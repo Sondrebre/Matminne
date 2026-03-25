@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title th:text="${samling.navn} + ' | MatMinne'">Samling | MatMinne</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        /* ── HERO ── */
+        .page-hero {
+            background: var(--mat-mork);
+            padding: 48px 0 64px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(46,204,113,.06) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .hero-inner { position: relative; z-index: 1; }
+
+        .hero-tag {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--mat-gronn);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .page-hero h1 {
+            font-size: 2.4rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            color: white;
+            margin: 0 0 6px;
+        }
+
+        .page-hero p { color: rgba(255,255,255,.4); font-size: .9rem; margin: 0; }
+
+        /* ── CONTENT ── */
+        .content-wrap {
+            max-width: 1000px;
+            margin: -36px auto 80px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ── GRID ── */
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .kort {
+            background: white;
+            border-radius: 22px;
+            overflow: hidden;
+            border: 1px solid #f1f5f9;
+            transition: transform .3s ease, box-shadow .3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0,0,0,.04);
+        }
+
+        .kort:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 18px 44px rgba(0,0,0,.08);
+        }
+
+        .kort-img {
+            height: 190px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kort-img img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform .5s ease;
+        }
+
+        .kort:hover .kort-img img { transform: scale(1.05); }
+
+        .kat-badge {
+            position: absolute;
+            top: 10px; right: 10px;
+            background: var(--mat-gronn);
+            color: white;
+            font-size: .68rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 99px;
+        }
+
+        .kort-body { padding: 18px 20px 16px; flex-grow: 1; display: flex; flex-direction: column; }
+
+        .kort-meta {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .kort-meta span {
+            font-size: .72rem;
+            font-weight: 700;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .kort-meta i { color: var(--mat-gronn); font-size: .65rem; }
+
+        .kort-title {
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: var(--mat-mork);
+            letter-spacing: -.3px;
+            line-height: 1.3;
+            text-decoration: none;
+            display: block;
+            flex-grow: 1;
+            margin-bottom: 14px;
+            transition: color .2s;
+        }
+
+        .kort-title:hover { color: var(--mat-gronn); }
+
+        .kort-actions { display: flex; gap: 8px; }
+
+        .btn-see {
+            flex: 1;
+            background: #f1f5f9;
+            color: var(--mat-mork);
+            text-decoration: none;
+            text-align: center;
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: .85rem;
+            transition: .2s;
+        }
+
+        .btn-see:hover { background: var(--mat-mork); color: white; }
+
+        .btn-fjern {
+            background: #fff0f0;
+            color: #e74c3c;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: .85rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: .2s;
+        }
+
+        .btn-fjern:hover { background: #e74c3c; color: white; }
+
+        /* ── EMPTY ── */
+        .empty-box {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid #f1f5f9;
+            text-align: center;
+            padding: 70px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.04);
+        }
+
+        .empty-icon {
+            width: 88px; height: 88px;
+            background: var(--mat-lys-gronn);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4rem;
+            margin: 0 auto 20px;
+        }
+
+        .empty-box h3 { font-weight: 900; font-size: 1.4rem; letter-spacing: -.5px; margin-bottom: 8px; color: var(--mat-mork); }
+        .empty-box p { color: #94a3b8; margin-bottom: 24px; }
+
+        .btn-browse {
+            background: var(--mat-gronn);
+            color: white;
+            text-decoration: none;
+            padding: 12px 28px;
+            border-radius: 14px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: .2s;
+            box-shadow: 0 8px 24px rgba(46,204,113,.25);
+        }
+
+        .btn-browse:hover { background: var(--mat-gronn-m); transform: translateY(-2px); color: white; }
+
+        /* ── BACK LINK ── */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: .85rem;
+            margin-bottom: 20px;
+            transition: color .2s;
+        }
+
+        .back-link:hover { color: var(--mat-mork); }
+
+        @media (max-width: 600px) {
+            .recipe-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <!-- HERO -->
+    <div class="page-hero">
+        <div class="container hero-inner">
+            <span class="hero-tag">Samling</span>
+            <h1 th:text="${samling.navn}">Samlingnavn</h1>
+            <p th:text="${samling.beskrivelse != null and samling.beskrivelse != '' ? samling.beskrivelse : 'Din personlige samling'}"></p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-wrap">
+
+            <a href="/samlinger" class="back-link">
+                <i class="fas fa-chevron-left"></i> Tilbake til samlinger
+            </a>
+
+            <!-- EMPTY -->
+            <div th:if="${oppskrifter == null or #lists.isEmpty(oppskrifter)}" class="empty-box">
+                <div class="empty-icon">📭</div>
+                <h3>Samlingen er tom</h3>
+                <p>Legg til oppskrifter fra "Utforsk" eller din kokebok.</p>
+                <a href="/oppdag" class="btn-browse">
+                    <i class="fa-solid fa-compass"></i> Utforsk oppskrifter
+                </a>
+            </div>
+
+            <!-- GRID -->
+            <div class="recipe-grid" th:unless="${oppskrifter == null or #lists.isEmpty(oppskrifter)}">
+                <div class="kort" th:each="o : ${oppskrifter}">
+                    <div class="kort-img">
+                        <img th:src="${o.bildeUrl != null && o.bildeUrl != '' ? o.bildeUrl : 'https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&w=600&q=70'}" alt="">
+                        <span th:if="${o.kategori != null}" class="kat-badge" th:text="${o.kategori}"></span>
+                    </div>
+                    <div class="kort-body">
+                        <div class="kort-meta" th:if="${o.tilberedningstid != null or o.porsjoner != null}">
+                            <span th:if="${o.tilberedningstid != null}">
+                                <i class="fas fa-clock"></i>
+                                <span th:text="${o.tilberedningstid} + ' min'"></span>
+                            </span>
+                            <span th:if="${o.porsjoner != null}">
+                                <i class="fas fa-users"></i>
+                                <span th:text="${o.porsjoner} + ' pors.'"></span>
+                            </span>
+                        </div>
+                        <a th:href="@{'/detaljer/' + ${o.id}}" class="kort-title" th:text="${o.tittel}">Tittel</a>
+                        <div class="kort-actions">
+                            <a th:href="@{'/detaljer/' + ${o.id}}" class="btn-see">
+                                <i class="fa-solid fa-eye me-1"></i> Se oppskrift
+                            </a>
+                            <form th:action="@{'/samlinger/' + ${samling.id} + '/fjern/' + ${o.id}}" method="POST">
+                                <button type="submit" class="btn-fjern" title="Fjern fra samling">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

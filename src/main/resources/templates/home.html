@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MatMinne — Din digitale kokebok</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        :root {
+            --g:    #2ecc71;
+            --gd:   #27ae60;
+            --gdk:  #1e8449;
+            --dark: #0f172a;
+            --soft: #f0fdf4;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--dark); overflow-x: hidden; }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+            padding: 18px 5%;
+            display: flex; align-items: center; justify-content: space-between;
+            transition: background .3s, box-shadow .3s;
+        }
+        nav.scrolled {
+            background: rgba(255,255,255,.96);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 2px 20px rgba(0,0,0,.07);
+        }
+        .logo { font-weight: 900; font-size: 1.4rem; letter-spacing: -1.5px; color: var(--dark); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .logo-icon { width: 34px; height: 34px; background: var(--g); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 12px rgba(46,204,113,.35); }
+        .logo em { font-style: normal; color: var(--g); }
+        .nav-btn {
+            background: var(--g); color: white; text-decoration: none;
+            padding: 10px 24px; border-radius: 12px; font-weight: 800; font-size: .88rem;
+            display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 16px rgba(46,204,113,.3); transition: .2s;
+        }
+        .nav-btn:hover { background: var(--gd); color: white; transform: translateY(-1px); }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            background: linear-gradient(160deg, #ffffff 0%, #f0fdf4 40%, #dcfce7 100%);
+            display: flex; align-items: center;
+            padding: 120px 5% 80px;
+            position: relative; overflow: hidden;
+        }
+        .hero::after {
+            content: '';
+            position: absolute; bottom: 0; left: 0; right: 0; height: 120px;
+            background: linear-gradient(to bottom, transparent, #fff);
+        }
+
+        /* Deco circles */
+        .deco-circle {
+            position: absolute; border-radius: 50%; pointer-events: none;
+        }
+        .deco-1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(46,204,113,.15), transparent 70%); top: -100px; right: -100px; }
+        .deco-2 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(46,204,113,.1), transparent 70%); bottom: 0; left: 10%; }
+
+        .hero-inner { position: relative; z-index: 1; display: flex; align-items: center; gap: 80px; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+        .hero-text { flex: 1; max-width: 580px; }
+
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: white; border: 1.5px solid #bbf7d0;
+            color: var(--gd); padding: 7px 16px; border-radius: 99px;
+            font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;
+            margin-bottom: 28px; box-shadow: 0 2px 12px rgba(46,204,113,.12);
+        }
+        .hero-badge-dot { width: 8px; height: 8px; background: var(--g); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+
+        h1 {
+            font-size: clamp(2.8rem, 5.5vw, 5rem);
+            font-weight: 900; letter-spacing: -3px; line-height: .95;
+            color: var(--dark); margin-bottom: 24px;
+        }
+        h1 em { font-style: normal; color: var(--g); }
+
+        .hero-sub {
+            font-size: 1.1rem; color: #475569; line-height: 1.75;
+            max-width: 460px; margin-bottom: 44px; font-weight: 500;
+        }
+
+        .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-bottom: 48px; }
+
+        .btn-main {
+            background: var(--g); color: white; text-decoration: none;
+            padding: 16px 36px; border-radius: 14px; font-weight: 900; font-size: 1rem;
+            display: inline-flex; align-items: center; gap: 9px;
+            box-shadow: 0 8px 28px rgba(46,204,113,.35); transition: .25s;
+        }
+        .btn-main:hover { background: var(--gd); color: white; transform: translateY(-2px); box-shadow: 0 14px 36px rgba(46,204,113,.45); }
+
+        .trust { display: flex; align-items: center; gap: 12px; }
+        .avatars { display: flex; }
+        .avatars img { width: 34px; height: 34px; border-radius: 50%; border: 2.5px solid white; margin-left: -9px; object-fit: cover; }
+        .avatars img:first-child { margin-left: 0; }
+        .trust-txt { font-size: .82rem; color: #64748b; font-weight: 500; }
+        .trust-txt strong { color: var(--dark); }
+
+        /* ── FOOD VISUAL ── */
+        .hero-visual {
+            flex: 1; max-width: 520px;
+            position: relative; display: flex; align-items: center; justify-content: center;
+        }
+        .food-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+            width: 100%;
+        }
+        .food-img {
+            border-radius: 24px; overflow: hidden;
+            box-shadow: 0 16px 44px rgba(0,0,0,.1);
+        }
+        .food-img img { width: 100%; height: 200px; object-fit: cover; display: block; transition: transform .5s; }
+        .food-img:hover img { transform: scale(1.04); }
+        .food-img.tall img { height: 270px; }
+        .food-img.short img { height: 130px; }
+
+        .floating-tag {
+            position: absolute; background: white;
+            border-radius: 14px; padding: 10px 16px;
+            box-shadow: 0 8px 28px rgba(0,0,0,.12);
+            display: flex; align-items: center; gap: 10px;
+            white-space: nowrap;
+        }
+        .floating-tag-icon { font-size: 1.3rem; }
+        .floating-tag-text strong { display: block; font-size: .88rem; font-weight: 800; color: var(--dark); }
+        .floating-tag-text span { font-size: .73rem; color: #64748b; }
+        .ft-1 { bottom: 24px; left: -20px; animation: floatY 4s ease-in-out infinite; }
+        .ft-2 { top: 24px; right: -20px; animation: floatY 4s ease-in-out 2s infinite; }
+        @keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+        /* ── FEATURES ── */
+        .features { background: white; padding: 90px 5%; }
+        .section-label { font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2.5px; color: var(--g); display: block; margin-bottom: 10px; }
+        .section-title { font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 900; letter-spacing: -1.5px; color: var(--dark); margin-bottom: 52px; max-width: 480px; line-height: 1.15; }
+        .feat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 22px; max-width: 1100px; margin: 0 auto; }
+        .feat-card {
+            background: var(--soft); border: 1.5px solid #bbf7d0;
+            border-radius: 22px; padding: 30px 26px; transition: .28s;
+        }
+        .feat-card:hover { background: white; box-shadow: 0 12px 36px rgba(46,204,113,.12); transform: translateY(-4px); border-color: var(--g); }
+        .feat-icon { font-size: 1.6rem; margin-bottom: 16px; }
+        .feat-card h3 { font-size: 1rem; font-weight: 800; color: var(--dark); margin-bottom: 8px; letter-spacing: -.3px; }
+        .feat-card p { font-size: .85rem; color: #64748b; line-height: 1.7; }
+
+        /* ── STEPS ── */
+        .steps-section { background: var(--soft); padding: 90px 5%; }
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 28px; margin-top: 52px; max-width: 1100px; margin-left: auto; margin-right: auto; }
+        .step { background: white; border-radius: 22px; padding: 28px 24px; border: 1.5px solid #e2e8f0; text-align: left; }
+        .step-num { width: 48px; height: 48px; background: var(--g); color: white; border-radius: 14px; font-size: 1.2rem; font-weight: 900; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; box-shadow: 0 4px 14px rgba(46,204,113,.3); }
+        .step h4 { font-size: .95rem; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
+        .step p { font-size: .83rem; color: #64748b; line-height: 1.65; }
+
+        /* ── CTA ── */
+        .cta-section {
+            background: linear-gradient(135deg, var(--dark) 0%, #0f2318 100%);
+            padding: 90px 5%; text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .cta-section::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse 70% 80% at 50% 50%, rgba(46,204,113,.12) 0%, transparent 65%);
+        }
+        .cta-section h2 { position: relative; font-size: clamp(2rem, 4vw, 3.4rem); font-weight: 900; letter-spacing: -2.5px; color: white; margin-bottom: 16px; }
+        .cta-section p { position: relative; color: rgba(255,255,255,.5); font-size: 1.05rem; margin-bottom: 40px; }
+        .cta-btn {
+            position: relative; background: var(--g); color: white; text-decoration: none;
+            padding: 17px 48px; border-radius: 16px; font-weight: 900; font-size: 1.05rem;
+            display: inline-flex; align-items: center; gap: 10px;
+            box-shadow: 0 12px 36px rgba(46,204,113,.4); transition: .25s;
+        }
+        .cta-btn:hover { background: var(--gd); color: white; transform: translateY(-2px); }
+
+        /* ── FOOTER ── */
+        footer { background: white; padding: 28px 5%; text-align: center; border-top: 1px solid #f1f5f9; }
+        footer p { font-size: .8rem; color: #94a3b8; }
+
+        @media (max-width: 900px) {
+            .hero-inner { flex-direction: column; gap: 50px; }
+            .hero-visual { width: 100%; max-width: 480px; }
+        }
+        @media (max-width: 600px) {
+            h1 { letter-spacing: -2px; }
+            .hero-actions { flex-direction: column; }
+            .btn-main { width: 100%; justify-content: center; }
+            .ft-1, .ft-2 { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="mainNav">
+        <a href="/" class="logo">
+            <div class="logo-icon">🍎</div>
+            mat<em>minne.</em>
+        </a>
+        <a href="/oauth2/authorization/google" class="nav-btn">
+            <i class="fab fa-google"></i> Logg inn
+        </a>
+    </nav>
+
+    <!-- ── HERO ── -->
+    <section class="hero">
+        <div class="deco-circle deco-1"></div>
+        <div class="deco-circle deco-2"></div>
+        <div class="hero-inner">
+            <div class="hero-text">
+                <div class="hero-badge">
+                    <span class="hero-badge-dot"></span> Gratis for alle
+                </div>
+                <h1>Din digitale<br><em>kokebok.</em></h1>
+                <p class="hero-sub">Lagre oppskrifter fra hele nettet, planlegg ukens måltider, og del favorittene dine med venner.</p>
+                <div class="hero-actions">
+                    <a href="/oauth2/authorization/google" class="btn-main">
+                        <i class="fab fa-google"></i> Kom i gang gratis
+                    </a>
+                </div>
+                <div class="trust">
+                    <div class="avatars">
+                        <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&q=80" alt="">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&q=80" alt="">
+                        <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=80&q=80" alt="">
+                    </div>
+                    <p class="trust-txt">Bli med <strong>tusenvis av kokker</strong></p>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="food-grid">
+                    <div class="food-img tall">
+                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80" alt="Mat">
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:14px;">
+                        <div class="food-img short">
+                            <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500&q=80" alt="Mat">
+                        </div>
+                        <div class="food-img short">
+                            <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=500&q=80" alt="Mat">
+                        </div>
+                    </div>
+                </div>
+                <div class="floating-tag ft-1">
+                    <div class="floating-tag-icon">✨</div>
+                    <div class="floating-tag-text">
+                        <strong>AI-import</strong>
+                        <span>Lim inn URL — klar på sekunder</span>
+                    </div>
+                </div>
+                <div class="floating-tag ft-2">
+                    <div class="floating-tag-icon">📅</div>
+                    <div class="floating-tag-text">
+                        <strong>Ukesmeny</strong>
+                        <span>7 dager planlagt</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── FEATURES ── -->
+    <section class="features">
+        <div style="max-width:1100px;margin:0 auto;">
+            <span class="section-label">Funksjoner</span>
+            <h2 class="section-title">Alt du trenger på ett sted</h2>
+            <div class="feat-grid">
+                <div class="feat-card">
+                    <div class="feat-icon">🤖</div>
+                    <h3>AI-import</h3>
+                    <p>Lim inn en URL fra Matprat, Godt.no eller et annet nettsted — AI henter tittel, ingredienser og fremgangsmåte automatisk.</p>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">📅</div>
+                    <h3>Ukesmeny</h3>
+                    <p>Planlegg frokost, lunsj og middag for hele uken. Generer handleliste med ett klikk.</p>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">👥</div>
+                    <h3>Fellesskap</h3>
+                    <p>Følg andre kokker, lik og kommenter oppskrifter, og del dine egne favoritter med alle.</p>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">📁</div>
+                    <h3>Samlinger</h3>
+                    <p>Organiser oppskriftene dine i egne samlinger — «Hverdagsmiddager», «Dessert-favoritter» og mer.</p>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">🍳</div>
+                    <h3>Kokemodus</h3>
+                    <p>Gå gjennom oppskriften steg for steg med visuell fremdrift — perfekt å ha fremme på kjøkkenet.</p>
+                </div>
+                <div class="feat-card">
+                    <div class="feat-icon">🛒</div>
+                    <h3>Handleliste</h3>
+                    <p>Generer handleliste direkte fra ukesmenyen. Aldri glem noe i butikken igjen.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── STEPS ── -->
+    <section class="steps-section">
+        <div style="max-width:1100px;margin:0 auto;">
+            <span class="section-label">Slik fungerer det</span>
+            <h2 class="section-title">I gang på 30 sekunder</h2>
+            <div class="steps-grid">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h4>Logg inn med Google</h4>
+                    <p>Ingen passord, ingen skjemaer — bare ett klikk.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h4>Legg til en oppskrift</h4>
+                    <p>Lim inn en URL og la AI gjøre jobben, eller skriv inn manuelt.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <h4>Planlegg uken</h4>
+                    <p>Sett opp ukesmenyen og generer handleliste automatisk.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <h4>Del og oppdage</h4>
+                    <p>Utforsk hva andre kokkere deler og finn nye favoritter.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── CTA ── -->
+    <section class="cta-section">
+        <h2>Klar til å starte?</h2>
+        <p>Gratis for alltid. Ingen kredittkort. Bare mat.</p>
+        <a href="/oauth2/authorization/google" class="cta-btn">
+            <i class="fab fa-google"></i> Start din kokebok nå
+        </a>
+    </section>
+
+    <footer>
+        <p>MatMinne &copy; 2025 — Din digitale kokebok</p>
+    </footer>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 40);
+        });
+    </script>
+</body>
+</html>

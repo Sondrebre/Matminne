@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Min Kokebok | MatMinne</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        /* ── APP HEADER ── */
+        .app-header {
+            background: linear-gradient(160deg, #ecfdf5 0%, #d1fae5 60%, #bbf7d0 100%);
+            border-bottom: 1px solid #a7f3d0;
+            padding: 48px 0 68px;
+            position: relative;
+            overflow: hidden;
+        }
+        .app-header::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(34,197,94,.15) 1px, transparent 1px);
+            background-size: 22px 22px;
+        }
+        .app-header-glow {
+            position: absolute; width: 420px; height: 420px;
+            background: radial-gradient(circle, rgba(34,197,94,.2), transparent 65%);
+            right: -100px; top: -80px; pointer-events: none;
+        }
+        .app-header-glow2 {
+            position: absolute; width: 220px; height: 220px;
+            background: radial-gradient(circle, rgba(34,197,94,.12), transparent 65%);
+            left: 5%; bottom: -60px; pointer-events: none;
+        }
+        .app-header-inner {
+            position: relative; z-index: 1;
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 16px; margin-bottom: 22px;
+        }
+
+        /* greeting */
+        .greeting-time {
+            font-size: clamp(1.7rem, 4vw, 2.6rem);
+            font-weight: 900; letter-spacing: -1.5px;
+            color: var(--mat-mork); line-height: 1.1; margin-bottom: 5px;
+        }
+        .greeting-sub {
+            font-size: .88rem; color: #64748b; font-weight: 500;
+        }
+
+        /* stats pill */
+        .header-stat-pill {
+            background: white;
+            border: 1.5px solid #a7f3d0;
+            color: var(--mat-gronn-m);
+            padding: 8px 16px; border-radius: 99px;
+            font-weight: 800; font-size: .85rem;
+            display: flex; align-items: center; gap: 7px;
+            white-space: nowrap; flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(34,197,94,.15);
+        }
+
+        /* search bar */
+        .header-search-wrap { position: relative; z-index: 1; }
+        .header-search-inner {
+            background: white; border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(34,197,94,.12), 0 2px 8px rgba(0,0,0,.04);
+            border: 1px solid #d1fae5;
+            display: flex; align-items: center;
+            padding: 8px 8px 8px 18px; gap: 12px;
+        }
+        .header-search-inner > .search-icon { color: #94a3b8; font-size:.92rem; flex-shrink:0; }
+        .header-search-inner input {
+            flex: 1; border: none; outline: none;
+            font-family: inherit; font-size: .95rem; font-weight: 500;
+            color: var(--mat-mork); background: transparent;
+        }
+        .header-search-inner input::placeholder { color: #cbd5e1; }
+        .search-count-badge {
+            background: #f1f5f9; color: #64748b;
+            font-weight: 800; font-size: .72rem;
+            padding: 6px 12px; border-radius: 10px;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .header-add-btn {
+            width: 42px; height: 42px; background: var(--mat-gronn); color: white;
+            border-radius: 13px; display: flex; align-items: center; justify-content: center;
+            text-decoration: none; font-size: 1.05rem; flex-shrink: 0; transition: .2s;
+            box-shadow: 0 4px 14px rgba(46,204,113,.35);
+        }
+        .header-add-btn:hover { background: var(--mat-gronn-m); color: white; transform: scale(1.06); }
+
+        /* ── FILTER CHIPS ── */
+        .filter-bar {
+            max-width: 900px; margin: -20px auto 24px; padding: 0 16px;
+            position: relative; z-index: 10;
+            display: flex; gap: 8px; align-items: center;
+            overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
+            padding-bottom: 4px;
+        }
+        .filter-bar::-webkit-scrollbar { display: none; }
+
+        .chip {
+            padding: 7px 16px; border-radius: 99px; font-size: .78rem; font-weight: 700;
+            border: 1.5px solid #e2e8f0; color: #64748b; background: white;
+            cursor: pointer; transition: .18s; white-space: nowrap; user-select: none;
+            flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,.04);
+        }
+        .chip:hover { border-color: var(--mat-gronn); color: var(--mat-gronn); }
+        .chip.active { background: var(--mat-gronn); border-color: var(--mat-gronn); color: white; box-shadow: 0 4px 14px rgba(46,204,113,.3); }
+
+        /* ── GRID ── */
+        .recipes-section { padding: 0 0 100px; }
+
+        .section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 18px;
+        }
+        .section-meta { font-size:.78rem; font-weight:700; color:#94a3b8; }
+
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* ── CARD ── */
+        .recipe-item { transition: opacity .15s; }
+        .recipe-item.hidden { display: none; }
+
+        .recipe-card {
+            background: white; border-radius: 22px; overflow: hidden;
+            border: 1px solid #f1f5f9; display: flex; flex-direction: column;
+            transition: transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .28s;
+            box-shadow: 0 2px 10px rgba(0,0,0,.04);
+            cursor: pointer;
+        }
+        .recipe-card:hover { transform: translateY(-7px); box-shadow: 0 22px 52px rgba(0,0,0,.1); }
+
+        .card-img { height: 190px; position: relative; overflow: hidden; background: #f1f5f9; }
+        .card-img img { width:100%; height:100%; object-fit:cover; transition:transform .55s ease; display:block; }
+        .recipe-card:hover .card-img img { transform: scale(1.07); }
+
+        .card-kat {
+            position: absolute; top: 12px; right: 12px;
+            background: rgba(15,23,42,.72); backdrop-filter: blur(8px);
+            color: var(--mat-gronn); font-size:.63rem; font-weight:800;
+            padding: 4px 10px; border-radius: 99px; letter-spacing:.5px;
+        }
+        .card-vis {
+            position: absolute; top: 12px; left: 12px;
+            background: rgba(255,255,255,.9); backdrop-filter: blur(8px);
+            padding: 4px 10px; border-radius: 8px;
+            font-size: .67rem; font-weight: 700; color: #64748b;
+        }
+        .card-vis.public { color: var(--mat-gronn); }
+
+        .card-body { padding: 18px 18px 16px; flex-grow:1; display:flex; flex-direction:column; }
+
+        .card-meta { display:flex; gap:10px; margin-bottom:9px; flex-wrap:wrap; }
+        .card-meta span {
+            font-size:.68rem; font-weight:700; color:#94a3b8;
+            display:flex; align-items:center; gap:4px;
+        }
+        .card-meta i { color:var(--mat-gronn); font-size:.62rem; }
+
+        .card-title {
+            font-size: 1.05rem; font-weight: 800; color: var(--mat-mork);
+            letter-spacing: -.3px; line-height: 1.3; margin: 0 0 14px; flex-grow: 1;
+        }
+
+        .card-actions { display: flex; gap: 8px; }
+        .btn-view {
+            flex:1; background:var(--mat-mork); color:white; text-align:center;
+            padding:10px 14px; border-radius:12px; font-weight:700; font-size:.83rem;
+            text-decoration:none; transition:.2s;
+        }
+        .btn-view:hover { background:var(--mat-gronn); color:white; }
+        .btn-icon {
+            width:40px; height:40px; border-radius:12px;
+            display:flex; align-items:center; justify-content:center;
+            font-size:.84rem; transition:.2s; flex-shrink:0; text-decoration:none;
+        }
+        .btn-icon-edit { background:#f1f5f9; color:#64748b; border:none; cursor:pointer; }
+        .btn-icon-edit:hover { background:var(--mat-lys-gronn); color:var(--mat-gronn-m); }
+        .btn-icon-delete { background:#f1f5f9; color:#64748b; border:none; cursor:pointer; }
+        .btn-icon-delete:hover { background:#fee2e2; color:#dc2626; }
+
+        /* ── EMPTY ── */
+        .empty-book { text-align: center; padding: 60px 20px 80px; max-width: 520px; margin: 0 auto; }
+        .empty-visual { position: relative; width: 130px; height: 130px; margin: 0 auto 28px; }
+        .empty-visual-bg {
+            width: 130px; height: 130px; border-radius: 38px;
+            background: linear-gradient(160deg, #dcfce7 0%, #bbf7d0 100%);
+            display: flex; align-items: center; justify-content: center; font-size: 3.6rem;
+            box-shadow: 0 20px 60px rgba(34,197,94,.18);
+        }
+        .empty-visual-dot {
+            position: absolute; width: 28px; height: 28px; border-radius: 50%;
+            background: white; box-shadow: 0 4px 14px rgba(0,0,0,.08);
+            display: flex; align-items: center; justify-content: center; font-size: .95rem;
+        }
+        .empty-visual-dot.d1 { top: -6px; right: 0; }
+        .empty-visual-dot.d2 { bottom: 8px; right: -10px; }
+        .empty-visual-dot.d3 { top: 30px; left: -12px; }
+        .empty-book h3 { font-weight:900; font-size:1.6rem; letter-spacing:-.6px; color:var(--mat-mork); margin-bottom:10px; }
+        .empty-book p { color:#64748b; margin-bottom:28px; line-height:1.7; font-size:.95rem; }
+        .empty-steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; text-align: left; }
+        .empty-step {
+            background: white; border: 1px solid #e8f5e9; border-radius: 14px;
+            padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+            font-size: .88rem; font-weight: 600; color: #475569;
+        }
+        .empty-step-num {
+            width: 28px; height: 28px; border-radius: 9px; background: var(--mat-lys-gronn);
+            color: var(--mat-gronn); font-weight: 900; font-size: .82rem;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .btn-start { background:var(--mat-gronn); color:white; text-decoration:none; padding:14px 30px; border-radius:14px; font-weight:800; font-size:.95rem; display:inline-flex; align-items:center; gap:8px; transition:.2s; box-shadow:0 8px 24px rgba(46,204,113,.25); }
+        .btn-start:hover { background:var(--mat-gronn-m); transform:translateY(-2px); color:white; }
+
+        .no-results { text-align:center; padding:60px 20px; color:#94a3b8; font-weight:600; }
+        .no-results i { font-size:2rem; display:block; margin-bottom:12px; opacity:.4; }
+
+        /* ── FAB (mobil) ── */
+        .fab {
+            position: fixed; bottom: 90px; right: 18px;
+            width: 58px; height: 58px;
+            background: var(--mat-gronn); color: white;
+            border-radius: 20px; display: none;
+            align-items: center; justify-content: center;
+            font-size: 1.35rem; text-decoration: none; z-index: 800;
+            box-shadow: 0 8px 28px rgba(46,204,113,.45);
+            transition: transform .22s cubic-bezier(.34,1.56,.64,1), background .2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .fab:hover { background: var(--mat-gronn-m); color: white; transform: scale(1.08) rotate(90deg); }
+        .fab:active { transform: scale(.9); transition: transform .08s; }
+
+        @media (max-width: 768px) {
+            .fab { display: flex; }
+            .header-add-btn { display: none; }
+            .recipe-grid { grid-template-columns: 1fr; gap: 14px; }
+            .filter-bar { margin-bottom: 18px; }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .recipe-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <!-- APP HEADER -->
+    <div class="app-header">
+        <div class="app-header-glow"></div>
+        <div class="app-header-glow2"></div>
+        <div class="container app-header-inner">
+            <div>
+                <div class="greeting-time" id="greetingLine">God dag 👋</div>
+                <div class="greeting-sub" th:text="'Du har ' + ${antall} + ' oppskrift' + (${antall} == 1 ? '' : 'er') + ' lagret'">0 oppskrifter lagret</div>
+            </div>
+            <div class="header-stat-pill">
+                <i class="fa-solid fa-book-open"></i>
+                <span th:text="${antall}">0</span>
+            </div>
+        </div>
+        <div class="container header-search-wrap">
+            <div class="header-search-inner">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="recipeSearch" placeholder="Søk i kokeboken din...">
+                <div class="search-count-badge" id="searchCountBadge" th:text="${antall} + ' treff'">0 treff</div>
+                <a href="/ny-oppskrift" class="header-add-btn" title="Ny oppskrift">
+                    <i class="fas fa-plus"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FILTER CHIPS -->
+    <div class="filter-bar" th:unless="${oppskrifter.isEmpty()}">
+        <div class="chip active" onclick="filterKat(this, '')">Alle</div>
+        <div class="chip" onclick="filterKat(this, 'Frokost')">🌅 Frokost</div>
+        <div class="chip" onclick="filterKat(this, 'Lunsj')">☀️ Lunsj</div>
+        <div class="chip" onclick="filterKat(this, 'Middag')">🍽️ Middag</div>
+        <div class="chip" onclick="filterKat(this, 'Dessert')">🍰 Dessert</div>
+        <div class="chip" onclick="filterKat(this, 'Snacks')">🥨 Snacks</div>
+        <div class="chip" onclick="filterKat(this, 'Drikke')">🥤 Drikke</div>
+        <div class="chip" onclick="filterKat(this, 'Annet')">📦 Annet</div>
+    </div>
+
+    <!-- GRID -->
+    <div class="container recipes-section">
+
+        <div th:if="${oppskrifter.isEmpty()}" class="empty-book">
+            <div class="empty-visual">
+                <div class="empty-visual-bg">📖</div>
+                <div class="empty-visual-dot d1">✨</div>
+                <div class="empty-visual-dot d2">🍳</div>
+                <div class="empty-visual-dot d3">🌿</div>
+            </div>
+            <h3>Kokeboken venter på deg!</h3>
+            <p>Du har ikke lagt til noen oppskrifter ennå.<br>Her er tre enkle måter å komme i gang:</p>
+            <div class="empty-steps">
+                <div class="empty-step">
+                    <div class="empty-step-num">1</div>
+                    <span>Lim inn en lenke fra nett — AI henter oppskriften for deg automatisk</span>
+                </div>
+                <div class="empty-step">
+                    <div class="empty-step-num">2</div>
+                    <span>Skriv inn din egen oppskrift manuelt med ingredienser og fremgangsmåte</span>
+                </div>
+                <div class="empty-step">
+                    <div class="empty-step-num">3</div>
+                    <span>Utforsk andres kokker og lagre favorittene dine</span>
+                </div>
+            </div>
+            <a href="/ny-oppskrift" class="btn-start">
+                <i class="fa-solid fa-plus"></i> Legg til første oppskrift
+            </a>
+        </div>
+
+        <div class="section-header" th:unless="${oppskrifter.isEmpty()}">
+            <span class="section-meta" id="visibleCount" th:text="${antall} + ' oppskrifter'"></span>
+        </div>
+
+        <div class="recipe-grid" id="recipeGrid" th:unless="${oppskrifter.isEmpty()}">
+            <div class="recipe-item"
+                 th:each="o : ${oppskrifter}"
+                 th:attr="data-title=${o.tittel.toLowerCase()}, data-kat=${o.kategori != null ? o.kategori : ''}">
+                <div class="recipe-card">
+                    <div class="card-img">
+                        <img th:src="${o.bildeUrl != null && o.bildeUrl != '' ? o.bildeUrl : 'https://images.unsplash.com/photo-1495195129352-aeb325a55b65?auto=format&fit=crop&w=600&q=70'}" alt="" loading="lazy">
+                        <div class="card-vis" th:classappend="${o.erOffentlig} ? 'public' : ''"
+                             th:text="${o.erOffentlig} ? '🌍 Offentlig' : '🔒 Privat'"></div>
+                        <div th:if="${o.kategori != null}" class="card-kat" th:text="${o.kategori}"></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta" th:if="${o.tilberedningstid != null or o.porsjoner != null}">
+                            <span th:if="${o.tilberedningstid != null}">
+                                <i class="fas fa-clock"></i>
+                                <span th:text="${o.tilberedningstid} + ' min'"></span>
+                            </span>
+                            <span th:if="${o.porsjoner != null}">
+                                <i class="fas fa-users"></i>
+                                <span th:text="${o.porsjoner} + ' pors.'"></span>
+                            </span>
+                            <span th:if="${o.vanskelighet != null}">
+                                <i class="fas fa-signal"></i>
+                                <span th:text="${o.vanskelighet}"></span>
+                            </span>
+                        </div>
+                        <div class="card-title" th:text="${o.tittel}">Tittel</div>
+                        <div class="card-actions">
+                            <a th:href="@{'/detaljer/' + ${o.id}}" class="btn-view">
+                                <i class="fa-solid fa-eye me-1"></i> Se oppskrift
+                            </a>
+                            <a th:href="@{'/rediger/' + ${o.id}}" class="btn-icon btn-icon-edit" title="Rediger">
+                                <i class="fas fa-pen"></i>
+                            </a>
+                            <form th:action="@{'/slett/' + ${o.id}}" method="POST">
+                                <button type="submit" class="btn-icon btn-icon-delete" title="Slett"
+                                        onclick="return confirm('Slette denne oppskriften?')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="no-results" id="noResults" style="display:none;">
+            <i class="fas fa-search"></i>
+            Ingen oppskrifter matcher søket ditt.
+        </div>
+    </div>
+
+    <!-- FAB (mobil) -->
+    <a href="/ny-oppskrift" class="fab" title="Ny oppskrift">
+        <i class="fas fa-plus"></i>
+    </a>
+
+    <div th:replace="~{fragments :: bottom_nav}"></div>
+    <div th:replace="~{fragments :: scripts}"></div>
+
+    <script>
+        // Tidsbasert hilsen
+        (function() {
+            const h = new Date().getHours();
+            let g;
+            if (h < 5)       g = 'God natt ⭐';
+            else if (h < 10) g = 'God morgen ☀️';
+            else if (h < 12) g = 'God formiddag 🌤️';
+            else if (h < 17) g = 'God ettermiddag 🍽️';
+            else if (h < 22) g = 'God kveld 🌙';
+            else             g = 'God natt ⭐';
+            const el = document.getElementById('greetingLine');
+            if (el) el.textContent = g;
+        })();
+
+        // Search + filter
+        let aktivKat = '';
+        const items        = document.querySelectorAll('.recipe-item');
+        const countBadge   = document.getElementById('searchCountBadge');
+        const visibleCount = document.getElementById('visibleCount');
+        const noResults    = document.getElementById('noResults');
+        const searchInput  = document.getElementById('recipeSearch');
+
+        function oppdaterTelling() {
+            const n = document.querySelectorAll('.recipe-item:not(.hidden)').length;
+            if (countBadge)   countBadge.textContent   = n + ' treff';
+            if (visibleCount) visibleCount.textContent = n + ' oppskrift' + (n === 1 ? '' : 'er');
+            if (noResults)    noResults.style.display  = n === 0 ? 'block' : 'none';
+        }
+
+        function filtrer() {
+            const sok = searchInput ? searchInput.value.toLowerCase() : '';
+            items.forEach(item => {
+                const tittel = item.dataset.title || '';
+                const kat    = item.dataset.kat   || '';
+                item.classList.toggle('hidden', !(tittel.includes(sok) && (aktivKat === '' || kat === aktivKat)));
+            });
+            oppdaterTelling();
+        }
+
+        function filterKat(el, kat) {
+            aktivKat = kat;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            filtrer();
+        }
+
+        if (searchInput) searchInput.addEventListener('input', filtrer);
+    </script>
+</body>
+</html>

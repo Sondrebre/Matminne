@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Rediger Oppskrift | MatMinne</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        /* ── PAGE HEADER ── */
+        .edit-hero {
+            background: var(--mat-mork);
+            padding: 48px 0 64px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .edit-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(46,204,113,.06) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .edit-hero-inner { position: relative; z-index: 1; }
+
+        .edit-hero-tag {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--mat-gronn);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .edit-hero h1 {
+            font-size: 2.4rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            color: white;
+            margin: 0 0 6px;
+        }
+
+        .edit-hero p { color: rgba(255,255,255,.4); font-size: .9rem; margin: 0; }
+
+        /* ── FORM ── */
+        .form-wrap {
+            max-width: 800px;
+            margin: -36px auto 80px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px 32px 28px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 20px 56px rgba(0,0,0,.07);
+            margin-bottom: 16px;
+        }
+
+        .form-section-title {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--mat-gronn);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .field-group { margin-bottom: 18px; }
+
+        .field-label {
+            display: block;
+            font-weight: 700;
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #64748b;
+            margin-bottom: 7px;
+        }
+
+        .field-input {
+            width: 100%;
+            border: 2px solid #f1f5f9;
+            border-radius: 14px;
+            padding: 13px 16px;
+            font-size: .98rem;
+            font-family: inherit;
+            font-weight: 500;
+            color: var(--mat-mork);
+            background: #f8fafc;
+            outline: none;
+            transition: border-color .2s, background .2s;
+        }
+
+        .field-input:focus { border-color: var(--mat-gronn); background: white; }
+
+        textarea.field-input {
+            resize: vertical;
+            min-height: 160px;
+            line-height: 1.7;
+        }
+
+        /* Public toggle */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 16px 20px;
+            border: 2px solid #f1f5f9;
+        }
+
+        .toggle-info strong { display: block; font-weight: 800; font-size: .95rem; color: var(--mat-mork); margin-bottom: 2px; }
+        .toggle-info small { color: #94a3b8; font-size: .82rem; }
+
+        .form-check-input[type=checkbox] {
+            width: 48px; height: 24px;
+            cursor: pointer;
+        }
+
+        /* Actions */
+        .form-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .btn-back {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: .88rem;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            transition: color .2s;
+        }
+
+        .btn-back:hover { color: var(--mat-mork); }
+
+        .btn-save {
+            background: var(--mat-gronn);
+            color: white;
+            border: none;
+            padding: 13px 32px;
+            border-radius: 14px;
+            font-weight: 900;
+            font-size: .95rem;
+            cursor: pointer;
+            transition: .25s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 8px 24px rgba(46,204,113,.25);
+        }
+
+        .btn-save:hover { background: var(--mat-gronn-m); transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <!-- PAGE HEADER -->
+    <div class="edit-hero">
+        <div class="container edit-hero-inner">
+            <span class="edit-hero-tag">Din kokebok</span>
+            <h1>Rediger <span style="color:var(--mat-gronn);">Oppskrift</span></h1>
+            <p th:text="'Oppdaterer: ' + ${o.tittel}">Oppdater detaljene</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-wrap">
+            <form th:action="@{'/oppdater/' + ${o.id}}" method="POST">
+
+                <!-- GRUNNINFO -->
+                <div class="form-card">
+                    <div class="form-section-title">
+                        <i class="fa-solid fa-circle-info"></i> Grunninfo
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label" for="tittel">Navn på retten</label>
+                        <input type="text" id="tittel" name="tittel" class="field-input"
+                               th:value="${o.tittel}" placeholder="f.eks. Bestemors kjøttkaker" required>
+                    </div>
+
+                    <div class="field-group" style="margin-bottom:0;">
+                        <label class="field-label" for="bildeUrl">Bilde-URL</label>
+                        <input type="text" id="bildeUrl" name="bildeUrl" class="field-input"
+                               th:value="${o.bildeUrl}" placeholder="https://images.unsplash.com/...">
+                    </div>
+                </div>
+
+                <!-- DETALJER -->
+                <div class="form-card">
+                    <div class="form-section-title">
+                        <i class="fa-solid fa-sliders"></i> Detaljer
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="field-group">
+                                <label class="field-label" for="kategori">Kategori</label>
+                                <select id="kategori" name="kategori" class="field-input">
+                                    <option value="">– Velg kategori –</option>
+                                    <option value="Frokost"     th:selected="${o.kategori == 'Frokost'}">Frokost</option>
+                                    <option value="Lunsj"       th:selected="${o.kategori == 'Lunsj'}">Lunsj</option>
+                                    <option value="Middag"      th:selected="${o.kategori == 'Middag'}">Middag</option>
+                                    <option value="Dessert"     th:selected="${o.kategori == 'Dessert'}">Dessert</option>
+                                    <option value="Snacks"      th:selected="${o.kategori == 'Snacks'}">Snacks</option>
+                                    <option value="Drikke"      th:selected="${o.kategori == 'Drikke'}">Drikke</option>
+                                    <option value="Annet"       th:selected="${o.kategori == 'Annet'}">Annet</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field-group">
+                                <label class="field-label" for="vanskelighet">Vanskelighet</label>
+                                <select id="vanskelighet" name="vanskelighet" class="field-input">
+                                    <option value="">– Velg nivå –</option>
+                                    <option value="Enkel"    th:selected="${o.vanskelighet == 'Enkel'}">Enkel</option>
+                                    <option value="Medium"   th:selected="${o.vanskelighet == 'Medium'}">Medium</option>
+                                    <option value="Avansert" th:selected="${o.vanskelighet == 'Avansert'}">Avansert</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field-group" style="margin-bottom:0;">
+                                <label class="field-label" for="tilberedningstid">Tilberedningstid (min)</label>
+                                <input type="number" id="tilberedningstid" name="tilberedningstid" class="field-input"
+                                       min="1" th:value="${o.tilberedningstid}" placeholder="f.eks. 30">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="field-group" style="margin-bottom:0;">
+                                <label class="field-label" for="porsjoner">Porsjoner</label>
+                                <input type="number" id="porsjoner" name="porsjoner" class="field-input"
+                                       min="1" th:value="${o.porsjoner}" placeholder="f.eks. 4">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OPPSKRIFT -->
+                <div class="form-card">
+                    <div class="form-section-title">
+                        <i class="fa-solid fa-list-ul"></i> Oppskriften
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="field-group">
+                                <label class="field-label" for="ingredienser">Ingredienser</label>
+                                <textarea id="ingredienser" name="ingredienser" class="field-input"
+                                          th:text="${o.ingredienser}"
+                                          placeholder="2 stk egg&#10;500g mel..."></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="field-group">
+                                <label class="field-label" for="fremgangsmate">Fremgangsmåte</label>
+                                <textarea id="fremgangsmate" name="fremgangsmate" class="field-input"
+                                          th:text="${o.fremgangsmate}"
+                                          placeholder="1. Start med å koke opp vann..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="toggle-row">
+                        <div class="toggle-info">
+                            <strong><i class="fa-solid fa-globe me-2" style="color:var(--mat-gronn);"></i>Del med fellesskapet</strong>
+                            <small>Gjør oppskriften synlig under "Utforsk" for alle</small>
+                        </div>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" name="erOffentlig"
+                                   id="erOffentlig" th:checked="${o.erOffentlig}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="form-actions">
+                    <a href="/kokebok" class="btn-back">
+                        <i class="fas fa-chevron-left"></i> Tilbake uten å lagre
+                    </a>
+                    <button type="submit" class="btn-save">
+                        <i class="fa-solid fa-floppy-disk"></i> Lagre endringer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

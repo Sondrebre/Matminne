@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(claude-api)",
+      "Skill(claude-api:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/)",
+      "Bash(ls \"c:/Users/Sondr/Downloads/demo\\(1\\)/MatMinne/\"*.mv.db)",
+      "Bash(ls \"c:/Users/Sondr/Downloads/demo\\(1\\)/MatMinne/matminne_db\"*)"
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#2ecc71"/>
+  <rect x="48" y="48" width="416" height="416" rx="72" fill="#27ae60"/>
+  <!-- Fork -->
+  <rect x="155" y="110" width="22" height="120" rx="11" fill="white"/>
+  <rect x="155" y="110" width="22" height="55" rx="11" fill="white" opacity="0.6"/>
+  <rect x="143" y="110" width="12" height="70" rx="6" fill="white"/>
+  <rect x="177" y="110" width="12" height="70" rx="6" fill="white"/>
+  <!-- Fork handle -->
+  <rect x="155" y="230" width="22" height="170" rx="11" fill="white"/>
+  <!-- Knife -->
+  <rect x="335" y="110" width="22" height="290" rx="11" fill="white"/>
+  <path d="M335 110 Q357 110 357 220 L335 220 Z" fill="white" opacity="0.7"/>
+  <!-- M letter in center -->
+  <text x="256" y="290" font-size="140" text-anchor="middle" font-family="Arial Black, sans-serif" font-weight="900" fill="white" opacity="0.15">M</text>
+</svg>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>MatMinne AI | Abonnement</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        /* ── HERO ── */
+        .sub-hero {
+            background: linear-gradient(160deg, #ecfdf5 0%, #d1fae5 55%, #bbf7d0 100%);
+            border-bottom: 1px solid #a7f3d0;
+            padding: 72px 0 56px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+        .sub-hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(34,197,94,.12) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .sub-hero-glow {
+            position: absolute;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(34,197,94,.15), transparent 65%);
+            left: 50%; top: -100px; transform: translateX(-50%);
+            pointer-events: none;
+        }
+        .sub-hero-inner { position: relative; z-index: 1; }
+
+        .sub-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: white; border: 1px solid #a7f3d0;
+            border-radius: 99px; padding: 5px 14px;
+            font-size: .72rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 2px;
+            color: var(--mat-gronn-m); margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(34,197,94,.12);
+        }
+
+        .sub-hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.4rem);
+            font-weight: 900; letter-spacing: -2px;
+            color: var(--mat-mork); margin-bottom: 12px; line-height: 1.1;
+        }
+        .sub-hero h1 span { color: var(--mat-gronn); }
+        .sub-hero p { font-size: 1rem; color: #64748b; max-width: 480px; margin: 0 auto; line-height: 1.7; }
+
+        /* ── ALREADY SUBSCRIBED BANNER ── */
+        .subscribed-banner {
+            background: white; border: 2px solid #a7f3d0; border-radius: 20px;
+            padding: 24px 32px; max-width: 560px; margin: 32px auto 40px;
+            position: relative; z-index: 10;
+            box-shadow: 0 16px 48px rgba(34,197,94,.12);
+            display: flex; align-items: center; gap: 18px;
+        }
+        .subscribed-icon {
+            width: 54px; height: 54px; border-radius: 16px;
+            background: linear-gradient(160deg, #d1fae5, #bbf7d0);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem; flex-shrink: 0;
+        }
+        .subscribed-banner h3 { font-weight: 900; font-size: 1.05rem; color: var(--mat-mork); margin: 0 0 4px; }
+        .subscribed-banner p { font-size: .85rem; color: #64748b; margin: 0; }
+
+        /* ── PRICING CARD ── */
+        .pricing-wrap {
+            max-width: 860px; margin: 0 auto 60px;
+            padding: 40px 20px 0;
+            display: grid;
+            grid-template-columns: 1fr 1.15fr;
+            gap: 20px;
+        }
+
+        .price-card {
+            background: white; border-radius: 28px;
+            border: 1.5px solid #e8f5e9;
+            box-shadow: 0 8px 40px rgba(34,197,94,.08);
+            padding: 32px 28px;
+            display: flex; flex-direction: column;
+        }
+
+        .price-card.featured {
+            border-color: var(--mat-gronn);
+            box-shadow: 0 20px 60px rgba(34,197,94,.22);
+            position: relative; overflow: hidden;
+        }
+        .price-card.featured::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--mat-gronn), #a7f3d0, var(--mat-gronn));
+            background-size: 300% auto;
+            animation: stripeMove 3s linear infinite;
+        }
+        .featured-pill {
+            background: var(--mat-gronn); color: white;
+            font-size: .65rem; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            padding: 4px 12px; border-radius: 99px;
+            display: inline-block; margin-bottom: 16px;
+        }
+
+        .plan-name { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; margin-bottom: 8px; }
+        .plan-price { font-size: 3rem; font-weight: 900; letter-spacing: -2px; color: var(--mat-mork); line-height: 1; margin-bottom: 4px; }
+        .plan-price sup { font-size: 1.2rem; font-weight: 700; vertical-align: top; margin-top: 8px; }
+        .plan-price sub { font-size: .85rem; font-weight: 600; color: #94a3b8; }
+        .plan-desc { font-size: .82rem; color: #94a3b8; margin-bottom: 24px; }
+
+        .plan-features { list-style: none; padding: 0; margin: 0 0 28px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        .plan-features li { display: flex; align-items: center; gap: 10px; font-size: .88rem; font-weight: 600; color: #475569; }
+        .plan-features li .check { width: 20px; height: 20px; border-radius: 6px; background: var(--mat-lys-gronn); color: var(--mat-gronn); display: flex; align-items: center; justify-content: center; font-size: .7rem; flex-shrink: 0; }
+        .plan-features li .cross { width: 20px; height: 20px; border-radius: 6px; background: #f1f5f9; color: #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: .7rem; flex-shrink: 0; }
+        .plan-features li.muted { color: #cbd5e1; }
+
+        .btn-plan-free {
+            background: #f1f5f9; color: var(--mat-mork); border: none;
+            padding: 14px; border-radius: 14px; font-weight: 800; font-size: .9rem;
+            cursor: pointer; font-family: inherit; transition: .2s; text-align: center;
+            text-decoration: none; display: block;
+        }
+        .btn-plan-free:hover { background: #e2e8f0; color: var(--mat-mork); }
+
+        .btn-plan-pro {
+            background: var(--mat-gronn); color: white; border: none;
+            padding: 16px; border-radius: 14px; font-weight: 900; font-size: .95rem;
+            cursor: pointer; font-family: inherit; transition: .2s; text-align: center;
+            display: block; text-decoration: none;
+            box-shadow: 0 8px 28px rgba(34,197,94,.35);
+        }
+        .btn-plan-pro:hover { background: var(--mat-gronn-m); transform: translateY(-2px); color: white;
+            box-shadow: 0 12px 36px rgba(34,197,94,.4); }
+
+        /* ── FEATURES SECTION ── */
+        .features-section {
+            max-width: 860px; margin: 0 auto 80px; padding: 0 20px;
+        }
+        .features-label {
+            text-align: center; font-size: .68rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 2.5px; color: #94a3b8;
+            margin-bottom: 32px;
+        }
+        .features-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+        }
+        .feat-card {
+            background: white; border-radius: 20px; padding: 24px 20px;
+            border: 1px solid #e8f5e9; box-shadow: 0 4px 16px rgba(34,197,94,.06);
+            transition: transform .2s, box-shadow .2s;
+        }
+        .feat-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(34,197,94,.12); }
+        .feat-icon {
+            width: 48px; height: 48px; border-radius: 14px;
+            background: linear-gradient(160deg, #dcfce7, #bbf7d0);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; margin-bottom: 14px;
+        }
+        .feat-card h4 { font-weight: 800; font-size: .95rem; color: var(--mat-mork); margin-bottom: 6px; }
+        .feat-card p { font-size: .82rem; color: #64748b; line-height: 1.6; margin: 0; }
+
+        /* ── FAQ ── */
+        .faq-section { max-width: 640px; margin: 0 auto 80px; padding: 0 20px; }
+        .faq-label { text-align: center; font-size: .68rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 2.5px; color: #94a3b8; margin-bottom: 28px; }
+        .faq-item {
+            background: white; border-radius: 16px; border: 1px solid #e8f5e9;
+            margin-bottom: 10px; overflow: hidden;
+        }
+        .faq-q {
+            padding: 16px 20px; font-weight: 800; font-size: .9rem; color: var(--mat-mork);
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+            user-select: none;
+        }
+        .faq-q .faq-icon { font-size: .8rem; color: #94a3b8; transition: transform .2s; }
+        .faq-item.open .faq-icon { transform: rotate(45deg); }
+        .faq-a { display: none; padding: 0 20px 16px; font-size: .86rem; color: #64748b; line-height: 1.7; }
+        .faq-item.open .faq-a { display: block; }
+
+        @media (max-width: 700px) {
+            .pricing-wrap { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 480px) {
+            .features-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <!-- HERO -->
+    <div class="sub-hero">
+        <div class="sub-hero-glow"></div>
+        <div class="container sub-hero-inner">
+            <div class="sub-badge">
+                <i class="fas fa-wand-magic-sparkles"></i> MatMinne AI
+            </div>
+            <h1>Gi matlagingen<br>din <span>superkrefter</span></h1>
+            <p>Bruk Claude AI til å finne ingredienssubstitutter, generere oppskrifter fra URL og mye mer — alt for 69,90 kr/mnd.</p>
+        </div>
+    </div>
+
+    <!-- SUKSESS-TOAST etter kampanjekode eller betaling -->
+    <div th:if="${param.suksess != null and !harAbonnement}"
+         style="position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;
+                background:white;border:2px solid #a7f3d0;border-radius:18px;
+                box-shadow:0 16px 48px rgba(34,197,94,.2);
+                padding:16px 24px;display:flex;align-items:center;gap:12px;
+                font-weight:800;font-size:.92rem;color:var(--mat-mork);
+                animation:slideIn .3s ease;">
+        <span style="font-size:1.4rem;">🎉</span> AI-abonnement aktivert! Alle funksjoner er nå tilgjengelig.
+    </div>
+
+    <!-- ALREADY SUBSCRIBED -->
+    <div th:if="${harAbonnement}" class="container">
+        <div class="subscribed-banner">
+            <div class="subscribed-icon">✅</div>
+            <div>
+                <h3>Du har MatMinne AI!</h3>
+                <p>Alle AI-funksjoner er aktivert på kontoen din. Nyt tilgangen!</p>
+            </div>
+            <form th:action="@{/abonnement/avbryt}" method="POST" style="margin-left:auto;">
+                <button type="submit" style="background:none;border:1px solid #e2e8f0;color:#94a3b8;
+                    padding:8px 16px;border-radius:10px;font-weight:700;font-size:.78rem;
+                    cursor:pointer;font-family:inherit;transition:.2s;white-space:nowrap;"
+                    onclick="return confirm('Er du sikker på at du vil avslutte abonnementet?')">
+                    Avbryt abonnement
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PRICING -->
+    <div class="pricing-wrap" th:unless="${harAbonnement}">
+
+        <!-- Gratis -->
+        <div class="price-card">
+            <div class="plan-name">Gratis</div>
+            <div class="plan-price"><sup>kr</sup>0<sub>/mnd</sub></div>
+            <div class="plan-desc">For deg som vil komme i gang</div>
+            <ul class="plan-features">
+                <li><span class="check">✓</span> Ubegrenset kokebok</li>
+                <li><span class="check">✓</span> Dele og følge venner</li>
+                <li><span class="check">✓</span> Handleliste og ukesmeny</li>
+                <li><span class="check">✓</span> Samlinger og eksport til PDF</li>
+                <li class="muted"><span class="cross">✕</span> AI ingredienssubstitutt</li>
+                <li class="muted"><span class="cross">✕</span> AI import fra URL</li>
+                <li class="muted"><span class="cross">✕</span> AI matforslag og ukesmeny</li>
+            </ul>
+            <a href="/kokebok" class="btn-plan-free">Fortsett gratis</a>
+        </div>
+
+        <!-- Pro -->
+        <div class="price-card featured">
+            <span class="featured-pill">✨ Anbefalt</span>
+            <div class="plan-name">MatMinne AI</div>
+            <div class="plan-price"><sup>kr</sup>69<span style="font-size:1.8rem;">,90</span><sub>/mnd</sub></div>
+            <div class="plan-desc">Full AI-kraft for matentusiaster</div>
+            <ul class="plan-features">
+                <li><span class="check">✓</span> Alt i gratisplanen</li>
+                <li><span class="check">✓</span> <strong>AI ingredienssubstitutt</strong></li>
+                <li><span class="check">✓</span> <strong>AI import fra hvilken som helst URL</strong></li>
+                <li><span class="check">✓</span> <strong>AI matforslag og ukesmeny</strong></li>
+                <li><span class="check">✓</span> Prioritert support</li>
+                <li><span class="check">✓</span> Tidlig tilgang til nye funksjoner</li>
+            </ul>
+            <form th:action="@{/abonnement/checkout}" method="POST">
+                <button type="submit" class="btn-plan-pro">
+                    <i class="fas fa-bolt me-2"></i> Start AI-abonnement — 69,90 kr/mnd
+                </button>
+            </form>
+            <p style="font-size:.72rem;color:#94a3b8;text-align:center;margin-top:10px;">
+                Sikker betaling via Stripe · Avslutt når som helst
+            </p>
+        </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="features-section">
+        <div class="features-label">Hva du får med AI-abonnementet</div>
+        <div class="features-grid">
+            <div class="feat-card">
+                <div class="feat-icon">🔄</div>
+                <h4>Ingredienssubstitutt</h4>
+                <p>Mangler du smør, fløte eller et krydder? AI gir deg 3 perfekte alternativer på sekunder.</p>
+            </div>
+            <div class="feat-card">
+                <div class="feat-icon">🌐</div>
+                <h4>Import fra URL</h4>
+                <p>Lim inn lenken til en oppskrift fra nett — AI trekker ut og strukturerer den automatisk.</p>
+            </div>
+            <div class="feat-card">
+                <div class="feat-icon">🗓️</div>
+                <h4>AI-ukesmeny</h4>
+                <p>Fortell hva du har lyst på og AI lager en balansert ukesmeny tilpasset deg og familien.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="faq-section">
+        <div class="faq-label">Ofte stilte spørsmål</div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-q">Kan jeg avslutte når som helst? <span class="faq-icon">+</span></div>
+            <div class="faq-a">Ja, absolutt. Du kan avbryte abonnementet ditt med ett klikk fra denne siden. Det er ingen bindingstid og ingen skjulte avgifter.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-q">Hvilke betalingsmåter støttes? <span class="faq-icon">+</span></div>
+            <div class="faq-a">Vi bruker Stripe for sikker betaling. Du kan betale med Visa, Mastercard, og andre vanlige kort. Betalingen håndteres trygt av Stripe og MatMinne lagrer aldri kortinformasjonen din.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-q">Hva skjer med AI-funksjonene hvis jeg avslutter? <span class="faq-icon">+</span></div>
+            <div class="faq-a">AI-funksjonene deaktiveres ved slutten av betalingsperioden. Alle oppskriftene dine, venner og annet innhold forblir tilgjengelig — ingenting slettes.</div>
+        </div>
+        <div class="faq-item" onclick="toggleFaq(this)">
+            <div class="faq-q">Er det en gratis prøveperiode? <span class="faq-icon">+</span></div>
+            <div class="faq-a">Vi jobber med å innføre en 7-dagers gratis prøveperiode. I mellomtiden er prisen 69,90 kr/mnd uten bindingstid.</div>
+        </div>
+    </div>
+
+    <!-- KAMPANJEKODE -->
+    <div style="max-width:400px;margin:0 auto 80px;padding:0 20px;">
+        <div style="background:white;border-radius:22px;border:1px solid #e8f5e9;
+                    box-shadow:0 8px 32px rgba(34,197,94,.07);padding:24px 28px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+                <div style="width:36px;height:36px;border-radius:11px;background:var(--mat-lys-gronn);
+                            display:flex;align-items:center;justify-content:center;font-size:1rem;">🎁</div>
+                <div>
+                    <div style="font-weight:900;font-size:.92rem;color:var(--mat-mork);">Har du en kampanjekode?</div>
+                    <div style="font-size:.75rem;color:#94a3b8;">Aktiver gratis tilgang med kode</div>
+                </div>
+            </div>
+            <form th:action="@{/abonnement/kampanje}" method="POST"
+                  style="display:flex;gap:8px;">
+                <input type="text" name="kode" id="kodeInput"
+                       placeholder="Skriv inn kode…"
+                       autocomplete="off"
+                       th:value="${param.kode}"
+                       style="flex:1;border:2px solid #e8f5e9;border-radius:12px;
+                              padding:11px 14px;font-family:inherit;font-size:.9rem;
+                              font-weight:600;outline:none;transition:border-color .2s;
+                              color:var(--mat-mork);background:#f8fafc;letter-spacing:1px;"
+                       onfocus="this.style.borderColor='var(--mat-gronn)'"
+                       onblur="this.style.borderColor='#e8f5e9'">
+                <button type="submit"
+                        style="background:var(--mat-gronn);color:white;border:none;
+                               padding:11px 20px;border-radius:12px;font-weight:800;
+                               font-size:.88rem;cursor:pointer;font-family:inherit;
+                               transition:.2s;white-space:nowrap;
+                               box-shadow:0 4px 14px rgba(34,197,94,.25);">
+                    Aktiver
+                </button>
+            </form>
+            <!-- Feil -->
+            <div th:if="${param.feil != null}"
+                 style="margin-top:10px;font-size:.82rem;color:#dc2626;font-weight:700;
+                        background:#fef2f2;padding:8px 12px;border-radius:10px;">
+                ❌ Ugyldig kode. Prøv igjen.
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: bottom_nav}"></div>
+    <div th:replace="~{fragments :: scripts}"></div>
+
+    <script>
+        function toggleFaq(el) { el.classList.toggle('open'); }
+    </script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Finn folk | MatMinne</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        /* ── PAGE HERO ── */
+        .search-hero {
+            background: var(--mat-mork);
+            padding: 48px 0 72px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(46,204,113,.06) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .search-hero-glow {
+            position: absolute;
+            width: 360px; height: 360px;
+            background: radial-gradient(circle, rgba(46,204,113,.1), transparent 65%);
+            right: -60px; top: -60px;
+            pointer-events: none;
+        }
+
+        .search-hero-inner { position: relative; z-index: 1; }
+
+        .search-tag {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--mat-gronn);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .search-hero h1 {
+            font-size: 2.6rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            color: white;
+            margin: 0 0 6px;
+        }
+
+        .search-hero p { color: rgba(255,255,255,.4); font-size: .9rem; margin: 0; }
+
+        /* ── SEARCH BAR (floating) ── */
+        .search-float {
+            max-width: 600px;
+            margin: -32px auto 0;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-form {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 56px rgba(0,0,0,.12);
+            border: 1px solid #f1f5f9;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .search-form input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 18px 22px;
+            font-size: 1rem;
+            font-family: inherit;
+            font-weight: 500;
+            color: var(--mat-mork);
+            background: transparent;
+        }
+
+        .search-form input::placeholder { color: #94a3b8; }
+
+        .search-form button {
+            background: var(--mat-gronn);
+            color: white;
+            border: none;
+            padding: 18px 26px;
+            font-weight: 800;
+            font-size: .9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+            transition: background .2s;
+            white-space: nowrap;
+        }
+
+        .search-form button:hover { background: var(--mat-gronn-m); }
+
+        /* ── RESULTS ── */
+        .results-wrap {
+            max-width: 600px;
+            margin: 40px auto 80px;
+            padding: 0 20px;
+        }
+
+        .results-label {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #94a3b8;
+            margin-bottom: 14px;
+        }
+
+        /* ── USER CARD ── */
+        .user-card {
+            background: white;
+            border-radius: 20px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 10px;
+            border: 1px solid #f1f5f9;
+            transition: box-shadow .25s, transform .25s;
+        }
+
+        .user-card:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,.06);
+            transform: translateY(-2px);
+        }
+
+        .user-avatar {
+            width: 50px; height: 50px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--mat-gronn), var(--mat-mork));
+            color: white;
+            font-weight: 900;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .user-info { flex: 1; min-width: 0; }
+        .user-name { font-weight: 800; font-size: 1rem; color: var(--mat-mork); margin: 0 0 2px; }
+        .user-sub  { font-size: .78rem; color: #94a3b8; font-weight: 600; }
+
+        .btn-follow {
+            background: var(--mat-gronn);
+            color: white;
+            border: none;
+            padding: 9px 20px;
+            border-radius: 11px;
+            font-weight: 800;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: .2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(46,204,113,.2);
+        }
+
+        .btn-follow:hover { background: var(--mat-gronn-m); transform: scale(1.04); }
+
+        .btn-unfollow {
+            background: #f1f5f9;
+            color: #64748b;
+            border: none;
+            padding: 9px 20px;
+            border-radius: 11px;
+            font-weight: 800;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: .2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .btn-unfollow:hover { background: #fee2e2; color: #dc2626; }
+
+        /* ── EMPTY STATES ── */
+        .empty-state {
+            text-align: center;
+            padding: 64px 20px;
+        }
+
+        .empty-state .empty-icon {
+            width: 80px; height: 80px;
+            border-radius: 24px;
+            background: var(--mat-lys-gronn);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4rem;
+            margin: 0 auto 20px;
+        }
+
+        .empty-state h3 { font-weight: 900; font-size: 1.3rem; color: var(--mat-mork); margin-bottom: 8px; }
+        .empty-state p  { color: #94a3b8; font-size: .9rem; }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <!-- HERO -->
+    <div class="search-hero">
+        <div class="search-hero-glow"></div>
+        <div class="container search-hero-inner">
+            <span class="search-tag">Fellesskap</span>
+            <h1>Finn kokker</h1>
+            <p>Søk etter folk og se hva de lager</p>
+        </div>
+    </div>
+
+    <!-- SEARCH BAR -->
+    <div class="search-float">
+        <form th:action="@{/sok/personer}" method="get" class="search-form">
+            <input type="text" name="navn" placeholder="Skriv navn på en person..."
+                   th:value="${sokeord}" autofocus>
+            <button type="submit">
+                <i class="fas fa-search"></i> Søk
+            </button>
+        </form>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-wrap">
+
+        <!-- After search -->
+        <div th:if="${brukere != null}">
+            <div th:if="${brukere.isEmpty()}" class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <h3>Ingen treff</h3>
+                <p>Prøv et annet navn eller sjekk stavemåten.</p>
+            </div>
+
+            <div th:unless="${brukere.isEmpty()}">
+                <div class="results-label"
+                     th:text="${brukere.size()} + ' person(er) funnet'">Resultater</div>
+
+                <div th:each="bruker : ${brukere}" class="user-card">
+                    <div class="user-avatar"
+                         th:text="${#strings.substring(bruker.fulltNavn, 0, 1)}">N</div>
+                    <div class="user-info">
+                        <p class="user-name" th:text="${bruker.fulltNavn}">Navn Navnesen</p>
+                        <p class="user-sub"><i class="fa-solid fa-utensils me-1"></i>MatMinne-kokk</p>
+                    </div>
+                    <!-- Ikke vis knapp for seg selv -->
+                    <th:block th:if="${innloggetBrukerId != bruker.id}">
+                        <!-- Følger allerede -->
+                        <form th:if="${fulgteBrukerIds != null and fulgteBrukerIds.contains(bruker.id)}"
+                              th:action="@{'/slutt-å-følge/' + ${bruker.epost}}" method="post">
+                            <button type="submit" class="btn-unfollow">
+                                <i class="fa-solid fa-user-check"></i> Følger
+                            </button>
+                        </form>
+                        <!-- Følger ikke -->
+                        <form th:unless="${fulgteBrukerIds != null and fulgteBrukerIds.contains(bruker.id)}"
+                              th:action="@{'/følg/' + ${bruker.epost}}" method="post">
+                            <button type="submit" class="btn-follow">
+                                <i class="fa-solid fa-user-plus"></i> Følg
+                            </button>
+                        </form>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+
+        <!-- Before search -->
+        <div th:unless="${brukere != null}" class="empty-state">
+            <div class="empty-icon">👥</div>
+            <h3>Finn nye kokker</h3>
+            <p>Søk etter navn for å finne folk å følge og se oppskriftene deres.</p>
+        </div>
+
+    </div>
+
+    <div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

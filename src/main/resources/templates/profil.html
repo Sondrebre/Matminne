@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title th:text="${profilNavn} + ' | MatMinne'">Profil | MatMinne</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        /* ── BANNER ── */
+        @keyframes bannerShift {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: .8; transform: scale(1); }
+            50%       { opacity: 1; transform: scale(1.08); }
+        }
+        @keyframes ringPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(46,204,113,.4); }
+            50%       { box-shadow: 0 0 0 8px rgba(46,204,113,0); }
+        }
+
+        .profile-banner {
+            height: 230px;
+            background: linear-gradient(-45deg, #bbf7d0, #86efac, #d1fae5, #a7f3d0);
+            background-size: 400% 400%;
+            animation: bannerShift 10s ease infinite;
+            border-bottom: 1px solid #a7f3d0;
+            position: relative; overflow: hidden;
+        }
+        .profile-banner::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(34,197,94,.2) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .banner-glow {
+            position: absolute; width: 420px; height: 420px;
+            background: radial-gradient(circle, rgba(46,204,113,.2), transparent 65%);
+            bottom: -140px; right: -60px; pointer-events: none;
+            animation: glowPulse 6s ease-in-out infinite;
+        }
+        .banner-glow2 {
+            position: absolute; width: 260px; height: 260px;
+            background: radial-gradient(circle, rgba(46,204,113,.1), transparent 65%);
+            top: -80px; left: 10%; pointer-events: none;
+            animation: glowPulse 8s ease-in-out infinite reverse;
+        }
+
+        /* ── PROFILE CARD ── */
+        .profile-card {
+            background: white; border-radius: 32px; padding: 32px 36px;
+            max-width: 1000px; margin: -80px auto 36px;
+            position: relative; z-index: 2;
+            box-shadow: 0 24px 60px rgba(0,0,0,.09);
+        }
+        .profile-top { display: flex; align-items: flex-start; gap: 28px; }
+
+        /* ── AVATAR ── */
+        .avatar-wrap { position: relative; margin-top: -90px; flex-shrink: 0; }
+        .avatar-img {
+            width: 130px; height: 130px; border-radius: 26px; object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 12px 32px rgba(0,0,0,.14), 0 0 0 3px var(--mat-gronn);
+            display: block;
+            animation: ringPulse 3s ease-in-out infinite;
+        }
+        .avatar-emoji {
+            width: 130px; height: 130px; border-radius: 26px;
+            border: 4px solid white;
+            box-shadow: 0 12px 32px rgba(0,0,0,.14), 0 0 0 3px var(--mat-gronn);
+            background: linear-gradient(135deg, var(--mat-lys-gronn), #a7f3d0);
+            display: flex; align-items: center; justify-content: center; font-size: 3.2rem;
+            animation: ringPulse 3s ease-in-out infinite;
+        }
+        .avatar-cam-btn {
+            position: absolute; bottom: -4px; right: -4px;
+            width: 34px; height: 34px; border-radius: 10px;
+            background: var(--mat-gronn); color: white; border: 3px solid white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .78rem; cursor: pointer; transition: .2s;
+        }
+        .avatar-cam-btn:hover { background: var(--mat-gronn-m); transform: scale(1.1); }
+
+        /* ── INFO + ACTIONS ── */
+        .profile-info { flex: 1; padding-top: 6px; min-width: 0; }
+        .profile-name {
+            font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 900;
+            letter-spacing: -1.5px; color: var(--mat-mork); margin: 0 0 6px;
+        }
+        .profile-email { font-size: .82rem; color: #94a3b8; font-weight: 600; margin-bottom: 16px; }
+        .profile-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .btn-follow {
+            background: var(--mat-gronn); color: white; border: none;
+            padding: 10px 22px; border-radius: 12px; font-weight: 800; font-size: .88rem;
+            cursor: pointer; transition: .2s; display: inline-flex; align-items: center; gap: 7px;
+            font-family: inherit; box-shadow: 0 6px 18px rgba(46,204,113,.25);
+        }
+        .btn-follow:hover { background: var(--mat-gronn-m); transform: translateY(-2px); }
+        .btn-unfollow {
+            background: #fff1f2; color: #dc2626; border: 1px solid #fecaca;
+            padding: 10px 22px; border-radius: 12px; font-weight: 800; font-size: .88rem;
+            cursor: pointer; transition: .2s; display: inline-flex; align-items: center; gap: 7px; font-family: inherit;
+        }
+        .btn-unfollow:hover { background: #fee2e2; }
+        .btn-new-recipe {
+            background: var(--mat-gronn); color: white; text-decoration: none;
+            padding: 10px 22px; border-radius: 12px; font-weight: 800; font-size: .88rem;
+            display: inline-flex; align-items: center; gap: 7px; transition: .2s;
+            box-shadow: 0 6px 18px rgba(46,204,113,.25);
+        }
+        .btn-new-recipe:hover { background: var(--mat-gronn-m); transform: translateY(-2px); color: white; }
+
+        /* ── STATS ── */
+        .profile-stats {
+            display: flex; gap: 0; margin-left: auto; align-self: center; flex-shrink: 0;
+            border-left: 1px solid #f1f5f9; padding-left: 24px;
+        }
+        .stat {
+            text-align: center; padding: 10px 20px; border-right: 1px solid #f1f5f9;
+            transition: background .2s; border-radius: 14px; cursor: default;
+        }
+        .stat:last-child { border-right: none; }
+        .stat:hover { background: var(--mat-lys-gronn); }
+        .stat-val {
+            font-size: 2.2rem; font-weight: 900; color: var(--mat-mork);
+            display: block; line-height: 1; margin-bottom: 5px; letter-spacing: -1.5px;
+        }
+        .stat-lbl { font-size: .63rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; }
+
+        /* ── RECIPE GRID ── */
+        .recipes-section { max-width: 1000px; margin: 0 auto; padding-bottom: 80px; }
+        .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+        .section-label { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; }
+
+        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+
+        .recipe-tile {
+            border-radius: 20px; overflow: hidden; position: relative;
+            background: #f1f5f9; aspect-ratio: 4/3;
+        }
+        .recipe-tile img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease; }
+        .recipe-tile:hover img { transform: scale(1.06); }
+
+        /* Title always visible at bottom */
+        .tile-bottom {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 32px 14px 14px;
+            background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 100%);
+        }
+        .tile-title { color: white; font-weight: 800; font-size: .88rem; line-height: 1.3; margin-bottom: 8px; }
+
+        .tile-overlay {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity .25s;
+        }
+        .recipe-tile:hover .tile-overlay { opacity: 1; }
+        .btn-tile-view {
+            background: white; color: var(--mat-mork); text-decoration: none;
+            padding: 9px 18px; border-radius: 10px; font-weight: 800; font-size: .82rem;
+            display: inline-flex; align-items: center; gap: 6px; transition: .2s;
+            box-shadow: 0 4px 14px rgba(0,0,0,.15);
+        }
+        .btn-tile-view:hover { background: var(--mat-gronn); color: white; }
+
+        /* ── EMPTY ── */
+        .empty-state {
+            text-align: center; padding: 60px 20px; background: white;
+            border-radius: 24px; border: 2px dashed #e2e8f0;
+        }
+        .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+        .empty-state h4 { font-weight: 800; color: var(--mat-mork); margin-bottom: 6px; }
+        .empty-state p { color: #94a3b8; margin: 0; }
+
+        /* ── MODAL ── */
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center; padding:20px; }
+        .modal-overlay.active { display:flex; }
+        .modal-box { background:white; padding:36px; border-radius:28px; max-width:400px; width:100%; text-align:center; box-shadow:0 30px 80px rgba(0,0,0,.2); }
+        .modal-box h4 { font-weight:900; font-size:1.3rem; letter-spacing:-.5px; margin-bottom:6px; }
+        .modal-box p { color:#94a3b8; font-size:.88rem; margin-bottom:20px; }
+        .modal-preview { width:90px; height:90px; border-radius:20px; object-fit:cover; margin:0 auto 16px; display:none; border:3px solid var(--mat-lys-gronn); }
+        .modal-input { width:100%; border:2px solid #f1f5f9; border-radius:14px; padding:12px 16px; font-size:.95rem; font-family:inherit; outline:none; margin-bottom:16px; transition:border-color .2s; }
+        .modal-input:focus { border-color:var(--mat-gronn); }
+        .modal-actions { display:flex; gap:10px; }
+        .btn-modal-cancel { flex:1; background:#f1f5f9; color:var(--mat-mork); border:none; padding:12px; border-radius:13px; font-weight:700; cursor:pointer; font-family:inherit; transition:.2s; }
+        .btn-modal-cancel:hover { background:#e2e8f0; }
+        .btn-modal-save { flex:1; background:var(--mat-gronn); color:white; border:none; padding:12px; border-radius:13px; font-weight:800; cursor:pointer; font-family:inherit; transition:.2s; }
+        .btn-modal-save:hover { background:var(--mat-gronn-m); }
+
+        @media (max-width:768px) {
+            .profile-top { flex-wrap: wrap; }
+            .profile-stats { border-left:none; padding-left:0; margin-left:0; border-top:1px solid #f1f5f9; padding-top:18px; width:100%; justify-content:center; }
+            .profile-card { margin:-50px 12px 28px; padding:22px 18px; }
+            .avatar-wrap { margin-top: -70px; }
+            .avatar-img, .avatar-emoji { width:110px; height:110px; }
+            .recipe-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="profile-banner">
+        <div class="banner-glow"></div>
+        <div class="banner-glow2"></div>
+    </div>
+
+    <div class="container">
+        <div class="profile-card">
+            <div class="profile-top">
+
+                <!-- AVATAR -->
+                <div class="avatar-wrap">
+                    <img th:if="${profilBrukerBilde != null and !#strings.isEmpty(profilBrukerBilde)}"
+                         th:src="${profilBrukerBilde}" class="avatar-img" alt="Profil">
+                    <div th:unless="${profilBrukerBilde != null and !#strings.isEmpty(profilBrukerBilde)}"
+                         class="avatar-emoji">👨‍🍳</div>
+                    <button th:if="${erEgenProfil}" class="avatar-cam-btn"
+                            onclick="document.getElementById('avatarModal').classList.add('active')"
+                            title="Endre profilbilde">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                </div>
+
+                <!-- INFO + ACTIONS -->
+                <div class="profile-info">
+                    <h1 class="profile-name" th:text="${profilNavn}">Navn</h1>
+                    <div class="profile-email" th:text="${profilEpost}"></div>
+                    <div class="profile-actions">
+                        <th:block th:if="${!erEgenProfil}">
+                            <form th:if="${!følgerAllerede}" th:action="@{'/følg/' + ${profilEpost}}" method="post">
+                                <button type="submit" class="btn-follow">
+                                    <i class="fa-solid fa-user-plus"></i> Følg kokk
+                                </button>
+                            </form>
+                            <form th:if="${følgerAllerede}" th:action="@{'/slutt-å-følge/' + ${profilEpost}}" method="post">
+                                <button type="submit" class="btn-unfollow">
+                                    <i class="fa-solid fa-user-minus"></i> Slutt å følge
+                                </button>
+                            </form>
+                        </th:block>
+                        <a th:if="${erEgenProfil}" href="/ny-oppskrift" class="btn-new-recipe">
+                            <i class="fa-solid fa-plus"></i> Ny oppskrift
+                        </a>
+                    </div>
+                </div>
+
+                <!-- STATS -->
+                <div class="profile-stats">
+                    <div class="stat">
+                        <span class="stat-val" th:attr="data-count=${oppskrifter.size()}" th:text="${oppskrifter.size()}">0</span>
+                        <span class="stat-lbl">Oppskrifter</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-val" th:attr="data-count=${antallFølgere}" th:text="${antallFølgere}">0</span>
+                        <span class="stat-lbl">Følgere</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RECIPES -->
+        <div class="recipes-section">
+            <div class="section-header">
+                <span class="section-label" th:text="${oppskrifter.size()} + ' offentlige oppskrifter'">Oppskrifter</span>
+            </div>
+
+            <div th:if="${oppskrifter.isEmpty()}" class="empty-state">
+                <div class="empty-icon">🍽️</div>
+                <h4>Ingen offentlige oppskrifter ennå</h4>
+                <p th:if="${erEgenProfil}">Legg til oppskrifter og merk dem som offentlige.</p>
+                <p th:unless="${erEgenProfil}">Denne kokken har ikke delt noe ennå.</p>
+            </div>
+
+            <div class="recipe-grid" th:unless="${oppskrifter.isEmpty()}">
+                <div class="recipe-tile" th:each="o : ${oppskrifter}">
+                    <img th:src="${o.bildeUrl != null && o.bildeUrl != '' ? o.bildeUrl : 'https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&w=600&q=70'}" alt="" loading="lazy">
+                    <div class="tile-overlay">
+                        <a th:href="@{'/detaljer/' + ${o.id}}" class="btn-tile-view">
+                            <i class="fa-solid fa-eye"></i> Se oppskrift
+                        </a>
+                    </div>
+                    <div class="tile-bottom">
+                        <div class="tile-title" th:text="${o.tittel}">Tittel</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AVATAR MODAL -->
+    <div class="modal-overlay" id="avatarModal">
+        <div class="modal-box">
+            <h4>🍎 Bytt profilbilde</h4>
+            <p>Lim inn en URL til bildet du vil bruke.</p>
+            <img id="previewImg" class="modal-preview" alt="Forhåndsvisning">
+            <form action="/oppdater-profilbilde" method="POST">
+                <input type="url" name="nyBildeUrl" id="bildeUrlInput" class="modal-input"
+                       placeholder="https://..." required oninput="forhåndsvis(this.value)">
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal-cancel"
+                            onclick="document.getElementById('avatarModal').classList.remove('active')">
+                        Avbryt
+                    </button>
+                    <button type="submit" class="btn-modal-save">
+                        <i class="fas fa-check me-1"></i> Oppdater
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: scripts}"></div>
+
+    <script>
+        function forhåndsvis(url) {
+            const img = document.getElementById('previewImg');
+            if (url && url.startsWith('http')) {
+                img.src = url;
+                img.style.display = 'block';
+                img.onerror = () => { img.style.display = 'none'; };
+            } else {
+                img.style.display = 'none';
+            }
+        }
+
+        // Animate stat counters on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.stat-val[data-count]').forEach(el => {
+                const target = parseInt(el.dataset.count, 10);
+                if (isNaN(target) || target === 0) return;
+                let start = null;
+                const duration = 900;
+                function step(ts) {
+                    if (!start) start = ts;
+                    const p = Math.min((ts - start) / duration, 1);
+                    const eased = 1 - Math.pow(1 - p, 3);
+                    el.textContent = Math.round(eased * target);
+                    if (p < 1) requestAnimationFrame(step);
+                }
+                requestAnimationFrame(step);
+            });
+        });
+    </script>
+</body>
+</html>

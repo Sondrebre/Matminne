@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="header_links">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2ecc71">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="MatMinne">
+    <link rel="apple-touch-icon" href="/icons/icon.svg">
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --mat-gronn:     #22c55e;
+            --mat-gronn-m:   #16a34a;
+            --mat-mork:      #0f172a;
+            --mat-slate:     #1e293b;
+            --mat-lys-gronn: #bbf7d0;
+            --mat-mint:      #ecfdf5;
+            --mat-grønn-kant:#a7f3d0;
+            --bakgrunn:      #f0fdf4;
+            --hvit:          #ffffff;
+            --text-muted:    #64748b;
+        }
+
+        /* Override Bootstrap blue with green globally */
+        :root {
+            --bs-primary:        #2ecc71;
+            --bs-primary-rgb:    46, 204, 113;
+            --bs-link-color:     #27ae60;
+            --bs-link-color-rgb: 39, 174, 96;
+            --bs-link-hover-color: #1e8449;
+            --bs-focus-ring-color: rgba(46,204,113,.25);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            background-color: var(--bakgrunn);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--mat-mork);
+            margin: 0;
+        }
+
+        /* Bootstrap btn-primary → green */
+        .btn-primary {
+            background-color: var(--mat-gronn) !important;
+            border-color: var(--mat-gronn) !important;
+            color: white !important;
+        }
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--mat-gronn-m) !important;
+            border-color: var(--mat-gronn-m) !important;
+        }
+
+        /* Input focus ring → green */
+        .form-control:focus,
+        .form-select:focus,
+        .form-check-input:focus {
+            border-color: var(--mat-gronn) !important;
+            box-shadow: 0 0 0 0.25rem rgba(46,204,113,.2) !important;
+        }
+
+        /* Checkbox/toggle → green */
+        .form-check-input:checked {
+            background-color: var(--mat-gronn) !important;
+            border-color: var(--mat-gronn) !important;
+        }
+
+        /* Bootstrap links → green */
+        a { color: var(--mat-gronn-m); }
+        a:hover { color: #1e8449; }
+
+        .fw-900 { font-weight: 900; }
+        .fw-800 { font-weight: 800; }
+        .fw-700 { font-weight: 700; }
+        .fw-600 { font-weight: 600; }
+
+        /* ===========================
+           NAVBAR
+        =========================== */
+
+        /* Animated top accent stripe */
+        .navbar-topstripe {
+            height: 3px;
+            background: linear-gradient(90deg,
+                var(--mat-gronn) 0%,
+                #a7f3d0 35%,
+                var(--mat-gronn) 65%,
+                #a7f3d0 100%
+            );
+            background-size: 300% auto;
+            animation: stripeMove 4s linear infinite;
+        }
+
+        @keyframes stripeMove {
+            0%   { background-position: 0% center; }
+            100% { background-position: 300% center; }
+        }
+
+        .navbar {
+            padding: 0;
+            background: rgba(240,253,244,0.97) !important;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(167,243,208,0.5);
+            transition: box-shadow .3s;
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 4px 24px rgba(0,0,0,.08);
+        }
+
+        .navbar > .container {
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+
+        /* Logo */
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--mat-gronn);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(46,204,113,.3);
+            transition: transform .25s;
+        }
+
+        .navbar-brand:hover .nav-logo-icon {
+            transform: rotate(-8deg) scale(1.08);
+        }
+
+        .nav-logo-text {
+            font-size: 1.45rem;
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            color: var(--mat-mork);
+            line-height: 1;
+        }
+
+        .nav-logo-text span { color: var(--mat-gronn); }
+
+        /* Nav links */
+        .nav-link {
+            position: relative;
+            color: #64748b !important;
+            font-weight: 600;
+            font-size: 0.88rem;
+            padding: 10px 14px !important;
+            transition: color .2s;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            right: 50%;
+            height: 2px;
+            background: var(--mat-gronn);
+            border-radius: 2px;
+            transition: left .22s ease, right .22s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--mat-mork) !important;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active-page::after {
+            left: 14px;
+            right: 14px;
+        }
+
+        .nav-link.active-page {
+            color: var(--mat-mork) !important;
+            font-weight: 700;
+        }
+
+        /* Separator dot */
+        .nav-sep {
+            width: 4px;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            margin: 0 4px;
+        }
+
+        /* Profile button */
+        .btn-nav-profil {
+            background: var(--mat-gronn);
+            color: white !important;
+            border-radius: 11px;
+            font-weight: 700;
+            font-size: .85rem;
+            padding: 9px 20px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            transition: all .22s;
+            box-shadow: 0 4px 14px rgba(46,204,113,.25);
+        }
+
+        .btn-nav-profil:hover {
+            background: var(--mat-gronn-m);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(46,204,113,.35);
+            color: white !important;
+        }
+
+        /* Settings icon */
+        .nav-icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #f1f5f9;
+            color: #64748b !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .95rem;
+            transition: .2s;
+            text-decoration: none;
+        }
+
+        .nav-icon-btn:hover {
+            background: var(--mat-lys-gronn);
+            color: var(--mat-gronn) !important;
+        }
+
+        /* Google login button */
+        .btn-mat {
+            background-color: var(--mat-gronn);
+            color: white !important;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 10px 24px;
+            border: none;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(46,204,113,.25);
+        }
+
+        .btn-mat:hover {
+            background-color: var(--mat-gronn-m);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(46,204,113,.35);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar fragment -->
+    <div th:fragment="navbar">
+        <div class="navbar-topstripe"></div>
+        <nav class="navbar navbar-expand-lg sticky-top" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <div class="nav-logo-icon">🍎</div>
+                    <div class="nav-logo-text">mat<span>minne.</span></div>
+                </a>
+
+                <button class="navbar-toggler border-0 p-2" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        style="background:#f1f5f9;border-radius:10px;">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto align-items-center gap-1">
+
+                        <th:block th:if="${brukerEpost != null}">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/kokebok">
+                                    <i class="fa-solid fa-book-open me-1"></i> Min Bok
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/vennefeed">
+                                    <i class="fa-solid fa-user-group me-1"></i> Vennevegg
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/oppdag">
+                                    <i class="fa-solid fa-compass me-1"></i> Utforsk
+                                </a>
+                            </li>
+
+                            <!-- MER-DROPDOWN -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-grip me-1"></i> Mer
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" style="border-radius:16px;border:1px solid #f1f5f9;box-shadow:0 20px 48px rgba(0,0,0,.1);padding:8px;min-width:200px;">
+                                    <li><a class="dropdown-item" href="/samlinger" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
+                                        <i class="fa-solid fa-layer-group me-2" style="color:var(--mat-gronn);"></i>Samlinger
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="/handleliste" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
+                                        <i class="fa-solid fa-cart-shopping me-2" style="color:var(--mat-gronn);"></i>Handleliste
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="/ukesmeny" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
+                                        <i class="fa-solid fa-calendar-week me-2" style="color:var(--mat-gronn);"></i>Ukesmeny
+                                    </a></li>
+                                    <li><hr class="dropdown-divider" style="margin:6px 8px;"></li>
+                                    <li><a class="dropdown-item" href="/ai-forslag" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
+                                        <i class="fa-solid fa-wand-magic-sparkles me-2" style="color:var(--mat-gronn);"></i>AI Matforslag
+                                    </a></li>
+                                    <li>
+                                        <a class="dropdown-item" href="/abonnement" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
+                                            <i class="fa-solid fa-bolt me-2" style="color:var(--mat-gronn);"></i>
+                                            <span th:if="${harAbonnement}">AI-abonnement ✓</span>
+                                            <span th:unless="${harAbonnement}">Oppgrader til AI</span>
+                                        </a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="/utfordringer" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
+                                        <i class="fa-solid fa-trophy me-2" style="color:var(--mat-gronn);"></i>Ukeutfordringer
+                                    </a></li>
+                                    <li><hr class="dropdown-divider" style="margin:6px 8px;"></li>
+                                    <li><a class="dropdown-item" href="/installer-app" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
+                                        <i class="fa-solid fa-mobile-screen me-2" style="color:var(--mat-gronn);"></i>Installer som app
+                                    </a></li>
+                                </ul>
+                            </li>
+
+                            <li class="nav-item"><div class="nav-sep d-none d-lg-block"></div></li>
+
+                            <li class="nav-item ms-lg-1">
+                                <a th:href="@{'/profil/' + ${brukerEpost}}" class="btn-nav-profil">
+                                    <i class="fa-regular fa-circle-user"></i> Min Profil
+                                </a>
+                            </li>
+                            <li class="nav-item ms-1">
+                                <a href="/varsler" class="nav-icon-btn" title="Varsler" style="position:relative;">
+                                    <i class="fa-solid fa-bell"></i>
+                                    <span th:if="${ulesVarsler != null and ulesVarsler > 0}"
+                                          th:text="${ulesVarsler}"
+                                          style="position:absolute;top:-4px;right:-4px;background:var(--mat-gronn);color:white;border-radius:99px;font-size:.6rem;font-weight:900;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px;"></span>
+                                </a>
+                            </li>
+                            <li class="nav-item ms-1">
+                                <a href="/innstillinger" class="nav-icon-btn" title="Innstillinger">
+                                    <i class="fa-solid fa-gear"></i>
+                                </a>
+                            </li>
+                        </th:block>
+
+                        <th:block th:unless="${brukerEpost != null}">
+                            <li class="nav-item">
+                                <a href="/oauth2/authorization/google" class="btn-mat">
+                                    <i class="fa-brands fa-google"></i> Start din kokebok
+                                </a>
+                            </li>
+                        </th:block>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- MOBIL BOTTOM NAV (vises kun når innlogget) -->
+    <div th:fragment="bottom_nav" th:if="${brukerEpost != null}">
+        <nav class="bottom-nav">
+            <div class="bottom-nav-inner">
+                <a href="/kokebok" class="bn-item">
+                    <i class="fa-solid fa-book-open"></i>Min bok
+                </a>
+                <a href="/vennefeed" class="bn-item">
+                    <i class="fa-solid fa-user-group"></i>Venner
+                </a>
+                <a href="/ny-oppskrift" class="bn-center">
+                    <i class="fa-solid fa-plus"></i>
+                </a>
+                <a href="/oppdag" class="bn-item">
+                    <i class="fa-solid fa-compass"></i>Utforsk
+                </a>
+                <a href="/varsler" class="bn-item" style="position:relative;">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="bn-badge" th:if="${ulesVarsler != null and ulesVarsler > 0}" th:text="${ulesVarsler}"></span>
+                    Varsler
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <div th:fragment="scripts">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Progress bar -->
+        <div id="page-progress"></div>
+
+        <!-- Toast container -->
+        <div id="toastContainer" style="position:fixed;bottom:30px;right:30px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;"></div>
+
+        <!-- PWA: Register service worker + install banner -->
+        <script>
+            // Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
+            }
+
+            // Install prompt (Android/Desktop)
+            let deferredPrompt = null;
+            window.addEventListener('beforeinstallprompt', e => {
+                e.preventDefault();
+                deferredPrompt = e;
+                const banner = document.getElementById('installBanner');
+                if (banner) banner.style.display = 'flex';
+            });
+
+            function installApp() {
+                if (!deferredPrompt) return;
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => {
+                    deferredPrompt = null;
+                    const banner = document.getElementById('installBanner');
+                    if (banner) banner.style.display = 'none';
+                });
+            }
+
+            function skjulInstallBanner() {
+                const banner = document.getElementById('installBanner');
+                if (banner) banner.style.display = 'none';
+                localStorage.setItem('installBannerSkjult', '1');
+            }
+
+            window.addEventListener('DOMContentLoaded', () => {
+                if (localStorage.getItem('installBannerSkjult')) {
+                    const banner = document.getElementById('installBanner');
+                    if (banner) banner.remove();
+                }
+            });
+        </script>
+
+        <!-- Install banner (vises automatisk av JS hvis tilgjengelig) -->
+        <div id="installBanner" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;max-width:420px;margin:0 auto;
+             background:white;border-radius:20px;box-shadow:0 16px 48px rgba(0,0,0,.14);border:1px solid #f1f5f9;
+             padding:16px 18px;align-items:center;gap:14px;z-index:2000;">
+            <div style="width:44px;height:44px;background:#2ecc71;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">🍎</div>
+            <div style="flex:1;min-width:0;">
+                <div style="font-weight:800;font-size:.92rem;color:#0f172a;margin-bottom:2px;">Installer MatMinne</div>
+                <div style="font-size:.75rem;color:#94a3b8;">Legg til på hjemskjermen for raskere tilgang</div>
+            </div>
+            <button onclick="installApp()" style="background:#2ecc71;color:white;border:none;padding:9px 16px;border-radius:11px;font-weight:800;font-size:.8rem;cursor:pointer;font-family:inherit;white-space:nowrap;">Installer</button>
+            <button onclick="skjulInstallBanner()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:1rem;padding:4px;flex-shrink:0;">✕</button>
+        </div>
+
+        <script>
+            // Toast
+            function showToast(melding, type = 'success') {
+                const colors = { success: '#2ecc71', error: '#e74c3c', info: '#2ecc71' };
+                const icons  = { success: '✓', error: '✕', info: 'ℹ' };
+                const t = document.createElement('div');
+                t.style.cssText = `
+                    background:white;padding:14px 20px;border-radius:14px;pointer-events:all;
+                    box-shadow:0 8px 32px rgba(0,0,0,.13);display:flex;align-items:center;gap:12px;
+                    border-left:4px solid ${colors[type]};min-width:240px;font-weight:600;font-size:.9rem;
+                    animation:slideIn .3s ease;font-family:'Plus Jakarta Sans',sans-serif;
+                `;
+                t.innerHTML = `<span style="background:${colors[type]};color:white;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;">${icons[type]}</span><span>${melding}</span>`;
+                document.getElementById('toastContainer').appendChild(t);
+                setTimeout(() => { t.style.animation = 'slideOut .3s ease'; setTimeout(() => t.remove(), 280); }, 3000);
+            }
+
+            // ── PAGE TRANSITIONS ──
+            const _prog = document.getElementById('page-progress');
+            function _startProg() {
+                if (!_prog) return;
+                _prog.style.width = '0%';
+                _prog.classList.add('going');
+                requestAnimationFrame(() => { _prog.style.width = '75%'; });
+            }
+            function _endProg() {
+                if (!_prog) return;
+                _prog.style.width = '100%';
+                setTimeout(() => { _prog.classList.remove('going'); _prog.style.width = '0%'; }, 350);
+            }
+            _endProg(); // finish bar on page load
+
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a[href]');
+                if (!link) return;
+                const href = link.getAttribute('href');
+                if (!href || href.startsWith('#') || href.startsWith('javascript:') ||
+                    href.startsWith('mailto:') || link.target === '_blank' ||
+                    e.metaKey || e.ctrlKey || e.shiftKey) return;
+                if (href.startsWith('/') || href.startsWith('./') || href.startsWith('../')) {
+                    _startProg();
+                    document.body.style.transition = 'opacity .16s ease';
+                    document.body.style.opacity = '.6';
+                }
+            });
+
+            // Also start progress on form submits
+            document.addEventListener('submit', () => { _startProg(); });
+
+            // Scroll shadow on navbar
+            window.addEventListener('scroll', () => {
+                document.getElementById('mainNav')?.classList.toggle('scrolled', window.scrollY > 20);
+            });
+
+            // Active nav link + bottom nav
+            document.addEventListener('DOMContentLoaded', () => {
+                const p = window.location.pathname;
+                document.querySelectorAll('.nav-link').forEach(l => {
+                    const h = l.getAttribute('href');
+                    if (h && h !== '/' && p.startsWith(h)) l.classList.add('active-page');
+                });
+
+                // Bottom nav active state — best (longest) prefix match
+                let bestEl = null, bestLen = 0;
+                document.querySelectorAll('.bn-item').forEach(item => {
+                    const href = item.getAttribute('href');
+                    if (href && href !== '/' && p.startsWith(href) && href.length > bestLen) {
+                        bestLen = href.length;
+                        bestEl = item;
+                    }
+                });
+                if (bestEl) bestEl.classList.add('active');
+
+                // Stagger fade-up for cards on load
+                document.querySelectorAll('.recipe-card, .samling-card').forEach((el, i) => {
+                    el.style.animationDelay = (i * 0.04) + 's';
+                    el.classList.add('fade-up');
+                });
+            });
+        </script>
+
+        <style>
+            @keyframes slideIn  { from { transform:translateX(110px);opacity:0; } to { transform:translateX(0);opacity:1; } }
+            @keyframes slideOut { from { transform:translateX(0);opacity:1; } to { transform:translateX(110px);opacity:0; } }
+            @keyframes fadeUp   { from { transform:translateY(12px);opacity:0; } to { transform:translateY(0);opacity:1; } }
+            @keyframes shimmer  { 0% { background-position:-600px 0; } 100% { background-position:600px 0; } }
+            @keyframes bodyIn   { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+
+            /* ── PAGE ENTER ANIMATION ── */
+            body { animation: bodyIn .28s ease both; }
+
+            /* ── PROGRESS BAR ── */
+            #page-progress {
+                position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+                background: linear-gradient(90deg, var(--mat-gronn), #a7f3d0, var(--mat-gronn));
+                background-size: 300% auto;
+                animation: stripeMove 1s linear infinite;
+                z-index: 9999; opacity: 0;
+                transition: width .3s ease, opacity .3s ease;
+                box-shadow: 0 0 12px rgba(34,197,94,.6);
+            }
+            #page-progress.going { opacity: 1; }
+
+            /* ── SKELETON SHIMMER ── */
+            .skel {
+                background: linear-gradient(90deg, #e8f5e9 25%, #f0fdf4 50%, #e8f5e9 75%);
+                background-size: 1200px 100%;
+                animation: shimmer 1.6s infinite;
+                border-radius: 10px;
+            }
+            .skel-card {
+                background: white; border-radius: 20px; overflow: hidden;
+                border: 1px solid #e8f5e9; box-shadow: 0 4px 20px rgba(0,0,0,.04);
+                margin-bottom: 20px;
+            }
+            .skel-img  { height: 190px; }
+            .skel-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+            .skel-line { height: 13px; }
+            .skel-line.s { width: 55%; }
+            .skel-line.m { width: 75%; }
+            .skel-line.l { width: 95%; }
+
+            /* ── MOBIL BOTTOM NAV ── */
+            .bottom-nav {
+                display: none;
+                position: fixed;
+                bottom: 0; left: 0; right: 0;
+                background: rgba(240,253,244,.98);
+                backdrop-filter: blur(28px);
+                -webkit-backdrop-filter: blur(28px);
+                border-top: 1px solid rgba(167,243,208,.6);
+                box-shadow: 0 -2px 24px rgba(34,197,94,.06);
+                z-index: 1050;
+                padding: 0 0 max(4px, env(safe-area-inset-bottom));
+            }
+            .bottom-nav-inner {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                max-width: 600px;
+                margin: 0 auto;
+                height: 66px;
+                padding: 0 6px;
+            }
+            .bn-item {
+                display: flex; flex-direction: column; align-items: center; gap: 2px;
+                text-decoration: none; color: #94a3b8;
+                font-size: .55rem; font-weight: 700;
+                text-transform: uppercase; letter-spacing: .6px;
+                flex: 1; padding: 8px 4px 6px;
+                transition: color .18s;
+                position: relative;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .bn-item i {
+                font-size: 1.2rem;
+                width: 44px; height: 30px;
+                display: flex; align-items: center; justify-content: center;
+                border-radius: 10px;
+                transition: background .18s, color .18s, transform .15s;
+                margin-bottom: 1px;
+            }
+            .bn-item:active { opacity: .65; transform: scale(.88); transition: transform .08s; }
+            .bn-item.active { color: var(--mat-gronn); }
+            .bn-item.active i {
+                background: var(--mat-lys-gronn);
+                color: var(--mat-gronn);
+                transform: scale(1.08);
+            }
+            .bn-center {
+                width: 54px; height: 54px; background: var(--mat-gronn); color: white;
+                border-radius: 18px; display: flex; align-items: center; justify-content: center;
+                font-size: 1.35rem; text-decoration: none; margin-top: -18px;
+                box-shadow: 0 8px 28px rgba(46,204,113,.45); transition: .2s;
+                flex-shrink: 0;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .bn-center:hover { background: var(--mat-gronn-m); color: white; }
+            .bn-center:active { transform: scale(.88); transition: transform .08s; }
+            .bn-badge {
+                position: absolute; top: 4px; right: 6px;
+                background: #ef4444; color: white;
+                border-radius: 99px; font-size: .5rem; font-weight: 900;
+                min-width: 15px; height: 15px; padding: 0 3px;
+                display: flex; align-items: center; justify-content: center;
+                border: 2px solid white;
+            }
+
+            /* ── GLOBAL APP-FEEL ── */
+            .recipe-card:active,
+            .samling-card:active,
+            .recipe-tile:active { transform: scale(.97) !important; transition: transform .08s !important; }
+
+            .btn-mat:active,
+            .btn-nav-profil:active,
+            .btn-follow:active,
+            .btn-start:active { transform: scale(.95) !important; transition: transform .08s !important; }
+
+            /* Entrance animation for cards */
+            .fade-up {
+                animation: fadeUp .4s ease both;
+            }
+
+            @media (max-width: 768px) {
+                .bottom-nav { display: block; }
+                body { padding-bottom: 82px; }
+            }
+        </style>
+    </div>
+
+</body>
+</html>

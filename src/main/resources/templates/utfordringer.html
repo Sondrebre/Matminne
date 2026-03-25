@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Ukeutfordringer | MatMinne</title>
+    <style>
+        body { background: var(--bakgrunn); }
+
+        .page-hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a1e 100%);
+            padding: 52px 0 70px; position: relative; overflow: hidden;
+        }
+        .page-hero::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(46,204,113,.07) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .hero-inner { position: relative; z-index: 1; }
+        .hero-tag { font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:2.5px; color:var(--mat-gronn); display:block; margin-bottom:10px; }
+        .page-hero h1 { font-size:clamp(2.2rem,4vw,3.2rem); font-weight:900; letter-spacing:-2px; color:white; margin:0 0 8px; }
+        .page-hero p { color:rgba(255,255,255,.4); font-size:.9rem; margin:0; }
+
+        .content-wrap { max-width:820px; margin:-36px auto 80px; padding:0 20px; position:relative; z-index:10; }
+
+        /* UKENS UTFORDRING */
+        .ukens-card {
+            background: linear-gradient(135deg, var(--mat-gronn) 0%, var(--mat-gronn-m) 100%);
+            border-radius:28px; padding:32px 36px; color:white; margin-bottom:28px;
+            position:relative; overflow:hidden;
+            box-shadow:0 20px 56px rgba(46,204,113,.3);
+        }
+        .ukens-card::after {
+            content:'🏆'; position:absolute; right:24px; top:50%; transform:translateY(-50%);
+            font-size:5rem; opacity:.15;
+        }
+        .ukens-label { font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:2px; opacity:.8; margin-bottom:10px; }
+        .ukens-tittel { font-size:1.8rem; font-weight:900; letter-spacing:-.5px; margin:0 0 8px; }
+        .ukens-besk { opacity:.85; font-size:.9rem; line-height:1.6; margin:0; }
+
+        .btn-delta {
+            display:inline-flex; align-items:center; gap:8px;
+            background:white; color:var(--mat-gronn); padding:11px 24px;
+            border-radius:14px; font-weight:800; font-size:.9rem;
+            text-decoration:none; margin-top:18px; transition:.2s;
+            box-shadow:0 6px 18px rgba(0,0,0,.1);
+        }
+        .btn-delta:hover { transform:translateY(-2px); color:var(--mat-gronn); }
+
+        /* NY UTFORDRING FORM */
+        .ny-form-card {
+            background:white; border-radius:24px; padding:26px 28px;
+            border:1px solid #f1f5f9; box-shadow:0 4px 20px rgba(0,0,0,.04);
+            margin-bottom:28px;
+        }
+        .form-label { font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:var(--mat-gronn); margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+        .form-input {
+            width:100%; border:2px solid #f1f5f9; border-radius:14px;
+            padding:12px 16px; font-size:.92rem; font-family:inherit; font-weight:500;
+            color:var(--mat-mork); background:#f8fafc; outline:none; transition:.2s;
+            margin-bottom:10px;
+        }
+        .form-input:focus { border-color:var(--mat-gronn); background:white; }
+        .btn-submit {
+            background:var(--mat-gronn); color:white; border:none; padding:12px 24px;
+            border-radius:14px; font-weight:800; font-size:.9rem; cursor:pointer;
+            font-family:inherit; transition:.2s; display:inline-flex; align-items:center; gap:7px;
+        }
+        .btn-submit:hover { background:var(--mat-gronn-m); }
+
+        /* BIDRAG GRID */
+        .section-title { font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:#94a3b8; margin-bottom:14px; }
+        .bidrag-grid {
+            display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px;
+        }
+        .bidrag-card {
+            background:white; border-radius:20px; overflow:hidden;
+            border:1px solid #f1f5f9; transition:transform .25s, box-shadow .25s;
+            text-decoration:none; color:inherit;
+        }
+        .bidrag-card:hover { transform:translateY(-4px); box-shadow:0 16px 40px rgba(0,0,0,.08); }
+        .bidrag-img { width:100%; height:160px; object-fit:cover; }
+        .bidrag-body { padding:14px 16px; }
+        .bidrag-tittel { font-weight:800; font-size:.95rem; color:var(--mat-mork); margin:0 0 4px; }
+        .bidrag-av { font-size:.78rem; color:#94a3b8; font-weight:600; }
+
+        /* EMPTY */
+        .empty-state { text-align:center; padding:60px 20px; background:white; border-radius:24px; border:1px solid #f1f5f9; }
+        .empty-icon { width:80px; height:80px; background:var(--mat-lys-gronn); border-radius:24px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; margin:0 auto 20px; }
+        .empty-state h3 { font-weight:900; font-size:1.3rem; color:var(--mat-mork); margin-bottom:8px; }
+        .empty-state p { color:#94a3b8; }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="page-hero">
+        <div class="container hero-inner">
+            <span class="hero-tag">Fellesskap</span>
+            <h1>Ukeutfordringer</h1>
+            <p>Lag mat, del oppskriften din og inspirer andre</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-wrap">
+
+            <!-- UKENS UTFORDRING -->
+            <div class="ukens-card" th:if="${ukensUtfordring != null}">
+                <div class="ukens-label">Ukens utfordring</div>
+                <h2 class="ukens-tittel" th:text="${ukensUtfordring.tittel}">Utfordring</h2>
+                <p class="ukens-besk" th:text="${ukensUtfordring.beskrivelse}"></p>
+                <a th:href="@{'/ny-oppskrift'}" class="btn-delta">
+                    <i class="fa-solid fa-plus"></i> Delta med en oppskrift
+                </a>
+            </div>
+
+            <!-- INGEN UTFORDRING -->
+            <div th:unless="${ukensUtfordring != null}" class="empty-state" style="margin-bottom:28px;">
+                <div class="empty-icon">🏆</div>
+                <h3>Ingen aktiv utfordring</h3>
+                <p>Opprett ukens utfordring nedenfor!</p>
+            </div>
+
+            <!-- NY UTFORDRING -->
+            <div class="ny-form-card">
+                <div class="form-label"><i class="fa-solid fa-trophy"></i> Sett ny ukesutfordring</div>
+                <form action="/utfordringer/ny" method="POST">
+                    <input type="text" name="tittel" class="form-input"
+                           placeholder="f.eks. Kylling, Vegetar, Under 30 minutter..." required>
+                    <input type="text" name="beskrivelse" class="form-input"
+                           placeholder="Kort beskrivelse (valgfritt)">
+                    <button type="submit" class="btn-submit">
+                        <i class="fa-solid fa-flag-checkered"></i> Sett utfordring
+                    </button>
+                </form>
+            </div>
+
+            <!-- BIDRAG -->
+            <div th:if="${ukensUtfordring != null}">
+                <div class="section-title" th:text="'Bidrag (' + ${bidrag.size()} + ' oppskrifter)'"></div>
+
+                <div th:if="${bidrag.isEmpty()}" class="empty-state">
+                    <div class="empty-icon">👨‍🍳</div>
+                    <h3>Ingen bidrag ennå</h3>
+                    <p>Vær den første til å legge ut en oppskrift for denne utfordringen!</p>
+                </div>
+
+                <div th:unless="${bidrag.isEmpty()}" class="bidrag-grid">
+                    <a th:each="o : ${bidrag}" th:href="@{'/detaljer/' + ${o.id}}" class="bidrag-card">
+                        <img class="bidrag-img"
+                             th:src="${o.bildeUrl != null and o.bildeUrl != '' ? o.bildeUrl : 'https://images.unsplash.com/photo-1495195129352-aeb325a55b65?auto=format&fit=crop&w=400&q=70'}"
+                             alt="">
+                        <div class="bidrag-body">
+                            <div class="bidrag-tittel" th:text="${o.tittel}">Tittel</div>
+                            <div class="bidrag-av">Av <span th:text="${o.brukerNavn}">Kokk</span></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: bottom_nav}"></div>
+    <div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

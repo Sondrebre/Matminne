@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>AI Matforslag | MatMinne</title>
+    <style>
+        body { background: var(--bakgrunn); }
+
+        .page-hero {
+            background: linear-gradient(135deg, var(--mat-mork) 0%, #1a2a1a 100%);
+            padding: 52px 0 70px; position: relative; overflow: hidden;
+        }
+        .page-hero::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(46,204,113,.07) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .hero-glow { position:absolute; width:400px; height:400px; background:radial-gradient(circle,rgba(46,204,113,.15),transparent 65%); right:-80px; top:-80px; pointer-events:none; }
+        .hero-inner { position:relative; z-index:1; }
+        .hero-tag { font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:2.5px; color:var(--mat-gronn); display:block; margin-bottom:10px; }
+        .page-hero h1 { font-size:clamp(2.2rem,4vw,3.2rem); font-weight:900; letter-spacing:-2px; color:white; margin:0 0 8px; }
+        .page-hero p { color:rgba(255,255,255,.45); font-size:.95rem; margin:0; }
+
+        .content-wrap { max-width:760px; margin:-36px auto 80px; padding:0 20px; position:relative; z-index:10; }
+
+        /* INPUT CARD */
+        .input-card {
+            background:white; border-radius:24px; padding:28px 30px;
+            border:1px solid #f1f5f9; box-shadow:0 20px 56px rgba(0,0,0,.07);
+            margin-bottom:20px;
+        }
+        .input-label { font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:var(--mat-gronn); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+        .ing-input {
+            width:100%; border:2px solid #f1f5f9; border-radius:16px;
+            padding:14px 18px; font-size:.95rem; font-family:inherit; font-weight:500;
+            color:var(--mat-mork); background:#f8fafc; outline:none;
+            transition:border-color .2s, background .2s;
+        }
+        .ing-input:focus { border-color:var(--mat-gronn); background:white; }
+
+        .examples { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 16px; }
+        .example-chip {
+            background:#f1f5f9; border:none; padding:6px 14px; border-radius:99px;
+            font-size:.78rem; font-weight:700; color:#64748b; cursor:pointer;
+            font-family:inherit; transition:.2s;
+        }
+        .example-chip:hover { background:var(--mat-lys-gronn); color:var(--mat-gronn); }
+
+        .btn-generate {
+            background:var(--mat-gronn); color:white; border:none; padding:14px 28px;
+            border-radius:16px; font-weight:800; font-size:.95rem; cursor:pointer;
+            font-family:inherit; transition:.2s; display:inline-flex; align-items:center;
+            gap:8px; box-shadow:0 8px 24px rgba(46,204,113,.3); width:100%;
+            justify-content:center;
+        }
+        .btn-generate:hover:not(:disabled) { background:var(--mat-gronn-m); transform:translateY(-2px); }
+        .btn-generate:disabled { background:#94a3b8; box-shadow:none; cursor:not-allowed; transform:none; }
+
+        /* LOADING */
+        .loading-card {
+            display:none; background:white; border-radius:24px; padding:40px 30px;
+            border:1px solid #f1f5f9; box-shadow:0 4px 20px rgba(0,0,0,.04);
+            text-align:center; margin-bottom:20px;
+        }
+        .loading-card.show { display:block; }
+
+        .ai-dots { display:flex; justify-content:center; gap:8px; margin-bottom:20px; }
+        .ai-dot {
+            width:12px; height:12px; border-radius:50%; background:var(--mat-gronn);
+            animation:bounce .8s ease-in-out infinite;
+        }
+        .ai-dot:nth-child(2) { animation-delay:.16s; }
+        .ai-dot:nth-child(3) { animation-delay:.32s; }
+        @keyframes bounce {
+            0%,80%,100% { transform:scale(.7); opacity:.5; }
+            40%          { transform:scale(1.1); opacity:1; }
+        }
+
+        .loading-steps { display:flex; flex-direction:column; gap:8px; max-width:340px; margin:0 auto; }
+        .loading-step {
+            display:flex; align-items:center; gap:10px;
+            font-size:.85rem; font-weight:600; color:#94a3b8; transition:.4s;
+        }
+        .loading-step.active { color:var(--mat-gronn); }
+        .loading-step.done { color:#22c55e; }
+        .step-icon { width:22px; height:22px; border-radius:50%; border:2px solid #e2e8f0; display:flex; align-items:center; justify-content:center; font-size:.7rem; flex-shrink:0; transition:.4s; }
+        .loading-step.active .step-icon { border-color:var(--mat-gronn); background:var(--mat-lys-gronn); color:var(--mat-gronn); }
+        .loading-step.done .step-icon { border-color:#22c55e; background:#f0fdf4; color:#22c55e; }
+
+        /* RESULT */
+        .result-card {
+            display:none; background:white; border-radius:24px; padding:30px;
+            border:1px solid #f1f5f9; box-shadow:0 4px 20px rgba(0,0,0,.04);
+            animation:fadeUp .4s ease;
+        }
+        .result-card.show { display:block; }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+        .result-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+        .result-label { font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:2px; color:var(--mat-gronn); display:flex; align-items:center; gap:8px; }
+        .btn-retry { background:#f1f5f9; border:none; padding:8px 16px; border-radius:10px; font-weight:700; font-size:.82rem; cursor:pointer; font-family:inherit; transition:.2s; color:#64748b; display:flex; align-items:center; gap:6px; }
+        .btn-retry:hover { background:var(--mat-lys-gronn); color:var(--mat-gronn); }
+
+        /* Recipe cards from AI */
+        .ai-recipes { display:flex; flex-direction:column; gap:16px; }
+        .ai-recipe {
+            background:#f8fafc; border-radius:16px; padding:20px 22px;
+            border:1px solid #f1f5f9;
+        }
+        .ai-recipe h3 { font-size:1.1rem; font-weight:900; color:var(--mat-mork); margin:0 0 8px; letter-spacing:-.3px; }
+        .ai-recipe-desc { font-size:.88rem; color:#64748b; margin:0 0 14px; font-style:italic; }
+        .ai-recipe-section { font-size:.72rem; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; color:var(--mat-gronn); margin:12px 0 6px; }
+        .ai-recipe p, .ai-recipe li { font-size:.9rem; color:#475569; line-height:1.7; margin:0; }
+        .ai-recipe ul, .ai-recipe ol { padding-left:18px; margin:0; }
+
+        .btn-lag-oppskrift {
+            display:inline-flex; align-items:center; gap:6px;
+            background:var(--mat-gronn); color:white; border:none; padding:8px 18px;
+            border-radius:10px; font-weight:800; font-size:.82rem; cursor:pointer;
+            font-family:inherit; transition:.2s; text-decoration:none; margin-top:12px;
+        }
+        .btn-lag-oppskrift:hover { background:var(--mat-gronn-m); color:white; }
+
+        /* ERROR */
+        .error-card {
+            display:none; background:#fff1f2; border-radius:20px; padding:22px 24px;
+            border:1px solid #fecaca; margin-bottom:20px;
+        }
+        .error-card.show { display:flex; align-items:center; gap:14px; }
+        .error-card i { color:#dc2626; font-size:1.3rem; flex-shrink:0; }
+        .error-card span { font-size:.9rem; font-weight:600; color:#dc2626; }
+
+        /* RATE LIMIT */
+        .ratelimit-card {
+            display:none; background:#fffbeb; border-radius:20px; padding:24px 28px;
+            border:1px solid #fde68a; margin-bottom:20px; text-align:center;
+        }
+        .ratelimit-card.show { display:block; }
+        .ratelimit-card .rl-icon { font-size:2.2rem; margin-bottom:10px; }
+        .ratelimit-card h3 { font-weight:900; color:#92400e; font-size:1rem; margin:0 0 6px; }
+        .ratelimit-card p { color:#b45309; font-size:.85rem; margin:0 0 14px; }
+        .countdown-wrap { display:inline-flex; align-items:center; gap:8px; background:#fef3c7; border-radius:12px; padding:10px 20px; }
+        .countdown-num { font-size:1.6rem; font-weight:900; color:#92400e; min-width:40px; text-align:center; }
+        .countdown-lbl { font-size:.75rem; font-weight:700; color:#b45309; }
+        .btn-retry-now { margin-top:14px; background:var(--mat-gronn); color:white; border:none; padding:10px 22px; border-radius:12px; font-weight:800; font-size:.88rem; cursor:pointer; font-family:inherit; transition:.2s; }
+        .btn-retry-now:hover { background:var(--mat-gronn-m); }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="page-hero">
+        <div class="hero-glow"></div>
+        <div class="container hero-inner">
+            <span class="hero-tag">AI-assistent</span>
+            <h1>Hva kan jeg lage?</h1>
+            <p>Fortell hva du har hjemme — AI foreslår oppskrifter på sekunder</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-wrap">
+
+            <!-- INPUT -->
+            <div class="input-card">
+                <div class="input-label"><i class="fa-solid fa-seedling"></i> Ingredienser du har</div>
+                <input type="text" id="ingField" class="ing-input"
+                       placeholder="f.eks. kylling, pasta, tomat, løk, hvitløk..."
+                       autocomplete="off">
+                <div class="examples">
+                    <span style="font-size:.72rem;font-weight:700;color:#94a3b8;align-self:center;">Prøv:</span>
+                    <button type="button" class="example-chip" onclick="setExample('egg, bacon, poteter, løk')">Egg &amp; bacon</button>
+                    <button type="button" class="example-chip" onclick="setExample('kylling, ris, hvitløk, ingefær, soyasaus, lime')">Asiatisk kylling</button>
+                    <button type="button" class="example-chip" onclick="setExample('laks, sitron, dill, fløte, pasta')">Laks pasta</button>
+                    <button type="button" class="example-chip" onclick="setExample('kjøttdeig, tomat, oregano, mozzarella')">Italiensk</button>
+                    <button type="button" class="example-chip" onclick="setExample('havregryn, banan, honning, melk')">Frokost</button>
+                </div>
+                <button id="genBtn" class="btn-generate" onclick="generer()">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generer forslag
+                </button>
+            </div>
+
+            <!-- LOADING -->
+            <div class="loading-card" id="loadingCard">
+                <div class="ai-dots">
+                    <div class="ai-dot"></div>
+                    <div class="ai-dot"></div>
+                    <div class="ai-dot"></div>
+                </div>
+                <div class="loading-steps">
+                    <div class="loading-step" id="step1">
+                        <div class="step-icon"><i class="fa-solid fa-check"></i></div>
+                        <span>Analyserer ingredienser...</span>
+                    </div>
+                    <div class="loading-step" id="step2">
+                        <div class="step-icon"><i class="fa-solid fa-check"></i></div>
+                        <span>Søker etter kombinasjoner...</span>
+                    </div>
+                    <div class="loading-step" id="step3">
+                        <div class="step-icon"><i class="fa-solid fa-check"></i></div>
+                        <span>Skriver oppskriftforslag...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ERROR -->
+            <div class="error-card" id="errorCard">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span id="errorMsg">Noe gikk galt. Prøv igjen.</span>
+            </div>
+
+            <!-- RATE LIMIT -->
+            <div class="ratelimit-card" id="rateLimitCard">
+                <div class="rl-icon">⏳</div>
+                <h3>Gemini API-kvoten er brukt opp</h3>
+                <p>Gratis-planen har en begrenset daglig kvote. Vi prøvde alle tilgjengelige modeller.
+                    Prøv igjen om litt, eller oppgrader til betalt plan på
+                    <a href="https://ai.google.dev" target="_blank" style="color:#b45309;">ai.google.dev</a>.</p>
+                <div class="countdown-wrap">
+                    <span class="countdown-num" id="countdownNum">60</span>
+                    <span class="countdown-lbl">sekunder</span>
+                </div><br>
+                <button class="btn-retry-now" id="retryBtn" onclick="generer()" disabled>
+                    <i class="fa-solid fa-rotate-right"></i> Prøv igjen
+                </button>
+            </div>
+
+            <!-- RESULT -->
+            <div class="result-card" id="resultCard">
+                <div class="result-header">
+                    <div class="result-label"><i class="fa-solid fa-lightbulb"></i> AI-forslag basert på dine ingredienser</div>
+                    <button class="btn-retry" onclick="nullstill()">
+                        <i class="fa-solid fa-rotate-left"></i> Prøv igjen
+                    </button>
+                </div>
+                <div class="ai-recipes" id="recipesContainer"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: bottom_nav}"></div>
+    <div th:replace="~{fragments :: scripts}"></div>
+    <script>
+        function setExample(val) {
+            document.getElementById('ingField').value = val;
+            document.getElementById('ingField').focus();
+        }
+
+        let stepTimer;
+
+        function startStepAnimation() {
+            const steps = ['step1','step2','step3'];
+            let i = 0;
+            steps.forEach(s => document.getElementById(s).className = 'loading-step');
+            document.getElementById(steps[0]).classList.add('active');
+            stepTimer = setInterval(() => {
+                if (i < steps.length - 1) {
+                    document.getElementById(steps[i]).classList.remove('active');
+                    document.getElementById(steps[i]).classList.add('done');
+                    i++;
+                    document.getElementById(steps[i]).classList.add('active');
+                }
+            }, 3000);
+        }
+
+        function stopStepAnimation() {
+            clearInterval(stepTimer);
+            ['step1','step2','step3'].forEach(s => {
+                document.getElementById(s).classList.remove('active');
+                document.getElementById(s).classList.add('done');
+            });
+        }
+
+        let countdownTimer;
+
+        function startCountdown(sek) {
+            clearInterval(countdownTimer);
+            let gjenvaerende = parseInt(sek) || 60;
+            document.getElementById('countdownNum').textContent = gjenvaerende;
+            document.getElementById('retryBtn').disabled = true;
+            countdownTimer = setInterval(() => {
+                gjenvaerende--;
+                document.getElementById('countdownNum').textContent = gjenvaerende;
+                if (gjenvaerende <= 0) {
+                    clearInterval(countdownTimer);
+                    document.getElementById('retryBtn').disabled = false;
+                    document.getElementById('retryBtn').innerHTML = '<i class="fa-solid fa-rotate-right"></i> Prøv igjen nå!';
+                    document.getElementById('retryBtn').style.animation = 'pulse .6s ease infinite alternate';
+                }
+            }, 1000);
+        }
+
+        async function generer() {
+            const ing = document.getElementById('ingField').value.trim();
+            if (!ing) {
+                document.getElementById('ingField').focus();
+                document.getElementById('ingField').style.borderColor = '#dc2626';
+                setTimeout(() => document.getElementById('ingField').style.borderColor = '', 1500);
+                return;
+            }
+
+            // Reset
+            document.getElementById('loadingCard').classList.add('show');
+            document.getElementById('errorCard').classList.remove('show');
+            document.getElementById('resultCard').classList.remove('show');
+            document.getElementById('rateLimitCard').classList.remove('show');
+            document.getElementById('genBtn').disabled = true;
+            document.getElementById('genBtn').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Genererer...';
+            startStepAnimation();
+
+            try {
+                const res = await fetch('/api/ai-forslag', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ingredienser: ing })
+                });
+                const data = await res.json();
+
+                stopStepAnimation();
+                document.getElementById('loadingCard').classList.remove('show');
+
+                if (data.rateLimitSek) {
+                    startCountdown(data.rateLimitSek);
+                    document.getElementById('rateLimitCard').classList.add('show');
+                } else if (data.feil) {
+                    document.getElementById('errorMsg').textContent = data.feil;
+                    document.getElementById('errorCard').classList.add('show');
+                } else {
+                    renderResult(data.svar);
+                    document.getElementById('resultCard').classList.add('show');
+                }
+            } catch (e) {
+                stopStepAnimation();
+                document.getElementById('loadingCard').classList.remove('show');
+                document.getElementById('errorMsg').textContent = 'Kunne ikke nå serveren. Sjekk internett og prøv igjen.';
+                document.getElementById('errorCard').classList.add('show');
+            }
+
+            document.getElementById('genBtn').disabled = false;
+            document.getElementById('genBtn').innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Generer forslag';
+        }
+
+        function renderResult(tekst) {
+            const container = document.getElementById('recipesContainer');
+            container.innerHTML = '';
+
+            // Del opp i oppskrifter på ### headings
+            const deler = tekst.split(/(?=###\s)/);
+            deler.forEach(del => {
+                del = del.trim();
+                if (!del) return;
+
+                const card = document.createElement('div');
+                card.className = 'ai-recipe';
+
+                // Tittel
+                const tittelMatch = del.match(/^###\s*(.+)/m);
+                const tittel = tittelMatch ? tittelMatch[1].trim() : 'Oppskrift';
+
+                // Resten av teksten uten tittelen
+                let innhold = del.replace(/^###\s*.+\n?/, '').trim();
+
+                // Første setning = beskrivelse
+                const linjeSplit = innhold.split('\n');
+                let beskrivelse = '';
+                let startIdx = 0;
+                if (linjeSplit[0] && !linjeSplit[0].startsWith('**') && !linjeSplit[0].startsWith('-') && !linjeSplit[0].match(/^\d+\./)) {
+                    beskrivelse = linjeSplit[0].trim();
+                    startIdx = 1;
+                }
+
+                // Bygg HTML
+                let html = `<h3>${tittel}</h3>`;
+                if (beskrivelse) html += `<p class="ai-recipe-desc">${beskrivelse}</p>`;
+
+                let resten = linjeSplit.slice(startIdx).join('\n').trim();
+                // Formater bold seksjoner
+                resten = resten
+                    .replace(/\*\*(.+?)\*\*/g, '<div class="ai-recipe-section">$1</div>')
+                    .replace(/^- (.+)/gm, '<li>$1</li>')
+                    .replace(/^\d+\.\s(.+)/gm, '<li>$1</li>');
+
+                // Wrap li-tags i ul
+                resten = resten.replace(/(<li>.*<\/li>)+/gs, m => `<ul>${m}</ul>`);
+                html += resten;
+
+                // Lag oppskrift-knapp
+                const encoded = encodeURIComponent(tittel);
+                html += `<a href="/ny-oppskrift" class="btn-lag-oppskrift" onclick="prefillOppskrift('${tittel.replace(/'/g,"\\'")}')">
+                    <i class="fa-solid fa-plus"></i> Lag som oppskrift
+                </a>`;
+
+                card.innerHTML = html;
+                container.appendChild(card);
+            });
+
+            if (container.children.length === 0) {
+                container.innerHTML = `<p style="color:#64748b;">${tekst}</p>`;
+            }
+        }
+
+        function prefillOppskrift(tittel) {
+            sessionStorage.setItem('prefillTittel', tittel);
+        }
+
+        function nullstill() {
+            document.getElementById('resultCard').classList.remove('show');
+            document.getElementById('errorCard').classList.remove('show');
+            document.getElementById('ingField').focus();
+        }
+
+        // Enter-tast
+        document.getElementById('ingField').addEventListener('keydown', e => {
+            if (e.key === 'Enter') generer();
+        });
+    </script>
+</body>
+</html>

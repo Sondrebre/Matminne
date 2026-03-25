@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Installer MatMinne | MatMinne</title>
+    <style>
+        body { background: var(--bakgrunn); }
+
+        .page-hero {
+            background: linear-gradient(135deg, var(--mat-mork), #0a1f10);
+            padding: 60px 0 80px; position: relative; overflow: hidden;
+        }
+        .page-hero::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(46,204,113,.07) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .hero-glow { position:absolute; width:400px; height:400px; background:radial-gradient(circle,rgba(46,204,113,.15),transparent 65%); right:-80px; top:-80px; pointer-events:none; }
+        .hero-inner { position: relative; z-index: 1; }
+        .hero-tag { font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:2.5px; color:var(--mat-gronn); display:block; margin-bottom:12px; }
+        .page-hero h1 { font-size:clamp(2.2rem,4vw,3.4rem); font-weight:900; letter-spacing:-2px; color:white; margin:0 0 10px; }
+        .page-hero p { color:rgba(255,255,255,.45); font-size:.95rem; margin:0 0 24px; max-width:480px; }
+
+        .app-preview {
+            display: inline-flex; align-items: center; gap: 14px;
+            background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+            border-radius: 18px; padding: 14px 20px;
+        }
+        .app-icon { width:56px; height:56px; background:var(--mat-gronn); border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:1.6rem; box-shadow:0 8px 24px rgba(46,204,113,.4); }
+        .app-info strong { display:block; color:white; font-weight:900; font-size:1.05rem; }
+        .app-info span { color:rgba(255,255,255,.5); font-size:.8rem; }
+
+        .content-wrap { max-width: 820px; margin: -40px auto 80px; padding: 0 20px; position: relative; z-index: 10; }
+
+        /* Quick install button */
+        .install-card {
+            background: white; border-radius: 24px; padding: 28px 30px;
+            border: 1px solid #f1f5f9; box-shadow: 0 20px 56px rgba(0,0,0,.08); margin-bottom: 28px;
+            display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+        }
+        .install-card-info { flex: 1; min-width: 200px; }
+        .install-card-info h3 { font-weight:900; font-size:1.2rem; letter-spacing:-.5px; margin:0 0 6px; color:var(--mat-mork); }
+        .install-card-info p { color:#64748b; font-size:.88rem; margin:0; }
+        .btn-install-now {
+            background: var(--mat-gronn); color: white; border: none;
+            padding: 14px 28px; border-radius: 14px; font-weight: 900; font-size: .95rem;
+            cursor: pointer; transition: .25s; font-family: inherit; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 8px 24px rgba(46,204,113,.3); white-space: nowrap;
+        }
+        .btn-install-now:hover { background: var(--mat-gronn-m); transform: translateY(-2px); }
+        .btn-install-now:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+        #installStatus { font-size:.78rem; color:#94a3b8; margin-top:8px; }
+
+        /* Guide sections */
+        .guide-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px; }
+
+        .guide-card {
+            background: white; border-radius: 24px; padding: 28px;
+            border: 1px solid #f1f5f9; box-shadow: 0 4px 20px rgba(0,0,0,.04);
+        }
+        .guide-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+        .guide-os-icon {
+            width: 48px; height: 48px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;
+        }
+        .guide-os-icon.android { background: #e8f5e9; }
+        .guide-os-icon.ios { background: #f1f5f9; }
+        .guide-os-icon.desktop { background: #fef3c7; }
+        .guide-os-name { font-weight: 900; font-size: 1.05rem; color: var(--mat-mork); margin: 0; }
+        .guide-os-sub { font-size: .8rem; color: #94a3b8; font-weight: 600; }
+
+        .steps-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
+        .step-item { display: flex; align-items: flex-start; gap: 12px; }
+        .step-num {
+            width: 26px; height: 26px; border-radius: 8px; background: var(--mat-lys-gronn);
+            color: var(--mat-gronn-m); font-weight: 900; font-size: .78rem;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+        }
+        .step-text { font-size: .88rem; color: #475569; line-height: 1.55; font-weight: 600; }
+        .step-text strong { color: var(--mat-mork); }
+        .step-text code {
+            background: #f1f5f9; padding: 2px 7px; border-radius: 6px;
+            font-size: .82rem; font-family: monospace; color: var(--mat-gronn-m); font-weight: 700;
+        }
+
+        .tip-box {
+            background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 16px;
+            padding: 14px 18px; margin-top: 16px; font-size: .82rem; color: #166534; font-weight: 600;
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .tip-box i { color: var(--mat-gronn); flex-shrink: 0; margin-top: 1px; }
+
+        /* Benefits */
+        .benefits { background: white; border-radius: 24px; padding: 32px; border: 1px solid #f1f5f9; margin-bottom: 28px; }
+        .benefits h3 { font-weight: 900; font-size: 1.15rem; letter-spacing:-.5px; margin: 0 0 20px; color: var(--mat-mork); }
+        .benefits-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+        .benefit { display: flex; align-items: flex-start; gap: 10px; }
+        .benefit-icon { color: var(--mat-gronn); font-size: .95rem; margin-top: 2px; flex-shrink: 0; }
+        .benefit-text strong { display: block; font-weight: 800; font-size: .88rem; color: var(--mat-mork); margin-bottom: 2px; }
+        .benefit-text span { font-size: .78rem; color: #94a3b8; font-weight: 600; }
+
+        @media (max-width: 600px) { .guide-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="page-hero">
+        <div class="hero-glow"></div>
+        <div class="container hero-inner">
+            <span class="hero-tag">PWA · Progressive Web App</span>
+            <h1>Installer MatMinne</h1>
+            <p>Legg MatMinne til på hjemskjermen og bruk den som en ekte app — helt gratis, ingen app store nødvendig.</p>
+            <div class="app-preview">
+                <div class="app-icon">🍎</div>
+                <div class="app-info">
+                    <strong>MatMinne</strong>
+                    <span>Din digitale kokebok</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-wrap">
+
+            <!-- QUICK INSTALL (vises på Chrome/Edge/Android) -->
+            <div class="install-card" id="quickInstallCard" style="display:none;">
+                <div style="font-size:2rem;flex-shrink:0;">📲</div>
+                <div class="install-card-info">
+                    <h3>Installer med ett klikk</h3>
+                    <p>Nettleseren din støtter direkte installasjon — ingen app store, ingen nedlasting.</p>
+                    <div id="installStatus"></div>
+                </div>
+                <button class="btn-install-now" id="installNowBtn" onclick="kjørInstall()">
+                    <i class="fa-solid fa-download"></i> Installer nå
+                </button>
+            </div>
+
+            <!-- FORDELER -->
+            <div class="benefits">
+                <h3><i class="fa-solid fa-star me-2" style="color:var(--mat-gronn);"></i>Hvorfor installere?</h3>
+                <div class="benefits-grid">
+                    <div class="benefit">
+                        <i class="fa-solid fa-bolt benefit-icon"></i>
+                        <div class="benefit-text">
+                            <strong>Lynrask tilgang</strong>
+                            <span>Åpne direkte fra hjemskjermen uten å åpne nettleseren</span>
+                        </div>
+                    </div>
+                    <div class="benefit">
+                        <i class="fa-solid fa-expand benefit-icon"></i>
+                        <div class="benefit-text">
+                            <strong>Fullskjerm</strong>
+                            <span>Ingen adressefelt — ser ut og føles som en ekte app</span>
+                        </div>
+                    </div>
+                    <div class="benefit">
+                        <i class="fa-solid fa-wifi-slash benefit-icon"></i>
+                        <div class="benefit-text">
+                            <strong>Fungerer offline</strong>
+                            <span>Sider du har besøkt er tilgjengelig uten nett</span>
+                        </div>
+                    </div>
+                    <div class="benefit">
+                        <i class="fa-solid fa-lock benefit-icon"></i>
+                        <div class="benefit-text">
+                            <strong>Trygt og privat</strong>
+                            <span>Ingen app store-tilgang til telefonen din</span>
+                        </div>
+                    </div>
+                    <div class="benefit">
+                        <i class="fa-solid fa-arrows-rotate benefit-icon"></i>
+                        <div class="benefit-text">
+                            <strong>Alltid oppdatert</strong>
+                            <span>Oppdateres automatisk — aldri utdatert</span>
+                        </div>
+                    </div>
+                    <div class="benefit">
+                        <i class="fa-solid fa-kitchen-set benefit-icon"></i>
+                        <div class="benefit-text">
+                            <strong>Perfekt på kjøkkenet</strong>
+                            <span>Les oppskrifter i fullskjerm mens du lager mat</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GUIDER PER PLATTFORM -->
+            <div class="guide-grid">
+
+                <!-- ANDROID -->
+                <div class="guide-card">
+                    <div class="guide-header">
+                        <div class="guide-os-icon android">🤖</div>
+                        <div>
+                            <p class="guide-os-name">Android</p>
+                            <p class="guide-os-sub">Chrome, Edge, Samsung Browser</p>
+                        </div>
+                    </div>
+                    <ol class="steps-list">
+                        <li class="step-item">
+                            <div class="step-num">1</div>
+                            <div class="step-text">Åpne <strong>MatMinne</strong> i Chrome på Android</div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-num">2</div>
+                            <div class="step-text">Trykk på <strong>⋮ (tre prikker)</strong> øverst til høyre</div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-num">3</div>
+                            <div class="step-text">Velg <strong>«Legg til på startskjerm»</strong></div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-num">4</div>
+                            <div class="step-text">Trykk <strong>«Legg til»</strong> i dialogen som dukker opp</div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-num">5</div>
+                            <div class="step-text">MatMinne-ikonet vises nå på hjemskjermen din 🎉</div>
+                        </li>
+                    </ol>
+                    <div class="tip-box">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        Chrome kan også vise en automatisk bannere — trykk bare <strong>«Installer»</strong> der.
+                    </div>
+                </div>
+
+                <!-- IOS -->
+                <div class="guide-card">
+                    <div class="guide-header">
+                        <div class="guide-os-icon ios">🍏</div>
+                        <div>
+                            <p class="guide-os-name">iPhone / iPad</p>
+                            <p class="guide-os-sub">Safari (må bruke Safari)</p>
+                        </div>
+                    </div>
+                    <ol class="steps-list">
+                        <li class="step-item">
+                            <div class="step-num">1</div>
+                            <div class="step-text">Åpne <strong>MatMinne i Safari</strong> — Chrome støtter ikke installasjon på iOS</div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-num">2</div>
+                            <div class="step-text">Trykk på <strong>Del-ikonet</strong> <code>⎙</code> nederst i skjermen</div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-num">3</div>
+                            <div class="step-text">Scroll ned og trykk <strong>«Legg til på hjem-skjerm»</strong></div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-num">4</div>
+                            <div class="step-text">Gi den et navn (eller behold <strong>«MatMinne»</strong>) og trykk <strong>«Legg til»</strong></div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-num">5</div>
+                            <div class="step-text">Ikonet vises på hjemskjermen din 🎉</div>
+                        </li>
+                    </ol>
+                    <div class="tip-box">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        På iPhone 14 og nyere: trykk <strong>Del-knappen</strong> øverst til høyre i Safari.
+                    </div>
+                </div>
+
+                <!-- DESKTOP -->
+                <div class="guide-card">
+                    <div class="guide-header">
+                        <div class="guide-os-icon desktop">💻</div>
+                        <div>
+                            <p class="guide-os-name">PC / Mac</p>
+                            <p class="guide-os-sub">Chrome, Edge</p>
+                        </div>
+                    </div>
+                    <ol class="steps-list">
+                        <li class="step-item">
+                            <div class="step-num">1</div>
+                            <div class="step-text">Åpne <strong>MatMinne i Chrome eller Edge</strong></div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-num">2</div>
+                            <div class="step-text">Se etter <strong>installer-ikonet</strong> <code>⊕</code> i adressefeltet (høyre side)</div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-num">3</div>
+                            <div class="step-text">Klikk på det og velg <strong>«Installer»</strong></div>
+                        </li>
+                        <li class="step-item">
+                            <div class="step-num">4</div>
+                            <div class="step-text">MatMinne åpnes i et eget vindu — som en desktop-app 🎉</div>
+                        </li>
+                    </ol>
+                    <div class="tip-box">
+                        <i class="fa-solid fa-lightbulb"></i>
+                        Alternativt: trykk <strong>⋮ → Cast, save and share → Install page as app</strong> i Chrome.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: bottom_nav}"></div>
+    <div th:replace="~{fragments :: scripts}"></div>
+
+    <script>
+        let deferredPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', e => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('quickInstallCard').style.display = 'flex';
+        });
+
+        async function kjørInstall() {
+            if (!deferredPrompt) {
+                document.getElementById('installStatus').textContent = 'Se guidene nedenfor for din enhet.';
+                return;
+            }
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            const btn = document.getElementById('installNowBtn');
+            if (outcome === 'accepted') {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Installert!';
+                btn.disabled = true;
+                btn.style.background = '#27ae60';
+            } else {
+                document.getElementById('installStatus').textContent = 'Avbrutt. Se guidene nedenfor.';
+            }
+        }
+
+        // Vis knapp om PWA allerede er installert
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('quickInstallCard').style.display = 'none';
+        });
+    </script>
+</body>
+</html>

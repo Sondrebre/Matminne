@@ -1,0 +1,47 @@
+{
+  "name": "MatMinne",
+  "short_name": "MatMinne",
+  "description": "Din digitale kokebok — lagre, planlegg og del oppskrifter",
+  "start_url": "/kokebok",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2ecc71",
+  "orientation": "portrait-primary",
+  "lang": "nb",
+  "categories": ["food", "lifestyle", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ny oppskrift",
+      "short_name": "Ny",
+      "url": "/ny-oppskrift",
+      "description": "Legg til en ny oppskrift"
+    },
+    {
+      "name": "Ukesmeny",
+      "short_name": "Uke",
+      "url": "/ukesmeny",
+      "description": "Planlegg ukens måltider"
+    },
+    {
+      "name": "Handleliste",
+      "short_name": "Handle",
+      "url": "/handleliste",
+      "description": "Se og oppdater handlelisten"
+    }
+  ]
+}

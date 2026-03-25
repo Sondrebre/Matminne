@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title th:text="${o != null ? o.tittel + ' | MatMinne' : 'MatMinne'}">MatMinne</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        /* ── HERO ── */
+        .recipe-hero {
+            height: 55vh; min-height: 380px;
+            position: relative; overflow: hidden; background: #1a2a1a;
+        }
+        .recipe-hero img {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: .8; transition: transform 8s ease;
+            image-rendering: high-quality;
+        }
+        .recipe-hero:hover img { transform: scale(1.04); }
+        .hero-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,.1) 0%, rgba(0,0,0,.75) 100%);
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 48px 6%;
+        }
+        .hero-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+        .hero-chip {
+            background: rgba(255,255,255,.15); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,.2); color: white;
+            padding: 4px 12px; border-radius: 99px; font-size: .72rem; font-weight: 700;
+        }
+        .hero-chip.green { background: rgba(46,204,113,.3); border-color: rgba(46,204,113,.5); color: #a7f3d0; }
+        .hero-title {
+            color: white; font-size: clamp(2rem, 5vw, 4rem); font-weight: 900;
+            letter-spacing: -2px; margin: 0; line-height: 1.05; text-shadow: 0 4px 20px rgba(0,0,0,.4);
+        }
+
+        /* ── BACK ── */
+        .back-btn {
+            position: absolute; top: 80px; left: 24px; z-index: 20;
+            background: rgba(255,255,255,.12); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,.2); color: white;
+            padding: 9px 18px; border-radius: 12px; font-weight: 700; font-size: .84rem;
+            text-decoration: none; display: flex; align-items: center; gap: 7px;
+            transition: .2s;
+        }
+        .back-btn:hover { background: rgba(255,255,255,.22); color: white; }
+
+        /* ── LAYOUT ── */
+        .recipe-wrap {
+            max-width: 1040px; margin: 0 auto; padding: 0 20px 120px;
+        }
+
+        /* ── QUICK-STATS BAR ── */
+        .stats-bar {
+            background: white; border-radius: 18px; border: 1px solid #e8f5e9;
+            box-shadow: 0 8px 30px rgba(34,197,94,.08);
+            display: flex; align-items: center; justify-content: center;
+            gap: 0; flex-wrap: wrap; margin: -28px 0 36px; position: relative; z-index: 10;
+            overflow: hidden;
+        }
+        .stat-item {
+            flex: 1; min-width: 100px; text-align: center; padding: 18px 16px;
+            border-right: 1px solid #f1f5f9;
+        }
+        .stat-item:last-child { border-right: none; }
+        .stat-item i { font-size: 1rem; color: var(--mat-gronn); display: block; margin-bottom: 6px; }
+        .stat-item strong { display: block; font-size: .95rem; font-weight: 800; color: var(--mat-mork); }
+        .stat-item span { font-size: .7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .5px; }
+
+        /* ── CONTENT GRID ── */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar { display: flex; flex-direction: column; gap: 20px; }
+        .side-card {
+            background: white; border-radius: 20px; border: 1px solid #e8f5e9;
+            box-shadow: 0 4px 20px rgba(34,197,94,.06); overflow: hidden;
+        }
+        .side-card-head {
+            padding: 16px 22px; border-bottom: 1px solid #f0fdf4;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .side-card-head i { color: var(--mat-gronn); font-size: 1rem; }
+        .side-card-head h3 { font-size: .82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin: 0; }
+        .side-card-body { padding: 18px 22px; }
+        .ingredient-text { font-size: .92rem; line-height: 1.9; color: #475569; white-space: pre-line; }
+
+        /* ── MAIN ── */
+        .main-col { display: flex; flex-direction: column; gap: 20px; }
+        .main-card {
+            background: white; border-radius: 20px; border: 1px solid #e8f5e9;
+            box-shadow: 0 4px 20px rgba(34,197,94,.06);
+        }
+        .main-card-head {
+            padding: 20px 28px; border-bottom: 1px solid #f0fdf4;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .main-card-head h2 { font-size: .82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin: 0; display: flex; align-items: center; gap: 8px; }
+        .main-card-head h2 i { color: var(--mat-gronn); }
+        .main-card-body { padding: 22px 28px; }
+
+        .cook-btn {
+            background: var(--mat-gronn); color: white; border: none;
+            padding: 9px 18px; border-radius: 10px; font-weight: 800; font-size: .8rem;
+            cursor: pointer; display: flex; align-items: center; gap: 7px; transition: .2s;
+            font-family: inherit; box-shadow: 0 4px 14px rgba(46,204,113,.3);
+        }
+        .cook-btn:hover { background: var(--mat-gronn-m); }
+
+        /* ── STEP LIST ── */
+        .step-text { font-size: .96rem; line-height: 1.85; color: #475569; white-space: pre-line; }
+        .cook-progress-wrap { margin-top: 18px; }
+        .cook-progress-label { font-size: .75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .cook-progress-bar { height: 6px; background: #f1f5f9; border-radius: 99px; overflow: hidden; }
+        .cook-progress-fill { height: 100%; background: var(--mat-gronn); border-radius: 99px; transition: width .4s ease; width: 0; }
+
+        .cook-item {
+            display: flex; align-items: flex-start; gap: 14px;
+            padding: 12px 14px; border-radius: 12px; cursor: pointer;
+            transition: background .15s; margin-bottom: 4px; user-select: none;
+        }
+        .cook-item:hover { background: #f8fafc; }
+        .cook-item.done { opacity: .45; }
+        .cook-item.done .cook-text { text-decoration: line-through; }
+        .cook-check {
+            width: 24px; height: 24px; border-radius: 8px; border: 2px solid #cbd5e1;
+            background: white; flex-shrink: 0; display: flex; align-items: center;
+            justify-content: center; transition: .2s; margin-top: 1px;
+        }
+        .cook-item.done .cook-check { background: var(--mat-gronn); border-color: var(--mat-gronn); }
+        .cook-item.done .cook-check::after { content: '✓'; color: white; font-size: .8rem; font-weight: 800; }
+        .step-num-badge {
+            width: 28px; height: 28px; border-radius: 8px; background: var(--mat-lys-gronn);
+            color: var(--mat-gronn); font-weight: 800; font-size: .85rem;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; transition: .2s;
+        }
+        .cook-item.done .step-num-badge { background: var(--mat-gronn); color: white; }
+        .cook-text { font-size: .94rem; line-height: 1.65; color: #475569; }
+        /* ── FULLSKJERM KOKEMODUS ── */
+        #kokeOverlay {
+            display: none; position: fixed; inset: 0; z-index: 9999;
+            background: #0f172a; flex-direction: column; overflow: hidden;
+        }
+        #kokeOverlay.open { display: flex; }
+        .koke-topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 28px; border-bottom: 1px solid #1e293b; flex-shrink: 0;
+        }
+        .koke-title { font-size: .82rem; font-weight: 700; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
+        .koke-meta { font-size: .82rem; font-weight: 800; color: #475569; }
+        .koke-close {
+            background: #1e293b; border: none; color: #64748b; width: 36px; height: 36px;
+            border-radius: 10px; font-size: 1rem; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; transition: .15s; flex-shrink: 0;
+        }
+        .koke-close:hover { background: #334155; color: white; }
+        .koke-progressbar { height: 3px; background: #1e293b; flex-shrink: 0; }
+        .koke-progressfill { height: 100%; background: var(--mat-gronn); transition: width .4s ease; }
+        .koke-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 8% 20px; overflow-y: auto; }
+        .koke-stepnum {
+            font-size: clamp(5rem, 15vw, 9rem); font-weight: 900; line-height: 1;
+            color: #1e293b; letter-spacing: -4px; margin-bottom: 20px; user-select: none;
+        }
+        .koke-steptext {
+            font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 700; color: #e2e8f0;
+            line-height: 1.55; max-width: 800px;
+        }
+        .koke-footer {
+            display: flex; gap: 12px; padding: 20px 28px; border-top: 1px solid #1e293b; flex-shrink: 0;
+        }
+        .koke-btn {
+            flex: 1; padding: 18px; border-radius: 16px; border: none; font-weight: 800;
+            font-size: 1rem; cursor: pointer; font-family: inherit; transition: .18s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .koke-btn-prev { background: #1e293b; color: #64748b; }
+        .koke-btn-prev:hover { background: #334155; color: white; }
+        .koke-btn-next { background: var(--mat-gronn); color: white; box-shadow: 0 8px 24px rgba(46,204,113,.35); }
+        .koke-btn-next:hover { background: var(--mat-gronn-m); }
+        .koke-btn-next:disabled, .koke-btn-prev:disabled { opacity: .35; cursor: default; }
+        .koke-done-screen {
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; flex: 1; padding: 40px;
+        }
+        .koke-done-screen.vis { display: flex; }
+        .koke-done-ikon { font-size: 5rem; margin-bottom: 20px; }
+        .koke-done-screen h2 { font-size: 2.2rem; font-weight: 900; color: white; margin: 0 0 10px; letter-spacing: -1px; }
+        .koke-done-screen p { color: #64748b; font-size: .95rem; margin: 0 0 28px; }
+
+        /* ── ACTIONS STRIP ── */
+        .actions-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .act-btn {
+            background: white; border: 1.5px solid #e2e8f0; color: #64748b;
+            padding: 9px 16px; border-radius: 12px; font-weight: 700; font-size: .82rem;
+            cursor: pointer; font-family: inherit; transition: .2s;
+            display: flex; align-items: center; gap: 7px; text-decoration: none;
+        }
+        .act-btn:hover { border-color: var(--mat-gronn); color: var(--mat-gronn); background: var(--mat-lys-gronn); }
+        .act-btn.red:hover { border-color: #fecaca; color: #dc2626; background: #fff0f0; }
+
+        /* ── LIKES / RATING ── */
+        .social-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+        .like-btn {
+            background: #f8fafc; border: 1.5px solid #e2e8f0; color: #64748b;
+            padding: 9px 18px; border-radius: 12px; font-weight: 700; font-size: .9rem;
+            cursor: pointer; font-family: inherit; transition: .2s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .like-btn.liked { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
+        .like-btn:hover { transform: scale(1.04); }
+        .like-count { font-size: .85rem; font-weight: 600; color: #94a3b8; }
+
+        .stars-row { display: flex; align-items: center; gap: 10px; }
+        .star-btn {
+            background: none; border: none; font-size: 1.45rem; cursor: pointer;
+            color: #e2e8f0; transition: color .12s, transform .12s; padding: 0;
+        }
+        .star-btn:hover, .star-btn.active { color: #f59e0b; transform: scale(1.18); }
+        .rating-meta { font-size: .82rem; font-weight: 700; color: #94a3b8; }
+
+        /* ── SAMLING ── */
+        .samling-details { background: #f8fafc; border-radius: 14px; border: 1px solid #f1f5f9; overflow: hidden; margin-bottom: 20px; }
+        .samling-summary {
+            padding: 13px 18px; font-weight: 700; font-size: .88rem; cursor: pointer;
+            list-style: none; display: flex; align-items: center; gap: 8px; color: var(--mat-mork);
+        }
+        .samling-summary:hover { background: #f1f5f9; }
+        .samling-summary i { color: var(--mat-gronn); }
+        .samling-list { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 6px; }
+        .samling-btn {
+            background: white; border: 1px solid #f1f5f9; border-radius: 11px;
+            padding: 10px 14px; cursor: pointer; font-family: inherit; font-weight: 700;
+            font-size: .86rem; width: 100%; text-align: left; transition: .2s; color: var(--mat-mork);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .samling-btn:hover { border-color: var(--mat-gronn); color: var(--mat-gronn); background: var(--mat-lys-gronn); }
+        .samling-btn i { color: var(--mat-gronn); font-size: .85rem; }
+
+        /* ── KOMMENTARER ── */
+        .kommentar-item {
+            background: #f8fafc; border-radius: 16px; padding: 16px 18px;
+            margin-bottom: 10px; border: 1px solid #f1f5f9;
+        }
+        .kom-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .kom-author { display: flex; align-items: center; gap: 10px; }
+        .kom-avatar {
+            width: 32px; height: 32px; border-radius: 10px;
+            background: linear-gradient(135deg, var(--mat-gronn), var(--mat-gronn-m, #27ae60));
+            color: white; font-weight: 800; font-size: .8rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .kom-name { font-weight: 700; font-size: .88rem; color: var(--mat-mork); }
+        .kom-time { font-size: .72rem; color: #94a3b8; }
+        .kom-text { font-size: .9rem; color: #475569; line-height: 1.6; margin: 0 0 8px; }
+        .btn-reply {
+            background: none; border: none; color: var(--mat-gronn); font-size: .78rem;
+            font-weight: 700; cursor: pointer; padding: 3px 0; font-family: inherit; transition: .15s;
+        }
+        .btn-reply:hover { color: var(--mat-gronn-m, #27ae60); }
+        .reply-form { display: none; margin-top: 10px; }
+        .reply-form.open { display: flex; gap: 8px; }
+        .comment-replies { margin-left: 40px; margin-top: 8px; }
+        .reply-item {
+            background: #f0fdf4; border-radius: 12px; padding: 12px 16px;
+            margin-bottom: 6px; border: 1px solid #dcfce7;
+        }
+        .kom-input {
+            flex: 1; border: 2px solid #f1f5f9; border-radius: 13px; padding: 11px 16px;
+            font-family: inherit; font-size: .9rem; outline: none; transition: border-color .2s;
+        }
+        .kom-input:focus { border-color: var(--mat-gronn); }
+        .kom-submit {
+            background: var(--mat-gronn); color: white; border: none; padding: 11px 18px;
+            border-radius: 13px; font-weight: 800; cursor: pointer; font-family: inherit;
+            transition: .2s; flex-shrink: 0;
+        }
+        .kom-submit:hover { background: var(--mat-gronn-m, #27ae60); }
+
+        /* ── FOOTER ACTIONS ── */
+        .footer-actions {
+            margin-top: 28px; padding-top: 24px; border-top: 1px solid #f1f5f9;
+            display: flex; gap: 10px; flex-wrap: wrap;
+        }
+        .btn-action {
+            background: #f1f5f9; color: var(--mat-mork); padding: 12px 24px;
+            border-radius: 13px; text-decoration: none; font-weight: 700; font-size: .9rem;
+            transition: .2s; border: none; cursor: pointer; font-family: inherit;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-action:hover { background: #e2e8f0; color: var(--mat-mork); }
+
+        /* ── QR MODAL ── */
+        .qr-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 9999; align-items: center; justify-content: center; }
+        .qr-modal.open { display: flex; }
+        .qr-box { background: white; border-radius: 24px; padding: 36px; text-align: center; box-shadow: 0 40px 80px rgba(0,0,0,.2); max-width: 320px; width: 90%; }
+        .qr-box h3 { font-weight: 900; margin: 0 0 16px; font-size: 1.1rem; }
+        .qr-box img { width: 200px; height: 200px; border-radius: 12px; }
+        .qr-box p { font-size: .8rem; color: #94a3b8; margin: 12px 0 0; }
+        .btn-qr-close { margin-top: 18px; background: #f1f5f9; border: none; padding: 10px 24px; border-radius: 12px; font-weight: 800; cursor: pointer; font-family: inherit; }
+
+        @media (max-width: 860px) {
+            .content-grid { grid-template-columns: 1fr; }
+            .back-btn { top: 70px; }
+        }
+        @media (max-width: 600px) {
+            .stats-bar { flex-direction: row; }
+            .stat-item { padding: 14px 10px; }
+            .hero-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <th:block th:if="${o != null}">
+
+        <!-- HERO -->
+        <div class="recipe-hero">
+            <img th:with="imgUrl=${o.bildeUrl != null && o.bildeUrl != '' ? o.bildeUrl : 'https://images.unsplash.com/photo-1495521821757-a1efb6729352'}"
+                 th:src="${#strings.contains(imgUrl, 'unsplash.com') and !#strings.contains(imgUrl, 'w=') ? imgUrl + '?auto=format&fit=crop&w=1600&q=90' : imgUrl}"
+                 alt="" fetchpriority="high">
+            <a href="javascript:history.back()" class="back-btn">
+                <i class="fas fa-chevron-left"></i> Tilbake
+            </a>
+            <div class="hero-overlay">
+                <div class="hero-chips">
+                    <span th:if="${o.kategori != null}" class="hero-chip green" th:text="${o.kategori}"></span>
+                    <span th:if="${o.vanskelighet != null}" class="hero-chip" th:text="${o.vanskelighet}"></span>
+                    <span th:if="${o.erOffentlig}" class="hero-chip">🌍 Offentlig</span>
+                </div>
+                <h1 class="hero-title" th:text="${o.tittel}">Tittel</h1>
+            </div>
+        </div>
+
+        <div class="recipe-wrap">
+
+            <!-- STATS BAR -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <i class="far fa-user"></i>
+                    <strong th:text="${o.brukerNavn}">Ukjent</strong>
+                    <span>Kokk</span>
+                </div>
+                <div class="stat-item" th:if="${o.tilberedningstid != null}">
+                    <i class="far fa-clock"></i>
+                    <strong th:text="${o.tilberedningstid} + ' min'">–</strong>
+                    <span>Tid</span>
+                </div>
+                <div class="stat-item" th:if="${o.porsjoner != null}">
+                    <i class="fas fa-utensils"></i>
+                    <strong th:text="${o.porsjoner} + ' pors.'">–</strong>
+                    <span>Porsjoner</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-star" style="color:#f59e0b;"></i>
+                    <strong th:text="${antallRatinger > 0 ? #numbers.formatDecimal(snittRating,1,1) : '–'}">–</strong>
+                    <span th:text="${antallRatinger} + ' stemmer'">Vurdering</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-heart" style="color:#dc2626;"></i>
+                    <strong th:text="${likeAntall}">0</strong>
+                    <span>Liker</span>
+                </div>
+                <div class="stat-item">
+                    <i class="far fa-calendar"></i>
+                    <strong th:text="${o.datoOpprettet != null ? #temporals.format(o.datoOpprettet,'dd.MM.yy') : '–'}">–</strong>
+                    <span>Lagret</span>
+                </div>
+            </div>
+
+            <div class="content-grid">
+
+                <!-- ── SIDEBAR ── -->
+                <aside class="sidebar">
+
+                    <!-- Ingredienser -->
+                    <div class="side-card" th:if="${o.ingredienser != null and !#strings.isEmpty(o.ingredienser)}">
+                        <div class="side-card-head">
+                            <i class="fas fa-list-ul"></i>
+                            <h3>Ingredienser</h3>
+                        </div>
+                        <div class="side-card-body">
+                            <div class="ingredient-text" id="ingText" style="display:none;" th:text="${o.ingredienser}"></div>
+                            <div id="ingList"></div>
+                        </div>
+                    </div>
+
+                    <!-- Ingrediens-substitutt (AI) -->
+                    <div class="side-card" th:if="${o.ingredienser != null and !#strings.isEmpty(o.ingredienser) and innlogget}">
+                        <div class="side-card-head">
+                            <i class="fas fa-wand-magic-sparkles" style="color:var(--mat-gronn);"></i>
+                            <h3>Ingredienssubstitutt</h3>
+                        </div>
+                        <div class="side-card-body">
+                            <p style="font-size:.82rem;color:#64748b;margin-bottom:12px;line-height:1.5;">
+                                Mangler du en ingrediens? Skriv inn hva du leter etter, så finner AI deg alternativer.
+                            </p>
+                            <div style="display:flex;gap:8px;margin-bottom:12px;">
+                                <input type="text" id="substituttInput"
+                                       placeholder="f.eks. smør, fløte…"
+                                       style="flex:1;border:2px solid #e8f5e9;border-radius:12px;padding:9px 13px;
+                                              font-family:inherit;font-size:.88rem;outline:none;
+                                              transition:border-color .2s;color:var(--mat-mork);"
+                                       onfocus="this.style.borderColor='var(--mat-gronn)'"
+                                       onblur="this.style.borderColor='#e8f5e9'">
+                                <button onclick="hentSubstitutt()" id="substituttBtn"
+                                        style="background:var(--mat-gronn);color:white;border:none;
+                                               padding:9px 14px;border-radius:12px;font-weight:800;
+                                               font-size:.82rem;cursor:pointer;font-family:inherit;
+                                               transition:.2s;white-space:nowrap;flex-shrink:0;">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                            <div id="substituttResult" style="display:none;">
+                                <div id="substituttSpinner" style="text-align:center;padding:16px 0;">
+                                    <div class="skel skel-line m" style="margin:0 auto 8px;"></div>
+                                    <div class="skel skel-line s" style="margin:0 auto 8px;"></div>
+                                    <div class="skel skel-line l" style="margin:0 auto;"></div>
+                                </div>
+                                <div id="substituttTekst" style="display:none;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Del / handleliste -->
+                    <div class="side-card">
+                        <div class="side-card-head">
+                            <i class="fas fa-share-nodes"></i>
+                            <h3>Del og lagre</h3>
+                        </div>
+                        <div class="side-card-body" style="display:flex;flex-direction:column;gap:8px;">
+                            <button class="act-btn" onclick="kopierLenke()" style="width:100%;justify-content:center;">
+                                <i class="fa-solid fa-link"></i> Kopier lenke
+                            </button>
+                            <button class="act-btn" onclick="visQr()" style="width:100%;justify-content:center;">
+                                <i class="fa-solid fa-qrcode"></i> QR-kode
+                            </button>
+                            <form th:if="${innloggetBrukerId != null}"
+                                  th:action="@{'/handleliste/fra-oppskrift/' + ${o.id}}" method="POST">
+                                <button type="submit" class="act-btn" style="width:100%;justify-content:center;">
+                                    <i class="fa-solid fa-cart-plus"></i> Legg i handleliste
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Legg i samling -->
+                    <div th:if="${innloggetBrukerId != null and !mineSamlinger.isEmpty()}" class="side-card">
+                        <div class="side-card-head">
+                            <i class="fas fa-layer-group"></i>
+                            <h3>Legg i samling</h3>
+                        </div>
+                        <div class="side-card-body" style="display:flex;flex-direction:column;gap:6px;padding-top:10px;">
+                            <form th:each="s : ${mineSamlinger}"
+                                  th:action="@{'/samlinger/' + ${s.id} + '/legg-til/' + ${o.id}}" method="POST">
+                                <button type="submit" class="samling-btn">
+                                    <i class="fa-solid fa-plus"></i>
+                                    <span th:text="${s.navn}">Samling</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </aside>
+
+                <!-- ── MAIN ── -->
+                <div class="main-col">
+
+                    <!-- Liker + rating -->
+                    <div class="main-card">
+                        <div class="main-card-body">
+                            <div class="social-row">
+                                <!-- Liker -->
+                                <form th:if="${innloggetBrukerId != null}" th:action="@{'/lik/' + ${o.id}}" method="POST">
+                                    <button type="submit" class="like-btn"
+                                            th:classappend="${erLikt} ? ' liked' : ''">
+                                        <i th:class="${erLikt} ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
+                                        <span th:text="${likeAntall}">0</span>
+                                    </button>
+                                </form>
+                                <span th:unless="${innloggetBrukerId != null}" class="like-count">
+                                    <i class="fa-regular fa-heart"></i> <span th:text="${likeAntall}">0</span>
+                                </span>
+
+                                <!-- Rating -->
+                                <div class="stars-row">
+                                    <form th:if="${innloggetBrukerId != null}" th:action="@{'/rating/' + ${o.id}}" method="POST"
+                                          class="stars-row" id="ratingForm" style="gap:4px;">
+                                        <input type="hidden" name="verdi" id="ratingVerdi" th:value="${minRating > 0 ? minRating : 1}">
+                                        <th:block th:each="i : ${#numbers.sequence(1,5)}">
+                                            <button type="submit" class="star-btn"
+                                                    th:classappend="${i <= minRating} ? ' active' : ''"
+                                                    th:data-val="${i}" onclick="setRating(this)">★</button>
+                                        </th:block>
+                                    </form>
+                                    <div th:unless="${innloggetBrukerId != null}" style="display:flex;gap:3px;">
+                                        <th:block th:each="i : ${#numbers.sequence(1,5)}">
+                                            <span style="font-size:1.3rem;"
+                                                  th:style="${i <= snittRating} ? 'color:#f59e0b;' : 'color:#e2e8f0;'">★</span>
+                                        </th:block>
+                                    </div>
+                                    <span class="rating-meta"
+                                          th:text="${antallRatinger > 0 ? #numbers.formatDecimal(snittRating,1,1) + '/5' : 'Ingen ennå'}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fremgangsmåte -->
+                    <div class="main-card" th:if="${o.fremgangsmate != null and !#strings.isEmpty(o.fremgangsmate)}">
+                        <div class="main-card-head">
+                            <h2><i class="fas fa-list-ol"></i> Fremgangsmåte</h2>
+                            <button class="cook-btn" onclick="startKokemodus()" id="cookToggle">
+                                <i class="fas fa-fire"></i> Start matlaging
+                            </button>
+                        </div>
+                        <div class="main-card-body">
+                            <div class="step-text" id="stepText" th:text="${o.fremgangsmate}"></div>
+                            <div id="stepList" style="display:none;"></div>
+                            <div id="progressWrap" class="cook-progress-wrap" style="display:none;">
+                                <div class="cook-progress-label" id="progressLabel">0 av 0 steg fullført</div>
+                                <div class="cook-progress-bar"><div class="cook-progress-fill" id="progressFill"></div></div>
+                            </div>
+
+                            <!-- Footer-handlinger -->
+                            <div class="footer-actions">
+                                <th:block th:if="${erEier}">
+                                    <a th:href="@{'/rediger/' + ${o.id}}" class="btn-action">
+                                        <i class="fas fa-pen"></i> Rediger
+                                    </a>
+                                    <form th:action="@{/pdf}" method="POST" style="display:inline;">
+                                        <input type="hidden" name="id" th:value="${o.id}">
+                                        <button type="submit" class="btn-action">
+                                            <i class="fas fa-file-pdf"></i> Last ned PDF
+                                        </button>
+                                    </form>
+                                </th:block>
+                                <th:block th:unless="${erEier}">
+                                    <form th:action="@{'/kopier/' + ${o.id}}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn-action">
+                                            <i class="fas fa-copy"></i> Lagre i min kokebok
+                                        </button>
+                                    </form>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kommentarer -->
+                    <div class="main-card">
+                        <div class="main-card-head">
+                            <h2><i class="fas fa-comments"></i> Kommentarer</h2>
+                        </div>
+                        <div class="main-card-body">
+                            <div th:if="${kommentarer.isEmpty()}"
+                                 style="color:#94a3b8;font-size:.88rem;margin-bottom:20px;text-align:center;padding:20px 0;">
+                                Ingen kommentarer ennå — vær den første!
+                            </div>
+
+                            <th:block th:each="k : ${kommentarer}" th:if="${k.foreldreId == null}">
+                                <div class="kommentar-item">
+                                    <div class="kom-header">
+                                        <div class="kom-author">
+                                            <div class="kom-avatar" th:text="${#strings.substring(k.brukerNavn,0,1)}">U</div>
+                                            <div>
+                                                <div class="kom-name" th:text="${k.brukerNavn}">Navn</div>
+                                                <div class="kom-time" th:text="${k.opprettet != null ? #temporals.format(k.opprettet,'dd.MM.yy HH:mm') : ''}"></div>
+                                            </div>
+                                        </div>
+                                        <form th:if="${innloggetBrukerId != null and k.brukerId == innloggetBrukerId}"
+                                              th:action="@{'/slett-kommentar/' + ${k.id}}" method="POST">
+                                            <button type="submit" style="background:none;border:none;color:#cbd5e1;cursor:pointer;padding:4px 8px;border-radius:8px;transition:.2s;"
+                                                    onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#cbd5e1'">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <p class="kom-text" th:text="${k.tekst}"></p>
+                                    <th:block th:if="${innloggetBrukerId != null}">
+                                        <button class="btn-reply" th:onclick="'toggleReply(' + ${k.id} + ')'">
+                                            <i class="fa-solid fa-reply"></i> Svar
+                                        </button>
+                                        <div th:id="'reply-' + ${k.id}" class="reply-form">
+                                            <form th:action="@{'/kommentar/' + ${o.id}}" method="POST" style="display:flex;gap:8px;flex:1;">
+                                                <input type="hidden" name="foreldreId" th:value="${k.id}">
+                                                <input type="text" name="tekst" class="kom-input" placeholder="Svar..." required maxlength="500">
+                                                <button type="submit" class="kom-submit"><i class="fa-solid fa-paper-plane"></i></button>
+                                            </form>
+                                        </div>
+                                    </th:block>
+                                    <div class="comment-replies">
+                                        <th:block th:each="svar : ${kommentarer}" th:if="${svar.foreldreId == k.id}">
+                                            <div class="reply-item">
+                                                <div class="kom-author" style="margin-bottom:6px;">
+                                                    <div class="kom-avatar" style="width:26px;height:26px;border-radius:8px;font-size:.72rem;" th:text="${#strings.substring(svar.brukerNavn,0,1)}">U</div>
+                                                    <span class="kom-name" th:text="${svar.brukerNavn}">Navn</span>
+                                                    <span class="kom-time" th:text="${svar.opprettet != null ? #temporals.format(svar.opprettet,'dd.MM.yy HH:mm') : ''}"></span>
+                                                </div>
+                                                <p style="margin:0;font-size:.88rem;color:#475569;line-height:1.5;" th:text="${svar.tekst}"></p>
+                                            </div>
+                                        </th:block>
+                                    </div>
+                                </div>
+                            </th:block>
+
+                            <form th:if="${innloggetBrukerId != null}"
+                                  th:action="@{'/kommentar/' + ${o.id}}" method="POST"
+                                  style="display:flex;gap:10px;margin-top:16px;">
+                                <input type="text" name="tekst" class="kom-input" placeholder="Skriv en kommentar..." required maxlength="500">
+                                <button type="submit" class="kom-submit"><i class="fa-solid fa-paper-plane"></i></button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- FULLSKJERM KOKEMODUS -->
+        <div id="kokeOverlay">
+            <div class="koke-topbar">
+                <span class="koke-title" th:text="${o.tittel}"></span>
+                <span class="koke-meta" id="kokeMetaTekst"></span>
+                <button class="koke-close" onclick="avsluttKoke()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="koke-progressbar"><div class="koke-progressfill" id="kokeProgFill"></div></div>
+            <div class="koke-body" id="kokeBody">
+                <div class="koke-stepnum" id="kokeStepNum">1</div>
+                <div class="koke-steptext" id="kokeStepText"></div>
+            </div>
+            <div class="koke-done-screen" id="kokeDone">
+                <div class="koke-done-ikon">🎉</div>
+                <h2>Ferdig laget!</h2>
+                <p>Du har fullført alle stegene. God appetitt!</p>
+                <button class="koke-btn koke-btn-next" style="max-width:280px;" onclick="avsluttKoke()">
+                    <i class="fas fa-check"></i> Tilbake til oppskriften
+                </button>
+            </div>
+            <div class="koke-footer">
+                <button class="koke-btn koke-btn-prev" id="kokePrev" onclick="kokeNav(-1)">
+                    <i class="fas fa-chevron-left"></i> Forrige
+                </button>
+                <button class="koke-btn koke-btn-next" id="kokeNext" onclick="kokeNav(1)">
+                    Neste <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- QR MODAL -->
+        <div class="qr-modal" id="qrModal" onclick="lukkQr(event)">
+            <div class="qr-box">
+                <h3>Del oppskriften</h3>
+                <img id="qrImg" src="" alt="QR-kode">
+                <p>Skann koden for å åpne oppskriften</p>
+                <button class="btn-qr-close" onclick="document.getElementById('qrModal').classList.remove('open')">Lukk</button>
+            </div>
+        </div>
+
+    </th:block>
+
+    <th:block th:unless="${o != null}">
+        <div class="container text-center" style="padding-top:160px;">
+            <div style="font-size:4rem;margin-bottom:20px;">🍽️</div>
+            <h2 style="font-weight:900;letter-spacing:-1px;">Oppskriften finnes ikke</h2>
+            <p style="color:#94a3b8;margin-bottom:30px;">Den kan ha blitt slettet eller er ikke lenger tilgjengelig.</p>
+            <a href="/oppdag" style="background:var(--mat-gronn);color:white;text-decoration:none;padding:12px 28px;border-radius:14px;font-weight:800;">
+                Utforsk oppskrifter
+            </a>
+        </div>
+    </th:block>
+
+    <div th:replace="~{fragments :: bottom_nav}"></div>
+    <div th:replace="~{fragments :: scripts}"></div>
+
+    <script>
+        // ── Ingredienser som sjekkliste ved sidelast ──
+        function buildIngredientList() {
+            const ingText = document.getElementById('ingText');
+            const ingList = document.getElementById('ingList');
+            if (!ingText || !ingList) return;
+            const lines = ingText.innerText.split('\n').map(l => l.trim()).filter(l => l);
+            ingList.innerHTML = '';
+            lines.forEach(line => {
+                const clean = line.replace(/^[-•*]\s+/, '').replace(/^\d+\.\s+/, '');
+                const item = document.createElement('div');
+                item.className = 'cook-item';
+                item.innerHTML = `<div class="cook-check"></div><div class="cook-text">${clean}</div>`;
+                item.addEventListener('click', () => item.classList.toggle('done'));
+                ingList.appendChild(item);
+            });
+        }
+        document.addEventListener('DOMContentLoaded', buildIngredientList);
+
+        // ── Fullskjerm kokemodus ──
+        let kokeSteg = [];
+        let kokeIdx = 0;
+
+        function startKokemodus() {
+            const stepText = document.getElementById('stepText');
+            if (!stepText) return;
+            const lines = stepText.innerText.split('\n').map(l => l.trim()).filter(l => l);
+            kokeSteg = lines.map(l => l.replace(/^[-•*]\s+/, '').replace(/^\d+\.\s+/, ''));
+            if (kokeSteg.length === 0) return;
+            kokeIdx = 0;
+            document.getElementById('kokeOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+            oppdaterKokeSteg();
+        }
+
+        function oppdaterKokeSteg() {
+            const total = kokeSteg.length;
+            const body = document.getElementById('kokeBody');
+            const done = document.getElementById('kokeDone');
+            const finished = kokeIdx >= total;
+
+            body.style.display = finished ? 'none' : 'flex';
+            done.classList.toggle('vis', finished);
+            document.getElementById('koke-footer') // hide footer on done
+            document.querySelector('.koke-footer').style.display = finished ? 'none' : 'flex';
+
+            if (!finished) {
+                document.getElementById('kokeStepNum').textContent = kokeIdx + 1;
+                document.getElementById('kokeStepText').textContent = kokeSteg[kokeIdx];
+            }
+
+            const pct = Math.min(100, Math.round(((kokeIdx) / total) * 100));
+            document.getElementById('kokeProgFill').style.width = pct + '%';
+            document.getElementById('kokeMetaTekst').textContent = finished ? '' : `${kokeIdx + 1} / ${total}`;
+            document.getElementById('kokePrev').disabled = kokeIdx <= 0;
+        }
+
+        function kokeNav(retning) {
+            kokeIdx = Math.max(0, Math.min(kokeSteg.length, kokeIdx + retning));
+            oppdaterKokeSteg();
+        }
+
+        function avsluttKoke() {
+            document.getElementById('kokeOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // Sveipestøtte
+        let touchStartX = 0;
+        document.getElementById('kokeOverlay').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+        document.getElementById('kokeOverlay').addEventListener('touchend', e => {
+            const diff = touchStartX - e.changedTouches[0].clientX;
+            if (Math.abs(diff) > 60) kokeNav(diff > 0 ? 1 : -1);
+        });
+
+        // Piltaster
+        document.addEventListener('keydown', e => {
+            if (!document.getElementById('kokeOverlay').classList.contains('open')) return;
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') kokeNav(1);
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') kokeNav(-1);
+            if (e.key === 'Escape') avsluttKoke();
+        });
+
+        function setRating(btn) {
+            const val = parseInt(btn.dataset.val);
+            document.getElementById('ratingVerdi').value = val;
+            document.querySelectorAll('.star-btn').forEach((s, i) => s.classList.toggle('active', i < val));
+        }
+        document.querySelectorAll('.star-btn').forEach(btn => {
+            btn.addEventListener('mouseover', () => {
+                const val = parseInt(btn.dataset.val);
+                document.querySelectorAll('.star-btn').forEach((s, i) => s.classList.toggle('active', i < val));
+            });
+        });
+        const rf = document.getElementById('ratingForm');
+        if (rf) {
+            rf.addEventListener('mouseleave', () => {
+                const cur = parseInt(document.getElementById('ratingVerdi').value) || 0;
+                document.querySelectorAll('.star-btn').forEach((s, i) => s.classList.toggle('active', i < cur));
+            });
+        }
+
+        function kopierLenke() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                const btn = event.target.closest('button');
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Kopiert!';
+                btn.style.borderColor = 'var(--mat-gronn)'; btn.style.color = 'var(--mat-gronn)';
+                setTimeout(() => { btn.innerHTML = orig; btn.style.borderColor = ''; btn.style.color = ''; }, 2000);
+            });
+        }
+        function visQr() {
+            document.getElementById('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(window.location.href);
+            document.getElementById('qrModal').classList.add('open');
+        }
+        function lukkQr(e) {
+            if (e.target === document.getElementById('qrModal')) document.getElementById('qrModal').classList.remove('open');
+        }
+        function toggleReply(id) {
+            const el = document.getElementById('reply-' + id);
+            el.classList.toggle('open');
+            if (el.classList.contains('open')) el.querySelector('input').focus();
+        }
+
+        // ── INGREDIENS SUBSTITUTT ──
+        async function hentSubstitutt() {
+            const input = document.getElementById('substituttInput');
+            const ingrediens = input.value.trim();
+            if (!ingrediens) { input.focus(); return; }
+
+            const btn = document.getElementById('substituttBtn');
+            const result = document.getElementById('substituttResult');
+            const spinner = document.getElementById('substituttSpinner');
+            const tekst = document.getElementById('substituttTekst');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            result.style.display = 'block';
+            spinner.style.display = 'block';
+            tekst.style.display = 'none';
+
+            try {
+                const fd = new FormData();
+                fd.append('ingrediens', ingrediens);
+                const res = await fetch('/api/substitutt', { method: 'POST', body: fd });
+                if (res.status === 402) {
+                    tekst.innerHTML = `<div style="text-align:center;padding:8px 0;">
+                        <div style="font-size:1.4rem;margin-bottom:8px;">✨</div>
+                        <div style="font-weight:800;font-size:.9rem;color:var(--mat-mork);margin-bottom:6px;">Krever AI-abonnement</div>
+                        <p style="font-size:.8rem;color:#64748b;margin-bottom:12px;">Få tilgang til ingredienssubstitutt og alle andre AI-funksjoner for 69,90 kr/mnd.</p>
+                        <a href="/abonnement" style="background:var(--mat-gronn);color:white;text-decoration:none;
+                            padding:10px 20px;border-radius:12px;font-weight:800;font-size:.85rem;display:inline-block;">
+                            Se abonnement
+                        </a></div>`;
+                    spinner.style.display = 'none';
+                    tekst.style.display = 'block';
+                    return;
+                }
+                const data = await res.json();
+                const linjer = data.svar.split('\n').filter(l => l.trim());
+                tekst.innerHTML = linjer.map(l => {
+                    const clean = l.trim();
+                    if (!clean) return '';
+                    const match = clean.match(/^(\d+)\.\s*(.+?)\s*[—–-]\s*(.+)$/);
+                    if (match) {
+                        return `<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #f0fdf4;align-items:flex-start;">
+                            <div style="width:24px;height:24px;border-radius:8px;background:var(--mat-lys-gronn);color:var(--mat-gronn);
+                                        font-weight:900;font-size:.78rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${match[1]}</div>
+                            <div><div style="font-weight:800;font-size:.88rem;color:var(--mat-mork);">${match[2]}</div>
+                            <div style="font-size:.8rem;color:#64748b;margin-top:2px;">${match[3]}</div></div></div>`;
+                    }
+                    return `<p style="font-size:.88rem;color:#475569;margin:6px 0;">${clean}</p>`;
+                }).join('');
+                spinner.style.display = 'none';
+                tekst.style.display = 'block';
+            } catch (e) {
+                tekst.innerHTML = '<p style="color:#dc2626;font-size:.85rem;">Noe gikk galt. Prøv igjen.</p>';
+                spinner.style.display = 'none';
+                tekst.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-search"></i>';
+            }
+        }
+
+        document.getElementById('substituttInput')?.addEventListener('keydown', e => {
+            if (e.key === 'Enter') hentSubstitutt();
+        });
+
+    </script>
+</body>
+</html>

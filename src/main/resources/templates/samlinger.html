@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Samlinger | MatMinne</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        /* ── HERO ── */
+        .page-hero {
+            background: linear-gradient(160deg, #ecfdf5 0%, #d1fae5 60%, #bbf7d0 100%);
+            border-bottom: 1px solid #a7f3d0;
+            padding: 48px 0 64px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(34,197,94,.15) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .hero-inner { position: relative; z-index: 1; }
+
+        .hero-tag {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--mat-gronn-m);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .page-hero h1 {
+            font-size: 2.6rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            color: var(--mat-mork);
+            margin: 0 0 6px;
+        }
+
+        .page-hero p { color: #64748b; font-size: .9rem; margin: 0; }
+
+        /* ── CONTENT ── */
+        .content-wrap {
+            max-width: 900px;
+            margin: -36px auto 80px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ── NEW SAMLING CARD ── */
+        .ny-samling-card {
+            background: white;
+            border-radius: 24px;
+            padding: 28px 30px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 20px 56px rgba(0,0,0,.07);
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--mat-gronn);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .field-input {
+            flex: 1;
+            min-width: 160px;
+            border: 2px solid #f1f5f9;
+            border-radius: 14px;
+            padding: 13px 16px;
+            font-size: .95rem;
+            font-family: inherit;
+            font-weight: 500;
+            color: var(--mat-mork);
+            background: #f8fafc;
+            outline: none;
+            transition: border-color .2s, background .2s;
+        }
+
+        .field-input:focus { border-color: var(--mat-gronn); background: white; }
+
+        .btn-create {
+            background: var(--mat-gronn);
+            color: white;
+            border: none;
+            padding: 13px 24px;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: .92rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            box-shadow: 0 8px 24px rgba(46,204,113,.25);
+        }
+
+        .btn-create:hover { background: var(--mat-gronn-m); transform: translateY(-2px); }
+
+        /* ── GRID ── */
+        .samlinger-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 18px;
+        }
+
+        .samling-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 20px rgba(0,0,0,.04);
+            display: flex;
+            flex-direction: column;
+            transition: transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .28s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .samling-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 48px rgba(0,0,0,.1);
+        }
+
+        .samling-cover {
+            height: 130px; position: relative; overflow: hidden;
+            background: linear-gradient(135deg, var(--mat-mork), #1a2a1a);
+        }
+        .samling-cover img { width:100%; height:100%; object-fit:cover; transition:transform .5s; display:block; }
+        .samling-card:hover .samling-cover img { transform: scale(1.06); }
+        .samling-cover-placeholder {
+            width:100%; height:100%;
+            background: linear-gradient(135deg, var(--mat-mork) 0%, #1a3a1a 100%);
+            display: flex; align-items: center; justify-content: center; font-size: 2.4rem;
+        }
+        .samling-cover-overlay {
+            position:absolute; inset:0;
+            background: linear-gradient(to top, rgba(0,0,0,.5) 0%, transparent 60%);
+        }
+
+        .samling-body { padding: 16px 18px 16px; flex-grow:1; display:flex; flex-direction:column; gap:8px; }
+
+        .samling-icon {
+            width: 48px; height: 48px;
+            background: var(--mat-lys-gronn);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+        }
+
+        .samling-navn {
+            font-weight: 900;
+            font-size: 1.05rem;
+            letter-spacing: -.3px;
+            color: var(--mat-mork);
+        }
+
+        .samling-besk {
+            font-size: .83rem;
+            color: #94a3b8;
+            line-height: 1.5;
+            flex-grow: 1;
+        }
+
+        .samling-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .samling-count {
+            font-size: .75rem;
+            font-weight: 700;
+            color: var(--mat-gronn);
+            background: var(--mat-lys-gronn);
+            padding: 4px 10px;
+            border-radius: 99px;
+        }
+
+        .btn-slett {
+            background: none;
+            border: none;
+            color: #cbd5e1;
+            font-size: .85rem;
+            cursor: pointer;
+            padding: 4px;
+            transition: color .2s;
+        }
+
+        .btn-slett:hover { color: #e74c3c; }
+
+        /* ── EMPTY ── */
+        .empty-state {
+            text-align: center;
+            padding: 70px 20px;
+        }
+
+        .empty-icon {
+            width: 88px; height: 88px;
+            background: var(--mat-lys-gronn);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4rem;
+            margin: 0 auto 20px;
+        }
+
+        .empty-state h3 { font-weight: 900; font-size: 1.4rem; letter-spacing: -.5px; margin-bottom: 8px; color: var(--mat-mork); }
+        .empty-state p { color: #94a3b8; }
+
+        @media (max-width: 600px) {
+            .samlinger-grid { grid-template-columns: 1fr; }
+            .input-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <!-- HERO -->
+    <div class="page-hero">
+        <div class="container hero-inner">
+            <span class="hero-tag">Din kokebok</span>
+            <h1>Samlinger</h1>
+            <p>Organiser oppskriftene dine i egne samlinger</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-wrap">
+
+            <!-- NY SAMLING -->
+            <div class="ny-samling-card">
+                <div class="card-title">
+                    <i class="fa-solid fa-plus"></i> Lag ny samling
+                </div>
+                <form action="/samlinger/ny" method="POST">
+                    <div class="input-row">
+                        <input type="text" name="navn" class="field-input"
+                               placeholder="f.eks. Middagsklassikere" required>
+                        <input type="text" name="beskrivelse" class="field-input"
+                               placeholder="Kort beskrivelse (valgfritt)">
+                        <button type="submit" class="btn-create">
+                            <i class="fa-solid fa-layer-group"></i> Opprett
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- EMPTY -->
+            <div th:if="${samlinger == null or #lists.isEmpty(samlinger)}"
+                 style="background:white;border-radius:24px;border:1px solid #f1f5f9;box-shadow:0 4px 20px rgba(0,0,0,.04);">
+                <div class="empty-state">
+                    <div class="empty-icon">📚</div>
+                    <h3>Ingen samlinger ennå</h3>
+                    <p>Lag din første samling ovenfor og begynn å organisere oppskriftene!</p>
+                </div>
+            </div>
+
+            <!-- GRID -->
+            <div class="samlinger-grid" th:unless="${samlinger == null or #lists.isEmpty(samlinger)}">
+                <div th:each="s : ${samlinger}">
+                    <a th:href="@{'/samlinger/' + ${s.id}}" class="samling-card">
+                        <!-- Coverfoto -->
+                        <div class="samling-cover">
+                            <img th:if="${forsideBilder[s.id] != null}"
+                                 th:src="${forsideBilder[s.id]}" alt="" loading="lazy">
+                            <div th:unless="${forsideBilder[s.id] != null}"
+                                 class="samling-cover-placeholder">📂</div>
+                            <div class="samling-cover-overlay"></div>
+                        </div>
+                        <!-- Info -->
+                        <div class="samling-body">
+                            <div class="samling-navn" th:text="${s.navn}">Navn</div>
+                            <div class="samling-besk"
+                                 th:text="${s.beskrivelse != null and s.beskrivelse != '' ? s.beskrivelse : 'Ingen beskrivelse'}">
+                            </div>
+                            <div class="samling-footer">
+                                <span class="samling-count"
+                                      th:text="${(antallPerSamling[s.id] != null ? antallPerSamling[s.id] : 0) + ' oppskrift' + (antallPerSamling[s.id] != null and antallPerSamling[s.id] == 1 ? '' : 'er')}">
+                                </span>
+                                <form th:action="@{'/samlinger/slett/' + ${s.id}}" method="POST"
+                                      onclick="event.stopPropagation();">
+                                    <button type="submit" class="btn-slett"
+                                            onclick="return confirm('Slett samlingen?');"
+                                            title="Slett samling">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: bottom_nav}"></div>
+    <div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

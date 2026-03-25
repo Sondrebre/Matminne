@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>AI Ukesmeny | MatMinne</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        /* ── HERO ── */
+        .ai-hero {
+            background: linear-gradient(160deg, #ecfdf5 0%, #d1fae5 55%, #bbf7d0 100%);
+            border-bottom: 1px solid #a7f3d0;
+            padding: 56px 0 88px;
+            position: relative; overflow: hidden; text-align: center;
+        }
+        .ai-hero::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(34,197,94,.12) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .ai-hero-glow {
+            position: absolute; width: 420px; height: 420px;
+            background: radial-gradient(circle, rgba(34,197,94,.16), transparent 65%);
+            left: 50%; top: -80px; transform: translateX(-50%);
+            pointer-events: none;
+        }
+        .ai-hero-inner { position: relative; z-index: 1; }
+        .ai-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: white; border: 1px solid #a7f3d0; border-radius: 99px;
+            padding: 5px 16px; font-size: .7rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 2px;
+            color: var(--mat-gronn-m); margin-bottom: 16px;
+            box-shadow: 0 4px 16px rgba(34,197,94,.12);
+        }
+        .ai-hero h1 {
+            font-size: clamp(2rem, 5vw, 3rem); font-weight: 900;
+            letter-spacing: -2px; color: var(--mat-mork); margin-bottom: 10px;
+        }
+        .ai-hero h1 span { color: var(--mat-gronn); }
+        .ai-hero p { color: #64748b; font-size: .95rem; max-width: 460px; margin: 0 auto; line-height: 1.7; }
+
+        /* ── FORM CARD ── */
+        .form-wrap {
+            max-width: 640px; margin: -44px auto 80px; padding: 0 20px;
+            position: relative; z-index: 10;
+        }
+
+        .form-card {
+            background: white; border-radius: 28px;
+            border: 1px solid #e8f5e9;
+            box-shadow: 0 20px 64px rgba(34,197,94,.12);
+            overflow: hidden;
+        }
+
+        .form-card-top {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            padding: 22px 28px; border-bottom: 1px solid #d1fae5;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .form-card-top-icon {
+            width: 46px; height: 46px; border-radius: 14px;
+            background: white; display: flex; align-items: center;
+            justify-content: center; font-size: 1.4rem;
+            box-shadow: 0 4px 14px rgba(34,197,94,.15);
+        }
+        .form-card-top h2 { font-weight: 900; font-size: 1.05rem; color: var(--mat-mork); margin: 0 0 2px; }
+        .form-card-top p { font-size: .8rem; color: #64748b; margin: 0; }
+
+        .form-body { padding: 28px; display: flex; flex-direction: column; gap: 24px; }
+
+        /* ── FIELD ── */
+        .field { display: flex; flex-direction: column; gap: 8px; }
+        .field label {
+            font-size: .82rem; font-weight: 800; color: var(--mat-mork);
+            display: flex; align-items: center; gap: 7px;
+        }
+        .field label i { color: var(--mat-gronn); font-size: .8rem; }
+        .field-hint { font-size: .76rem; color: #94a3b8; font-weight: 500; }
+
+        /* ── KJØTT SLIDER ── */
+        .kjott-wrap { display: flex; flex-direction: column; gap: 10px; }
+        .kjott-track {
+            display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px;
+        }
+        .kjott-btn {
+            aspect-ratio: 1; border-radius: 12px;
+            border: 2px solid #e8f5e9; background: #f8fafc;
+            font-size: .85rem; font-weight: 800; cursor: pointer;
+            transition: .15s; display: flex; align-items: center; justify-content: center;
+            color: #94a3b8; font-family: inherit;
+        }
+        .kjott-btn:hover { border-color: var(--mat-gronn); background: var(--mat-lys-gronn); color: var(--mat-gronn); }
+        .kjott-btn.sel {
+            border-color: var(--mat-gronn); background: var(--mat-gronn);
+            color: white; transform: scale(1.06);
+            box-shadow: 0 4px 14px rgba(34,197,94,.3);
+        }
+        .kjott-desc { font-size: .8rem; color: var(--mat-gronn); font-weight: 700; text-align: center; min-height: 18px; }
+
+        /* ── ALLERGI TAGS ── */
+        .allergi-grid {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;
+        }
+        .allergi-tag {
+            padding: 7px 14px; border-radius: 99px;
+            border: 2px solid #e8f5e9; background: #f8fafc;
+            font-size: .8rem; font-weight: 700; cursor: pointer;
+            transition: .15s; color: #64748b; user-select: none;
+        }
+        .allergi-tag:hover { border-color: var(--mat-gronn); color: var(--mat-gronn); }
+        .allergi-tag.sel {
+            border-color: var(--mat-gronn); background: var(--mat-lys-gronn);
+            color: var(--mat-gronn-m);
+        }
+
+        /* ── PORSJONER ── */
+        .porsjoner-row {
+            display: flex; align-items: center; gap: 0;
+            background: #f8fafc; border-radius: 14px; overflow: hidden;
+            border: 2px solid #e8f5e9; width: fit-content;
+        }
+        .pors-btn {
+            width: 46px; height: 46px; border: none; background: none;
+            font-size: 1.3rem; cursor: pointer; color: var(--mat-mork);
+            font-weight: 900; transition: .15s; font-family: inherit;
+        }
+        .pors-btn:hover { background: var(--mat-lys-gronn); color: var(--mat-gronn); }
+        .pors-val {
+            width: 52px; text-align: center; font-weight: 900;
+            font-size: 1.1rem; color: var(--mat-mork); border: none;
+            background: none; font-family: inherit;
+        }
+
+        /* ── TEXTAREA ── */
+        .field-textarea {
+            border: 2px solid #e8f5e9; border-radius: 14px;
+            padding: 12px 16px; font-family: inherit;
+            font-size: .88rem; font-weight: 500; color: var(--mat-mork);
+            outline: none; resize: vertical; min-height: 72px; transition: border-color .2s;
+            background: #f8fafc;
+        }
+        .field-textarea:focus { border-color: var(--mat-gronn); background: white; }
+        .field-textarea::placeholder { color: #cbd5e1; }
+
+        /* ── PREVIEW ── */
+        .preview-strip {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1px solid #a7f3d0; border-radius: 18px;
+            padding: 16px 20px; display: flex; gap: 16px; flex-wrap: wrap;
+        }
+        .preview-item { display: flex; align-items: center; gap: 8px; }
+        .preview-icon { font-size: 1.1rem; }
+        .preview-text { font-size: .82rem; font-weight: 700; color: var(--mat-mork); }
+
+        /* ── SUBMIT ── */
+        .btn-generer {
+            background: var(--mat-gronn); color: white; border: none;
+            padding: 18px; border-radius: 16px; font-weight: 900;
+            font-size: 1.02rem; cursor: pointer; font-family: inherit;
+            transition: .2s; display: flex; align-items: center;
+            justify-content: center; gap: 10px;
+            box-shadow: 0 10px 32px rgba(34,197,94,.35);
+        }
+        .btn-generer:hover { background: var(--mat-gronn-m); transform: translateY(-2px);
+            box-shadow: 0 16px 40px rgba(34,197,94,.4); }
+        .btn-generer:active { transform: scale(.97); }
+
+        /* ── LOADING OVERLAY ── */
+        .loading-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(240,253,244,.94); backdrop-filter: blur(12px);
+            z-index: 9999; flex-direction: column;
+            align-items: center; justify-content: center; gap: 24px;
+        }
+        .loading-overlay.vis { display: flex; }
+        .loading-spinner {
+            width: 72px; height: 72px; border-radius: 22px;
+            background: white; box-shadow: 0 16px 48px rgba(34,197,94,.18);
+            display: flex; align-items: center; justify-content: center; font-size: 2rem;
+            animation: loadPulse 1.2s ease-in-out infinite;
+        }
+        @keyframes loadPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 16px 48px rgba(34,197,94,.18); }
+            50% { transform: scale(1.08); box-shadow: 0 24px 64px rgba(34,197,94,.30); }
+        }
+        .loading-steps { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+        .loading-step {
+            font-size: .88rem; font-weight: 700; color: #64748b;
+            display: flex; align-items: center; gap: 8px; opacity: .4; transition: opacity .4s;
+        }
+        .loading-step.aktiv { opacity: 1; color: var(--mat-gronn); }
+        .loading-step i { font-size: .75rem; }
+        .loading-title { font-size: 1.3rem; font-weight: 900; color: var(--mat-mork); letter-spacing: -.5px; }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <!-- LOADING OVERLAY -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">🤖</div>
+        <div class="loading-title">AI lager ukesmenyen din…</div>
+        <div class="loading-steps">
+            <div class="loading-step aktiv" id="step1"><i class="fas fa-circle-dot"></i> Analyserer kostholdsønsker</div>
+            <div class="loading-step" id="step2"><i class="fas fa-circle-dot"></i> Velger balanserte retter</div>
+            <div class="loading-step" id="step3"><i class="fas fa-circle-dot"></i> Kontrollerer allergier</div>
+            <div class="loading-step" id="step4"><i class="fas fa-circle-dot"></i> Ferdigstiller ukeplan</div>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="ai-hero">
+        <div class="ai-hero-glow"></div>
+        <div class="container ai-hero-inner">
+            <div class="ai-badge"><i class="fas fa-wand-magic-sparkles"></i> AI-funksjon</div>
+            <h1>Din personlige<br><span>AI-ukesmeny</span></h1>
+            <p>Fortell Claude hva du liker og hva du ikke tåler — så lager den en komplett ukeplan for deg.</p>
+        </div>
+    </div>
+
+    <!-- FORM -->
+    <div class="form-wrap">
+        <div class="form-card">
+
+            <div class="form-card-top">
+                <div class="form-card-top-icon">🗓️</div>
+                <div>
+                    <h2>Tilpass din ukesmeny</h2>
+                    <p>Fyll inn dine preferanser, så gjør AI resten</p>
+                </div>
+            </div>
+
+            <form class="form-body" id="aiForm" action="/ukesmeny/ai/generer" method="POST">
+
+                <!-- KJØTTMIDDAGER -->
+                <div class="field">
+                    <label><i class="fas fa-drumstick-bite"></i> Kjøttbaserte middager per uke</label>
+                    <span class="field-hint">Klikk for å velge antall — resten blir fisk, vegetar eller annet</span>
+                    <div class="kjott-wrap">
+                        <div class="kjott-track">
+                            <button type="button" class="kjott-btn sel" data-val="0" onclick="velgKjott(this)">0</button>
+                            <button type="button" class="kjott-btn" data-val="1" onclick="velgKjott(this)">1</button>
+                            <button type="button" class="kjott-btn" data-val="2" onclick="velgKjott(this)">2</button>
+                            <button type="button" class="kjott-btn sel" data-val="3" onclick="velgKjott(this)">3</button>
+                            <button type="button" class="kjott-btn" data-val="4" onclick="velgKjott(this)">4</button>
+                            <button type="button" class="kjott-btn" data-val="5" onclick="velgKjott(this)">5</button>
+                            <button type="button" class="kjott-btn" data-val="6" onclick="velgKjott(this)">6</button>
+                            <button type="button" class="kjott-btn" data-val="7" onclick="velgKjott(this)">7</button>
+                        </div>
+                        <div class="kjott-desc" id="kjottDesc">3 kjøttmiddager · 4 fisk/vegetar</div>
+                    </div>
+                    <input type="hidden" name="kjottMiddager" id="kjottInput" value="3">
+                </div>
+
+                <!-- ALLERGIER/INTOLERANSER -->
+                <div class="field">
+                    <label><i class="fas fa-triangle-exclamation"></i> Allergier og intoleranser</label>
+                    <span class="field-hint">Klikk de som gjelder deg, eller skriv inn egne under</span>
+                    <div class="allergi-grid">
+                        <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="gluten">🌾 Gluten</div>
+                        <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="laktose">🥛 Laktose</div>
+                        <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="egg">🥚 Egg</div>
+                        <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="nøtter">🥜 Nøtter</div>
+                        <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="skalldyr">🦐 Skalldyr</div>
+                        <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="fisk">🐟 Fisk</div>
+                        <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="soya">🌱 Soya</div>
+                        <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="sennep">🌭 Sennep</div>
+                        <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="sesam">🫘 Sesam</div>
+                    </div>
+                    <input type="text" name="allergier" id="allergiInput" class="field-textarea"
+                           style="min-height:auto;resize:none;"
+                           placeholder="Andre allergier eller ting du ikke liker…">
+                </div>
+
+                <!-- PORSJONER -->
+                <div class="field">
+                    <label><i class="fas fa-users"></i> Antall porsjoner per rett</label>
+                    <div class="porsjoner-row">
+                        <button type="button" class="pors-btn" onclick="endrePors(-1)">−</button>
+                        <input type="text" class="pors-val" id="porsjoner" value="2" readonly>
+                        <button type="button" class="pors-btn" onclick="endrePors(1)">+</button>
+                    </div>
+                    <input type="hidden" name="porsjoner" id="porsjInput" value="2">
+                </div>
+
+                <!-- EKSTRA ØNSKER -->
+                <div class="field">
+                    <label><i class="fas fa-comment-dots"></i> Ekstra ønsker eller preferanser</label>
+                    <textarea class="field-textarea" name="ekstraOnsker"
+                              placeholder="F.eks: &quot;Vi liker asiatisk mat&quot;, &quot;Helst enkle hverdagsretter&quot;, &quot;Barna liker pasta&quot;, &quot;Vegetarisk mandag&quot;…"
+                              rows="3"></textarea>
+                </div>
+
+                <!-- PREVIEW -->
+                <div class="preview-strip" id="previewStrip">
+                    <div class="preview-item"><span class="preview-icon">🥩</span><span class="preview-text" id="prevKjott">3 kjøttmiddager</span></div>
+                    <div class="preview-item"><span class="preview-icon">🚫</span><span class="preview-text" id="prevAllergi">Ingen allergier valgt</span></div>
+                    <div class="preview-item"><span class="preview-icon">👥</span><span class="preview-text" id="prevPors">2 porsjoner</span></div>
+                </div>
+
+                <!-- SUBMIT -->
+                <button type="submit" class="btn-generer" id="genererBtn">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    Generer min ukesmeny
+                </button>
+
+                <p style="text-align:center;font-size:.76rem;color:#94a3b8;margin-top:-8px;">
+                    Claude AI genererer en komplett plan med frokost, lunsj og middag for alle 7 dager.
+                    Dette tar ca. 10–20 sekunder.
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: bottom_nav}"></div>
+    <div th:replace="~{fragments :: scripts}"></div>
+
+    <script>
+        // ── KJØTTMIDDAGER ──
+        let kjottVal = 3;
+        const kjottDesc = [
+            'Kun vegetar og fisk hele uken',
+            '1 kjøttmiddag · 6 vegetar/fisk',
+            '2 kjøttmiddager · 5 vegetar/fisk',
+            '3 kjøttmiddager · 4 fisk/vegetar',
+            '4 kjøttmiddager · 3 vegetar/fisk',
+            '5 kjøttmiddager · 2 vegetar/fisk',
+            '6 kjøttmiddager · 1 vegetar/fisk',
+            '7 kjøttmiddager · full kjøttsuke'
+        ];
+
+        function velgKjott(btn) {
+            document.querySelectorAll('.kjott-btn').forEach(b => b.classList.remove('sel'));
+            btn.classList.add('sel');
+            kjottVal = parseInt(btn.dataset.val);
+            document.getElementById('kjottInput').value = kjottVal;
+            document.getElementById('kjottDesc').textContent = kjottDesc[kjottVal];
+            document.getElementById('prevKjott').textContent = kjottVal + ' kjøttmiddager';
+        }
+        // Fix: deselect initial 0-btn, keep only 3
+        document.querySelectorAll('.kjott-btn').forEach(b => {
+            if (parseInt(b.dataset.val) !== 3) b.classList.remove('sel');
+        });
+
+        // ── ALLERGIER ──
+        const valgte = new Set();
+        function toggleAllergi(el) {
+            const v = el.dataset.val;
+            el.classList.toggle('sel');
+            if (valgte.has(v)) valgte.delete(v);
+            else valgte.add(v);
+            oppdaterAllergiInput();
+        }
+        function oppdaterAllergiInput() {
+            const fritekst = document.getElementById('allergiInput').value;
+            const tagsStr = [...valgte].join(', ');
+            const all = [tagsStr, fritekst].filter(s => s.trim()).join(', ');
+            document.getElementById('allergiInput').dataset.tags = tagsStr;
+            document.getElementById('prevAllergi').textContent =
+                valgte.size === 0 && !fritekst.trim()
+                    ? 'Ingen allergier valgt'
+                    : [...valgte].join(', ') + (fritekst.trim() ? (valgte.size ? ', ' : '') + fritekst.trim() : '');
+        }
+        document.getElementById('allergiInput').addEventListener('input', oppdaterAllergiInput);
+
+        // Override allergiInput value on submit to include tags
+        document.getElementById('aiForm').addEventListener('submit', function(e) {
+            const tags = [...valgte].join(', ');
+            const fritekst = document.getElementById('allergiInput').value.trim();
+            const combined = [tags, fritekst].filter(s => s).join(', ');
+            document.getElementById('allergiInput').value = combined;
+        });
+
+        // ── PORSJONER ──
+        let porsVal = 2;
+        function endrePors(delta) {
+            porsVal = Math.max(1, Math.min(12, porsVal + delta));
+            document.getElementById('porsjoner').value = porsVal;
+            document.getElementById('porsjInput').value = porsVal;
+            document.getElementById('prevPors').textContent = porsVal + ' porsjoner';
+        }
+
+        // ── LOADING ──
+        document.getElementById('aiForm').addEventListener('submit', function() {
+            document.getElementById('loadingOverlay').classList.add('vis');
+            const steps = ['step1','step2','step3','step4'];
+            let i = 1;
+            const iv = setInterval(() => {
+                if (i < steps.length) {
+                    document.getElementById(steps[i]).classList.add('aktiv');
+                    i++;
+                } else {
+                    clearInterval(iv);
+                }
+            }, 3500);
+        });
+    </script>
+</body>
+</html>

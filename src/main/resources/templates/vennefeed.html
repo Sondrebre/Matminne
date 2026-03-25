@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Venneveggen | MatMinne</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        /* ── PAGE HERO ── */
+        .feed-hero {
+            background: linear-gradient(160deg, #ecfdf5 0%, #d1fae5 60%, #bbf7d0 100%);
+            border-bottom: 1px solid #a7f3d0;
+            padding: 48px 0 64px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feed-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(34,197,94,.15) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .feed-hero-glow {
+            position: absolute;
+            width: 360px; height: 360px;
+            background: radial-gradient(circle, rgba(34,197,94,.18), transparent 65%);
+            right: -60px; top: -60px;
+            pointer-events: none;
+        }
+
+        .feed-hero-inner { position: relative; z-index: 1; }
+
+        .feed-tag {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--mat-gronn-m);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .feed-hero h1 {
+            font-size: 2.6rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            color: var(--mat-mork);
+            margin: 0 0 6px;
+        }
+
+        .feed-hero p { color: #64748b; font-size: .9rem; margin: 0; }
+
+        /* ── FEED LAYOUT ── */
+        .feed-wrap {
+            max-width: 560px;
+            margin: 40px auto 100px;
+            padding: 0 20px;
+        }
+
+        /* ── POST CARD ── */
+        .post-card {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid #f1f5f9;
+            margin-bottom: 28px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,.04);
+            transition: box-shadow .25s;
+        }
+
+        .post-card:hover { box-shadow: 0 12px 36px rgba(0,0,0,.08); }
+
+        .post-header {
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .post-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .post-avatar {
+            width: 38px; height: 38px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--mat-gronn), var(--mat-mork));
+            color: white;
+            font-weight: 800;
+            font-size: .88rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .post-username { font-weight: 800; font-size: .92rem; color: var(--mat-mork); }
+        .post-time { font-size: .72rem; color: #94a3b8; margin-top: 1px; }
+        .post-kat {
+            background: rgba(15,30,20,.75); backdrop-filter: blur(8px);
+            color: var(--mat-gronn); font-size: .65rem; font-weight: 800;
+            padding: 4px 10px; border-radius: 99px; letter-spacing: .5px;
+        }
+        .post-meta { display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+        .post-meta span { font-size: .72rem; font-weight: 700; color: #94a3b8; display: flex; align-items: center; gap: 4px; }
+        .post-meta i { color: var(--mat-gronn); font-size: .65rem; }
+        .post-meta i.fa-heart { color: #ef4444; }
+
+        .post-img {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+            display: block;
+        }
+
+        .post-body { padding: 16px 18px 18px; }
+
+        .post-title {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--mat-mork);
+            text-decoration: none;
+            display: block;
+            letter-spacing: -.3px;
+            margin-bottom: 14px;
+            transition: color .2s;
+        }
+
+        .post-title:hover { color: var(--mat-gronn); }
+
+        .post-actions {
+            display: flex;
+            gap: 8px;
+            padding-top: 14px;
+            border-top: 1px solid #f8fafc;
+        }
+
+        .btn-post-see {
+            flex: 1;
+            background: #f1f5f9;
+            color: var(--mat-mork);
+            text-decoration: none;
+            text-align: center;
+            padding: 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: .85rem;
+            transition: .2s;
+        }
+
+        .btn-post-see:hover { background: var(--mat-mork); color: white; }
+
+        .btn-post-save {
+            flex: 1;
+            background: var(--mat-gronn);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: .2s;
+            font-family: inherit;
+        }
+
+        .btn-post-save:hover { background: var(--mat-gronn-m); }
+
+        /* ── EMPTY STATE ── */
+        .empty-feed {
+            text-align: center;
+            padding: 60px 24px;
+            background: white;
+            border-radius: 28px;
+            border: 2px dashed #e2e8f0;
+        }
+
+        .empty-feed .empty-icon {
+            width: 80px; height: 80px;
+            background: var(--mat-lys-gronn);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4rem;
+            margin: 0 auto 20px;
+        }
+
+        .empty-feed h4 { font-weight: 900; color: var(--mat-mork); font-size: 1.2rem; margin-bottom: 8px; }
+        .empty-feed p { color: #94a3b8; margin-bottom: 24px; font-size: .9rem; }
+
+        .btn-find {
+            background: var(--mat-gronn);
+            color: white;
+            text-decoration: none;
+            padding: 12px 26px;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: .9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: .2s;
+            box-shadow: 0 8px 22px rgba(46,204,113,.25);
+        }
+
+        .btn-find:hover { background: var(--mat-gronn-m); transform: translateY(-2px); color: white; }
+
+        /* ── PERSON SEARCH ── */
+        .search-bar-wrap {
+            max-width: 560px;
+            margin: -28px auto 32px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-bar-inner {
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 16px 48px rgba(0,0,0,.10);
+            border: 1px solid #f1f5f9;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .search-bar-inner input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 14px 18px;
+            font-size: .95rem;
+            font-family: inherit;
+            font-weight: 500;
+            color: var(--mat-mork);
+            background: transparent;
+        }
+
+        .search-bar-inner input::placeholder { color: #94a3b8; }
+
+        .search-bar-inner button {
+            background: var(--mat-gronn);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-weight: 800;
+            font-size: .85rem;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background .2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .search-bar-inner button:hover { background: var(--mat-gronn-m); }
+
+        /* ── SEARCH RESULTS ── */
+        .search-results-wrap {
+            max-width: 560px;
+            margin: 0 auto 28px;
+            padding: 0 20px;
+        }
+
+        .search-results-label {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .person-card {
+            background: white;
+            border-radius: 18px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 8px;
+            border: 1px solid #f1f5f9;
+        }
+
+        .person-avatar {
+            width: 42px; height: 42px;
+            border-radius: 13px;
+            background: linear-gradient(135deg, var(--mat-gronn), var(--mat-mork));
+            color: white;
+            font-weight: 900;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .person-name { font-weight: 800; font-size: .95rem; color: var(--mat-mork); margin: 0; }
+        .person-sub  { font-size: .76rem; color: #94a3b8; font-weight: 600; }
+
+        .btn-person-follow {
+            background: var(--mat-gronn);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 11px;
+            font-weight: 800;
+            font-size: .82rem;
+            cursor: pointer;
+            transition: .2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(46,204,113,.2);
+        }
+
+        .btn-person-follow:hover { background: var(--mat-gronn-m); }
+
+        .btn-person-unfollow {
+            background: #f1f5f9;
+            color: #64748b;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 11px;
+            font-weight: 800;
+            font-size: .82rem;
+            cursor: pointer;
+            transition: .2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .btn-person-unfollow:hover { background: #fee2e2; color: #dc2626; }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <!-- HERO -->
+    <div class="feed-hero">
+        <div class="feed-hero-glow"></div>
+        <div class="container feed-hero-inner">
+            <span class="feed-tag">Sosialt</span>
+            <h1>Venneveggen</h1>
+            <p>Det siste fra kokkene du følger</p>
+        </div>
+    </div>
+
+    <!-- SEARCH BAR -->
+    <div class="search-bar-wrap">
+        <form th:action="@{/vennefeed}" method="get" class="search-bar-inner">
+            <input type="text" name="sok" placeholder="Søk etter kokker å følge..."
+                   th:value="${sokeTekst}" autocomplete="off">
+            <button type="submit">
+                <i class="fas fa-search"></i> Søk
+            </button>
+        </form>
+    </div>
+
+    <!-- SEARCH RESULTS -->
+    <div class="search-results-wrap" th:if="${sokResultater != null}">
+        <div class="search-results-label"
+             th:text="${sokResultater.isEmpty() ? 'Ingen treff' : sokResultater.size() + ' person(er) funnet'}"></div>
+
+        <div th:each="bruker : ${sokResultater}" class="person-card">
+            <div class="person-avatar" th:text="${#strings.substring(bruker.fulltNavn, 0, 1)}">N</div>
+            <div style="flex:1;min-width:0;">
+                <p class="person-name" th:text="${bruker.fulltNavn}">Navn</p>
+                <p class="person-sub"><i class="fa-solid fa-utensils me-1"></i>MatMinne-kokk</p>
+            </div>
+            <form th:if="${fulgteBrukerIds != null and fulgteBrukerIds.contains(bruker.id)}"
+                  th:action="@{'/slutt-å-følge/' + ${bruker.epost}}" method="post">
+                <button type="submit" class="btn-person-unfollow">
+                    <i class="fa-solid fa-user-check"></i> Følger
+                </button>
+            </form>
+            <form th:unless="${fulgteBrukerIds != null and fulgteBrukerIds.contains(bruker.id)}"
+                  th:action="@{'/følg/' + ${bruker.epost}}" method="post">
+                <button type="submit" class="btn-person-follow">
+                    <i class="fa-solid fa-user-plus"></i> Følg
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="feed-wrap">
+
+        <!-- EMPTY STATE -->
+        <div th:if="${oppskrifter.isEmpty()}" class="empty-feed">
+            <div class="empty-icon">🥗</div>
+            <h4>Ganske tomt her ennå</h4>
+            <p>Følg andre kokker for å se hva de lager! Finn folk under "Utforsk".</p>
+            <a href="/oppdag" class="btn-find">
+                <i class="fa-solid fa-compass"></i> Finn folk å følge
+            </a>
+        </div>
+
+        <!-- FEED POSTS -->
+        <div th:each="o : ${oppskrifter}" class="post-card">
+            <div class="post-header">
+                <a th:href="@{'/profil/' + ${o.brukerEpost}}" class="post-user">
+                    <div class="post-avatar"
+                         th:text="${#strings.substring(o.brukerNavn, 0, 1)}">U</div>
+                    <div>
+                        <div class="post-username" th:text="${o.brukerNavn}">Navn</div>
+                        <div class="post-time"><i class="fa-regular fa-clock me-1"></i>nylig</div>
+                    </div>
+                </a>
+            </div>
+
+            <div style="position:relative;">
+                <img class="post-img"
+                     th:src="${o.bildeUrl != null && o.bildeUrl != '' ? o.bildeUrl : 'https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&w=600&q=70'}"
+                     alt="">
+                <span th:if="${o.kategori != null}" class="post-kat"
+                      style="position:absolute;top:10px;right:10px;"
+                      th:text="${o.kategori}"></span>
+            </div>
+
+            <div class="post-body">
+                <a th:href="@{'/detaljer/' + ${o.id}}" class="post-title"
+                   th:text="${o.tittel}">Rettens navn</a>
+                <div class="post-meta">
+                    <span th:if="${o.tilberedningstid != null}">
+                        <i class="fas fa-clock"></i> <span th:text="${o.tilberedningstid} + ' min'"></span>
+                    </span>
+                    <span th:if="${o.porsjoner != null}">
+                        <i class="fas fa-users"></i> <span th:text="${o.porsjoner} + ' pors.'"></span>
+                    </span>
+                    <span th:if="${o.datoOpprettet != null}">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span th:text="${#temporals.format(o.datoOpprettet, 'dd.MM.yy')}"></span>
+                    </span>
+                </div>
+
+                <div class="post-actions">
+                    <a th:href="@{'/detaljer/' + ${o.id}}" class="btn-post-see">
+                        <i class="fa-solid fa-eye me-1"></i> Se
+                    </a>
+                    <form th:action="@{'/kopier/' + ${o.id}}" method="POST" style="flex:1;display:flex;">
+                        <button type="submit" class="btn-post-save w-100">
+                            <i class="fa-solid fa-bookmark me-1"></i> Lagre
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div th:replace="~{fragments :: bottom_nav}"></div>
+    <div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

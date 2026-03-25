@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Innstillinger | MatMinne</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        /* ── PAGE HEADER ── */
+        .settings-hero {
+            background: var(--mat-mork);
+            padding: 48px 0 64px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .settings-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(46,204,113,.06) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .settings-hero-inner { position: relative; z-index: 1; }
+
+        .settings-tag {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--mat-gronn);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .settings-hero h1 {
+            font-size: 2.4rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            color: white;
+            margin: 0 0 6px;
+        }
+
+        .settings-hero p { color: rgba(255,255,255,.4); font-size: .9rem; margin: 0; }
+
+        /* ── LAYOUT ── */
+        .settings-wrap {
+            max-width: 640px;
+            margin: -36px auto 80px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ── SECTION CARD ── */
+        .s-card {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid #f1f5f9;
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.04);
+        }
+
+        .s-card-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid #f8fafc;
+        }
+
+        .s-card-title {
+            font-weight: 900;
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--mat-gronn);
+            margin: 0;
+        }
+
+        .s-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            border-bottom: 1px solid #f8fafc;
+            gap: 16px;
+        }
+
+        .s-row:last-child { border-bottom: none; }
+
+        .s-row-left { flex: 1; min-width: 0; }
+        .s-row-label { font-weight: 700; font-size: .95rem; color: var(--mat-mork); margin-bottom: 2px; }
+        .s-row-sub { font-size: .8rem; color: #94a3b8; }
+
+        /* Profile avatar in settings */
+        .settings-avatar {
+            width: 58px;
+            height: 58px;
+            border-radius: 16px;
+            object-fit: cover;
+            border: 2px solid var(--mat-lys-gronn);
+            flex-shrink: 0;
+        }
+
+        .settings-avatar-fallback {
+            width: 58px;
+            height: 58px;
+            border-radius: 16px;
+            background: var(--mat-lys-gronn);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            flex-shrink: 0;
+        }
+
+        .info-chip {
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            border-radius: 10px;
+            padding: 5px 12px;
+            font-size: .82rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        /* Logout button */
+        .btn-logout {
+            background: #fff1f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: .88rem;
+            cursor: pointer;
+            transition: .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-family: inherit;
+        }
+
+        .btn-logout:hover { background: #fee2e2; }
+
+        /* Danger zone */
+        .danger-card {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid #fecaca;
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(220,38,38,.05);
+        }
+
+        .danger-header {
+            background: #fff5f5;
+            padding: 18px 24px;
+            border-bottom: 1px solid #fecaca;
+        }
+
+        .danger-title {
+            font-weight: 900;
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #dc2626;
+        }
+
+        .danger-body { padding: 20px 24px; }
+        .danger-body p { color: #94a3b8; font-size: .85rem; margin-bottom: 16px; }
+
+        .btn-delete-account {
+            background: #fff1f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: .88rem;
+            cursor: pointer;
+            transition: .2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-family: inherit;
+        }
+
+        .btn-delete-account:hover { background: #dc2626; color: white; border-color: #dc2626; }
+
+        /* Back link */
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #94a3b8;
+            font-size: .85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color .2s;
+            margin-top: 8px;
+        }
+
+        .back-link:hover { color: var(--mat-mork); }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <!-- PAGE HEADER -->
+    <div class="settings-hero">
+        <div class="container settings-hero-inner">
+            <span class="settings-tag">Konto</span>
+            <h1>Innstillinger</h1>
+            <p>Administrer profilen og kontoen din</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="settings-wrap">
+
+            <!-- PROFIL -->
+            <div class="s-card">
+                <div class="s-card-header">
+                    <p class="s-card-title">Din profil</p>
+                </div>
+                <div class="s-row">
+                    <div class="s-row-left">
+                        <div class="s-row-label" th:text="${navn}">Navn</div>
+                        <div class="s-row-sub">Hentet fra Google-kontoen din</div>
+                    </div>
+                    <img th:if="${bilde != null and !#strings.isEmpty(bilde)}"
+                         th:src="${bilde}" class="settings-avatar" alt="">
+                    <div th:unless="${bilde != null and !#strings.isEmpty(bilde)}"
+                         class="settings-avatar-fallback">👤</div>
+                </div>
+                <div class="s-row">
+                    <div class="s-row-left">
+                        <div class="s-row-label">E-postadresse</div>
+                        <div class="s-row-sub" th:text="${epost}">epost@eksempel.no</div>
+                    </div>
+                    <span class="info-chip">Google</span>
+                </div>
+            </div>
+
+            <!-- KONTO -->
+            <div class="s-card">
+                <div class="s-card-header">
+                    <p class="s-card-title">Konto</p>
+                </div>
+                <div class="s-row">
+                    <div class="s-row-left">
+                        <div class="s-row-label">Logg ut</div>
+                        <div class="s-row-sub">Avslutt økten på denne enheten</div>
+                    </div>
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn-logout">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logg ut
+                        </button>
+                    </form>
+                </div>
+                <div class="s-row">
+                    <div class="s-row-left">
+                        <div class="s-row-label">Min profil</div>
+                        <div class="s-row-sub">Se og rediger det andre ser</div>
+                    </div>
+                    <a th:href="@{'/profil/' + ${epost}}" class="info-chip" style="text-decoration:none;color:#64748b;transition:.2s;"
+                       onmouseover="this.style.color='var(--mat-gronn)'" onmouseout="this.style.color='#64748b'">
+                        <i class="fa-solid fa-arrow-right"></i> Gå til profil
+                    </a>
+                </div>
+            </div>
+
+            <!-- DANGER ZONE -->
+            <div class="danger-card">
+                <div class="danger-header">
+                    <p class="danger-title">Faresone</p>
+                </div>
+                <div class="danger-body">
+                    <p>Sletting av kontoen er permanent og kan ikke angres. Alle oppskrifter og data fjernes.</p>
+                    <button class="btn-delete-account"
+                            onclick="if(confirm('Er du sikker? Dette kan ikke angres.')) alert('Kontaktfunksjon ikke aktivert ennå.')">
+                        <i class="fa-solid fa-trash"></i> Slett min konto
+                    </button>
+                </div>
+            </div>
+
+            <a href="/kokebok" class="back-link">
+                <i class="fa-solid fa-arrow-left"></i> Tilbake til kokeboken
+            </a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

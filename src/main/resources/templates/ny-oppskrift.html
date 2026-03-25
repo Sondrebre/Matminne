@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Ny Oppskrift | MatMinne</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        /* ── HERO ── */
+        .form-hero {
+            background: var(--mat-mork); padding: 44px 0 60px;
+            position: relative; overflow: hidden;
+        }
+        .form-hero::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(46,204,113,.06) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .form-hero-inner { position: relative; z-index: 1; }
+        .form-hero-tag { font-size:.68rem; font-weight:800; text-transform:uppercase; letter-spacing:2.5px; color:var(--mat-gronn); display:block; margin-bottom:10px; }
+        .form-hero h1 { font-size:2.6rem; font-weight:900; letter-spacing:-2px; color:white; margin:0 0 8px; }
+        .form-hero p { color:rgba(255,255,255,.45); font-size:.9rem; margin:0; }
+
+        /* ── STEP INDICATOR ── */
+        .step-wrap {
+            max-width: 680px; margin: -28px auto 0;
+            padding: 0 20px; position: relative; z-index: 10;
+        }
+        .step-card {
+            background: white; border-radius: 20px;
+            box-shadow: 0 16px 48px rgba(0,0,0,.10); border: 1px solid #f1f5f9;
+            padding: 16px 24px; display: flex; align-items: center; gap: 0;
+        }
+        .step-item {
+            flex: 1; display: flex; align-items: center; gap: 10px;
+            position: relative; cursor: pointer;
+        }
+        .step-item:not(:last-child)::after {
+            content: ''; position: absolute; right: 0; top: 50%;
+            transform: translateY(-50%); height: 2px; width: 100%;
+            background: #f1f5f9; z-index: 0; left: 50%;
+        }
+        .step-num {
+            width: 32px; height: 32px; border-radius: 10px;
+            background: #f1f5f9; color: #94a3b8;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .8rem; font-weight: 900; flex-shrink: 0;
+            transition: .25s; position: relative; z-index: 1;
+        }
+        .step-label { font-size: .72rem; font-weight: 700; color: #94a3b8; transition: .25s; white-space: nowrap; }
+        .step-item.active .step-num { background: var(--mat-gronn); color: white; box-shadow: 0 4px 12px rgba(46,204,113,.3); }
+        .step-item.active .step-label { color: var(--mat-mork); }
+        .step-item.done .step-num { background: var(--mat-lys-gronn); color: var(--mat-gronn-m); }
+        .step-item.done .step-label { color: #64748b; }
+
+        /* ── FORM SECTIONS ── */
+        .form-wrap { max-width: 680px; margin: 24px auto 80px; padding: 0 20px; }
+
+        .form-step { display: none; }
+        .form-step.active { display: block; }
+
+        .form-card {
+            background: white; border-radius: 24px; padding: 32px 32px 28px;
+            border: 1px solid #f1f5f9; box-shadow: 0 4px 24px rgba(0,0,0,.04);
+            margin-bottom: 16px;
+        }
+        .form-section-title {
+            font-size: .68rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 2px; color: var(--mat-gronn);
+            margin-bottom: 22px; display: flex; align-items: center; gap: 8px;
+        }
+
+        .field-group { margin-bottom: 18px; }
+        .field-label { display:block; font-weight:700; font-size:.78rem; text-transform:uppercase; letter-spacing:1px; color:#64748b; margin-bottom:7px; }
+        .field-input {
+            width:100%; border:2px solid #f1f5f9; border-radius:14px;
+            padding:13px 16px; font-size:.97rem; font-family:inherit; font-weight:500;
+            color:var(--mat-mork); background:#f8fafc; outline:none;
+            transition:border-color .2s, background .2s;
+        }
+        .field-input:focus { border-color:var(--mat-gronn); background:white; }
+        textarea.field-input { resize:vertical; min-height:180px; line-height:1.7; }
+
+        /* Image preview */
+        .img-preview-wrap { margin-top: 10px; display: none; }
+        .img-preview { width:100%; height:160px; object-fit:cover; border-radius:14px; border:2px solid var(--mat-lys-gronn); }
+
+        /* Public toggle */
+        .toggle-row {
+            display:flex; align-items:center; justify-content:space-between;
+            background:#f8fafc; border-radius:16px; padding:16px 20px; border:2px solid #f1f5f9;
+        }
+        .toggle-info strong { display:block; font-weight:800; font-size:.95rem; color:var(--mat-mork); margin-bottom:2px; }
+        .toggle-info small { color:#94a3b8; font-size:.82rem; }
+        .form-check-input[type=checkbox] { width:48px; height:24px; cursor:pointer; }
+
+        /* Navigation buttons */
+        .step-nav { display:flex; gap:12px; margin-top:6px; }
+        .btn-prev {
+            background:#f1f5f9; color:var(--mat-mork); border:none;
+            padding:14px 24px; border-radius:14px; font-weight:700; font-size:.9rem;
+            cursor:pointer; font-family:inherit; transition:.2s; display:flex; align-items:center; gap:8px;
+        }
+        .btn-prev:hover { background:#e2e8f0; }
+        .btn-next {
+            flex:1; background:var(--mat-gronn); color:white; border:none;
+            padding:14px 24px; border-radius:14px; font-weight:900; font-size:.95rem;
+            cursor:pointer; font-family:inherit; transition:.25s; display:flex; align-items:center; justify-content:center; gap:8px;
+            box-shadow:0 8px 24px rgba(46,204,113,.25);
+        }
+        .btn-next:hover { background:var(--mat-gronn-m); transform:translateY(-2px); box-shadow:0 14px 32px rgba(46,204,113,.35); }
+
+        .btn-submit {
+            width:100%; background:var(--mat-gronn); color:white; border:none;
+            padding:17px; border-radius:16px; font-size:1.05rem; font-weight:900;
+            cursor:pointer; transition:.25s; font-family:inherit;
+            display:flex; align-items:center; justify-content:center; gap:10px;
+            box-shadow:0 10px 28px rgba(46,204,113,.25);
+        }
+        .btn-submit:hover { background:var(--mat-gronn-m); transform:translateY(-2px); }
+
+        .cancel-link { display:block; text-align:center; margin-top:14px; color:#94a3b8; font-size:.85rem; font-weight:600; text-decoration:none; transition:color .2s; }
+        .cancel-link:hover { color:var(--mat-mork); }
+
+        /* ── AI SECTION (step 1) ── */
+        .ai-banner {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1.5px solid #bbf7d0; border-radius: 20px;
+            padding: 24px 26px; margin-bottom: 16px;
+        }
+        .ai-banner-top { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+        .ai-icon { width:44px; height:44px; background:var(--mat-gronn); border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:white; flex-shrink:0; box-shadow:0 4px 14px rgba(46,204,113,.35); }
+        .ai-title strong { display:block; font-weight:900; font-size:1rem; color:var(--mat-mork); }
+        .ai-title small { font-size:.8rem; color:#64748b; }
+        .ai-input-row { display:flex; gap:10px; }
+        .ai-url-input {
+            flex:1; border:2px solid #bbf7d0; border-radius:14px;
+            padding:13px 18px; font-size:.95rem; font-family:inherit; font-weight:500;
+            outline:none; color:var(--mat-mork); background:white; transition:border-color .2s;
+        }
+        .ai-url-input:focus { border-color:var(--mat-gronn); }
+        .ai-fetch-btn {
+            background:var(--mat-gronn); color:white; border:none;
+            padding:13px 20px; border-radius:14px; font-weight:800; font-size:.88rem;
+            cursor:pointer; display:flex; align-items:center; gap:8px; transition:.25s; font-family:inherit; white-space:nowrap;
+        }
+        .ai-fetch-btn:hover { background:var(--mat-gronn-m); transform:translateY(-2px); }
+        .ai-fetch-btn:disabled { opacity:.6; transform:none; cursor:not-allowed; }
+
+        .divider { display:flex; align-items:center; gap:14px; margin:20px 0 0; }
+        .divider-line { flex:1; height:1px; background:#e2e8f0; }
+        .divider-txt { font-size:.75rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="form-hero">
+        <div class="container form-hero-inner">
+            <span class="form-hero-tag">Kokebok</span>
+            <h1>Nytt MatMinne</h1>
+            <p>Legg til en ny oppskrift i samlingen din.</p>
+        </div>
+    </div>
+
+    <!-- STEP INDICATOR -->
+    <div class="step-wrap">
+        <div class="step-card">
+            <div class="step-item active" id="si-1">
+                <div class="step-num">1</div>
+                <div class="step-label">Start</div>
+            </div>
+            <div class="step-item" id="si-2">
+                <div class="step-num">2</div>
+                <div class="step-label">Grunninfo</div>
+            </div>
+            <div class="step-item" id="si-3">
+                <div class="step-num">3</div>
+                <div class="step-label">Oppskrift</div>
+            </div>
+            <div class="step-item" id="si-4">
+                <div class="step-num">4</div>
+                <div class="step-label">Publiser</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-wrap">
+            <form th:action="@{/lagre}" method="POST" id="mainForm">
+
+                <!-- ── STEG 1: AI ELLER MANUELT ── -->
+                <div class="form-step active" id="step-1">
+                    <div class="ai-banner">
+                        <div class="ai-banner-top">
+                            <div class="ai-icon">✨</div>
+                            <div class="ai-title">
+                                <strong>Hent med AI — raskeste måten</strong>
+                                <small>Lim inn URL fra Matprat, Godt.no, BBC Food eller et annet nettsted</small>
+                            </div>
+                        </div>
+                        <div class="ai-input-row">
+                            <input type="url" id="aiUrl" class="ai-url-input"
+                                   placeholder="https://www.matprat.no/oppskrifter/...">
+                            <button type="button" class="ai-fetch-btn" id="aiFetchBtn" onclick="hentMedAi()">
+                                <i class="fas fa-wand-magic-sparkles"></i> Hent
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="divider">
+                        <div class="divider-line"></div>
+                        <span class="divider-txt">Eller skriv inn manuelt</span>
+                        <div class="divider-line"></div>
+                    </div>
+
+                    <div class="step-nav" style="margin-top:20px;">
+                        <button type="button" class="btn-next" onclick="gåTilSteg(2)">
+                            Skriv inn manuelt <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ── STEG 2: GRUNNINFO ── -->
+                <div class="form-step" id="step-2">
+                    <div class="form-card">
+                        <div class="form-section-title">
+                            <i class="fa-solid fa-circle-info"></i> Grunninfo
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label" for="tittel">Navn på retten *</label>
+                            <input type="text" id="tittel" name="tittel" class="field-input"
+                                   placeholder="f.eks. Bestemors kjøttkaker" required>
+                        </div>
+
+                        <div class="field-group" style="margin-bottom:0;">
+                            <label class="field-label" for="bildeUrl">Bilde-URL (valgfritt)</label>
+                            <input type="text" id="bildeUrl" name="bildeUrl" class="field-input"
+                                   placeholder="https://images.unsplash.com/..." oninput="visForhåndsvisning(this.value)">
+                            <div class="img-preview-wrap" id="imgPreviewWrap">
+                                <img id="imgPreview" class="img-preview" alt="Forhåndsvisning">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-card">
+                        <div class="form-section-title">
+                            <i class="fa-solid fa-sliders"></i> Detaljer
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="field-group">
+                                    <label class="field-label" for="kategori">Kategori</label>
+                                    <select id="kategori" name="kategori" class="field-input">
+                                        <option value="">– Velg –</option>
+                                        <option value="Frokost">🌅 Frokost</option>
+                                        <option value="Lunsj">☀️ Lunsj</option>
+                                        <option value="Middag">🍽️ Middag</option>
+                                        <option value="Dessert">🍰 Dessert</option>
+                                        <option value="Snacks">🥨 Snacks</option>
+                                        <option value="Drikke">🥤 Drikke</option>
+                                        <option value="Annet">📦 Annet</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="field-group">
+                                    <label class="field-label" for="vanskelighet">Vanskelighet</label>
+                                    <select id="vanskelighet" name="vanskelighet" class="field-input">
+                                        <option value="">– Velg –</option>
+                                        <option value="Enkel">⭐ Enkel</option>
+                                        <option value="Medium">⭐⭐ Medium</option>
+                                        <option value="Avansert">⭐⭐⭐ Avansert</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="field-group" style="margin-bottom:0;">
+                                    <label class="field-label" for="tilberedningstid">Tid (minutter)</label>
+                                    <input type="number" id="tilberedningstid" name="tilberedningstid"
+                                           class="field-input" min="1" placeholder="f.eks. 30">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="field-group" style="margin-bottom:0;">
+                                    <label class="field-label" for="porsjoner">Porsjoner</label>
+                                    <input type="number" id="porsjoner" name="porsjoner"
+                                           class="field-input" min="1" placeholder="f.eks. 4">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="step-nav">
+                        <button type="button" class="btn-prev" onclick="gåTilSteg(1)">
+                            <i class="fas fa-arrow-left"></i> Tilbake
+                        </button>
+                        <button type="button" class="btn-next" onclick="neste2til3()">
+                            Neste <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ── STEG 3: INGREDIENSER + FREMGANGSMÅTE ── -->
+                <div class="form-step" id="step-3">
+                    <div class="form-card">
+                        <div class="form-section-title">
+                            <i class="fa-solid fa-list-ul"></i> Ingredienser
+                        </div>
+                        <div class="field-group" style="margin-bottom:0;">
+                            <textarea id="ingredienser" name="ingredienser" class="field-input"
+                                      placeholder="• 200g mel&#10;• 2 egg&#10;• 1 dl melk" style="min-height:200px;"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-card">
+                        <div class="form-section-title">
+                            <i class="fa-solid fa-list-ol"></i> Fremgangsmåte
+                        </div>
+                        <div class="field-group" style="margin-bottom:0;">
+                            <textarea id="fremgangsmate" name="fremgangsmate" class="field-input"
+                                      placeholder="1. Bland det tørre&#10;2. Tilsett eggene&#10;3. ..." style="min-height:200px;"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="step-nav">
+                        <button type="button" class="btn-prev" onclick="gåTilSteg(2)">
+                            <i class="fas fa-arrow-left"></i> Tilbake
+                        </button>
+                        <button type="button" class="btn-next" onclick="gåTilSteg(4)">
+                            Neste <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ── STEG 4: PUBLISER ── -->
+                <div class="form-step" id="step-4">
+                    <div class="form-card">
+                        <div class="form-section-title">
+                            <i class="fa-solid fa-globe"></i> Synlighet
+                        </div>
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <strong><i class="fa-solid fa-globe me-2" style="color:var(--mat-gronn);"></i>Del med fellesskapet</strong>
+                                <small>Gjør oppskriften synlig under «Utforsk» for alle</small>
+                            </div>
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input" type="checkbox" name="erOffentlig" id="erOffentlig">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUMMARY -->
+                    <div class="form-card" style="background:#f0fdf4;border-color:#bbf7d0;">
+                        <div class="form-section-title" style="margin-bottom:14px;">
+                            <i class="fa-solid fa-check-circle"></i> Oppsummering
+                        </div>
+                        <div style="font-size:.88rem;color:#475569;line-height:1.8;">
+                            <div><strong>Tittel:</strong> <span id="sum-tittel">—</span></div>
+                            <div><strong>Kategori:</strong> <span id="sum-kat">—</span></div>
+                            <div><strong>Tid:</strong> <span id="sum-tid">—</span></div>
+                            <div><strong>Porsjoner:</strong> <span id="sum-pors">—</span></div>
+                        </div>
+                    </div>
+
+                    <div class="step-nav">
+                        <button type="button" class="btn-prev" onclick="gåTilSteg(3)">
+                            <i class="fas fa-arrow-left"></i> Tilbake
+                        </button>
+                    </div>
+
+                    <button type="submit" class="btn-submit" style="margin-top:12px;">
+                        <i class="fa-solid fa-bookmark"></i> Lagre i min kokebok
+                    </button>
+                </div>
+
+            </form>
+
+            <a href="/kokebok" class="cancel-link">
+                <i class="fa-solid fa-xmark me-1"></i> Avbryt
+            </a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: scripts}"></div>
+
+    <script>
+        let aktivSteg = 1;
+
+        function gåTilSteg(n) {
+            document.getElementById('step-' + aktivSteg).classList.remove('active');
+            document.getElementById('si-' + aktivSteg).classList.remove('active');
+            document.getElementById('si-' + aktivSteg).classList.add('done');
+
+            aktivSteg = n;
+            document.getElementById('step-' + n).classList.add('active');
+            document.getElementById('si-' + n).classList.add('active');
+            document.getElementById('si-' + n).classList.remove('done');
+
+            if (n === 4) oppdaterOppsummering();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function neste2til3() {
+            const tittel = document.getElementById('tittel').value.trim();
+            if (!tittel) {
+                showToast('Skriv inn et navn på retten!', 'error');
+                document.getElementById('tittel').focus();
+                return;
+            }
+            gåTilSteg(3);
+        }
+
+        function oppdaterOppsummering() {
+            document.getElementById('sum-tittel').textContent = document.getElementById('tittel').value || '—';
+            document.getElementById('sum-kat').textContent    = document.getElementById('kategori').value || '—';
+            const tid  = document.getElementById('tilberedningstid').value;
+            const pors = document.getElementById('porsjoner').value;
+            document.getElementById('sum-tid').textContent  = tid  ? tid  + ' min'  : '—';
+            document.getElementById('sum-pors').textContent = pors ? pors + ' pors.' : '—';
+        }
+
+        function visForhåndsvisning(url) {
+            const wrap = document.getElementById('imgPreviewWrap');
+            const img  = document.getElementById('imgPreview');
+            if (url && url.startsWith('http')) {
+                img.src = url;
+                img.onload  = () => { wrap.style.display = 'block'; };
+                img.onerror = () => { wrap.style.display = 'none'; };
+            } else {
+                wrap.style.display = 'none';
+            }
+        }
+
+        async function hentMedAi() {
+            const url = document.getElementById('aiUrl').value.trim();
+            if (!url) { showToast('Lim inn en URL først!', 'error'); return; }
+
+            const btn = document.getElementById('aiFetchBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Henter...';
+            btn.disabled = true;
+
+            try {
+                const res  = await fetch('/api/ai/extract?url=' + encodeURIComponent(url));
+                if (!res.ok) throw new Error('Serverfeil');
+                const data = await res.json();
+                if (data.feil) throw new Error(data.feil);
+
+                if (data.tittel)       document.getElementById('tittel').value          = data.tittel;
+                if (data.bildeUrl)     { document.getElementById('bildeUrl').value = data.bildeUrl; visForhåndsvisning(data.bildeUrl); }
+                if (data.ingredienser) document.getElementById('ingredienser').value    = data.ingredienser;
+                if (data.fremgangsmate)document.getElementById('fremgangsmate').value   = data.fremgangsmate;
+                if (data.kategori)     document.getElementById('kategori').value        = data.kategori;
+                if (data.vanskelighet) document.getElementById('vanskelighet').value    = data.vanskelighet;
+                if (data.tilberedningstid) document.getElementById('tilberedningstid').value = data.tilberedningstid;
+                if (data.porsjoner)    document.getElementById('porsjoner').value       = data.porsjoner;
+
+                showToast('Oppskriften er hentet! Sjekk feltene og lagre.', 'success');
+                gåTilSteg(2);
+            } catch (e) {
+                const melding = e.message || '';
+                if (melding.startsWith('RATE_LIMIT:')) {
+                    let sek = parseInt(melding.replace('RATE_LIMIT:', '')) || 60;
+                    startNedtelling(btn, sek);
+                } else {
+                    showToast('Kunne ikke hente automatisk. Prøv igjen eller skriv inn manuelt.', 'error');
+                    btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Hent';
+                    btn.disabled  = false;
+                }
+            }
+        }
+
+        function startNedtelling(btn, sek) {
+            btn.disabled = true;
+            const intervall = setInterval(() => {
+                btn.innerHTML = '<i class="fas fa-clock"></i> Vent ' + sek + 's...';
+                sek--;
+                if (sek < 0) {
+                    clearInterval(intervall);
+                    btn.innerHTML = '<i class="fas fa-wand-magic-sparkles"></i> Hent';
+                    btn.disabled = false;
+                    showToast('Prøv igjen nå!', 'success');
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

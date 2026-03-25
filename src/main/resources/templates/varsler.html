@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Varsler | MatMinne</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        /* ── HERO ── */
+        .page-hero {
+            background: var(--mat-mork);
+            padding: 48px 0 64px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(46,204,113,.06) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .hero-inner { position: relative; z-index: 1; }
+
+        .hero-tag {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: var(--mat-gronn);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .page-hero h1 {
+            font-size: 2.6rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            color: white;
+            margin: 0 0 6px;
+        }
+
+        .page-hero p { color: rgba(255,255,255,.4); font-size: .9rem; margin: 0; }
+
+        /* ── CONTENT ── */
+        .content-wrap {
+            max-width: 680px;
+            margin: -36px auto 80px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ── VARSEL ITEM ── */
+        .varsel-list {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid #f1f5f9;
+            box-shadow: 0 20px 56px rgba(0,0,0,.07);
+            overflow: hidden;
+        }
+
+        .varsel-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 24px;
+            border-bottom: 1px solid #f8fafc;
+            text-decoration: none;
+            color: var(--mat-mork);
+            transition: background .15s;
+        }
+
+        .varsel-item:last-child { border-bottom: none; }
+
+        .varsel-item:hover { background: #f8fafc; }
+
+        .varsel-item.ulest { background: #f0fdf4; }
+        .varsel-item.ulest:hover { background: #dcfce7; }
+
+        .varsel-icon {
+            width: 42px; height: 42px;
+            border-radius: 13px;
+            background: var(--mat-lys-gronn);
+            color: var(--mat-gronn);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .varsel-item.ulest .varsel-icon {
+            background: var(--mat-gronn);
+            color: white;
+        }
+
+        .varsel-tekst {
+            flex: 1;
+            font-size: .92rem;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .varsel-item.ulest .varsel-tekst { font-weight: 700; }
+
+        .varsel-tid {
+            font-size: .75rem;
+            color: #94a3b8;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .ulest-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--mat-gronn);
+            flex-shrink: 0;
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center;
+            padding: 70px 20px;
+        }
+
+        .empty-icon {
+            width: 88px; height: 88px;
+            background: var(--mat-lys-gronn);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.4rem;
+            margin: 0 auto 20px;
+        }
+
+        .empty-state h3 { font-weight: 900; font-size: 1.4rem; letter-spacing: -.5px; margin-bottom: 8px; }
+        .empty-state p { color: #94a3b8; }
+
+        /* ── SECTION LABEL ── */
+        .section-label {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #94a3b8;
+            padding: 0 4px;
+            margin: 20px 0 8px;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <!-- HERO -->
+    <div class="page-hero">
+        <div class="container hero-inner">
+            <span class="hero-tag">Aktivitet</span>
+            <h1>Varsler</h1>
+            <p>Se hva som har skjedd siden sist</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="content-wrap">
+
+            <!-- EMPTY -->
+            <div th:if="${varsler == null or #lists.isEmpty(varsler)}" class="varsel-list">
+                <div class="empty-state">
+                    <div class="empty-icon">🔔</div>
+                    <h3>Ingen varsler ennå</h3>
+                    <p>Når noen følger deg eller liker en oppskrift, dukker det opp her.</p>
+                </div>
+            </div>
+
+            <!-- LIST -->
+            <div th:unless="${varsler == null or #lists.isEmpty(varsler)}" class="varsel-list">
+                <th:block th:each="v, vStat : ${varsler}">
+                    <a th:href="${v.lenke != null ? v.lenke : '#'}"
+                       th:classappend="${!v.lest} ? ' ulest' : ''"
+                       class="varsel-item">
+                        <div class="varsel-icon">
+                            <i th:if="${v.tekst != null and #strings.contains(v.tekst, 'likte')}" class="fa-solid fa-heart" style="color:#dc2626;"></i>
+                            <i th:if="${v.tekst != null and #strings.contains(v.tekst, 'kommenterte')}" class="fa-solid fa-comment"></i>
+                            <i th:if="${v.tekst != null and #strings.contains(v.tekst, 'svarte')}" class="fa-solid fa-reply"></i>
+                            <i th:if="${v.tekst != null and (#strings.contains(v.tekst, 'følger') or #strings.contains(v.tekst, 'Følger'))}" class="fa-solid fa-user-plus"></i>
+                            <i th:if="${v.tekst == null or (!#strings.contains(v.tekst,'likte') and !#strings.contains(v.tekst,'kommenterte') and !#strings.contains(v.tekst,'svarte') and !#strings.contains(v.tekst,'følger') and !#strings.contains(v.tekst,'Følger'))}" class="fa-solid fa-bell"></i>
+                        </div>
+                        <span class="varsel-tekst" th:text="${v.tekst}">Varseltekst</span>
+                        <span class="varsel-tid"
+                              th:if="${v.opprettet != null}"
+                              th:text="${v.opprettet.dayOfMonth + '.' + v.opprettet.monthValue}">
+                        </span>
+                        <span th:if="${!v.lest}" class="ulest-dot"></span>
+                    </a>
+                </th:block>
+            </div>
+
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: bottom_nav}"></div>
+    <div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>
