@@ -124,7 +124,7 @@
             <!-- NY UTFORDRING -->
             <div class="ny-form-card">
                 <div class="form-label"><i class="fa-solid fa-trophy"></i> Sett ny ukesutfordring</div>
-                <form action="/utfordringer/ny" method="POST">
+                <form th:action="@{/utfordringer/ny}" method="POST">
                     <input type="text" name="tittel" class="form-input"
                            placeholder="f.eks. Kylling, Vegetar, Under 30 minutter..." required>
                     <input type="text" name="beskrivelse" class="form-input"

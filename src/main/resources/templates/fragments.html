@@ -3,6 +3,8 @@
 <head th:fragment="header_links">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
@@ -248,6 +250,76 @@
             color: var(--mat-gronn) !important;
         }
 
+        /* ── MOBIL OFFCANVAS STYLING ── */
+
+        .mob-drawer-head {
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .mob-drawer-brand {
+            display: flex; align-items: center; gap: 10px; text-decoration: none;
+        }
+        .mob-drawer-logo {
+            width: 34px; height: 34px; background: var(--mat-gronn); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; box-shadow: 0 4px 12px rgba(46,204,113,.3);
+        }
+        .mob-drawer-title {
+            font-size: 1.2rem; font-weight: 900; letter-spacing: -1px; color: var(--mat-mork);
+        }
+        .mob-drawer-title span { color: var(--mat-gronn); }
+        .mob-drawer-close {
+            width: 34px; height: 34px; background: #f1f5f9; border: none;
+            border-radius: 10px; font-size: 1rem; color: #64748b; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .15s;
+        }
+        .mob-drawer-close:hover { background: #e2e8f0; }
+
+        .mob-drawer-body { flex: 1; padding: 12px 12px 24px; }
+
+        .mob-drawer-section-label {
+            font-size: .62rem; font-weight: 800; color: #94a3b8;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            padding: 10px 10px 6px;
+        }
+
+        .mob-nav-link {
+            display: flex; align-items: center; gap: 13px;
+            padding: 12px 12px; border-radius: 14px; text-decoration: none;
+            font-weight: 700; font-size: .92rem; color: #334155;
+            transition: background .15s, color .15s;
+            margin-bottom: 2px;
+        }
+        .mob-nav-link:hover, .mob-nav-link:active { background: #f1f5f9; color: var(--mat-mork); }
+        .mob-nav-link.active { background: var(--mat-lys-gronn); color: var(--mat-gronn-m); }
+        .mob-nav-icon {
+            width: 36px; height: 36px; border-radius: 10px; background: #f8fafc;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .95rem; color: #64748b; flex-shrink: 0;
+            transition: background .15s;
+        }
+        .mob-nav-link.active .mob-nav-icon { background: white; color: var(--mat-gronn); }
+        .mob-nav-link:hover .mob-nav-icon { background: white; }
+
+        .mob-drawer-divider { height: 1px; background: #f1f5f9; margin: 8px 10px; }
+
+        .mob-drawer-foot {
+            padding: 12px 12px 16px;
+            border-top: 1px solid #f1f5f9;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .mob-profil-btn {
+            display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+            background: linear-gradient(135deg,var(--mat-gronn),#16a34a);
+            border-radius: 14px; text-decoration: none; color: white !important;
+            font-weight: 800; font-size: .9rem;
+            box-shadow: 0 4px 16px rgba(46,204,113,.3);
+        }
+        .mob-profil-btn:hover { opacity: .92; color: white !important; }
+        .mob-profil-icon { font-size: 1.2rem; }
+
         /* Google login button */
         .btn-mat {
             background-color: var(--mat-gronn);
@@ -284,13 +356,28 @@
                     <div class="nav-logo-text">mat<span>minne.</span></div>
                 </a>
 
-                <button class="navbar-toggler border-0 p-2" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                <!-- Desktop hamburger (Bootstrap collapse, hidden on mobile) -->
+                <button class="navbar-toggler border-0 p-2 d-none d-lg-flex" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#navbarNavDesktop"
                         style="background:#f1f5f9;border-radius:10px;">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- Mobile hamburger → Bootstrap offcanvas -->
+                <th:block th:if="${brukerEpost != null}">
+                    <button class="border-0 p-2 d-flex d-lg-none align-items-center justify-content-center"
+                            data-bs-toggle="offcanvas" data-bs-target="#mobOffcanvas"
+                            style="background:#f1f5f9;border-radius:10px;width:40px;height:40px;cursor:pointer;">
+                        <i class="fa-solid fa-bars" style="font-size:1rem;color:#475569;"></i>
+                    </button>
+                </th:block>
+                <th:block th:unless="${brukerEpost != null}">
+                    <a href="/oauth2/authorization/google" class="btn-mat d-flex d-lg-none" style="padding:9px 16px;font-size:.85rem;">
+                        <i class="fa-brands fa-google"></i> Logg inn
+                    </a>
+                </th:block>
+
+                <div class="collapse navbar-collapse" id="navbarNavDesktop">
                     <ul class="navbar-nav ms-auto align-items-center gap-1">
 
                         <th:block th:if="${brukerEpost != null}">
@@ -310,7 +397,7 @@
                                 </a>
                             </li>
 
-                            <!-- MER-DROPDOWN -->
+                            <!-- MER-DROPDOWN (desktop) -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                     <i class="fa-solid fa-grip me-1"></i> Mer
@@ -324,6 +411,9 @@
                                     </a></li>
                                     <li><a class="dropdown-item" href="/ukesmeny" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
                                         <i class="fa-solid fa-calendar-week me-2" style="color:var(--mat-gronn);"></i>Ukesmeny
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="/naeringstrener" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
+                                        <i class="fa-solid fa-dna me-2" style="color:var(--mat-gronn);"></i>Næringstrener
                                     </a></li>
                                     <li><hr class="dropdown-divider" style="margin:6px 8px;"></li>
                                     <li><a class="dropdown-item" href="/ai-forslag" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
@@ -380,6 +470,87 @@
                 </div>
             </div>
         </nav>
+
+        <!-- ── MOBIL DRAWER ─────────────────────────────── -->
+        <!-- Bootstrap offcanvas — håndterer swipe nativt -->
+        <th:block th:if="${brukerEpost != null}">
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="mobOffcanvas"
+                 style="width:min(85vw,320px);border-radius:0;">
+                <div class="offcanvas-header" style="border-bottom:1px solid #f1f5f9;padding:16px 20px;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div class="mob-drawer-logo">🍎</div>
+                        <div class="mob-drawer-title">mat<span>minne.</span></div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Lukk"></button>
+                </div>
+                <div class="offcanvas-body" style="padding:12px 12px 24px;overflow-y:auto;">
+                    <div class="mob-drawer-section-label">Navigasjon</div>
+                    <a href="/kokebok" class="mob-nav-link">
+                        <div class="mob-nav-icon"><i class="fa-solid fa-book-open"></i></div> Min Kokebok
+                    </a>
+                    <a href="/vennefeed" class="mob-nav-link">
+                        <div class="mob-nav-icon"><i class="fa-solid fa-user-group"></i></div> Vennevegg
+                    </a>
+                    <a href="/oppdag" class="mob-nav-link">
+                        <div class="mob-nav-icon"><i class="fa-solid fa-compass"></i></div> Utforsk
+                    </a>
+                    <a href="/ny-oppskrift" class="mob-nav-link">
+                        <div class="mob-nav-icon"><i class="fa-solid fa-plus"></i></div> Ny oppskrift
+                    </a>
+
+                    <div class="mob-drawer-divider"></div>
+                    <div class="mob-drawer-section-label">Planlegging</div>
+                    <a href="/handleliste" class="mob-nav-link">
+                        <div class="mob-nav-icon"><i class="fa-solid fa-cart-shopping"></i></div> Handleliste
+                    </a>
+                    <a href="/ukesmeny" class="mob-nav-link">
+                        <div class="mob-nav-icon"><i class="fa-solid fa-calendar-week"></i></div> Ukesmeny
+                    </a>
+                    <a href="/samlinger" class="mob-nav-link">
+                        <div class="mob-nav-icon"><i class="fa-solid fa-layer-group"></i></div> Samlinger
+                    </a>
+
+                    <div class="mob-drawer-divider"></div>
+                    <div class="mob-drawer-section-label">AI-verktøy</div>
+                    <a href="/naeringstrener" class="mob-nav-link">
+                        <div class="mob-nav-icon"><i class="fa-solid fa-dna"></i></div> Næringstrener
+                    </a>
+                    <a href="/ai-forslag" class="mob-nav-link">
+                        <div class="mob-nav-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div> AI Matforslag
+                    </a>
+
+                    <div class="mob-drawer-divider"></div>
+                    <div class="mob-drawer-section-label">Annet</div>
+                    <a href="/utfordringer" class="mob-nav-link">
+                        <div class="mob-nav-icon"><i class="fa-solid fa-trophy"></i></div> Ukeutfordringer
+                    </a>
+                    <a href="/varsler" class="mob-nav-link" style="position:relative;">
+                        <div class="mob-nav-icon"><i class="fa-solid fa-bell"></i></div> Varsler
+                        <span th:if="${ulesVarsler != null and ulesVarsler > 0}"
+                              th:text="${ulesVarsler}"
+                              style="margin-left:auto;background:var(--mat-gronn);color:white;border-radius:99px;font-size:.62rem;font-weight:900;min-width:20px;height:20px;display:flex;align-items:center;justify-content:center;padding:0 5px;"></span>
+                    </a>
+                    <a href="/innstillinger" class="mob-nav-link">
+                        <div class="mob-nav-icon"><i class="fa-solid fa-gear"></i></div> Innstillinger
+                    </a>
+                    <a href="/installer-app" class="mob-nav-link">
+                        <div class="mob-nav-icon"><i class="fa-solid fa-mobile-screen"></i></div> Installer som app
+                    </a>
+
+                    <div class="mob-drawer-divider"></div>
+                    <a th:href="@{'/profil/' + ${brukerEpost}}" class="mob-profil-btn" style="margin-top:8px;">
+                        <span class="mob-profil-icon"><i class="fa-regular fa-circle-user"></i></span>
+                        <span>Min Profil</span>
+                    </a>
+                    <a th:href="@{'/abonnement'}"
+                       style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:#faf5ff;border-radius:14px;text-decoration:none;color:#7c3aed;font-weight:700;font-size:.88rem;margin-top:8px;">
+                        <i class="fa-solid fa-bolt" style="color:#7c3aed;font-size:1rem;width:20px;text-align:center;"></i>
+                        <span th:if="${harAbonnement}">AI-abonnement aktivt ✓</span>
+                        <span th:unless="${harAbonnement}">Oppgrader til AI</span>
+                    </a>
+                </div>
+            </div>
+        </th:block>
     </div>
 
     <!-- MOBIL BOTTOM NAV (vises kun når innlogget) -->
@@ -409,6 +580,23 @@
 
     <div th:fragment="scripts">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- CSRF helper — leser token fra meta-tag satt av Thymeleaf -->
+        <script>
+            function getCsrf() {
+                const meta = document.querySelector('meta[name="_csrf"]');
+                return meta ? meta.content : '';
+            }
+            function getCsrfHeader() {
+                const meta = document.querySelector('meta[name="_csrf_header"]');
+                return meta ? meta.content : 'X-CSRF-TOKEN';
+            }
+            function csrfFetch(url, opts) {
+                opts = opts || {};
+                opts.headers = Object.assign({ [getCsrfHeader()]: getCsrf() }, opts.headers || {});
+                return fetch(url, opts);
+            }
+        </script>
 
         <!-- Progress bar -->
         <div id="page-progress"></div>
@@ -518,6 +706,15 @@
             // Also start progress on form submits
             document.addEventListener('submit', () => { _startProg(); });
 
+            // Highlight active link i offcanvas
+            (function() {
+                var p = window.location.pathname;
+                document.querySelectorAll('#mobOffcanvas .mob-nav-link').forEach(function(l) {
+                    var h = l.getAttribute('href');
+                    if (h && h !== '/' && p.startsWith(h)) l.classList.add('active');
+                });
+            })();
+
             // Scroll shadow on navbar
             window.addEventListener('scroll', () => {
                 document.getElementById('mainNav')?.classList.toggle('scrolled', window.scrollY > 20);
@@ -529,6 +726,11 @@
                 document.querySelectorAll('.nav-link').forEach(l => {
                     const h = l.getAttribute('href');
                     if (h && h !== '/' && p.startsWith(h)) l.classList.add('active-page');
+                });
+                // Highlight active link in mobile drawer
+                document.querySelectorAll('.mob-nav-link').forEach(l => {
+                    const h = l.getAttribute('href');
+                    if (h && h !== '/' && p.startsWith(h)) l.classList.add('active');
                 });
 
                 // Bottom nav active state — best (longest) prefix match

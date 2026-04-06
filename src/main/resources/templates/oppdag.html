@@ -318,11 +318,9 @@
                         <a th:href="@{'/detaljer/' + ${o.id}}" class="btn-see">
                             <i class="fa-solid fa-eye me-1"></i> Se
                         </a>
-                        <form th:action="@{'/kopier/' + ${o.id}}" method="POST" style="flex:1;display:flex;">
-                            <button type="submit" class="btn-save w-100">
-                                <i class="fa-solid fa-bookmark me-1"></i> Lagre
-                            </button>
-                        </form>
+                        <button class="btn-save" th:attr="data-id=${o.id}" onclick="lagreOppskrift(this)">
+                            <i class="fa-solid fa-bookmark me-1"></i> Lagre
+                        </button>
                     </div>
                 </div>
             </div>
@@ -331,5 +329,24 @@
 
     <div th:replace="~{fragments :: bottom_nav}"></div>
     <div th:replace="~{fragments :: scripts}"></div>
+
+    <script>
+        function lagreOppskrift(btn) {
+            if (btn.disabled) return;
+            const id = btn.dataset.id;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Lagrer...';
+
+            csrfFetch('/kopier/' + id, { method: 'POST', redirect: 'manual' })
+                .then(() => {
+                    btn.style.background = 'var(--mat-gronn-m)';
+                    btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Lagret!';
+                })
+                .catch(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-bookmark me-1"></i> Lagre';
+                });
+        }
+    </script>
 </body>
 </html>

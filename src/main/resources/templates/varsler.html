@@ -193,6 +193,7 @@
                         <span class="varsel-tekst" th:text="${v.tekst}">Varseltekst</span>
                         <span class="varsel-tid"
                               th:if="${v.opprettet != null}"
+                              th:attr="data-ts=${#temporals.format(v.opprettet, 'yyyy-MM-dd''T''HH:mm:ss')}"
                               th:text="${v.opprettet.dayOfMonth + '.' + v.opprettet.monthValue}">
                         </span>
                         <span th:if="${!v.lest}" class="ulest-dot"></span>
@@ -205,5 +206,25 @@
 
     <div th:replace="~{fragments :: bottom_nav}"></div>
     <div th:replace="~{fragments :: scripts}"></div>
+
+    <script>
+        (function() {
+            function relTid(isoStr) {
+                const d = new Date(isoStr);
+                if (isNaN(d)) return isoStr;
+                const diff = Math.floor((Date.now() - d.getTime()) / 1000);
+                if (diff < 60)     return 'Akkurat nå';
+                if (diff < 3600)   return Math.floor(diff / 60) + ' min siden';
+                if (diff < 86400)  return Math.floor(diff / 3600) + ' t siden';
+                if (diff < 172800) return 'I går';
+                if (diff < 604800) return Math.floor(diff / 86400) + ' dager siden';
+                return d.getDate() + '.' + (d.getMonth() + 1);
+            }
+
+            document.querySelectorAll('.varsel-tid[data-ts]').forEach(el => {
+                el.textContent = relTid(el.dataset.ts);
+            });
+        })();
+    </script>
 </body>
 </html>

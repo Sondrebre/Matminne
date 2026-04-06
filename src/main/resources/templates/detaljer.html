@@ -373,6 +373,11 @@
                     <strong th:text="${o.datoOpprettet != null ? #temporals.format(o.datoOpprettet,'dd.MM.yy') : '–'}">–</strong>
                     <span>Lagret</span>
                 </div>
+                <div class="stat-item" id="prisStat" th:if="${o.ingredienser != null and !#strings.isEmpty(o.ingredienser)}" style="cursor:pointer;" onclick="lastPris()">
+                    <i class="fas fa-tag" style="color:#10b981;"></i>
+                    <strong id="prisStatVerdi">Se pris</strong>
+                    <span>Estimat</span>
+                </div>
             </div>
 
             <div class="content-grid">
@@ -429,6 +434,25 @@
                         </div>
                     </div>
 
+                    <!-- Prisestimat (Kassal) -->
+                    <div class="side-card" th:if="${o.ingredienser != null and !#strings.isEmpty(o.ingredienser)}" id="prisKort" th:attr="data-id=${o.id}">
+                        <div class="side-card-head">
+                            <i class="fas fa-tag" style="color:#10b981;"></i>
+                            <h3>Prisestimat</h3>
+                        </div>
+                        <div class="side-card-body" id="prisKortBody">
+                            <button onclick="lastPris()" id="prisKnapp"
+                                    style="width:100%;background:linear-gradient(135deg,#10b981,#059669);
+                                           color:white;border:none;padding:12px 16px;border-radius:14px;
+                                           font-weight:800;font-size:.88rem;cursor:pointer;
+                                           font-family:inherit;transition:.2s;display:flex;
+                                           align-items:center;justify-content:center;gap:8px;
+                                           box-shadow:0 4px 14px rgba(16,185,129,.25);">
+                                <i class="fas fa-store"></i> Sjekk priser i norske butikker
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Del / handleliste -->
                     <div class="side-card">
                         <div class="side-card-head">
@@ -442,9 +466,10 @@
                             <button class="act-btn" onclick="visQr()" style="width:100%;justify-content:center;">
                                 <i class="fa-solid fa-qrcode"></i> QR-kode
                             </button>
-                            <form th:if="${innloggetBrukerId != null}"
+                            <form th:if="${innloggetBrukerId != null}" id="handlelisteForm"
                                   th:action="@{'/handleliste/fra-oppskrift/' + ${o.id}}" method="POST">
-                                <button type="submit" class="act-btn" style="width:100%;justify-content:center;">
+                                <button type="button" class="act-btn" style="width:100%;justify-content:center;"
+                                        onclick="leggTilHandellisteFiltrert(this)">
                                     <i class="fa-solid fa-cart-plus"></i> Legg i handleliste
                                 </button>
                             </form>
@@ -478,13 +503,15 @@
                         <div class="main-card-body">
                             <div class="social-row">
                                 <!-- Liker -->
-                                <form th:if="${innloggetBrukerId != null}" th:action="@{'/lik/' + ${o.id}}" method="POST">
-                                    <button type="submit" class="like-btn"
-                                            th:classappend="${erLikt} ? ' liked' : ''">
-                                        <i th:class="${erLikt} ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
-                                        <span th:text="${likeAntall}">0</span>
-                                    </button>
-                                </form>
+                                <button th:if="${innloggetBrukerId != null}"
+                                        id="likeBtn"
+                                        class="like-btn"
+                                        th:classappend="${erLikt} ? ' liked' : ''"
+                                        th:attr="data-id=${o.id}, data-liked=${erLikt}, data-count=${likeAntall}"
+                                        onclick="toggleLike(this)">
+                                    <i th:class="${erLikt} ? 'fa-solid fa-heart' : 'fa-regular fa-heart'"></i>
+                                    <span id="likeCount" th:text="${likeAntall}">0</span>
+                                </button>
                                 <span th:unless="${innloggetBrukerId != null}" class="like-count">
                                     <i class="fa-regular fa-heart"></i> <span th:text="${likeAntall}">0</span>
                                 </span>
@@ -584,7 +611,7 @@
                                     </div>
                                     <p class="kom-text" th:text="${k.tekst}"></p>
                                     <th:block th:if="${innloggetBrukerId != null}">
-                                        <button class="btn-reply" th:onclick="'toggleReply(' + ${k.id} + ')'">
+                                        <button class="btn-reply" th:data-kid="${k.id}" onclick="toggleReply(this.dataset.kid)">
                                             <i class="fa-solid fa-reply"></i> Svar
                                         </button>
                                         <div th:id="'reply-' + ${k.id}" class="reply-form">
@@ -823,7 +850,7 @@
             try {
                 const fd = new FormData();
                 fd.append('ingrediens', ingrediens);
-                const res = await fetch('/api/substitutt', { method: 'POST', body: fd });
+                const res = await csrfFetch('/api/substitutt', { method: 'POST', body: fd });
                 if (res.status === 402) {
                     tekst.innerHTML = `<div style="text-align:center;padding:8px 0;">
                         <div style="font-size:1.4rem;margin-bottom:8px;">✨</div>
@@ -867,6 +894,172 @@
         document.getElementById('substituttInput')?.addEventListener('keydown', e => {
             if (e.key === 'Enter') hentSubstitutt();
         });
+
+        // ── AI PRISESTIMAT ──
+        const oppskriftId = document.getElementById('prisKort')?.getAttribute('data-id');
+        let prisLastet = false;
+        let prisData = [];
+        let basePris = 0;
+
+        async function lastPris() {
+            if (prisLastet) return;
+            prisLastet = true;
+
+            const knapp = document.getElementById('prisKnapp');
+            const body = document.getElementById('prisKortBody');
+            const stat = document.getElementById('prisStatVerdi');
+
+            if (knapp) { knapp.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Claude estimerer priser…'; knapp.disabled = true; }
+            if (stat) stat.textContent = '…';
+
+            try {
+                const res = await fetch(`/api/pris/${oppskriftId}`);
+                const d = await res.json();
+
+                if (d.feil) {
+                    body.innerHTML = `<p style="font-size:.82rem;color:#dc2626;padding:4px 0;">${d.feil}</p>`;
+                    if (stat) stat.textContent = '–';
+                    return;
+                }
+
+                prisData = d.detaljer || [];
+                basePris = d.totalMin;
+                if (stat) stat.textContent = `ca. kr ${basePris}`;
+                byggPrisUI(body, stat);
+
+            } catch (e) {
+                body.innerHTML = `<p style="font-size:.82rem;color:#dc2626;padding:4px 0;">Kunne ikke hente priser. Prøv igjen.</p>`;
+                if (stat) stat.textContent = '–';
+                prisLastet = false;
+            }
+        }
+
+        function byggPrisUI(body, stat) {
+            const aktive = prisData.filter(it => !it.fjernet);
+            const sum = Math.round(aktive.reduce((acc, it) => acc + it.minPris, 0)) + 5;
+
+            if (stat) stat.textContent = `ca. kr ${sum}`;
+
+            let html = `
+                <div id="prisTopp" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);
+                            border-radius:16px;padding:18px 16px;margin-bottom:12px;text-align:center;">
+                    <div style="font-size:2rem;font-weight:900;color:#065f46;letter-spacing:-1px;" id="prisTotal">
+                        ca. kr ${sum}
+                    </div>
+                    <div style="font-size:.7rem;font-weight:700;color:#10b981;text-transform:uppercase;letter-spacing:1px;margin-top:2px;">
+                        Estimert totalkostnad · billigste butikk
+                    </div>
+                    <div style="font-size:.7rem;color:#6ee7b7;margin-top:5px;">
+                        Kryss av ingredienser du allerede har
+                    </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:5px;" id="prisListe">`;
+
+            prisData.forEach((item, idx) => {
+                const pris = item.minPris.toFixed(2).replace('.', ',');
+                const fjernet = item.fjernet;
+                html += `
+                    <div class="pris-rad${fjernet ? ' pris-fjernet' : ''}" data-idx="${idx}"
+                         onclick="toggleIngrediens(${idx})"
+                         style="display:flex;align-items:center;gap:10px;padding:9px 12px;
+                                border-radius:11px;cursor:pointer;transition:.15s;
+                                background:${fjernet ? '#f8fafc' : 'white'};
+                                border:1.5px solid ${fjernet ? '#f1f5f9' : '#e8f5e9'};
+                                opacity:${fjernet ? '.45' : '1'};">
+                        <div style="width:20px;height:20px;border-radius:6px;flex-shrink:0;
+                                    border:2px solid ${fjernet ? '#cbd5e1' : 'var(--mat-gronn)'};
+                                    background:${fjernet ? 'white' : 'var(--mat-gronn)'};
+                                    display:flex;align-items:center;justify-content:center;transition:.15s;">
+                            ${fjernet ? '' : '<i class="fas fa-check" style="color:white;font-size:.6rem;"></i>'}
+                        </div>
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-size:.83rem;font-weight:700;color:var(--mat-mork);
+                                        text-decoration:${fjernet ? 'line-through' : 'none'};
+                                        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                ${item.ingrediens}
+                            </div>
+                            <div style="font-size:.68rem;color:#94a3b8;margin-top:1px;
+                                        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                ${item.produktNavn}${item.billigstButikk ? ' · ' + item.billigstButikk : ''}
+                            </div>
+                        </div>
+                        <div style="font-size:.82rem;font-weight:800;
+                                    color:${fjernet ? '#cbd5e1' : '#059669'};flex-shrink:0;">
+                            ${fjernet ? '<s>kr ' + pris + '</s>' : 'kr ' + pris}
+                        </div>
+                    </div>`;
+            });
+
+            html += `</div>
+                <div style="margin-top:10px;font-size:.68rem;color:#cbd5e1;text-align:center;line-height:1.5;">
+                    AI-estimat · faktisk pris kan variere
+                </div>`;
+
+            body.innerHTML = html;
+        }
+
+        function toggleIngrediens(idx) {
+            prisData[idx].fjernet = !prisData[idx].fjernet;
+            const body = document.getElementById('prisKortBody');
+            const stat = document.getElementById('prisStatVerdi');
+            byggPrisUI(body, stat);
+        }
+
+        async function leggTilHandellisteFiltrert(btn) {
+            if (prisData.length === 0) {
+                // Priser ikke lastet — bruk vanlig form-submit (legg til alle)
+                document.getElementById('handlelisteForm').submit();
+                return;
+            }
+            const aktive = prisData.filter(it => !it.fjernet);
+            if (aktive.length === 0) {
+                alert('Alle ingredienser er allerede krysset av.');
+                return;
+            }
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Legger til...';
+            for (const item of aktive) {
+                await csrfFetch('/handleliste/legg-til', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'tekst=' + encodeURIComponent(item.ingrediens)
+                });
+            }
+            window.location.href = '/handleliste';
+        }
+
+        // ── LIKE (AJAX) ──
+        function toggleLike(btn) {
+            if (btn.disabled) return;
+            btn.disabled = true;
+            const id      = btn.dataset.id;
+            const erLikt  = btn.dataset.liked === 'true';
+            const count   = parseInt(btn.dataset.count, 10);
+            const nyttAntall = erLikt ? count - 1 : count + 1;
+
+            // Optimistic UI
+            btn.dataset.liked  = String(!erLikt);
+            btn.dataset.count  = nyttAntall;
+            btn.classList.toggle('liked', !erLikt);
+            btn.querySelector('i').className = !erLikt ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+            const countEl = document.getElementById('likeCount');
+            if (countEl) countEl.textContent = nyttAntall;
+            // Also update stat bar
+            const statHeart = document.querySelector('.stat-item .fa-heart')?.closest('.stat-item')?.querySelector('strong');
+            if (statHeart) statHeart.textContent = nyttAntall;
+
+            csrfFetch('/lik/' + id, { method: 'POST', redirect: 'manual' })
+                .then(() => { btn.disabled = false; })
+                .catch(() => {
+                    // Reverter
+                    btn.dataset.liked  = String(erLikt);
+                    btn.dataset.count  = count;
+                    btn.classList.toggle('liked', erLikt);
+                    btn.querySelector('i').className = erLikt ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+                    if (countEl) countEl.textContent = count;
+                    btn.disabled = false;
+                });
+        }
 
     </script>
 </body>

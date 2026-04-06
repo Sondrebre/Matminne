@@ -84,6 +84,21 @@
         }
         .btn-slett-item:hover { color:#e74c3c; }
 
+        .item-tekst { cursor:pointer; }
+        .item-tekst:hover { color:var(--mat-gronn); }
+        .edit-input {
+            flex:1; border:2px solid var(--mat-gronn); border-radius:10px;
+            padding:4px 10px; font-size:.95rem; font-family:inherit; font-weight:600;
+            color:var(--mat-mork); outline:none; background:white;
+        }
+
+        .btn-slett-alt {
+            background:white; border:1px solid #fecaca; color:#dc2626; padding:10px 18px;
+            border-radius:12px; font-weight:700; font-size:.85rem; cursor:pointer;
+            font-family:inherit; transition:.2s; display:flex; align-items:center; gap:7px;
+        }
+        .btn-slett-alt:hover { background:#fee2e2; }
+
         /* ACTIONS */
         .action-row { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
         .btn-action {
@@ -94,12 +109,74 @@
         }
         .btn-action:hover { background:#fee2e2; color:#dc2626; border-color:#fecaca; }
         .btn-action.green:hover { background:var(--mat-lys-gronn); color:var(--mat-gronn); border-color:var(--mat-gronn); }
+        .btn-action.ai-btn {
+            background: linear-gradient(135deg,#4338ca,#6366f1);
+            color:white; border-color:transparent;
+            box-shadow:0 4px 16px rgba(99,102,241,.3);
+        }
+        .btn-action.ai-btn:hover { opacity:.9; background: linear-gradient(135deg,#4338ca,#6366f1); color:white; border-color:transparent; }
+        .btn-action.ai-btn:disabled { opacity:.6; cursor:not-allowed; }
+
+        /* SMART SORT OVERLAY */
+        .smart-overlay {
+            display:none; position:fixed; inset:0; z-index:9000;
+            background:rgba(15,23,42,.6); backdrop-filter:blur(4px);
+            align-items:flex-end; justify-content:center;
+        }
+        .smart-overlay.vis { display:flex; }
+        .smart-panel {
+            background:white; border-radius:28px 28px 0 0;
+            width:100%; max-width:640px; max-height:85vh;
+            overflow-y:auto; padding:28px 24px 40px;
+            animation: slideUp .3s ease;
+        }
+        @keyframes slideUp { from{transform:translateY(60px);opacity:0} to{transform:translateY(0);opacity:1} }
+        .smart-header {
+            display:flex; align-items:center; justify-content:space-between;
+            margin-bottom:20px;
+        }
+        .smart-title { font-size:1.15rem; font-weight:900; color:#1e293b; }
+        .smart-close {
+            background:#f1f5f9; border:none; border-radius:50%; width:36px; height:36px;
+            cursor:pointer; font-size:1rem; color:#64748b; display:flex; align-items:center; justify-content:center;
+        }
+        .smart-gruppe { margin-bottom:20px; }
+        .sg-header {
+            display:flex; align-items:center; gap:8px;
+            font-size:.75rem; font-weight:800; text-transform:uppercase;
+            letter-spacing:1.5px; color:#64748b; margin-bottom:10px;
+        }
+        .sg-header span.sg-ikon { font-size:1.1rem; }
+        .sg-varer { display:flex; flex-direction:column; gap:6px; }
+        .sg-vare {
+            display:flex; align-items:center; gap:10px;
+            background:#f8fafc; border-radius:12px; padding:10px 14px;
+            font-size:.9rem; font-weight:600; color:#1e293b;
+        }
+        .sg-vare i { color:#94a3b8; font-size:.75rem; }
+        .smart-actions { display:flex; gap:10px; margin-top:24px; }
+        .smart-btn {
+            flex:1; padding:13px; border-radius:14px; border:none;
+            font-weight:800; font-size:.9rem; cursor:pointer; font-family:inherit;
+        }
+        .smart-btn-apply {
+            background:linear-gradient(135deg,#16a34a,#22c55e); color:white;
+        }
+        .smart-btn-cancel { background:#f1f5f9; color:#64748b; }
+        .smart-laster { text-align:center; padding:40px 20px; color:#6366f1; }
+        .smart-laster i { font-size:2rem; margin-bottom:10px; display:block; }
 
         /* EMPTY */
         .empty-state { text-align:center; padding:64px 20px; }
         .empty-icon { width:80px; height:80px; background:var(--mat-lys-gronn); border-radius:24px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; margin:0 auto 20px; }
         .empty-state h3 { font-weight:900; font-size:1.3rem; color:var(--mat-mork); margin-bottom:8px; }
         .empty-state p { color:#94a3b8; }
+
+        .hidden-action { display:none !important; }
+
+        /* Optimistic toggle animation */
+        .liste-item { transition: opacity .2s; }
+        .liste-item.removing { opacity: 0; transform: translateX(20px); transition: opacity .25s, transform .25s; }
     </style>
 </head>
 <body>
@@ -118,7 +195,7 @@
 
             <!-- LEGG TIL -->
             <div class="add-card">
-                <form action="/handleliste/legg-til" method="POST" class="add-row">
+                <form th:action="@{/handleliste/legg-til}" method="POST" class="add-row">
                     <input type="text" name="tekst" class="add-input" placeholder="f.eks. 500g kyllingfilet" required>
                     <button type="submit" class="btn-add">
                         <i class="fa-solid fa-plus me-1"></i> Legg til
@@ -138,7 +215,7 @@
             </div>
 
             <!-- LISTE -->
-            <div th:if="${items.isEmpty()}" class="liste-card">
+            <div th:if="${items.isEmpty()}" class="liste-card" id="listeKort">
                 <div class="empty-state">
                     <div class="empty-icon">🛒</div>
                     <h3>Handlelisten er tom</h3>
@@ -146,31 +223,36 @@
                 </div>
             </div>
 
-            <div th:unless="${items.isEmpty()}" class="liste-card">
+            <div th:unless="${items.isEmpty()}" class="liste-card" id="listeKort">
                 <div th:each="item : ${items}"
                      th:classappend="${item.ferdig} ? ' ferdig' : ''"
+                     th:attr="data-id=${item.id}"
                      class="liste-item">
-                    <form th:action="@{'/handleliste/toggle/' + ${item.id}}" method="POST">
-                        <button type="submit" class="check-btn" th:title="${item.ferdig ? 'Merk ugjort' : 'Merk gjort'}">
-                            <i th:if="${item.ferdig}" class="fa-solid fa-check"></i>
-                        </button>
-                    </form>
-                    <span class="item-tekst" th:text="${item.tekst}">Vare</span>
-                    <form th:action="@{'/handleliste/slett/' + ${item.id}}" method="POST">
-                        <button type="submit" class="btn-slett-item" title="Slett">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </form>
+                    <button class="check-btn"
+                            th:classappend="${item.ferdig} ? ' ferdig' : ''"
+                            th:title="${item.ferdig ? 'Merk ugjort' : 'Merk gjort'}"
+                            onclick="toggleItem(this)">
+                        <i th:if="${item.ferdig}" class="fa-solid fa-check"></i>
+                    </button>
+                    <span class="item-tekst" th:text="${item.tekst}" onclick="startRediger(this)" title="Klikk for å redigere">Vare</span>
+                    <button class="btn-slett-item" title="Slett" onclick="slettItem(this)">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
                 </div>
             </div>
 
             <!-- ACTIONS -->
-            <div class="action-row" th:if="${antallFerdig > 0}">
-                <form action="/handleliste/rydd" method="POST">
-                    <button type="submit" class="btn-action" onclick="return confirm('Fjerne alle gjorte varer?')">
-                        <i class="fa-solid fa-broom"></i> Rydd ferdiggjorte
-                    </button>
-                </form>
+            <div class="action-row" th:if="${antall > 0}">
+                <button class="btn-action ai-btn" id="smartSorterBtn" onclick="smartSorter(this)">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Smartsorter
+                </button>
+                <button class="btn-action" id="ryddBtn" onclick="ryddFerdig()"
+                        th:style="${antallFerdig > 0} ? '' : 'display:none'">
+                    <i class="fa-solid fa-broom"></i> Rydd ferdiggjorte
+                </button>
+                <button class="btn-slett-alt" onclick="slettAlt()">
+                    <i class="fa-solid fa-trash"></i> Slett alt
+                </button>
             </div>
             <div class="action-row">
                 <a href="/ukesmeny" class="btn-action green">
@@ -181,7 +263,252 @@
         </div>
     </div>
 
+    <!-- SMART SORT OVERLAY -->
+    <div class="smart-overlay" id="smartOverlay" onclick="lukkSmartOverlay(event)">
+        <div class="smart-panel" id="smartPanel">
+            <div class="smart-header">
+                <span class="smart-title"><i class="fa-solid fa-wand-magic-sparkles" style="color:#6366f1;margin-right:8px;"></i>Smartsortert handleliste</span>
+                <button class="smart-close" onclick="lukkSmartOverlay(null)"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="smartInnhold">
+                <div class="smart-laster">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                    <p style="color:#94a3b8;font-size:.88rem;margin:0;">AI sorterer og slår sammen varer...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div th:replace="~{fragments :: bottom_nav}"></div>
     <div th:replace="~{fragments :: scripts}"></div>
+
+    <script>
+        function getItemId(el) {
+            return el.closest('.liste-item').dataset.id;
+        }
+
+        function oppdaterStats() {
+            const alle   = document.querySelectorAll('.liste-item');
+            const ferdig = document.querySelectorAll('.liste-item.ferdig');
+            const statsText = document.querySelector('.stats-text');
+            const fill      = document.querySelector('.progress-fill');
+            const statsBar  = document.querySelector('.stats-bar');
+            const ryddBtn   = document.getElementById('ryddBtn');
+
+            if (statsBar) statsBar.style.display = alle.length > 0 ? 'flex' : 'none';
+            if (statsText) statsText.textContent = ferdig.length + ' av ' + alle.length + ' gjort';
+            if (fill) fill.style.width = (alle.length > 0 ? (ferdig.length * 100 / alle.length) : 0) + '%';
+            if (ryddBtn) ryddBtn.style.display = ferdig.length > 0 ? '' : 'none';
+        }
+
+        function toggleItem(btn) {
+            const item = btn.closest('.liste-item');
+            const id   = item.dataset.id;
+            const erFerdig = item.classList.contains('ferdig');
+
+            // Optimistic UI
+            item.classList.toggle('ferdig', !erFerdig);
+            btn.classList.toggle('ferdig', !erFerdig);
+            if (!erFerdig) {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+            } else {
+                btn.innerHTML = '';
+            }
+            oppdaterStats();
+
+            csrfFetch('/handleliste/toggle/' + id, { method: 'POST' })
+                .then(r => { if (!r.ok) location.reload(); })
+                .catch(() => location.reload());
+        }
+
+        function slettItem(btn) {
+            const item = btn.closest('.liste-item');
+            const id   = item.dataset.id;
+
+            item.classList.add('removing');
+            setTimeout(() => item.remove(), 260);
+            oppdaterStats();
+
+            // Vis tom-tilstand hvis siste element
+            setTimeout(() => {
+                const kort = document.getElementById('listeKort');
+                if (kort && kort.querySelectorAll('.liste-item').length === 0) {
+                    kort.innerHTML = '<div class="empty-state"><div class="empty-icon">🛒</div><h3>Handlelisten er tom</h3><p>Legg til varer manuelt, eller gå til en oppskrift og klikk "Legg i handleliste".</p></div>';
+                }
+                oppdaterStats();
+            }, 300);
+
+            csrfFetch('/handleliste/slett/' + id, { method: 'POST' })
+                .then(r => { if (!r.ok) location.reload(); })
+                .catch(() => location.reload());
+        }
+
+        function ryddFerdig() {
+            if (!confirm('Fjerne alle gjorte varer?')) return;
+            document.querySelectorAll('.liste-item.ferdig').forEach(item => {
+                item.classList.add('removing');
+                setTimeout(() => item.remove(), 260);
+            });
+            setTimeout(oppdaterStats, 300);
+            csrfFetch('/handleliste/rydd', { method: 'POST' })
+                .then(r => { if (!r.ok) location.reload(); })
+                .catch(() => location.reload());
+        }
+
+        function slettAlt() {
+            if (!confirm('Slette hele handlelisten?')) return;
+            document.querySelectorAll('.liste-item').forEach(item => {
+                item.classList.add('removing');
+                setTimeout(() => item.remove(), 260);
+            });
+            setTimeout(() => {
+                const kort = document.getElementById('listeKort');
+                if (kort) kort.innerHTML = '<div class="empty-state"><div class="empty-icon">🛒</div><h3>Handlelisten er tom</h3><p>Legg til varer manuelt, eller gå til en oppskrift og klikk "Legg i handleliste".</p></div>';
+                oppdaterStats();
+            }, 300);
+            csrfFetch('/handleliste/slett-alt', { method: 'POST' })
+                .then(r => { if (!r.ok) location.reload(); })
+                .catch(() => location.reload());
+        }
+
+        // Tving reload ved tilbake-navigering (unngår bfcache)
+        window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
+
+        // ── SMART SORTER ──────────────────────────────────────────────
+        let smartResultat = null;
+
+        function smartSorter(btn) {
+            const varer = [];
+            document.querySelectorAll('.liste-item .item-tekst').forEach(el => {
+                const tekst = el.textContent.trim();
+                if (tekst) varer.push(tekst);
+            });
+            if (varer.length === 0) return;
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sorterer...';
+
+            document.getElementById('smartOverlay').classList.add('vis');
+            document.getElementById('smartInnhold').innerHTML =
+                '<div class="smart-laster"><i class="fa-solid fa-spinner fa-spin"></i>' +
+                '<p style="color:#94a3b8;font-size:.88rem;margin:0;">AI sorterer og slår sammen varer...</p></div>';
+
+            csrfFetch('/api/handleliste/smartsorter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ varer: varer })
+            })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Smartsorter';
+                if (data.feil) {
+                    visSmartFeil(data.feil);
+                    return;
+                }
+                smartResultat = data;
+                visSmartResultat(data);
+            })
+            .catch(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Smartsorter';
+                visSmartFeil('Noe gikk galt. Prøv igjen.');
+            });
+        }
+
+        function visSmartResultat(data) {
+            let html = '';
+            (data.grupper || []).forEach(g => {
+                html += '<div class="smart-gruppe">' +
+                    '<div class="sg-header"><span class="sg-ikon">' + g.ikon + '</span>' + g.navn + '</div>' +
+                    '<div class="sg-varer">';
+                (g.varer || []).forEach(v => {
+                    html += '<div class="sg-vare"><i class="fa-solid fa-circle-dot"></i>' + escHtml(v) + '</div>';
+                });
+                html += '</div></div>';
+            });
+            html += '<div class="smart-actions">' +
+                '<button class="smart-btn smart-btn-cancel" onclick="lukkSmartOverlay(null)">Avbryt</button>' +
+                '<button class="smart-btn smart-btn-apply" onclick="brukSmartSortering()">Bruk denne sorteringen</button>' +
+                '</div>';
+            document.getElementById('smartInnhold').innerHTML = html;
+        }
+
+        function visSmartFeil(msg) {
+            document.getElementById('smartInnhold').innerHTML =
+                '<p style="color:#ef4444;text-align:center;padding:20px;">' + escHtml(msg) + '</p>' +
+                '<button class="smart-btn smart-btn-cancel" style="width:100%;" onclick="lukkSmartOverlay(null)">Lukk</button>';
+        }
+
+        function brukSmartSortering() {
+            if (!smartResultat || !smartResultat.grupper) return;
+            const kort = document.getElementById('listeKort');
+            if (!kort) return;
+            // Clear current items
+            kort.innerHTML = '';
+            smartResultat.grupper.forEach(g => {
+                // Group header
+                const headerDiv = document.createElement('div');
+                headerDiv.style.cssText = 'padding:10px 20px 4px;font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:#94a3b8;display:flex;align-items:center;gap:6px;background:#f8fafc;border-bottom:1px solid #f1f5f9;';
+                headerDiv.innerHTML = '<span>' + g.ikon + '</span>' + escHtml(g.navn);
+                kort.appendChild(headerDiv);
+                (g.varer || []).forEach(v => {
+                    const item = document.createElement('div');
+                    item.className = 'liste-item';
+                    item.dataset.id = 'smart-' + Math.random().toString(36).slice(2);
+                    item.innerHTML =
+                        '<span class="item-tekst" style="cursor:default;">' + escHtml(v) + '</span>';
+                    kort.appendChild(item);
+                });
+            });
+            lukkSmartOverlay(null);
+        }
+
+        function lukkSmartOverlay(e) {
+            if (e && e.target !== document.getElementById('smartOverlay')) return;
+            document.getElementById('smartOverlay').classList.remove('vis');
+            smartResultat = null;
+        }
+
+        function escHtml(str) {
+            return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        function startRediger(span) {
+            if (span.closest('.liste-item').classList.contains('ferdig')) return;
+            const gammelTekst = span.textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'edit-input';
+            input.value = gammelTekst;
+            span.replaceWith(input);
+            input.focus();
+            input.select();
+
+            function lagre() {
+                const nyTekst = input.value.trim();
+                const id = input.closest('.liste-item').dataset.id;
+                const nySpan = document.createElement('span');
+                nySpan.className = 'item-tekst';
+                nySpan.title = 'Klikk for å redigere';
+                nySpan.onclick = function() { startRediger(this); };
+                nySpan.textContent = nyTekst || gammelTekst;
+                input.replaceWith(nySpan);
+                if (nyTekst && nyTekst !== gammelTekst) {
+                    csrfFetch('/handleliste/endre/' + id, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ tekst: nyTekst })
+                    }).catch(() => { nySpan.textContent = gammelTekst; });
+                }
+            }
+
+            input.addEventListener('blur', lagre);
+            input.addEventListener('keydown', e => {
+                if (e.key === 'Enter') input.blur();
+                if (e.key === 'Escape') { input.value = gammelTekst; input.blur(); }
+            });
+        }
+    </script>
 </body>
 </html>

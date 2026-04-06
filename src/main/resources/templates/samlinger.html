@@ -261,7 +261,7 @@
                 <div class="card-title">
                     <i class="fa-solid fa-plus"></i> Lag ny samling
                 </div>
-                <form action="/samlinger/ny" method="POST">
+                <form th:action="@{/samlinger/ny}" method="POST">
                     <div class="input-row">
                         <input type="text" name="navn" class="field-input"
                                placeholder="f.eks. Middagsklassikere" required>

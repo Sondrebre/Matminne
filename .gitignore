@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### MatMinne ###
+*.db
+*.db.lock
+.claude/

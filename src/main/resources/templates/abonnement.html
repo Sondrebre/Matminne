@@ -66,58 +66,74 @@
         .subscribed-banner h3 { font-weight: 900; font-size: 1.05rem; color: var(--mat-mork); margin: 0 0 4px; }
         .subscribed-banner p { font-size: .85rem; color: #64748b; margin: 0; }
 
-        /* ── PRICING CARD ── */
+        /* ── PRICING CARDS ── */
         .pricing-wrap {
-            max-width: 860px; margin: 0 auto 60px;
+            max-width: 780px; margin: 0 auto 60px;
             padding: 40px 20px 0;
             display: grid;
-            grid-template-columns: 1fr 1.15fr;
-            gap: 20px;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            align-items: start;
         }
 
         .price-card {
             background: white; border-radius: 28px;
-            border: 1.5px solid #e8f5e9;
-            box-shadow: 0 8px 40px rgba(34,197,94,.08);
+            border: 2px solid #e8f5e9;
+            box-shadow: 0 4px 24px rgba(0,0,0,.06);
             padding: 32px 28px;
             display: flex; flex-direction: column;
+            transition: transform .2s, box-shadow .2s;
         }
+        .price-card:hover { transform: translateY(-3px); }
 
         .price-card.featured {
             border-color: var(--mat-gronn);
-            box-shadow: 0 20px 60px rgba(34,197,94,.22);
-            position: relative; overflow: hidden;
+            box-shadow: 0 20px 60px rgba(34,197,94,.2), 0 4px 24px rgba(0,0,0,.06);
+            background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
         }
-        .price-card.featured::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0; height: 4px;
-            background: linear-gradient(90deg, var(--mat-gronn), #a7f3d0, var(--mat-gronn));
-            background-size: 300% auto;
-            animation: stripeMove 3s linear infinite;
-        }
+
         .featured-pill {
             background: var(--mat-gronn); color: white;
-            font-size: .65rem; font-weight: 900;
-            text-transform: uppercase; letter-spacing: 1.5px;
-            padding: 4px 12px; border-radius: 99px;
-            display: inline-block; margin-bottom: 16px;
+            font-size: .7rem; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 2px;
+            padding: 7px 0; border-radius: 12px;
+            display: block; text-align: center;
+            margin-bottom: 20px; width: 100%;
         }
 
-        .plan-name { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; margin-bottom: 8px; }
-        .plan-price { font-size: 3rem; font-weight: 900; letter-spacing: -2px; color: var(--mat-mork); line-height: 1; margin-bottom: 4px; }
-        .plan-price sup { font-size: 1.2rem; font-weight: 700; vertical-align: top; margin-top: 8px; }
-        .plan-price sub { font-size: .85rem; font-weight: 600; color: #94a3b8; }
-        .plan-desc { font-size: .82rem; color: #94a3b8; margin-bottom: 24px; }
+        .plan-name {
+            font-size: .68rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 2.5px; color: #94a3b8; margin-bottom: 16px;
+        }
 
-        .plan-features { list-style: none; padding: 0; margin: 0 0 28px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
-        .plan-features li { display: flex; align-items: center; gap: 10px; font-size: .88rem; font-weight: 600; color: #475569; }
-        .plan-features li .check { width: 20px; height: 20px; border-radius: 6px; background: var(--mat-lys-gronn); color: var(--mat-gronn); display: flex; align-items: center; justify-content: center; font-size: .7rem; flex-shrink: 0; }
-        .plan-features li .cross { width: 20px; height: 20px; border-radius: 6px; background: #f1f5f9; color: #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: .7rem; flex-shrink: 0; }
+        .price-block { margin-bottom: 6px; display: flex; align-items: flex-end; gap: 2px; line-height: 1; }
+        .price-currency { font-size: .95rem; font-weight: 800; color: #94a3b8; margin-bottom: 8px; }
+        .price-amount { font-size: 4rem; font-weight: 900; letter-spacing: -3px; color: var(--mat-mork); }
+        .price-decimal { font-size: 1.8rem; font-weight: 900; letter-spacing: -1px; color: var(--mat-mork); margin-bottom: 6px; }
+        .price-period { font-size: .82rem; font-weight: 600; color: #94a3b8; margin-bottom: 4px; }
+
+        .plan-desc { font-size: .83rem; color: #94a3b8; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #f1f5f9; }
+
+        .plan-features { list-style: none; padding: 0; margin: 0 0 28px; flex: 1; display: flex; flex-direction: column; gap: 11px; }
+        .plan-features li { display: flex; align-items: center; gap: 11px; font-size: .875rem; font-weight: 600; color: #334155; }
+        .plan-features li .check {
+            width: 22px; height: 22px; border-radius: 7px;
+            background: #dcfce7; color: #16a34a;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .7rem; flex-shrink: 0; font-weight: 900;
+        }
+        .price-card.featured .check { background: var(--mat-gronn); color: white; }
+        .plan-features li .cross {
+            width: 22px; height: 22px; border-radius: 7px;
+            background: #f1f5f9; color: #cbd5e1;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .7rem; flex-shrink: 0;
+        }
         .plan-features li.muted { color: #cbd5e1; }
 
         .btn-plan-free {
-            background: #f1f5f9; color: var(--mat-mork); border: none;
-            padding: 14px; border-radius: 14px; font-weight: 800; font-size: .9rem;
+            background: #f1f5f9; color: #475569; border: none;
+            padding: 14px; border-radius: 14px; font-weight: 800; font-size: .88rem;
             cursor: pointer; font-family: inherit; transition: .2s; text-align: center;
             text-decoration: none; display: block;
         }
@@ -125,13 +141,12 @@
 
         .btn-plan-pro {
             background: var(--mat-gronn); color: white; border: none;
-            padding: 16px; border-radius: 14px; font-weight: 900; font-size: .95rem;
+            padding: 16px; border-radius: 14px; font-weight: 900; font-size: .92rem;
             cursor: pointer; font-family: inherit; transition: .2s; text-align: center;
             display: block; text-decoration: none;
-            box-shadow: 0 8px 28px rgba(34,197,94,.35);
+            box-shadow: 0 8px 24px rgba(34,197,94,.35);
         }
-        .btn-plan-pro:hover { background: var(--mat-gronn-m); transform: translateY(-2px); color: white;
-            box-shadow: 0 12px 36px rgba(34,197,94,.4); }
+        .btn-plan-pro:hover { background: var(--mat-gronn-m); transform: translateY(-2px); color: white; box-shadow: 0 12px 32px rgba(34,197,94,.45); }
 
         /* ── FEATURES SECTION ── */
         .features-section {
@@ -238,7 +253,11 @@
         <!-- Gratis -->
         <div class="price-card">
             <div class="plan-name">Gratis</div>
-            <div class="plan-price"><sup>kr</sup>0<sub>/mnd</sub></div>
+            <div class="price-block">
+                <span class="price-currency">kr</span>
+                <span class="price-amount">0</span>
+            </div>
+            <div class="price-period">/mnd</div>
             <div class="plan-desc">For deg som vil komme i gang</div>
             <ul class="plan-features">
                 <li><span class="check">✓</span> Ubegrenset kokebok</li>
@@ -256,7 +275,12 @@
         <div class="price-card featured">
             <span class="featured-pill">✨ Anbefalt</span>
             <div class="plan-name">MatMinne AI</div>
-            <div class="plan-price"><sup>kr</sup>69<span style="font-size:1.8rem;">,90</span><sub>/mnd</sub></div>
+            <div class="price-block">
+                <span class="price-currency">kr</span>
+                <span class="price-amount">69</span>
+                <span class="price-decimal">,90</span>
+            </div>
+            <div class="price-period">/mnd</div>
             <div class="plan-desc">Full AI-kraft for matentusiaster</div>
             <ul class="plan-features">
                 <li><span class="check">✓</span> Alt i gratisplanen</li>

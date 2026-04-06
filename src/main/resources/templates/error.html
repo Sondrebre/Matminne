@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Noe gikk galt — MatMinne</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(160deg, #f0fdf4 0%, #dcfce7 100%);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background: white; border-radius: 28px;
+            border: 1.5px solid #bbf7d0;
+            box-shadow: 0 20px 60px rgba(34,197,94,.1);
+            padding: 52px 44px; max-width: 480px; width: 100%; text-align: center;
+        }
+        .icon {
+            width: 80px; height: 80px; border-radius: 24px;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.2rem; margin: 0 auto 28px;
+        }
+        .code { font-size: .72rem; font-weight: 800; text-transform: uppercase;
+                letter-spacing: 2px; color: #94a3b8; margin-bottom: 10px; }
+        h1 { font-size: 1.7rem; font-weight: 900; letter-spacing: -1px; color: #0f172a; margin-bottom: 12px; }
+        p { font-size: .9rem; color: #64748b; line-height: 1.7; margin-bottom: 32px; }
+        .btn-home {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #22c55e; color: white; text-decoration: none;
+            padding: 13px 28px; border-radius: 14px; font-weight: 800; font-size: .9rem;
+            box-shadow: 0 8px 24px rgba(34,197,94,.25); transition: .2s;
+        }
+        .btn-home:hover { background: #16a34a; transform: translateY(-2px); color: white; }
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #f1f5f9; color: #475569; text-decoration: none;
+            padding: 13px 24px; border-radius: 14px; font-weight: 700; font-size: .88rem;
+            margin-left: 10px; transition: .2s;
+        }
+        .btn-back:hover { background: #e2e8f0; }
+        .actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">
+            <span th:if="${status == 404}">🔍</span>
+            <span th:if="${status == 403}">🔒</span>
+            <span th:unless="${status == 404 or status == 403}">⚠️</span>
+        </div>
+        <div class="code" th:text="'Feilkode ' + ${status}">Feilkode 500</div>
+        <h1 th:if="${status == 404}">Siden finnes ikke</h1>
+        <h1 th:if="${status == 403}">Ikke tilgang</h1>
+        <h1 th:unless="${status == 404 or status == 403}">Noe gikk galt</h1>
+        <p th:if="${status == 404}">Siden du leter etter eksisterer ikke, eller har blitt flyttet.</p>
+        <p th:if="${status == 403}">Du har ikke tilgang til denne siden.</p>
+        <p th:unless="${status == 404 or status == 403}">En uventet feil oppstod. Prøv igjen, eller gå tilbake til kokeboken.</p>
+        <div class="actions">
+            <a href="/kokebok" class="btn-home">🏠 Gå til kokeboken</a>
+            <a href="javascript:history.back()" class="btn-back">← Tilbake</a>
+        </div>
+    </div>
+</body>
+</html>

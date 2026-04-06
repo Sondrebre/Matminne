@@ -236,9 +236,23 @@
                         </div>
 
                         <div class="field-group" style="margin-bottom:0;">
-                            <label class="field-label" for="bildeUrl">Bilde-URL (valgfritt)</label>
-                            <input type="text" id="bildeUrl" name="bildeUrl" class="field-input"
-                                   placeholder="https://images.unsplash.com/..." oninput="visForhåndsvisning(this.value)">
+                            <label class="field-label">Bilde (valgfritt)</label>
+
+                            <!-- Filvelger -->
+                            <label for="bildeFil" style="display:flex;align-items:center;gap:10px;
+                                   background:#f0fdf4;border:2px dashed #86efac;border-radius:14px;
+                                   padding:14px 16px;cursor:pointer;font-weight:700;color:#16a34a;
+                                   font-size:.85rem;margin-bottom:10px;transition:.15s;"
+                                   onmouseover="this.style.background='#dcfce7'" onmouseout="this.style.background='#f0fdf4'">
+                                <i class="fa-solid fa-image" style="font-size:1.2rem;"></i>
+                                <span id="bildeFilLabel">Velg bilde fra kamerarulle eller PC</span>
+                            </label>
+                            <input type="file" id="bildeFil" accept="image/*" style="display:none;"
+                                   onchange="handterOppskriftBilde(this)">
+
+                            <!-- Skjult URL-felt som sendes med skjemaet -->
+                            <input type="hidden" id="bildeUrl" name="bildeUrl">
+
                             <div class="img-preview-wrap" id="imgPreviewWrap">
                                 <img id="imgPreview" class="img-preview" alt="Forhåndsvisning">
                             </div>
@@ -384,6 +398,7 @@
         </div>
     </div>
 
+    <div th:replace="~{fragments :: bottom_nav}"></div>
     <div th:replace="~{fragments :: scripts}"></div>
 
     <script>
@@ -422,11 +437,11 @@
             document.getElementById('sum-pors').textContent = pors ? pors + ' pors.' : '—';
         }
 
-        function visForhåndsvisning(url) {
+        function visForhåndsvisning(src) {
             const wrap = document.getElementById('imgPreviewWrap');
             const img  = document.getElementById('imgPreview');
-            if (url && url.startsWith('http')) {
-                img.src = url;
+            if (src) {
+                img.src = src;
                 img.onload  = () => { wrap.style.display = 'block'; };
                 img.onerror = () => { wrap.style.display = 'none'; };
             } else {
@@ -434,9 +449,34 @@
             }
         }
 
+        function handterOppskriftBilde(input) {
+            const fil = input.files[0];
+            if (!fil) return;
+            document.getElementById('bildeFilLabel').textContent = fil.name;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const maxW = 800, maxH = 600;
+                    let w = img.width, h = img.height;
+                    if (w > maxW) { h = h * maxW / w; w = maxW; }
+                    if (h > maxH) { w = w * maxH / h; h = maxH; }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+                    document.getElementById('bildeUrl').value = dataUrl;
+                    visForhåndsvisning(dataUrl);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(fil);
+        }
+
         async function hentMedAi() {
             const url = document.getElementById('aiUrl').value.trim();
             if (!url) { showToast('Lim inn en URL først!', 'error'); return; }
+            try { new URL(url); } catch { showToast('Ugyldig URL — lim inn en komplett nettadresse', 'error'); return; }
 
             const btn = document.getElementById('aiFetchBtn');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Henter...';

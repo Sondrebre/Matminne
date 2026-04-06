@@ -125,6 +125,8 @@
         }
         .stat:last-child { border-right: none; }
         .stat:hover { background: var(--mat-lys-gronn); }
+        .stat-clickable { cursor: pointer; }
+        .stat-clickable:hover .stat-lbl { color: var(--mat-gronn); }
         .stat-val {
             font-size: 2.2rem; font-weight: 900; color: var(--mat-mork);
             display: block; line-height: 1; margin-bottom: 5px; letter-spacing: -1.5px;
@@ -229,7 +231,22 @@
                 <!-- INFO + ACTIONS -->
                 <div class="profile-info">
                     <h1 class="profile-name" th:text="${profilNavn}">Navn</h1>
-                    <div class="profile-email" th:text="${profilEpost}"></div>
+                    <div class="profile-email" th:if="${erEgenProfil}" th:text="${profilEpost}"></div>
+
+                    <!-- BIO -->
+                    <div th:if="${profilBio != null and !#strings.isEmpty(profilBio)}"
+                         style="font-size:.88rem;color:#475569;line-height:1.6;margin-bottom:12px;max-width:340px;"
+                         th:text="${profilBio}"></div>
+                    <button th:if="${erEgenProfil}" onclick="åpneBioModal()"
+                            style="background:none;border:1px dashed #cbd5e1;border-radius:10px;
+                                   padding:6px 14px;font-size:.78rem;font-weight:700;color:#94a3b8;
+                                   cursor:pointer;margin-bottom:12px;font-family:inherit;transition:.15s;"
+                            onmouseover="this.style.borderColor='#22c55e';this.style.color='#16a34a';"
+                            onmouseout="this.style.borderColor='#cbd5e1';this.style.color='#94a3b8';">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <span th:text="${profilBio != null and !#strings.isEmpty(profilBio) ? 'Rediger bio' : 'Legg til bio'}">Legg til bio</span>
+                    </button>
+
                     <div class="profile-actions">
                         <th:block th:if="${!erEgenProfil}">
                             <form th:if="${!følgerAllerede}" th:action="@{'/følg/' + ${profilEpost}}" method="post">
@@ -255,9 +272,15 @@
                         <span class="stat-val" th:attr="data-count=${oppskrifter.size()}" th:text="${oppskrifter.size()}">0</span>
                         <span class="stat-lbl">Oppskrifter</span>
                     </div>
-                    <div class="stat">
+                    <div class="stat stat-clickable" onclick="åpneSosialModal('følgere')"
+                         title="Se hvem som følger deg">
                         <span class="stat-val" th:attr="data-count=${antallFølgere}" th:text="${antallFølgere}">0</span>
-                        <span class="stat-lbl">Følgere</span>
+                        <span class="stat-lbl">Følgere <i class="fa-solid fa-chevron-right" style="font-size:.5rem;opacity:.4;"></i></span>
+                    </div>
+                    <div class="stat stat-clickable" onclick="åpneSosialModal('følger')"
+                         title="Se hvem du følger">
+                        <span class="stat-val" th:attr="data-count=${antallFølger}" th:text="${antallFølger}">0</span>
+                        <span class="stat-lbl">Følger <i class="fa-solid fa-chevron-right" style="font-size:.5rem;opacity:.4;"></i></span>
                     </div>
                 </div>
             </div>
@@ -292,40 +315,203 @@
         </div>
     </div>
 
+    <!-- SOSIAL MODAL (følgere / følger) -->
+    <div class="modal-overlay" id="sosialModal">
+        <div class="modal-box" style="max-width:440px;text-align:left;padding:0;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:22px 28px 18px;border-bottom:1px solid #f1f5f9;">
+                <h4 id="sosialModalTittel" style="margin:0;font-size:1.1rem;letter-spacing:-.4px;">Følgere</h4>
+                <button onclick="document.getElementById('sosialModal').classList.remove('active')"
+                        style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:1.1rem;padding:4px;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="sosialModalInnhold" style="max-height:420px;overflow-y:auto;padding:12px 16px;">
+                <div style="text-align:center;padding:40px 20px;color:#94a3b8;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size:1.4rem;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- AVATAR MODAL -->
     <div class="modal-overlay" id="avatarModal">
         <div class="modal-box">
             <h4>🍎 Bytt profilbilde</h4>
-            <p>Lim inn en URL til bildet du vil bruke.</p>
-            <img id="previewImg" class="modal-preview" alt="Forhåndsvisning">
-            <form action="/oppdater-profilbilde" method="POST">
-                <input type="url" name="nyBildeUrl" id="bildeUrlInput" class="modal-input"
-                       placeholder="https://..." required oninput="forhåndsvis(this.value)">
+
+            <!-- Forhåndsvisning -->
+            <img id="previewImg" class="modal-preview" alt="Forhåndsvisning"
+                 style="display:none;width:100px;height:100px;border-radius:50%;object-fit:cover;margin:0 auto 16px;display:block;">
+
+            <!-- Filvelger (kamerarulle/PC) -->
+            <label for="bildeFilInput" style="display:flex;align-items:center;justify-content:center;gap:10px;
+                   background:#f0fdf4;border:2px dashed #86efac;border-radius:14px;
+                   padding:20px;cursor:pointer;font-weight:700;color:#16a34a;
+                   font-size:.88rem;margin-bottom:14px;transition:.15s;"
+                   onmouseover="this.style.background='#dcfce7'" onmouseout="this.style.background='#f0fdf4'">
+                <i class="fa-solid fa-image" style="font-size:1.3rem;"></i>
+                <span id="filLabel">Velg bilde fra kamerarulle eller PC</span>
+            </label>
+            <input type="file" id="bildeFilInput" accept="image/*" style="display:none;"
+                   onchange="handterBildeFil(this)">
+
+            <!-- URL-felt (skjult, fylles av JS) -->
+            <form th:action="@{/oppdater-profilbilde}" method="POST" id="avatarForm">
+                <input type="hidden" name="nyBildeUrl" id="bildeUrlInput">
                 <div class="modal-actions">
                     <button type="button" class="btn-modal-cancel"
-                            onclick="document.getElementById('avatarModal').classList.remove('active')">
+                            onclick="lukkAvatarModal()">
+                        Avbryt
+                    </button>
+                    <button type="submit" id="avatarLagreBtn" class="btn-modal-save" disabled
+                            style="opacity:.4;cursor:not-allowed;">
+                        <i class="fa-solid fa-check"></i> Lagre
+                    </button>
+                </div>
+            </form>
+            <canvas id="resizeCanvas" style="display:none;"></canvas>
+        </div>
+    </div>
+
+    <!-- BIO-MODAL -->
+    <div class="modal-overlay" id="bioModal">
+        <div class="modal-box">
+            <h4>✏️ Din bio</h4>
+            <p>Fortell andre litt om deg og matinteressene dine.</p>
+            <form th:action="@{/oppdater-bio}" method="POST">
+                <textarea name="bio" id="bioInput" class="modal-input"
+                          rows="4" maxlength="300"
+                          placeholder="F.eks. Glad i italiensk mat og helgebaking..."
+                          style="resize:vertical;min-height:90px;"
+                          th:text="${profilBio}"></textarea>
+                <div style="font-size:.72rem;color:#94a3b8;text-align:right;margin-top:4px;">
+                    <span id="bioTeller">0</span>/300
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal-cancel"
+                            onclick="document.getElementById('bioModal').classList.remove('active')">
                         Avbryt
                     </button>
                     <button type="submit" class="btn-modal-save">
-                        <i class="fas fa-check me-1"></i> Oppdater
+                        <i class="fa-solid fa-check"></i> Lagre
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
+    <div th:replace="~{fragments :: bottom_nav}"></div>
     <div th:replace="~{fragments :: scripts}"></div>
 
     <script>
-        function forhåndsvis(url) {
-            const img = document.getElementById('previewImg');
-            if (url && url.startsWith('http')) {
-                img.src = url;
-                img.style.display = 'block';
-                img.onerror = () => { img.style.display = 'none'; };
-            } else {
-                img.style.display = 'none';
+        // ── Sosial modal (følgere / følger) ──
+        const profilEpost = /*[[${profilEpost}]]*/ '';
+
+        async function åpneSosialModal(type) {
+            const modal   = document.getElementById('sosialModal');
+            const tittel  = document.getElementById('sosialModalTittel');
+            const innhold = document.getElementById('sosialModalInnhold');
+
+            tittel.textContent = type === 'følgere' ? 'Følgere' : 'Følger';
+            innhold.innerHTML  = '<div style="text-align:center;padding:40px 20px;color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin" style="font-size:1.4rem;"></i></div>';
+            modal.classList.add('active');
+
+            try {
+                const res  = await fetch(`/api/profil/${encodeURIComponent(profilEpost)}/${type}`);
+                const data = await res.json();
+
+                if (!data.length) {
+                    innhold.innerHTML = `<div style="text-align:center;padding:40px 20px;">
+                        <div style="font-size:2rem;margin-bottom:10px;">👥</div>
+                        <p style="color:#94a3b8;font-size:.9rem;">${type === 'følgere' ? 'Ingen følgere ennå' : 'Følger ingen ennå'}</p>
+                    </div>`;
+                    return;
+                }
+
+                innhold.innerHTML = data.map(b => `
+                    <a href="/profil/${encodeURIComponent(b.epost)}"
+                       onclick="document.getElementById('sosialModal').classList.remove('active')"
+                       style="display:flex;align-items:center;gap:14px;padding:12px 12px;
+                              border-radius:14px;text-decoration:none;transition:.15s;"
+                       onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+                        ${b.bilde
+                            ? `<img src="${b.bilde}" style="width:44px;height:44px;border-radius:13px;object-fit:cover;flex-shrink:0;border:2px solid #e2e8f0;">`
+                            : `<div style="width:44px;height:44px;border-radius:13px;background:var(--mat-lys-gronn);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">👤</div>`}
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-weight:700;font-size:.93rem;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${b.navn}</div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right" style="color:#cbd5e1;font-size:.75rem;flex-shrink:0;"></i>
+                    </a>`).join('');
+            } catch {
+                innhold.innerHTML = '<p style="color:#dc2626;padding:20px;font-size:.85rem;">Kunne ikke laste listen.</p>';
             }
+        }
+
+        // Lukk modal ved klikk utenfor
+        document.getElementById('sosialModal').addEventListener('click', e => {
+            if (e.target === document.getElementById('sosialModal'))
+                document.getElementById('sosialModal').classList.remove('active');
+        });
+
+        function åpneBioModal() {
+            document.getElementById('bioModal').classList.add('active');
+            const ta = document.getElementById('bioInput');
+            document.getElementById('bioTeller').textContent = ta.value.length;
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const ta = document.getElementById('bioInput');
+            if (ta) {
+                document.getElementById('bioTeller').textContent = ta.value.length;
+                ta.addEventListener('input', () => {
+                    document.getElementById('bioTeller').textContent = ta.value.length;
+                });
+            }
+            document.getElementById('bioModal')?.addEventListener('click', e => {
+                if (e.target === document.getElementById('bioModal'))
+                    document.getElementById('bioModal').classList.remove('active');
+            });
+        });
+
+        function lukkAvatarModal() {
+            document.getElementById('avatarModal').classList.remove('active');
+            document.getElementById('bildeFilInput').value = '';
+            document.getElementById('bildeUrlInput').value = '';
+            document.getElementById('filLabel').textContent = 'Velg bilde fra kamerarulle eller PC';
+            document.getElementById('previewImg').style.display = 'none';
+            document.getElementById('avatarLagreBtn').disabled = true;
+            document.getElementById('avatarLagreBtn').style.opacity = '.4';
+            document.getElementById('avatarLagreBtn').style.cursor = 'not-allowed';
+        }
+
+        function handterBildeFil(input) {
+            const fil = input.files[0];
+            if (!fil) return;
+            document.getElementById('filLabel').textContent = fil.name;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // Komprimer til maks 300x300 px
+                    const maxSize = 300;
+                    let w = img.width, h = img.height;
+                    if (w > h) { if (w > maxSize) { h = h * maxSize / w; w = maxSize; } }
+                    else        { if (h > maxSize) { w = w * maxSize / h; h = maxSize; } }
+                    const canvas = document.getElementById('resizeCanvas');
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+
+                    document.getElementById('previewImg').src = dataUrl;
+                    document.getElementById('previewImg').style.display = 'block';
+                    document.getElementById('bildeUrlInput').value = dataUrl;
+                    const btn = document.getElementById('avatarLagreBtn');
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(fil);
         }
 
         // Animate stat counters on load
