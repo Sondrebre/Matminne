@@ -194,12 +194,36 @@
         .btn-modal-save:hover { background:var(--mat-gronn-m); }
 
         @media (max-width:768px) {
+            .profile-banner { height: 180px; }
             .profile-top { flex-wrap: wrap; }
-            .profile-stats { border-left:none; padding-left:0; margin-left:0; border-top:1px solid #f1f5f9; padding-top:18px; width:100%; justify-content:center; }
-            .profile-card { margin:-50px 12px 28px; padding:22px 18px; }
-            .avatar-wrap { margin-top: -70px; }
-            .avatar-img, .avatar-emoji { width:110px; height:110px; }
-            .recipe-grid { grid-template-columns: repeat(2, 1fr); }
+            .profile-stats {
+                border-left: none; padding-left: 0; margin-left: 0;
+                border-top: 1px solid #f1f5f9; padding-top: 14px;
+                width: 100%; justify-content: space-around;
+            }
+            .stat { padding: 8px 12px; }
+            .stat-val { font-size: 1.7rem; }
+            .profile-card { margin: -50px 12px 24px; padding: 20px 16px; border-radius: 24px; }
+            .avatar-wrap { margin-top: -65px; }
+            .avatar-img, .avatar-emoji { width: 100px; height: 100px; border-radius: 22px; }
+            .profile-name { font-size: 1.4rem; }
+            .recipe-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            /* Modals: full-width on mobile */
+            .modal-box { padding: 24px 18px; border-radius: 20px; }
+            .modal-overlay { padding: 12px; align-items: flex-end; }
+            .modal-overlay > .modal-box { border-radius: 24px 24px 20px 20px; max-width: 100%; }
+        }
+
+        @media (max-width:400px) {
+            .profile-card { margin: -40px 8px 20px; padding: 16px 12px; }
+            .avatar-wrap { margin-top: -55px; }
+            .avatar-img, .avatar-emoji { width: 86px; height: 86px; border-radius: 18px; }
+            .profile-name { font-size: 1.2rem; letter-spacing: -0.5px; }
+            .profile-email { font-size: .75rem; }
+            .stat-val { font-size: 1.5rem; }
+            .stat { padding: 6px 8px; }
+            .recipe-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .btn-follow, .btn-unfollow, .btn-new-recipe { padding: 9px 14px; font-size: .82rem; }
         }
     </style>
 </head>

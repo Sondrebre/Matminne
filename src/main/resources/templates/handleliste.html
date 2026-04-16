@@ -177,6 +177,18 @@
         /* Optimistic toggle animation */
         .liste-item { transition: opacity .2s; }
         .liste-item.removing { opacity: 0; transform: translateX(20px); transition: opacity .25s, transform .25s; }
+
+        @media (max-width: 600px) {
+            .page-hero { padding: 32px 0 48px; }
+            .page-hero h1 { font-size: 2rem; letter-spacing: -1.5px; }
+            .content-wrap { padding: 0 12px; margin-top: -24px; }
+            .add-card { padding: 16px; }
+            .add-row { gap: 8px; }
+            .add-input { min-width: 0; }
+            .action-row { gap: 8px; }
+            .btn-action, .btn-slett-alt { padding: 9px 13px; font-size: .82rem; }
+            .liste-item { padding: 12px 14px; gap: 10px; }
+        }
     </style>
 </head>
 <body>

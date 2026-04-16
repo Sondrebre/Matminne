@@ -475,15 +475,17 @@
         <!-- Bootstrap offcanvas — håndterer swipe nativt -->
         <th:block th:if="${brukerEpost != null}">
             <div class="offcanvas offcanvas-end" tabindex="-1" id="mobOffcanvas"
-                 style="width:min(85vw,320px);border-radius:0;">
-                <div class="offcanvas-header" style="border-bottom:1px solid #f1f5f9;padding:16px 20px;">
+                 style="width:min(85vw,320px);border-radius:0;display:flex;flex-direction:column;">
+                <!-- Drag handle indicator -->
+                <div style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:4px;height:48px;background:#e2e8f0;border-radius:4px;opacity:.6;pointer-events:none;"></div>
+                <div class="offcanvas-header" style="border-bottom:1px solid #f1f5f9;padding:16px 20px;flex-shrink:0;">
                     <div style="display:flex;align-items:center;gap:10px;">
                         <div class="mob-drawer-logo">🍎</div>
                         <div class="mob-drawer-title">mat<span>minne.</span></div>
                     </div>
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Lukk"></button>
                 </div>
-                <div class="offcanvas-body" style="padding:12px 12px 24px;overflow-y:auto;">
+                <div class="offcanvas-body" style="padding:12px 12px 24px;overflow-y:scroll;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;flex:1;min-height:0;">
                     <div class="mob-drawer-section-label">Navigasjon</div>
                     <a href="/kokebok" class="mob-nav-link">
                         <div class="mob-nav-icon"><i class="fa-solid fa-book-open"></i></div> Min Kokebok
@@ -713,6 +715,47 @@
                     var h = l.getAttribute('href');
                     if (h && h !== '/' && p.startsWith(h)) l.classList.add('active');
                 });
+            })();
+
+            // ── SWIPE TO CLOSE OFFCANVAS ──
+            (function() {
+                var el = document.getElementById('mobOffcanvas');
+                if (!el) return;
+                var startX = 0, startY = 0, isDragging = false;
+
+                el.addEventListener('touchstart', function(e) {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                    isDragging = true;
+                }, { passive: true });
+
+                el.addEventListener('touchmove', function(e) {
+                    if (!isDragging) return;
+                    var dx = e.touches[0].clientX - startX;
+                    var dy = Math.abs(e.touches[0].clientY - startY);
+                    // If clearly scrolling vertically, cancel swipe detection
+                    if (dy > 30 && Math.abs(dx) < dy) isDragging = false;
+                }, { passive: true });
+
+                el.addEventListener('touchend', function(e) {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    var dx = e.changedTouches[0].clientX - startX;
+                    var dy = Math.abs(e.changedTouches[0].clientY - startY);
+                    // Swipe right (≥60px horizontal, not mostly vertical) → close
+                    if (dx > 60 && dy < 100) {
+                        var oc = bootstrap.Offcanvas.getInstance(el);
+                        if (oc) oc.hide();
+                    }
+                }, { passive: true });
+
+                // Also support backdrop area swipe
+                document.addEventListener('touchstart', function(e) {
+                    var backdrop = document.querySelector('.offcanvas-backdrop');
+                    if (backdrop && backdrop.contains(e.target)) {
+                        // tapping backdrop closes — already handled by Bootstrap
+                    }
+                }, { passive: true });
             })();
 
             // Scroll shadow on navbar

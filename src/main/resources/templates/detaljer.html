@@ -361,9 +361,24 @@
             .back-btn { top: 70px; }
         }
         @media (max-width: 600px) {
-            .stats-bar { flex-direction: row; }
-            .stat-item { padding: 14px 10px; }
-            .hero-title { font-size: 2rem; }
+            .recipe-hero { height: 42vh; min-height: 280px; }
+            .hero-overlay { padding: 28px 20px; }
+            .hero-title { font-size: 1.75rem; letter-spacing: -1px; }
+            .back-btn { top: 65px; left: 14px; padding: 7px 13px; font-size: .78rem; }
+            .recipe-wrap { padding: 0 12px 100px; }
+            .stats-bar { gap: 0; overflow-x: auto; flex-wrap: nowrap; justify-content: flex-start; }
+            .stat-item { min-width: 80px; padding: 12px 10px; flex-shrink: 0; }
+            .stat-item strong { font-size: .88rem; }
+            .actions-strip { gap: 8px; }
+            .act-btn { padding: 8px 12px; font-size: .8rem; }
+            .main-card-head { padding: 14px 16px; flex-wrap: wrap; gap: 8px; }
+            .main-card-body { padding: 14px 16px; }
+            .side-card-body { padding: 14px 16px; }
+            .koke-topbar { padding: 14px 18px; }
+            .koke-body { padding: 32px 6% 20px; }
+            .koke-footer { padding: 16px 18px; gap: 8px; }
+            .koke-btn { padding: 14px; font-size: .9rem; }
+            .koke-progressbar { margin: 0 18px; }
         }
     </style>
 </head>
