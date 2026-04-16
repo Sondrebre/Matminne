@@ -356,6 +356,7 @@
             .ai-visual { display: none; }
             .pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin-left: auto; margin-right: auto; }
         }
+        .nav-links { display: flex; align-items: center; gap: 20px; }
         @media (max-width: 600px) {
             h1 { letter-spacing: -2px; }
             .hero-btns { flex-direction: column; }
@@ -363,6 +364,10 @@
             .ft-a, .ft-b { display: none; }
             .hero-stats { gap: 20px; }
             .nav-links { display: none; }
+            .nav-btn { padding: 9px 14px; font-size: .8rem; }
+            .nav-btn span { display: none; }
+            .logo { font-size: 1.1rem; letter-spacing: -1px; }
+            .logo-icon { width: 28px; height: 28px; font-size: .85rem; }
         }
     </style>
 </head>
@@ -372,13 +377,13 @@
         <a href="/" class="logo">
             <div class="logo-icon">🍎</div>mat<em>minne.</em>
         </a>
-        <div style="display:flex;align-items:center;gap:20px;">
-            <div class="nav-links" style="display:flex;align-items:center;gap:20px;">
+        <div style="display:flex;align-items:center;gap:16px;">
+            <div class="nav-links">
                 <a href="#priser" style="font-size:.85rem;font-weight:700;color:#475569;text-decoration:none;" onmouseover="this.style.color='var(--g)'" onmouseout="this.style.color='#475569'">Priser</a>
                 <a href="#funksjoner" style="font-size:.85rem;font-weight:700;color:#475569;text-decoration:none;" onmouseover="this.style.color='var(--g)'" onmouseout="this.style.color='#475569'">Funksjoner</a>
             </div>
             <a href="/oauth2/authorization/google" class="nav-btn">
-                <i class="fab fa-google"></i> Logg inn
+                <i class="fab fa-google"></i><span> Logg inn</span>
             </a>
         </div>
     </nav>
@@ -628,10 +633,10 @@
                         <li><i class="fas fa-check"></i> Samlinger og handleliste</li>
                         <li><i class="fas fa-check"></i> Kokemodus (fullskjerm)</li>
                         <li><i class="fas fa-check"></i> Følg andre kokker</li>
-                        <li><i class="fas fa-check"></i> Mobilvennlig</li>
-                        <li class="muted"><i class="fas fa-times"></i> AI-import fra URL</li>
-                        <li class="muted"><i class="fas fa-times"></i> Prisestimat</li>
+                        <li><i class="fas fa-check"></i> Importer oppskrift fra URL</li>
+                        <li class="muted"><i class="fas fa-times"></i> AI-prisestimat</li>
                         <li class="muted"><i class="fas fa-times"></i> AI-ukesmeny</li>
+                        <li class="muted"><i class="fas fa-times"></i> AI-næringsberegner</li>
                     </ul>
                     <a href="/oauth2/authorization/google" class="price-btn outline">Kom i gang gratis</a>
                 </div>
@@ -642,10 +647,9 @@
                     <p class="price-desc">Full tilgang til alle AI-funksjoner. Avbryt når som helst.</p>
                     <ul class="price-list">
                         <li><i class="fas fa-check"></i> Alt i gratis</li>
-                        <li><i class="fas fa-check"></i> AI-import fra URL</li>
-                        <li><i class="fas fa-check"></i> Prisestimat fra norske butikker</li>
+                        <li><i class="fas fa-check"></i> AI-prisestimat fra norske butikker</li>
                         <li><i class="fas fa-check"></i> AI-ukesmeny (7 dager)</li>
-                        <li><i class="fas fa-check"></i> Ingredienssubstitutt</li>
+                        <li><i class="fas fa-check"></i> AI-ingredienssubstitutt</li>
                         <li><i class="fas fa-check"></i> AI-næringsberegner</li>
                         <li><i class="fas fa-check"></i> Prioritert support</li>
                         <li><i class="fas fa-check"></i> Nye funksjoner først</li>
