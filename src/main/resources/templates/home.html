@@ -362,6 +362,7 @@
             .btn-main, .btn-ghost { justify-content: center; }
             .ft-a, .ft-b { display: none; }
             .hero-stats { gap: 20px; }
+            .nav-links { display: none; }
         }
     </style>
 </head>
@@ -369,12 +370,13 @@
 
     <nav id="mainNav">
         <a href="/" class="logo">
-            <div class="logo-icon">🍎</div>
-            mat<em>minne.</em>
+            <div class="logo-icon">🍎</div>mat<em>minne.</em>
         </a>
         <div style="display:flex;align-items:center;gap:20px;">
-            <a href="#priser" style="font-size:.85rem;font-weight:700;color:#475569;text-decoration:none;" onmouseover="this.style.color='var(--g)'" onmouseout="this.style.color='#475569'">Priser</a>
-            <a href="#funksjoner" style="font-size:.85rem;font-weight:700;color:#475569;text-decoration:none;" onmouseover="this.style.color='var(--g)'" onmouseout="this.style.color='#475569'">Funksjoner</a>
+            <div class="nav-links" style="display:flex;align-items:center;gap:20px;">
+                <a href="#priser" style="font-size:.85rem;font-weight:700;color:#475569;text-decoration:none;" onmouseover="this.style.color='var(--g)'" onmouseout="this.style.color='#475569'">Priser</a>
+                <a href="#funksjoner" style="font-size:.85rem;font-weight:700;color:#475569;text-decoration:none;" onmouseover="this.style.color='var(--g)'" onmouseout="this.style.color='#475569'">Funksjoner</a>
+            </div>
             <a href="/oauth2/authorization/google" class="nav-btn">
                 <i class="fab fa-google"></i> Logg inn
             </a>
@@ -410,19 +412,19 @@
             <div class="hero-visual">
                 <div class="mock-card">
                     <img class="mock-hero-img" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=85" alt="Oppskrift">
-                    <div class="mock-title">Pasta Carbonara</div>
+                    <div class="mock-title">Hjemmelaget lasagne</div>
                     <div class="mock-stats">
                         <span class="mock-chip green">Middag</span>
-                        <span class="mock-chip">⏱ 25 min</span>
-                        <span class="mock-chip">👤 4 pors.</span>
-                        <span class="mock-chip">⭐ 4,8</span>
+                        <span class="mock-chip">⏱ 45 min</span>
+                        <span class="mock-chip">👤 6 pors.</span>
+                        <span class="mock-chip">⭐ 4,9</span>
                     </div>
                     <div class="mock-price">
                         <div>
                             <div class="mock-price-label">Estimert kostnad</div>
                             <div style="font-size:.68rem;color:#6ee7b7;margin-top:2px;">Billigste butikk · AI-estimat</div>
                         </div>
-                        <div class="mock-price-val">ca. kr 142</div>
+                        <div class="mock-price-val">ca. kr 189</div>
                     </div>
                 </div>
                 <div style="display:flex;gap:12px;margin-top:14px;flex-wrap:wrap;">
