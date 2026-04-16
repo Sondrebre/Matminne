@@ -151,6 +151,20 @@
         .divider { display:flex; align-items:center; gap:14px; margin:20px 0 0; }
         .divider-line { flex:1; height:1px; background:#e2e8f0; }
         .divider-txt { font-size:.75rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; }
+
+        @media (max-width: 600px) {
+            .form-hero { padding: 28px 0 44px; }
+            .form-hero h1 { font-size: 1.9rem; letter-spacing: -1.5px; }
+            .form-card { padding: 18px 16px 16px; }
+            .step-label { display: none; }
+            .step-card { padding: 12px 16px; }
+            .ai-input-row { flex-direction: column; }
+            .ai-fetch-btn { width: 100%; justify-content: center; }
+            .form-wrap { padding: 0 12px; margin-bottom: 60px; }
+            .step-wrap { padding: 0 12px; }
+            .step-nav { flex-direction: column; }
+            .btn-prev { justify-content: center; }
+        }
     </style>
 </head>
 <body>
