@@ -146,53 +146,104 @@
         /* ── FULLSKJERM KOKEMODUS ── */
         #kokeOverlay {
             display: none; position: fixed; inset: 0; z-index: 9999;
-            background: #0f172a; flex-direction: column; overflow: hidden;
+            background: linear-gradient(160deg, #0a1628 0%, #0f2318 60%, #0a1628 100%);
+            flex-direction: column; overflow: hidden;
+        }
+        #kokeOverlay::before {
+            content: ''; position: absolute; inset: 0; pointer-events: none;
+            background: radial-gradient(ellipse 70% 60% at 80% 20%, rgba(46,204,113,.07), transparent 60%),
+                        radial-gradient(ellipse 50% 50% at 20% 80%, rgba(46,204,113,.05), transparent 55%);
         }
         #kokeOverlay.open { display: flex; }
         .koke-topbar {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 16px 28px; border-bottom: 1px solid #1e293b; flex-shrink: 0;
+            padding: 18px 32px; flex-shrink: 0; position: relative; z-index: 1;
         }
-        .koke-title { font-size: .82rem; font-weight: 700; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
-        .koke-meta { font-size: .82rem; font-weight: 800; color: #475569; }
+        .koke-title {
+            font-size: .8rem; font-weight: 700; color: rgba(255,255,255,.35);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 55%;
+            letter-spacing: .3px;
+        }
+        .koke-meta {
+            background: rgba(46,204,113,.12); border: 1px solid rgba(46,204,113,.2);
+            color: #4ade80; font-size: .75rem; font-weight: 800;
+            padding: 5px 14px; border-radius: 99px; letter-spacing: .5px;
+        }
         .koke-close {
-            background: #1e293b; border: none; color: #64748b; width: 36px; height: 36px;
-            border-radius: 10px; font-size: 1rem; cursor: pointer; display: flex;
-            align-items: center; justify-content: center; transition: .15s; flex-shrink: 0;
+            background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08);
+            color: rgba(255,255,255,.4); width: 38px; height: 38px;
+            border-radius: 12px; font-size: .95rem; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; transition: .2s; flex-shrink: 0;
         }
-        .koke-close:hover { background: #334155; color: white; }
-        .koke-progressbar { height: 3px; background: #1e293b; flex-shrink: 0; }
-        .koke-progressfill { height: 100%; background: var(--mat-gronn); transition: width .4s ease; }
-        .koke-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 8% 20px; overflow-y: auto; }
-        .koke-stepnum {
-            font-size: clamp(5rem, 15vw, 9rem); font-weight: 900; line-height: 1;
-            color: #1e293b; letter-spacing: -4px; margin-bottom: 20px; user-select: none;
+        .koke-close:hover { background: rgba(255,255,255,.12); color: white; }
+        .koke-progressbar {
+            height: 2px; background: rgba(255,255,255,.06); flex-shrink: 0; margin: 0 32px;
+            border-radius: 2px; overflow: hidden;
         }
+        .koke-progressfill { height: 100%; background: linear-gradient(90deg, #22c55e, #4ade80); transition: width .5s cubic-bezier(.4,0,.2,1); border-radius: 2px; }
+        .koke-body {
+            flex: 1; display: flex; flex-direction: column; justify-content: center;
+            padding: 48px 10% 32px; overflow-y: auto; position: relative; z-index: 1;
+        }
+        .koke-step-badge {
+            display: inline-flex; align-items: center; gap: 10px;
+            margin-bottom: 32px;
+        }
+        .koke-step-pill {
+            background: rgba(46,204,113,.15); border: 1px solid rgba(46,204,113,.25);
+            color: #4ade80; font-size: .72rem; font-weight: 900;
+            padding: 6px 16px; border-radius: 99px; letter-spacing: 2px; text-transform: uppercase;
+        }
+        .koke-step-dots { display: flex; gap: 5px; }
+        .koke-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: rgba(255,255,255,.12); transition: all .3s;
+        }
+        .koke-dot.active { background: #4ade80; width: 20px; border-radius: 3px; }
+        .koke-dot.done { background: rgba(74,222,128,.35); }
         .koke-steptext {
-            font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 700; color: #e2e8f0;
-            line-height: 1.55; max-width: 800px;
+            font-size: clamp(1.3rem, 3.2vw, 2rem); font-weight: 700;
+            color: rgba(255,255,255,.92); line-height: 1.55; max-width: 780px;
+            animation: fadeSlideIn .35s ease;
         }
+        @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .koke-hint {
+            margin-top: 28px; display: flex; align-items: center; gap: 8px;
+            color: rgba(255,255,255,.2); font-size: .78rem;
+        }
+        .koke-hint i { font-size: .7rem; }
         .koke-footer {
-            display: flex; gap: 12px; padding: 20px 28px; border-top: 1px solid #1e293b; flex-shrink: 0;
+            display: flex; gap: 12px; padding: 24px 32px;
+            flex-shrink: 0; position: relative; z-index: 1;
         }
         .koke-btn {
-            flex: 1; padding: 18px; border-radius: 16px; border: none; font-weight: 800;
-            font-size: 1rem; cursor: pointer; font-family: inherit; transition: .18s;
+            flex: 1; padding: 18px; border-radius: 18px; border: none; font-weight: 800;
+            font-size: 1rem; cursor: pointer; font-family: inherit; transition: .2s;
             display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        .koke-btn-prev { background: #1e293b; color: #64748b; }
-        .koke-btn-prev:hover { background: #334155; color: white; }
-        .koke-btn-next { background: var(--mat-gronn); color: white; box-shadow: 0 8px 24px rgba(46,204,113,.35); }
-        .koke-btn-next:hover { background: var(--mat-gronn-m); }
-        .koke-btn-next:disabled, .koke-btn-prev:disabled { opacity: .35; cursor: default; }
+        .koke-btn-prev {
+            background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08);
+            color: rgba(255,255,255,.5); flex: 0 0 auto; padding: 18px 24px;
+        }
+        .koke-btn-prev:hover { background: rgba(255,255,255,.1); color: white; }
+        .koke-btn-next {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: white; box-shadow: 0 8px 32px rgba(34,197,94,.3);
+        }
+        .koke-btn-next:hover { box-shadow: 0 12px 40px rgba(34,197,94,.45); transform: translateY(-1px); }
+        .koke-btn-next:disabled, .koke-btn-prev:disabled { opacity: .25; cursor: default; transform: none; box-shadow: none; }
         .koke-done-screen {
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; flex: 1; padding: 40px;
+            text-align: center; flex: 1; padding: 40px; position: relative; z-index: 1;
         }
         .koke-done-screen.vis { display: flex; }
-        .koke-done-ikon { font-size: 5rem; margin-bottom: 20px; }
-        .koke-done-screen h2 { font-size: 2.2rem; font-weight: 900; color: white; margin: 0 0 10px; letter-spacing: -1px; }
-        .koke-done-screen p { color: #64748b; font-size: .95rem; margin: 0 0 28px; }
+        .koke-done-ikon {
+            font-size: 4.5rem; margin-bottom: 24px;
+            animation: pop .5s cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .koke-done-screen h2 { font-size: 2.4rem; font-weight: 900; color: white; margin: 0 0 10px; letter-spacing: -1.5px; }
+        .koke-done-screen p { color: rgba(255,255,255,.4); font-size: .95rem; margin: 0 0 32px; }
 
         /* ── ACTIONS STRIP ── */
         .actions-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
@@ -659,23 +710,27 @@
             </div>
             <div class="koke-progressbar"><div class="koke-progressfill" id="kokeProgFill"></div></div>
             <div class="koke-body" id="kokeBody">
-                <div class="koke-stepnum" id="kokeStepNum">1</div>
+                <div class="koke-step-badge">
+                    <span class="koke-step-pill" id="kokeStepPill">Steg 1</span>
+                    <div class="koke-step-dots" id="kokeDots"></div>
+                </div>
                 <div class="koke-steptext" id="kokeStepText"></div>
+                <div class="koke-hint"><i class="fas fa-hand-pointer"></i> Sveip eller bruk piltaster for å navigere</div>
             </div>
             <div class="koke-done-screen" id="kokeDone">
                 <div class="koke-done-ikon">🎉</div>
                 <h2>Ferdig laget!</h2>
                 <p>Du har fullført alle stegene. God appetitt!</p>
-                <button class="koke-btn koke-btn-next" style="max-width:280px;" onclick="avsluttKoke()">
+                <button class="koke-btn koke-btn-next" style="max-width:300px;" onclick="avsluttKoke()">
                     <i class="fas fa-check"></i> Tilbake til oppskriften
                 </button>
             </div>
             <div class="koke-footer">
                 <button class="koke-btn koke-btn-prev" id="kokePrev" onclick="kokeNav(-1)">
-                    <i class="fas fa-chevron-left"></i> Forrige
+                    <i class="fas fa-chevron-left"></i>
                 </button>
                 <button class="koke-btn koke-btn-next" id="kokeNext" onclick="kokeNav(1)">
-                    Neste <i class="fas fa-chevron-right"></i>
+                    Neste steg <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
         </div>
@@ -684,7 +739,7 @@
         <div class="qr-modal" id="qrModal" onclick="lukkQr(event)">
             <div class="qr-box">
                 <h3>Del oppskriften</h3>
-                <img id="qrImg" src="" alt="QR-kode">
+                <img id="qrImg" src="" alt="QR-kode" style="width:200px;height:200px;border-radius:10px;display:block;margin:8px auto;">
                 <p>Skann koden for å åpne oppskriften</p>
                 <button class="btn-qr-close" onclick="document.getElementById('qrModal').classList.remove('open')">Lukk</button>
             </div>
@@ -749,12 +804,25 @@
 
             body.style.display = finished ? 'none' : 'flex';
             done.classList.toggle('vis', finished);
-            document.getElementById('koke-footer') // hide footer on done
             document.querySelector('.koke-footer').style.display = finished ? 'none' : 'flex';
 
             if (!finished) {
-                document.getElementById('kokeStepNum').textContent = kokeIdx + 1;
-                document.getElementById('kokeStepText').textContent = kokeSteg[kokeIdx];
+                document.getElementById('kokeStepPill').textContent = `Steg ${kokeIdx + 1} av ${total}`;
+                const el = document.getElementById('kokeStepText');
+                el.style.animation = 'none';
+                el.offsetHeight; // reflow
+                el.style.animation = '';
+                el.textContent = kokeSteg[kokeIdx];
+
+                // dots
+                const dotsEl = document.getElementById('kokeDots');
+                const maxDots = Math.min(total, 9);
+                dotsEl.innerHTML = '';
+                for (let i = 0; i < maxDots; i++) {
+                    const d = document.createElement('div');
+                    d.className = 'koke-dot' + (i === kokeIdx ? ' active' : i < kokeIdx ? ' done' : '');
+                    dotsEl.appendChild(d);
+                }
             }
 
             const pct = Math.min(100, Math.round(((kokeIdx) / total) * 100));
@@ -818,7 +886,9 @@
             });
         }
         function visQr() {
-            document.getElementById('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(window.location.href);
+            const url = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&color=0f172a&bgcolor=ffffff&data=' + encodeURIComponent(window.location.href);
+            const img = document.getElementById('qrImg');
+            img.src = url;
             document.getElementById('qrModal').classList.add('open');
         }
         function lukkQr(e) {
@@ -1062,5 +1132,6 @@
         }
 
     </script>
+
 </body>
 </html>
