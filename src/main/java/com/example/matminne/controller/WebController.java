@@ -92,11 +92,14 @@ public class WebController {
     @GetMapping("/kokebok")
     public String visKokebok(Model model, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) return "redirect:/";
-        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        String epost = principal.getAttribute("email");
+        Bruker meg = brukerService.finnVedEpost(epost);
         if (meg == null) {
-            model.addAttribute("oppskrifter", Collections.emptyList());
-            model.addAttribute("antall", 0);
-            return "kokebok";
+            // Fallback: opprett bruker hvis TilgangsSjekk ikke rakk det
+            meg = new Bruker();
+            meg.setEpost(epost);
+            meg.setFulltNavn(principal.getAttribute("name"));
+            brukerService.lagreBruker(meg);
         }
         List<Oppskrift> mineOppskrifter = repository.findByBrukerId(meg.getId());
         Collections.reverse(mineOppskrifter);

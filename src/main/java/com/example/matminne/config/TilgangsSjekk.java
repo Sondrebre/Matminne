@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.example.matminne.model.*;
 import com.example.matminne.service.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -17,6 +18,9 @@ import java.util.stream.Collectors;
 @Component
 public class TilgangsSjekk implements AuthenticationSuccessHandler {
 
+    @Autowired
+    private BrukerService brukerService;
+
     @Value("${app.tillatte.epost:}")
     private String tillatteListe;
 
@@ -24,8 +28,25 @@ public class TilgangsSjekk implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
+        String epost = null;
+        String navn = null;
+        if (authentication.getPrincipal() instanceof OAuth2User user) {
+            epost = user.getAttribute("email");
+            navn = user.getAttribute("name");
+        }
+
+        // Opprett bruker i DB hvis de ikke finnes (f.eks. etter Railway-redeploy)
+        if (epost != null) {
+            Bruker meg = brukerService.finnVedEpost(epost);
+            if (meg == null) {
+                meg = new Bruker();
+                meg.setEpost(epost);
+                meg.setFulltNavn(navn);
+                brukerService.lagreBruker(meg);
+            }
+        }
+
         if (tillatteListe == null || tillatteListe.isBlank()) {
-            // Tom liste = alle tillatt
             response.sendRedirect("/kokebok");
             return;
         }
@@ -34,10 +55,6 @@ public class TilgangsSjekk implements AuthenticationSuccessHandler {
                 .map(String::toLowerCase)
                 .filter(s -> !s.isBlank())
                 .collect(Collectors.toList());
-        String epost = null;
-        if (authentication.getPrincipal() instanceof OAuth2User user) {
-            epost = user.getAttribute("email");
-        }
         if (epost != null && tillatte.contains(epost.toLowerCase())) {
             response.sendRedirect("/kokebok");
         } else {
