@@ -472,12 +472,11 @@
         </nav>
 
         <!-- ── MOBIL DRAWER ─────────────────────────────── -->
-        <!-- Bootstrap offcanvas — håndterer swipe nativt -->
         <th:block th:if="${brukerEpost != null}">
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="mobOffcanvas"
-                 style="width:min(85vw,320px);border-radius:0;display:flex;flex-direction:column;">
-                <!-- Drag handle indicator -->
-                <div style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:4px;height:48px;background:#e2e8f0;border-radius:4px;opacity:.6;pointer-events:none;"></div>
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="mobOffcanvas"
+                 style="width:min(88vw,320px);border-radius:0 20px 20px 0;">
+                <!-- Drag handle on right edge -->
+                <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:4px;height:48px;background:#e2e8f0;border-radius:4px;opacity:.5;pointer-events:none;"></div>
                 <div class="offcanvas-header" style="border-bottom:1px solid #f1f5f9;padding:16px 20px;flex-shrink:0;">
                     <div style="display:flex;align-items:center;gap:10px;">
                         <div class="mob-drawer-logo">🍎</div>
@@ -717,44 +716,40 @@
                 });
             })();
 
-            // ── SWIPE TO CLOSE OFFCANVAS ──
+            // ── SWIPE TO CLOSE OFFCANVAS (offcanvas-start = sveip venstre) ──
             (function() {
                 var el = document.getElementById('mobOffcanvas');
                 if (!el) return;
-                var startX = 0, startY = 0, isDragging = false;
+
+                var startX = 0, startY = 0, state = 'idle'; // idle | swiping | scrolling
 
                 el.addEventListener('touchstart', function(e) {
                     startX = e.touches[0].clientX;
                     startY = e.touches[0].clientY;
-                    isDragging = true;
+                    state = 'idle';
                 }, { passive: true });
 
                 el.addEventListener('touchmove', function(e) {
-                    if (!isDragging) return;
+                    if (state === 'scrolling') return;
                     var dx = e.touches[0].clientX - startX;
-                    var dy = Math.abs(e.touches[0].clientY - startY);
-                    // If clearly scrolling vertically, cancel swipe detection
-                    if (dy > 30 && Math.abs(dx) < dy) isDragging = false;
+                    var dy = e.touches[0].clientY - startY;
+                    if (state === 'idle') {
+                        // Avgjør retning etter 8px bevegelse
+                        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+                        state = Math.abs(dx) > Math.abs(dy) ? 'swiping' : 'scrolling';
+                    }
                 }, { passive: true });
 
                 el.addEventListener('touchend', function(e) {
-                    if (!isDragging) return;
-                    isDragging = false;
+                    if (state !== 'swiping') return;
                     var dx = e.changedTouches[0].clientX - startX;
                     var dy = Math.abs(e.changedTouches[0].clientY - startY);
-                    // Swipe right (≥60px horizontal, not mostly vertical) → close
-                    if (dx > 60 && dy < 100) {
+                    // Sveip venstre ≥50px og ikke for mye vertikalt → lukk
+                    if (dx < -50 && dy < 120) {
                         var oc = bootstrap.Offcanvas.getInstance(el);
                         if (oc) oc.hide();
                     }
-                }, { passive: true });
-
-                // Also support backdrop area swipe
-                document.addEventListener('touchstart', function(e) {
-                    var backdrop = document.querySelector('.offcanvas-backdrop');
-                    if (backdrop && backdrop.contains(e.target)) {
-                        // tapping backdrop closes — already handled by Bootstrap
-                    }
+                    state = 'idle';
                 }, { passive: true });
             })();
 
