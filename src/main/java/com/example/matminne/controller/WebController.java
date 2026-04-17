@@ -443,7 +443,7 @@ public class WebController {
         Oppskrift o = repository.findById(id).orElse(null);
         if (o == null || principal == null || !o.getBrukerEpost().equals(principal.getAttribute("email")))
             return "redirect:/kokebok";
-        model.addAttribute("oppskrift", o);
+        model.addAttribute("o", o);
         return "rediger";
     }
 
