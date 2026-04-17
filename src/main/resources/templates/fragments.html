@@ -407,6 +407,68 @@
 
     <!-- Navbar fragment -->
     <div th:fragment="navbar">
+        <!-- SPLASH SCREEN — kun for PWA standalone-modus -->
+        <div id="splashScreen" style="
+            position:fixed;inset:0;z-index:99999;
+            background:linear-gradient(160deg,#071a0d 0%,#0f2318 55%,#0a1a28 100%);
+            display:flex;flex-direction:column;align-items:center;justify-content:center;
+            transition:opacity .55s cubic-bezier(.4,0,.2,1);
+        ">
+            <div style="animation:splashPop .7s cubic-bezier(.34,1.56,.64,1) both;display:flex;flex-direction:column;align-items:center;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                     style="width:110px;height:110px;filter:drop-shadow(0 12px 36px rgba(34,197,94,.4));">
+                    <defs>
+                        <linearGradient id="sg2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#166534"/>
+                            <stop offset="100%" style="stop-color:#22c55e"/>
+                        </linearGradient>
+                        <linearGradient id="lf2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#a7f3d0"/>
+                            <stop offset="100%" style="stop-color:#6ee7b7"/>
+                        </linearGradient>
+                    </defs>
+                    <rect width="512" height="512" rx="110" fill="url(#sg2)"/>
+                    <circle cx="256" cy="225" r="132" fill="rgba(255,255,255,.1)"/>
+                    <circle cx="256" cy="225" r="108" fill="rgba(255,255,255,.07)"/>
+                    <rect x="212" y="112" width="22" height="205" rx="11" fill="white"/>
+                    <rect x="191" y="112" width="12" height="75" rx="6" fill="white"/>
+                    <rect x="234" y="112" width="12" height="75" rx="6" fill="white"/>
+                    <rect x="191" y="175" width="55" height="14" rx="7" fill="white"/>
+                    <rect x="278" y="155" width="22" height="162" rx="11" fill="white"/>
+                    <ellipse cx="289" cy="130" rx="28" ry="36" fill="white"/>
+                    <ellipse cx="289" cy="130" rx="18" ry="24" fill="rgba(34,197,94,.4)"/>
+                    <path d="M368 86 Q412 64 422 108 Q400 150 358 138 Q328 106 368 86Z" fill="url(#lf2)" opacity=".95"/>
+                    <text x="256" y="400" font-size="86" text-anchor="middle"
+                          font-family="Arial Black,sans-serif" font-weight="900" fill="white" letter-spacing="-1">MM</text>
+                </svg>
+                <div style="margin-top:22px;font-family:'Plus Jakarta Sans',sans-serif;font-size:2.2rem;font-weight:900;letter-spacing:-1.5px;color:white;animation:splashFadeUp .6s .25s both;">MatMinne</div>
+                <div style="font-size:.85rem;color:rgba(255,255,255,.45);font-weight:600;letter-spacing:.5px;margin-top:4px;animation:splashFadeUp .6s .4s both;">Din digitale kokebok</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:52px;animation:splashFadeUp .5s .55s both;">
+                <div style="width:9px;height:9px;border-radius:50%;background:#22c55e;animation:splashDot 1.2s 0s infinite ease-in-out;"></div>
+                <div style="width:9px;height:9px;border-radius:50%;background:#22c55e;animation:splashDot 1.2s .18s infinite ease-in-out;"></div>
+                <div style="width:9px;height:9px;border-radius:50%;background:#22c55e;animation:splashDot 1.2s .36s infinite ease-in-out;"></div>
+            </div>
+        </div>
+        <style>
+            @keyframes splashPop { from{opacity:0;transform:scale(.6)} to{opacity:1;transform:scale(1)} }
+            @keyframes splashFadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+            @keyframes splashDot { 0%,80%,100%{transform:scale(.5);opacity:.3} 40%{transform:scale(1);opacity:1} }
+        </style>
+        <script>
+            (function(){
+                var s = document.getElementById('splashScreen');
+                if(!s) return;
+                var pwa = window.navigator.standalone || window.matchMedia('(display-mode:standalone)').matches;
+                if(!pwa){ s.style.display='none'; return; }
+                window.addEventListener('load', function(){
+                    setTimeout(function(){
+                        s.style.opacity='0';
+                        setTimeout(function(){ s.remove(); }, 600);
+                    }, 1700);
+                });
+            })();
+        </script>
         <div class="navbar-topstripe"></div>
         <nav class="navbar navbar-expand-lg sticky-top" id="mainNav">
             <div class="container">
