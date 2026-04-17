@@ -460,7 +460,9 @@
                 var s = document.getElementById('splashScreen');
                 if(!s) return;
                 var pwa = window.navigator.standalone || window.matchMedia('(display-mode:standalone)').matches;
-                if(!pwa){ s.style.display='none'; return; }
+                // Ikke vis i nettleser, og ikke vis hvis allerede vist denne sesjonen
+                if(!pwa || sessionStorage.getItem('splashVist')){ s.style.display='none'; return; }
+                sessionStorage.setItem('splashVist','1');
                 window.addEventListener('load', function(){
                     setTimeout(function(){
                         s.style.opacity='0';
