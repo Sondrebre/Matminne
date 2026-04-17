@@ -245,7 +245,25 @@
 
 <div class="nt-wrap">
 
-    <div class="nt-card" id="inputKort">
+    <!-- PAYWALL — vises kun uten abonnement -->
+    <div th:if="${!harAbonnement}" style="
+        background: linear-gradient(135deg,#1e1b4b,#312e81);
+        border-radius:20px; padding:32px 24px; text-align:center; color:white;">
+        <div style="font-size:2.5rem;margin-bottom:14px;">&#x1F512;</div>
+        <div style="font-size:1.2rem;font-weight:900;margin-bottom:8px;">AI-abonnement kreves</div>
+        <div style="font-size:.9rem;color:rgba(255,255,255,.72);margin-bottom:22px;line-height:1.6;">
+            Næringstrener er en AI-funksjon som krever aktivt abonnement.<br>Oppgrader for å generere personlige dagsmenyer.
+        </div>
+        <a href="/abonnement" style="
+            display:inline-block; padding:13px 28px;
+            background:linear-gradient(135deg,#6366f1,#8b5cf6);
+            color:white;font-weight:800;border-radius:12px;
+            text-decoration:none;font-size:.95rem;">
+            &#x2728; Få AI-abonnement
+        </a>
+    </div>
+
+    <div class="nt-card" id="inputKort" th:if="${harAbonnement}">
         <div class="nt-card-hode">
             <i class="fa-solid fa-bullseye"></i> Hva er målet ditt i dag?
         </div>
@@ -307,7 +325,7 @@
         </div>
     </div>
 
-    <div id="ntResultat" style="display:none;"></div>
+    <div id="ntResultat" style="display:none;" th:if="${harAbonnement}"></div>
 
 </div>
 

@@ -999,11 +999,37 @@
 
             try {
                 const res = await fetch(`/api/pris/${oppskriftId}`);
+
+                if (res.status === 401) {
+                    body.innerHTML = `<p style="font-size:.82rem;color:#64748b;padding:4px 0;">Du må logge inn for å se prisestimater.</p>`;
+                    if (stat) stat.textContent = '–';
+                    return;
+                }
+                if (res.status === 403) {
+                    body.innerHTML = `<div style="text-align:center;padding:12px 0;">
+                        <div style="font-size:1.4rem;margin-bottom:8px;">✨</div>
+                        <div style="font-weight:800;font-size:.9rem;color:var(--mat-mork);margin-bottom:6px;">Krever AI-abonnement</div>
+                        <p style="font-size:.8rem;color:#64748b;margin-bottom:12px;">Få tilgang til prisestimater og alle AI-funksjoner.</p>
+                        <a href="/abonnement" style="background:var(--mat-gronn);color:white;text-decoration:none;
+                            padding:10px 20px;border-radius:12px;font-weight:800;font-size:.85rem;display:inline-block;">
+                            Se abonnement
+                        </a></div>`;
+                    if (stat) stat.textContent = '–';
+                    return;
+                }
+                if (!res.ok) {
+                    body.innerHTML = `<p style="font-size:.82rem;color:#dc2626;padding:4px 0;">Kunne ikke hente priser. Prøv igjen.</p>`;
+                    if (stat) stat.textContent = '–';
+                    prisLastet = false;
+                    return;
+                }
+
                 const d = await res.json();
 
                 if (d.feil) {
                     body.innerHTML = `<p style="font-size:.82rem;color:#dc2626;padding:4px 0;">${d.feil}</p>`;
                     if (stat) stat.textContent = '–';
+                    prisLastet = false;
                     return;
                 }
 

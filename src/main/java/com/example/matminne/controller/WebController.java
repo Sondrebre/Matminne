@@ -1160,6 +1160,8 @@ public class WebController {
             @RequestBody Map<String, String> body,
             @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg == null || !meg.isHarAbonnement()) return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).build();
         String maal = body.getOrDefault("maal", "").trim();
         if (maal.isBlank()) return ResponseEntity.badRequest().build();
         String kjønn    = body.getOrDefault("kjonn", "").trim();
