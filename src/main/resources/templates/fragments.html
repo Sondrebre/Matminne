@@ -250,106 +250,131 @@
             color: var(--mat-gronn) !important;
         }
 
-        /* ── CUSTOM DRAWER (erstatter Bootstrap offcanvas) ── */
+        /* ── CUSTOM DRAWER — høyreside med accordion ── */
 
         #drawerBackdrop {
             display: none;
             position: fixed; inset: 0;
-            background: rgba(15,23,42,.55);
-            backdrop-filter: blur(3px);
-            -webkit-backdrop-filter: blur(3px);
+            background: rgba(15,23,42,.5);
             z-index: 1040;
             opacity: 0;
-            transition: opacity .28s ease;
+            transition: opacity .26s ease;
+            -webkit-tap-highlight-color: transparent;
         }
-        #drawerBackdrop.open { display: block; }
+        #drawerBackdrop.open   { display: block; }
         #drawerBackdrop.visible { opacity: 1; }
 
         #mobDrawer {
             position: fixed;
-            top: 0; left: 0; bottom: 0;
-            width: min(88vw, 310px);
-            background: white;
+            top: 0; right: 0; bottom: 0;
+            width: min(88vw, 300px);
+            background: #fff;
             z-index: 1050;
             display: flex; flex-direction: column;
-            border-radius: 0 22px 22px 0;
-            box-shadow: 6px 0 48px rgba(0,0,0,.18);
-            transform: translateX(-100%);
-            transition: transform .28s cubic-bezier(.4,0,.2,1);
+            border-radius: 20px 0 0 20px;
+            box-shadow: -6px 0 48px rgba(0,0,0,.16);
+            transform: translateX(100%);
+            transition: transform .26s cubic-bezier(.4,0,.2,1);
             will-change: transform;
         }
         #mobDrawer.open { transform: translateX(0); }
 
-        .mob-drawer-head {
-            padding: 18px 18px 14px;
+        /* Header */
+        .dw-head {
+            padding: 16px 16px 12px;
             border-bottom: 1px solid #f1f5f9;
             display: flex; align-items: center; justify-content: space-between;
             flex-shrink: 0;
         }
-        .mob-drawer-brand {
-            display: flex; align-items: center; gap: 10px; text-decoration: none;
+        .dw-logo-wrap { display: flex; align-items: center; gap: 9px; }
+        .dw-logo-box {
+            width: 32px; height: 32px; background: var(--mat-gronn); border-radius: 9px;
+            display: flex; align-items: center; justify-content: center; font-size: .95rem;
         }
-        .mob-drawer-logo {
-            width: 34px; height: 34px; background: var(--mat-gronn); border-radius: 10px;
+        .dw-logo-txt { font-size: 1.1rem; font-weight: 900; letter-spacing: -1px; color: var(--mat-mork); }
+        .dw-logo-txt span { color: var(--mat-gronn); }
+        .dw-close {
+            width: 32px; height: 32px; background: #f1f5f9; border: none; border-radius: 9px;
+            font-size: .95rem; color: #64748b; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; box-shadow: 0 4px 12px rgba(46,204,113,.3);
+            -webkit-tap-highlight-color: transparent;
         }
-        .mob-drawer-title {
-            font-size: 1.2rem; font-weight: 900; letter-spacing: -1px; color: var(--mat-mork);
-        }
-        .mob-drawer-title span { color: var(--mat-gronn); }
-        .mob-drawer-close {
-            width: 34px; height: 34px; background: #f1f5f9; border: none;
-            border-radius: 10px; font-size: 1rem; color: #64748b; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: background .15s; -webkit-tap-highlight-color: transparent;
-        }
-        .mob-drawer-close:hover { background: #e2e8f0; }
 
-        .mob-drawer-body {
-            flex: 1; padding: 12px 12px 32px;
-            overflow-y: auto;
+        /* Scrollable body */
+        .dw-body {
+            flex: 1; overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             overscroll-behavior: contain;
+            padding: 10px 10px 24px;
         }
 
-        .mob-drawer-section-label {
-            font-size: .62rem; font-weight: 800; color: #94a3b8;
-            text-transform: uppercase; letter-spacing: 1.5px;
-            padding: 10px 10px 6px;
-        }
+        /* Accordion group */
+        .dw-group { margin-bottom: 4px; }
 
-        .mob-nav-link {
-            display: flex; align-items: center; gap: 13px;
-            padding: 12px 12px; border-radius: 14px; text-decoration: none;
-            font-weight: 700; font-size: .92rem; color: #334155;
-            transition: background .15s, color .15s;
-            margin-bottom: 2px;
-        }
-        .mob-nav-link:hover, .mob-nav-link:active { background: #f1f5f9; color: var(--mat-mork); }
-        .mob-nav-link.active { background: var(--mat-lys-gronn); color: var(--mat-gronn-m); }
-        .mob-nav-icon {
-            width: 36px; height: 36px; border-radius: 10px; background: #f8fafc;
-            display: flex; align-items: center; justify-content: center;
-            font-size: .95rem; color: #64748b; flex-shrink: 0;
+        .dw-group-btn {
+            width: 100%; display: flex; align-items: center; gap: 11px;
+            padding: 11px 10px; border-radius: 12px; border: none;
+            background: none; cursor: pointer; font-family: inherit;
+            font-weight: 800; font-size: .88rem; color: #334155;
+            -webkit-tap-highlight-color: transparent;
             transition: background .15s;
         }
-        .mob-nav-link.active .mob-nav-icon { background: white; color: var(--mat-gronn); }
-        .mob-nav-link:hover .mob-nav-icon { background: white; }
-
-        .mob-drawer-divider { height: 1px; background: #f1f5f9; margin: 8px 10px; }
-
-        .mob-drawer-foot {
-            padding: 12px 12px 16px;
-            border-top: 1px solid #f1f5f9;
-            display: flex; flex-direction: column; gap: 8px;
+        .dw-group-btn:active { background: #f1f5f9; }
+        .dw-group-icon {
+            width: 34px; height: 34px; border-radius: 10px; background: #f1f5f9;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .9rem; color: #64748b; flex-shrink: 0; transition: .15s;
         }
+        .dw-group-btn.open .dw-group-icon { background: var(--mat-lys-gronn); color: var(--mat-gronn); }
+        .dw-group-label { flex: 1; text-align: left; }
+        .dw-group-arrow {
+            font-size: .72rem; color: #cbd5e1;
+            transition: transform .22s ease;
+            flex-shrink: 0;
+        }
+        .dw-group-btn.open .dw-group-arrow { transform: rotate(90deg); }
+
+        /* Accordion items */
+        .dw-items {
+            display: none; padding: 2px 0 4px 14px;
+        }
+        .dw-items.open { display: block; }
+
+        .dw-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 9px 10px; border-radius: 10px; text-decoration: none;
+            font-size: .88rem; font-weight: 600; color: #475569;
+            transition: background .12s, color .12s;
+            margin-bottom: 1px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .dw-item i { width: 18px; text-align: center; color: #94a3b8; font-size: .85rem; flex-shrink: 0; }
+        .dw-item:active, .dw-item:hover { background: #f8fafc; color: var(--mat-mork); }
+        .dw-item.active { background: var(--mat-lys-gronn); color: var(--mat-gronn-m); font-weight: 700; }
+        .dw-item.active i { color: var(--mat-gronn); }
+
+        /* Footer buttons */
+        .dw-footer { padding: 10px 10px 16px; border-top: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 7px; flex-shrink: 0; }
+        .dw-profil-btn {
+            display: flex; align-items: center; gap: 11px; padding: 11px 13px;
+            background: linear-gradient(135deg, var(--mat-gronn), #16a34a);
+            border-radius: 13px; text-decoration: none; color: white !important;
+            font-weight: 800; font-size: .88rem; box-shadow: 0 4px 14px rgba(46,204,113,.3);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .dw-profil-btn:hover { opacity: .92; color: white !important; }
+        .dw-ai-btn {
+            display: flex; align-items: center; gap: 11px; padding: 10px 13px;
+            background: #faf5ff; border-radius: 13px; text-decoration: none;
+            color: #7c3aed !important; font-weight: 700; font-size: .85rem;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         .mob-profil-btn {
             display: flex; align-items: center; gap: 12px; padding: 12px 14px;
             background: linear-gradient(135deg,var(--mat-gronn),#16a34a);
             border-radius: 14px; text-decoration: none; color: white !important;
-            font-weight: 800; font-size: .9rem;
-            box-shadow: 0 4px 16px rgba(46,204,113,.3);
+            font-weight: 800; font-size: .9rem; box-shadow: 0 4px 16px rgba(46,204,113,.3);
         }
         .mob-profil-btn:hover { opacity: .92; color: white !important; }
         .mob-profil-icon { font-size: 1.2rem; }
@@ -504,85 +529,94 @@
             </div>
         </nav>
 
-        <!-- ── CUSTOM MOBIL DRAWER (ingen Bootstrap offcanvas) ── -->
+        <!-- ── CUSTOM MOBIL DRAWER — høyreside med accordion ── -->
         <th:block th:if="${brukerEpost != null}">
-            <!-- Backdrop -->
             <div id="drawerBackdrop" onclick="closeDrawer()"></div>
 
-            <!-- Drawer -->
             <div id="mobDrawer">
-                <div class="mob-drawer-head">
-                    <div class="mob-drawer-brand">
-                        <div class="mob-drawer-logo">🍎</div>
-                        <div class="mob-drawer-title">mat<span>minne.</span></div>
+                <!-- Header -->
+                <div class="dw-head">
+                    <div class="dw-logo-wrap">
+                        <div class="dw-logo-box">🍎</div>
+                        <div class="dw-logo-txt">mat<span>minne.</span></div>
                     </div>
-                    <button class="mob-drawer-close" onclick="closeDrawer()">
+                    <button class="dw-close" onclick="closeDrawer()">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
 
-                <div class="mob-drawer-body">
-                    <div class="mob-drawer-section-label">Navigasjon</div>
-                    <a href="/kokebok" class="mob-nav-link">
-                        <div class="mob-nav-icon"><i class="fa-solid fa-book-open"></i></div> Min Kokebok
-                    </a>
-                    <a href="/vennefeed" class="mob-nav-link">
-                        <div class="mob-nav-icon"><i class="fa-solid fa-user-group"></i></div> Vennevegg
-                    </a>
-                    <a href="/oppdag" class="mob-nav-link">
-                        <div class="mob-nav-icon"><i class="fa-solid fa-compass"></i></div> Utforsk
-                    </a>
-                    <a href="/ny-oppskrift" class="mob-nav-link">
-                        <div class="mob-nav-icon"><i class="fa-solid fa-plus"></i></div> Ny oppskrift
-                    </a>
+                <!-- Scrollable innhold -->
+                <div class="dw-body">
 
-                    <div class="mob-drawer-divider"></div>
-                    <div class="mob-drawer-section-label">Planlegging</div>
-                    <a href="/handleliste" class="mob-nav-link">
-                        <div class="mob-nav-icon"><i class="fa-solid fa-cart-shopping"></i></div> Handleliste
-                    </a>
-                    <a href="/ukesmeny" class="mob-nav-link">
-                        <div class="mob-nav-icon"><i class="fa-solid fa-calendar-week"></i></div> Ukesmeny
-                    </a>
-                    <a href="/samlinger" class="mob-nav-link">
-                        <div class="mob-nav-icon"><i class="fa-solid fa-layer-group"></i></div> Samlinger
-                    </a>
+                    <!-- Navigasjon -->
+                    <div class="dw-group">
+                        <button class="dw-group-btn open" onclick="toggleGroup(this)">
+                            <div class="dw-group-icon"><i class="fa-solid fa-compass"></i></div>
+                            <span class="dw-group-label">Navigasjon</span>
+                            <i class="fa-solid fa-chevron-right dw-group-arrow"></i>
+                        </button>
+                        <div class="dw-items open">
+                            <a href="/kokebok"      class="dw-item"><i class="fa-solid fa-book-open"></i> Min Kokebok</a>
+                            <a href="/vennefeed"    class="dw-item"><i class="fa-solid fa-user-group"></i> Vennevegg</a>
+                            <a href="/oppdag"       class="dw-item"><i class="fa-solid fa-compass"></i> Utforsk</a>
+                            <a href="/ny-oppskrift" class="dw-item"><i class="fa-solid fa-plus"></i> Ny oppskrift</a>
+                        </div>
+                    </div>
 
-                    <div class="mob-drawer-divider"></div>
-                    <div class="mob-drawer-section-label">AI-verktøy</div>
-                    <a href="/naeringstrener" class="mob-nav-link">
-                        <div class="mob-nav-icon"><i class="fa-solid fa-dna"></i></div> Næringstrener
-                    </a>
-                    <a href="/ai-forslag" class="mob-nav-link">
-                        <div class="mob-nav-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div> AI Matforslag
-                    </a>
+                    <!-- Planlegging -->
+                    <div class="dw-group">
+                        <button class="dw-group-btn" onclick="toggleGroup(this)">
+                            <div class="dw-group-icon"><i class="fa-solid fa-calendar-week"></i></div>
+                            <span class="dw-group-label">Planlegging</span>
+                            <i class="fa-solid fa-chevron-right dw-group-arrow"></i>
+                        </button>
+                        <div class="dw-items">
+                            <a href="/handleliste" class="dw-item"><i class="fa-solid fa-cart-shopping"></i> Handleliste</a>
+                            <a href="/ukesmeny"    class="dw-item"><i class="fa-solid fa-calendar-week"></i> Ukesmeny</a>
+                            <a href="/samlinger"   class="dw-item"><i class="fa-solid fa-layer-group"></i> Samlinger</a>
+                        </div>
+                    </div>
 
-                    <div class="mob-drawer-divider"></div>
-                    <div class="mob-drawer-section-label">Annet</div>
-                    <a href="/utfordringer" class="mob-nav-link">
-                        <div class="mob-nav-icon"><i class="fa-solid fa-trophy"></i></div> Ukeutfordringer
-                    </a>
-                    <a href="/varsler" class="mob-nav-link">
-                        <div class="mob-nav-icon"><i class="fa-solid fa-bell"></i></div> Varsler
-                        <span th:if="${ulesVarsler != null and ulesVarsler > 0}"
-                              th:text="${ulesVarsler}"
-                              style="margin-left:auto;background:var(--mat-gronn);color:white;border-radius:99px;font-size:.62rem;font-weight:900;min-width:20px;height:20px;display:flex;align-items:center;justify-content:center;padding:0 5px;"></span>
-                    </a>
-                    <a href="/innstillinger" class="mob-nav-link">
-                        <div class="mob-nav-icon"><i class="fa-solid fa-gear"></i></div> Innstillinger
-                    </a>
-                    <a href="/installer-app" class="mob-nav-link">
-                        <div class="mob-nav-icon"><i class="fa-solid fa-mobile-screen"></i></div> Installer som app
-                    </a>
+                    <!-- AI-verktøy -->
+                    <div class="dw-group">
+                        <button class="dw-group-btn" onclick="toggleGroup(this)">
+                            <div class="dw-group-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                            <span class="dw-group-label">AI-verktøy</span>
+                            <i class="fa-solid fa-chevron-right dw-group-arrow"></i>
+                        </button>
+                        <div class="dw-items">
+                            <a href="/naeringstrener" class="dw-item"><i class="fa-solid fa-dna"></i> Næringstrener</a>
+                            <a href="/ai-forslag"     class="dw-item"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Matforslag</a>
+                        </div>
+                    </div>
 
-                    <div class="mob-drawer-divider"></div>
-                    <a th:href="@{'/profil/' + ${brukerEpost}}" class="mob-profil-btn">
-                        <span class="mob-profil-icon"><i class="fa-regular fa-circle-user"></i></span>
+                    <!-- Annet -->
+                    <div class="dw-group">
+                        <button class="dw-group-btn" onclick="toggleGroup(this)">
+                            <div class="dw-group-icon"><i class="fa-solid fa-ellipsis"></i></div>
+                            <span class="dw-group-label">Annet</span>
+                            <i class="fa-solid fa-chevron-right dw-group-arrow"></i>
+                        </button>
+                        <div class="dw-items">
+                            <a href="/utfordringer" class="dw-item"><i class="fa-solid fa-trophy"></i> Ukeutfordringer</a>
+                            <a href="/varsler"      class="dw-item"><i class="fa-solid fa-bell"></i> Varsler
+                                <span th:if="${ulesVarsler != null and ulesVarsler > 0}" th:text="${ulesVarsler}"
+                                      style="margin-left:auto;background:var(--mat-gronn);color:white;border-radius:99px;font-size:.58rem;font-weight:900;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 4px;"></span>
+                            </a>
+                            <a href="/innstillinger" class="dw-item"><i class="fa-solid fa-gear"></i> Innstillinger</a>
+                            <a href="/installer-app" class="dw-item"><i class="fa-solid fa-mobile-screen"></i> Installer som app</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="dw-footer">
+                    <a th:href="@{'/profil/' + ${brukerEpost}}" class="dw-profil-btn">
+                        <i class="fa-regular fa-circle-user" style="font-size:1.1rem;"></i>
                         <span>Min Profil</span>
                     </a>
-                    <a th:href="@{'/abonnement'}"
-                       style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:#faf5ff;border-radius:14px;text-decoration:none;color:#7c3aed;font-weight:700;font-size:.88rem;margin-top:8px;">
-                        <i class="fa-solid fa-bolt" style="color:#7c3aed;font-size:1rem;width:20px;text-align:center;"></i>
+                    <a href="/abonnement" class="dw-ai-btn">
+                        <i class="fa-solid fa-bolt" style="font-size:.95rem;"></i>
                         <span th:if="${harAbonnement}">AI-abonnement aktivt ✓</span>
                         <span th:unless="${harAbonnement}">Oppgrader til AI</span>
                     </a>
@@ -754,7 +788,7 @@
             })();
 
             // ── CUSTOM DRAWER ──────────────────────────────────────────
-            var _drawer = document.getElementById('mobDrawer');
+            var _drawer   = document.getElementById('mobDrawer');
             var _backdrop = document.getElementById('drawerBackdrop');
 
             function openDrawer() {
@@ -775,30 +809,56 @@
                 setTimeout(function() { _backdrop.style.display = 'none'; }, 300);
             }
 
-            // Sveip venstre for å lukke
+            // Accordion
+            function toggleGroup(btn) {
+                var items = btn.nextElementSibling;
+                var isOpen = btn.classList.contains('open');
+                btn.classList.toggle('open', !isOpen);
+                items.classList.toggle('open', !isOpen);
+            }
+
+            // Aktiv lenke i drawer
+            (function() {
+                var p = window.location.pathname;
+                document.querySelectorAll('#mobDrawer .dw-item').forEach(function(a) {
+                    var h = a.getAttribute('href');
+                    if (h && h !== '/' && p.startsWith(h)) {
+                        a.classList.add('active');
+                        // Åpne den tilhørende gruppen automatisk
+                        var items = a.closest('.dw-items');
+                        if (items) {
+                            items.classList.add('open');
+                            var btn = items.previousElementSibling;
+                            if (btn) btn.classList.add('open');
+                        }
+                    }
+                });
+            })();
+
+            // Sveip HØYRE (positiv dx) for å lukke (drawer er på høyre side)
             if (_drawer) {
-                var _sx = 0, _sy = 0, _dir = null;
+                var _sx = 0, _sy = 0, _decided = false, _isH = false;
                 _drawer.addEventListener('touchstart', function(e) {
                     _sx = e.touches[0].clientX;
                     _sy = e.touches[0].clientY;
-                    _dir = null;
+                    _decided = false; _isH = false;
                 }, { passive: true });
                 _drawer.addEventListener('touchmove', function(e) {
-                    if (_dir === 'v') return;
-                    var dx = e.touches[0].clientX - _sx;
-                    var dy = e.touches[0].clientY - _sy;
-                    if (_dir === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
-                        _dir = Math.abs(dx) > Math.abs(dy) ? 'h' : 'v';
+                    if (_decided && !_isH) return;
+                    var dx = Math.abs(e.touches[0].clientX - _sx);
+                    var dy = Math.abs(e.touches[0].clientY - _sy);
+                    if (!_decided && (dx > 8 || dy > 8)) {
+                        _isH = dx > dy;
+                        _decided = true;
                     }
                 }, { passive: true });
                 _drawer.addEventListener('touchend', function(e) {
-                    if (_dir !== 'h') return;
+                    if (!_isH) return;
                     var dx = e.changedTouches[0].clientX - _sx;
-                    if (dx < -48) closeDrawer();
+                    if (dx > 50) closeDrawer();
                 }, { passive: true });
             }
 
-            // Escape-tast lukker
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') closeDrawer();
             });
