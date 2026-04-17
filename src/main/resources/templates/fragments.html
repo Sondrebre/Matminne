@@ -598,6 +598,7 @@
                             <i class="fa-solid fa-chevron-right dw-group-arrow"></i>
                         </button>
                         <div class="dw-items">
+                            <a th:href="@{'/profil/' + ${brukerEpost}}" class="dw-item"><i class="fa-regular fa-circle-user"></i> Min Profil</a>
                             <a href="/utfordringer" class="dw-item"><i class="fa-solid fa-trophy"></i> Ukeutfordringer</a>
                             <a href="/varsler"      class="dw-item"><i class="fa-solid fa-bell"></i> Varsler
                                 <span th:if="${ulesVarsler != null and ulesVarsler > 0}" th:text="${ulesVarsler}"
