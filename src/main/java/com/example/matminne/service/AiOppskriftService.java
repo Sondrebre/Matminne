@@ -409,13 +409,21 @@ public class AiOppskriftService {
             return;
         }
         try {
-            String[] deler = aiSvar.split("INGREDIENSER:|FREMGANGSMÅTE:");
-            if (deler.length >= 1) ny.setTittel(deler[0].replace("TITTEL:", "").trim());
+            // Robust splitting — handles markdown (**INGREDIENSER:**) and both Å/A variants
+            String[] deler = aiSvar.split("(?i)\\*{0,2}INGREDIENSER:\\*{0,2}|(?i)\\*{0,2}FREMGANGSM[ÅA]TE:\\*{0,2}");
+            if (deler.length >= 1) {
+                String tittel = deler[0].replaceAll("(?i)\\*{0,2}TITTEL:\\*{0,2}", "").trim();
+                ny.setTittel(tittel.isBlank() ? null : tittel);
+            }
             if (deler.length >= 2) ny.setIngredienser(deler[1].trim());
             if (deler.length >= 3) ny.setFremgangsmate(deler[2].trim());
+
+            // If nothing was parsed, treat as error
+            if (ny.getTittel() == null && ny.getIngredienser() == null) {
+                ny.setFeil("Klarte ikke hente oppskriften fra denne siden. Prøv en annen lenke.");
+            }
         } catch (Exception e) {
-            ny.setTittel("Klarte ikke tolke AI-svaret.");
-            ny.setIngredienser(aiSvar);
+            ny.setFeil("Klarte ikke tolke AI-svaret. Prøv igjen.");
         }
     }
 }
