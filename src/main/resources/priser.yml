@@ -1,0 +1,226 @@
+# Norske dagligvarepriser 2025 (Rema 1000 / Kiwi)
+# Rediger prisene her og push til git – appen oppdateres automatisk.
+# Format: ingrediens (søkeord), produktNavn (hva AI skriver), pris (kr), butikk
+
+matminne:
+  priser:
+    - ingrediens: egg
+      produktNavn: Prior egg 12 stk
+      pris: 38.0
+      butikk: Rema 1000
+    - ingrediens: mel
+      produktNavn: Hvetemel 1 kg
+      pris: 18.0
+      butikk: Rema 1000
+    - ingrediens: sukker
+      produktNavn: Sukker 1 kg
+      pris: 22.0
+      butikk: Rema 1000
+    - ingrediens: smør
+      produktNavn: Smør 500g
+      pris: 72.0
+      butikk: Rema 1000
+    - ingrediens: margarin
+      produktNavn: Soft margarin 400g
+      pris: 30.0
+      butikk: Rema 1000
+    - ingrediens: lettmelk
+      produktNavn: Lettmelk 1 liter
+      pris: 23.0
+      butikk: Rema 1000
+    - ingrediens: helmelk
+      produktNavn: Helmelk 1 liter
+      pris: 25.0
+      butikk: Rema 1000
+    - ingrediens: fløte
+      produktNavn: Matfløte 3 dl
+      pris: 30.0
+      butikk: Rema 1000
+    - ingrediens: rømme
+      produktNavn: Rømme 350g
+      pris: 35.0
+      butikk: Rema 1000
+    - ingrediens: yoghurt
+      produktNavn: Naturell yoghurt 500g
+      pris: 28.0
+      butikk: Rema 1000
+    - ingrediens: kjøttdeig
+      produktNavn: Kjøttdeig 400g
+      pris: 58.0
+      butikk: Rema 1000
+    - ingrediens: kyllingfilet
+      produktNavn: Kyllingfilet 700g
+      pris: 98.0
+      butikk: Rema 1000
+    - ingrediens: laks
+      produktNavn: Laksefilet 400g
+      pris: 75.0
+      butikk: Rema 1000
+    - ingrediens: torsk
+      produktNavn: Torskefilet 400g
+      pris: 70.0
+      butikk: Rema 1000
+    - ingrediens: svinekjøtt
+      produktNavn: Svinekoteletter 600g
+      pris: 68.0
+      butikk: Rema 1000
+    - ingrediens: bacon
+      produktNavn: Bacon 140g
+      pris: 38.0
+      butikk: Rema 1000
+    - ingrediens: pølser
+      produktNavn: Grillpølser 600g
+      pris: 55.0
+      butikk: Rema 1000
+    - ingrediens: pasta
+      produktNavn: Pasta 500g
+      pris: 16.0
+      butikk: Rema 1000
+    - ingrediens: ris
+      produktNavn: Ris 1 kg
+      pris: 28.0
+      butikk: Rema 1000
+    - ingrediens: potet
+      produktNavn: Poteter 1 kg
+      pris: 22.0
+      butikk: Rema 1000
+    - ingrediens: løk
+      produktNavn: Løk 1 kg
+      pris: 22.0
+      butikk: Rema 1000
+    - ingrediens: gulrot
+      produktNavn: Gulrøtter 1 kg
+      pris: 18.0
+      butikk: Rema 1000
+    - ingrediens: hvitløk
+      produktNavn: Hvitløk 1 hode
+      pris: 12.0
+      butikk: Rema 1000
+    - ingrediens: tomat
+      produktNavn: Tomater 500g
+      pris: 28.0
+      butikk: Rema 1000
+    - ingrediens: paprika
+      produktNavn: Paprika 3 stk
+      pris: 32.0
+      butikk: Rema 1000
+    - ingrediens: brokkoli
+      produktNavn: Brokkoli 1 stk
+      pris: 22.0
+      butikk: Rema 1000
+    - ingrediens: spinat
+      produktNavn: Babyspinat 200g
+      pris: 29.0
+      butikk: Rema 1000
+    - ingrediens: hermetiske tomater
+      produktNavn: Hermetiske tomater 400g
+      pris: 18.0
+      butikk: Rema 1000
+    - ingrediens: tomatpuré
+      produktNavn: Tomatpuré 140g
+      pris: 14.0
+      butikk: Rema 1000
+    - ingrediens: kokosmelk
+      produktNavn: Kokosmelk 400 ml
+      pris: 22.0
+      butikk: Rema 1000
+    - ingrediens: buljong
+      produktNavn: Buljongterninger 6 stk
+      pris: 16.0
+      butikk: Rema 1000
+    - ingrediens: olivenolje
+      produktNavn: Olivenolje 500 ml
+      pris: 55.0
+      butikk: Rema 1000
+    - ingrediens: solsikkeolje
+      produktNavn: Solsikkeolje 1 liter
+      pris: 30.0
+      butikk: Rema 1000
+    - ingrediens: soyasaus
+      produktNavn: Soyasaus 150 ml
+      pris: 25.0
+      butikk: Rema 1000
+    - ingrediens: parmesan
+      produktNavn: Parmesan 150g
+      pris: 55.0
+      butikk: Rema 1000
+    - ingrediens: mozzarella
+      produktNavn: Mozzarella 125g
+      pris: 30.0
+      butikk: Rema 1000
+    - ingrediens: cheddar
+      produktNavn: Cheddar 400g
+      pris: 62.0
+      butikk: Rema 1000
+    - ingrediens: norvegia
+      produktNavn: Norvegia skivet 400g
+      pris: 58.0
+      butikk: Rema 1000
+    - ingrediens: brød
+      produktNavn: Grovbrød 750g
+      pris: 35.0
+      butikk: Rema 1000
+    - ingrediens: gjær
+      produktNavn: Fersk gjær 50g
+      pris: 10.0
+      butikk: Rema 1000
+    - ingrediens: bakepulver
+      produktNavn: Bakepulver 170g
+      pris: 18.0
+      butikk: Rema 1000
+    - ingrediens: salt
+      produktNavn: Salt 1 kg
+      pris: 12.0
+      butikk: Rema 1000
+    - ingrediens: pepper
+      produktNavn: Pepper kvernet 50g
+      pris: 22.0
+      butikk: Rema 1000
+    - ingrediens: karri
+      produktNavn: Karripulver 45g
+      pris: 20.0
+      butikk: Rema 1000
+    - ingrediens: kanel
+      produktNavn: Kanel malt 28g
+      pris: 18.0
+      butikk: Rema 1000
+    - ingrediens: vaniljesukker
+      produktNavn: Vaniljesukker 8g
+      pris: 8.0
+      butikk: Rema 1000
+    - ingrediens: sjokolade
+      produktNavn: Mørk sjokolade 200g
+      pris: 32.0
+      butikk: Rema 1000
+    - ingrediens: kakao
+      produktNavn: Kakaopulver 250g
+      pris: 30.0
+      butikk: Rema 1000
+    - ingrediens: havregryn
+      produktNavn: Havregryn 1 kg
+      pris: 22.0
+      butikk: Rema 1000
+    - ingrediens: linser
+      produktNavn: Røde linser 500g
+      pris: 28.0
+      butikk: Rema 1000
+    - ingrediens: kikerter
+      produktNavn: Hermetiske kikerter 400g
+      pris: 18.0
+      butikk: Rema 1000
+    - ingrediens: mais
+      produktNavn: Hermetisk mais 340g
+      pris: 16.0
+      butikk: Rema 1000
+    - ingrediens: ananas
+      produktNavn: Hermetisk ananas 565g
+      pris: 22.0
+      butikk: Rema 1000
+    - ingrediens: reker
+      produktNavn: Kokte reker 150g
+      pris: 45.0
+      butikk: Rema 1000
+    - ingrediens: tunfisk
+      produktNavn: Tunfisk i vann 185g
+      pris: 22.0
+      butikk: Rema 1000

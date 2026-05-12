@@ -12,7 +12,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.example.matminne.config.PrisConfig;
 import com.example.matminne.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -27,6 +29,9 @@ public class AiOppskriftService {
 
     @Value("${anthropic.api.key:}")
     private String apiKey;
+
+    @Autowired
+    private PrisConfig prisConfig;
 
     private AnthropicClient client;
 
@@ -115,21 +120,19 @@ public class AiOppskriftService {
      */
     public Map<String, Object> genererPrisEstimat(String ingrediensTekst, Integer porsjoner) {
         Map<String, Object> feilSvar = new HashMap<>();
+        StringBuilder prisveiledning = new StringBuilder();
+        for (PrisConfig.Pris p : prisConfig.getPriser()) {
+            prisveiledning.append("- ").append(p.getIngrediens())
+                    .append(": ").append(p.getProduktNavn())
+                    .append(" kr ").append(p.getPris())
+                    .append(" (").append(p.getButikk()).append(")\n");
+        }
         String prompt = "Du er ekspert på norske dagligvarepriser i 2025 (Rema 1000, Kiwi, Meny, Spar).\n" +
                 "Estimer hva det koster å kjøpe ingrediensene til denne oppskriften i Norge i dag.\n" +
                 "Bruk alltid billigste butikk og billigste EMV/private-label produkt.\n" +
                 (porsjoner != null ? "Oppskriften er til " + porsjoner + " porsjoner.\n" : "") +
-                "\nPrisveiledning (2025, typiske Rema/Kiwi-priser):\n" +
-                "- Egg 12 stk: 38 kr | Mel 1 kg: 18 kr | Sukker 1 kg: 22 kr\n" +
-                "- Smør 500g: 72 kr | Margarin 400g: 30 kr\n" +
-                "- Lettmelk 1 L: 23 kr | Fløte 3 dl: 30 kr | Rømme 350g: 35 kr\n" +
-                "- Kjøttdeig 400g: 58 kr | Kyllingfilet 700g: 98 kr | Laks 400g: 75 kr\n" +
-                "- Pasta 500g: 16 kr | Ris 1 kg: 28 kr | Potet 1 kg: 22 kr\n" +
-                "- Løk 1 kg: 22 kr | Gulrot 1 kg: 18 kr | Hvitløk 1 hode: 12 kr\n" +
-                "- Hermetiske tomater 400g: 18 kr | Tomatpuré 140g: 14 kr\n" +
-                "- Kokosmelk 400 ml: 22 kr | Buljong terning 6 stk: 16 kr\n" +
-                "- Olivenolje 500 ml: 55 kr | Solsikkeolje 1 L: 30 kr\n" +
-                "- Fersk pasta 250g: 35 kr | Parmesan 150g: 55 kr | Mozzarella 125g: 30 kr\n" +
+                "\nReferansepriser (bruk disse som grunnlag – juster proporsjonalt for andre størrelser):\n" +
+                prisveiledning +
                 "\nRegler:\n" +
                 "- Oppgi prisen på minste tilgjengelig pakke som dekker behovet\n" +
                 "- Hvis ingrediensen er en liten mengde av noe (f.eks. 1 ts salt), bruk lav pris (2-5 kr)\n" +
