@@ -1047,7 +1047,7 @@
 
         function byggPrisUI(body, stat) {
             const aktive = prisData.filter(it => !it.fjernet);
-            const sum = Math.round(aktive.reduce((acc, it) => acc + it.minPris, 0)) + 5;
+            const sum = Math.round(aktive.reduce((acc, it) => acc + it.minPris, 0));
 
             if (stat) stat.textContent = `ca. kr ${sum}`;
 

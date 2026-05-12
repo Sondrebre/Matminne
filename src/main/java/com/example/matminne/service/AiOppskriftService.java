@@ -115,15 +115,29 @@ public class AiOppskriftService {
      */
     public Map<String, Object> genererPrisEstimat(String ingrediensTekst, Integer porsjoner) {
         Map<String, Object> feilSvar = new HashMap<>();
-        String prompt = "Du er ekspert på norske matvarepriser (Rema 1000, Kiwi, Meny, Spar).\n" +
-                "Estimer hva det koster å kjøpe ingrediensene til denne oppskriften.\n" +
-                "Bruk alltid billigste butikk og billigste merkevare/EMV-produkt.\n" +
+        String prompt = "Du er ekspert på norske dagligvarepriser i 2025 (Rema 1000, Kiwi, Meny, Spar).\n" +
+                "Estimer hva det koster å kjøpe ingrediensene til denne oppskriften i Norge i dag.\n" +
+                "Bruk alltid billigste butikk og billigste EMV/private-label produkt.\n" +
                 (porsjoner != null ? "Oppskriften er til " + porsjoner + " porsjoner.\n" : "") +
+                "\nPrisveiledning (2025, typiske Rema/Kiwi-priser):\n" +
+                "- Egg 12 stk: 38 kr | Mel 1 kg: 18 kr | Sukker 1 kg: 22 kr\n" +
+                "- Smør 500g: 72 kr | Margarin 400g: 30 kr\n" +
+                "- Lettmelk 1 L: 23 kr | Fløte 3 dl: 30 kr | Rømme 350g: 35 kr\n" +
+                "- Kjøttdeig 400g: 58 kr | Kyllingfilet 700g: 98 kr | Laks 400g: 75 kr\n" +
+                "- Pasta 500g: 16 kr | Ris 1 kg: 28 kr | Potet 1 kg: 22 kr\n" +
+                "- Løk 1 kg: 22 kr | Gulrot 1 kg: 18 kr | Hvitløk 1 hode: 12 kr\n" +
+                "- Hermetiske tomater 400g: 18 kr | Tomatpuré 140g: 14 kr\n" +
+                "- Kokosmelk 400 ml: 22 kr | Buljong terning 6 stk: 16 kr\n" +
+                "- Olivenolje 500 ml: 55 kr | Solsikkeolje 1 L: 30 kr\n" +
+                "- Fersk pasta 250g: 35 kr | Parmesan 150g: 55 kr | Mozzarella 125g: 30 kr\n" +
+                "\nRegler:\n" +
+                "- Oppgi prisen på minste tilgjengelig pakke som dekker behovet\n" +
+                "- Hvis ingrediensen er en liten mengde av noe (f.eks. 1 ts salt), bruk lav pris (2-5 kr)\n" +
+                "- totalMin = sum av alle minPris i listen\n" +
                 "\nIngredienser:\n" + ingrediensTekst + "\n\n" +
-                "Svar KUN med gyldig JSON, ingen annen tekst:\n" +
-                "{\"detaljer\":[{\"ingrediens\":\"melk\",\"produktNavn\":\"Lettmelk 1 liter\",\"minPris\":18.9,\"billigstButikk\":\"Rema 1000\"}]," +
-                "\"totalMin\":120}\n\n" +
-                "Vær realistisk og presis. Inkluder alle ingredienser. Ingen markdown.";
+                "Svar KUN med gyldig JSON, ingen annen tekst, ingen markdown:\n" +
+                "{\"detaljer\":[{\"ingrediens\":\"egg\",\"produktNavn\":\"Prior egg 12 stk\",\"minPris\":38.0,\"billigstButikk\":\"Rema 1000\"}]," +
+                "\"totalMin\":38.0}";
         String svar = kallClaude(prompt);
         if (svar == null || svar.startsWith("FEIL") || svar.startsWith("RATE_LIMIT")) {
             feilSvar.put("feil", svar != null ? svar : "Ukjent feil");
@@ -151,7 +165,7 @@ public class AiOppskriftService {
             long total = root.path("totalMin").asLong(0);
             Map<String, Object> res = new HashMap<>();
             res.put("detaljer", detaljer);
-            res.put("totalMin", total + 5);
+            res.put("totalMin", total);
             res.put("antallFunnet", detaljer.size());
             res.put("antallTotal", detaljer.size());
             return res;
