@@ -1,0 +1,260 @@
+Kategori;Ingrediens;ProduktNavn;Pris;Butikk
+Meieri;egg;Prior egg 12 stk;38.0;Rema 1000
+Meieri;lettmelk;Lettmelk 1 liter;23.0;Rema 1000
+Meieri;helmelk;Helmelk 1 liter;25.0;Rema 1000
+Meieri;skummetmelk;Skummetmelk 1 liter;22.0;Rema 1000
+Meieri;kaffemelk;Kaffemelk 1 liter;24.0;Rema 1000
+Meieri;fløte;Matfløte 3 dl;30.0;Rema 1000
+Meieri;kremfløte;Kremfløte 3 dl;32.0;Rema 1000
+Meieri;rømme;Rømme 350g;35.0;Rema 1000
+Meieri;crème fraîche;Crème fraîche 200g;28.0;Rema 1000
+Meieri;smør;Smør 500g;72.0;Rema 1000
+Meieri;margarin;Soft margarin 400g;30.0;Rema 1000
+Meieri;norvegia;Norvegia skivet 400g;58.0;Rema 1000
+Meieri;jarlsberg;Jarlsberg skivet 300g;62.0;Rema 1000
+Meieri;cheddar;Cheddar 400g;62.0;Rema 1000
+Meieri;mozzarella;Mozzarella 125g;30.0;Rema 1000
+Meieri;parmesan;Parmesan 150g;55.0;Rema 1000
+Meieri;fetaost;Feta 200g;45.0;Rema 1000
+Meieri;brunost;Gudbrandsdalsost 500g;68.0;Rema 1000
+Meieri;cottage cheese;Cottage cheese 400g;35.0;Rema 1000
+Meieri;kesam;Kesam 500g;40.0;Rema 1000
+Meieri;naturell yoghurt;Naturell yoghurt 500g;28.0;Rema 1000
+Meieri;gresk yoghurt;Gresk yoghurt 500g;38.0;Rema 1000
+Meieri;vaniljeyoghurt;Vaniljeyoghurt 150g;15.0;Rema 1000
+Meieri;kefir;Kefir 1 liter;25.0;Rema 1000
+Meieri;brie;Brie 125g;45.0;Rema 1000
+Meieri;philadelphia;Philadelphia original 200g;38.0;Rema 1000
+Meieri;smelteost;Smelteost skivet 130g;28.0;Rema 1000
+Meieri;ricotta;Ricotta 250g;40.0;Rema 1000
+Meieri;smøreost;Smøreost naturell 200g;32.0;Rema 1000
+Meieri;hvit geitost;Hvit geitost 120g;42.0;Rema 1000
+Kjøtt;kjøttdeig;Kjøttdeig 400g;58.0;Rema 1000
+Kjøtt;karbonadedeig;Karbonadedeig 400g;52.0;Rema 1000
+Kjøtt;svinefilet;Svinefilet 600g;88.0;Rema 1000
+Kjøtt;svinekoteletter;Svinekoteletter 600g;68.0;Rema 1000
+Kjøtt;svinekjøtt;Svinekjøtt i biter 600g;75.0;Rema 1000
+Kjøtt;bacon;Bacon 140g;38.0;Rema 1000
+Kjøtt;pølser;Grillpølser 600g;55.0;Rema 1000
+Kjøtt;wienerpølser;Wienerpølser 6 stk;42.0;Rema 1000
+Kjøtt;kyllingfilet;Kyllingfilet 700g;98.0;Rema 1000
+Kjøtt;kyllinglår;Kyllinglår 1 kg;85.0;Rema 1000
+Kjøtt;hel kylling;Hel kylling 1.2 kg;95.0;Rema 1000
+Kjøtt;kyllingvinger;Kyllingvinger 500g;55.0;Rema 1000
+Kjøtt;oksefilet;Oksefilet 400g;145.0;Rema 1000
+Kjøtt;biff;Biff 300g;120.0;Rema 1000
+Kjøtt;lammekjøtt;Lammekjøtt 500g;110.0;Rema 1000
+Kjøtt;medisterkaker;Medisterkaker 400g;55.0;Rema 1000
+Kjøtt;kokt skinke;Kokt skinke 110g;35.0;Rema 1000
+Kjøtt;salami;Salami 100g;30.0;Rema 1000
+Kjøtt;leverpostei;Leverpostei 165g;22.0;Rema 1000
+Kjøtt;spekeskinke;Spekeskinke 100g;55.0;Rema 1000
+Kjøtt;servelat;Servelat 200g;35.0;Rema 1000
+Kjøtt;roastbiff;Roastbiff 100g;45.0;Rema 1000
+Kjøtt;kalkun;Kalkun brystfilet 400g;85.0;Rema 1000
+Kjøtt;lammeribbe;Lammeribbe 1 kg;120.0;Rema 1000
+Kjøtt;kyllingkjøttdeig;Kyllingkjøttdeig 400g;55.0;Rema 1000
+Fisk;laks;Laksefilet 400g;75.0;Rema 1000
+Fisk;ørret;Ørretfilet 400g;70.0;Rema 1000
+Fisk;torsk;Torskefilet 400g;70.0;Rema 1000
+Fisk;sei;Seiloins 400g;55.0;Rema 1000
+Fisk;makrell;Makrell hel 400g;45.0;Rema 1000
+Fisk;tunfisk;Tunfisk i vann 185g;22.0;Rema 1000
+Fisk;sild i tomat;Sild i tomat 260g;28.0;Rema 1000
+Fisk;reker;Kokte reker 150g;45.0;Rema 1000
+Fisk;frosne reker;Frosne pillede reker 200g;55.0;Rema 1000
+Fisk;krabbekjøtt;Krabbekjøtt 170g;65.0;Rema 1000
+Fisk;blåskjell;Blåskjell 1 kg;55.0;Rema 1000
+Fisk;fiskepinner;Fiskepinner 500g;45.0;Rema 1000
+Fisk;fiskeburger;Fiskeburger 4 stk;55.0;Rema 1000
+Fisk;røkt laks;Røkt laks 100g;48.0;Rema 1000
+Fisk;klippfisk;Klippfisk 500g;95.0;Rema 1000
+Fisk;makrell i tomat;Makrell i tomat 170g;22.0;Rema 1000
+Fisk;ansjos;Ansjoser 50g;25.0;Rema 1000
+Fisk;laksepostei;Laksepostei 160g;42.0;Rema 1000
+Grønnsaker;potet;Poteter 1 kg;22.0;Rema 1000
+Grønnsaker;søtpotet;Søtpotet 500g;28.0;Rema 1000
+Grønnsaker;løk;Løk 1 kg;22.0;Rema 1000
+Grønnsaker;rødløk;Rødløk 500g;20.0;Rema 1000
+Grønnsaker;hvitløk;Hvitløk 1 hode;12.0;Rema 1000
+Grønnsaker;gulrot;Gulrøtter 1 kg;18.0;Rema 1000
+Grønnsaker;brokkoli;Brokkoli 1 stk;22.0;Rema 1000
+Grønnsaker;blomkål;Blomkål 1 stk;32.0;Rema 1000
+Grønnsaker;hodekål;Hodekål 1 stk;25.0;Rema 1000
+Grønnsaker;rosenkål;Rosenkål 500g;32.0;Rema 1000
+Grønnsaker;spinat;Babyspinat 200g;29.0;Rema 1000
+Grønnsaker;isbergsalat;Isbergsalat 1 stk;22.0;Rema 1000
+Grønnsaker;rucola;Rucola 75g;25.0;Rema 1000
+Grønnsaker;tomat;Tomater 500g;28.0;Rema 1000
+Grønnsaker;cherrytomater;Cherrytomater 250g;25.0;Rema 1000
+Grønnsaker;agurk;Agurk 1 stk;22.0;Rema 1000
+Grønnsaker;paprika;Paprika 3 stk;32.0;Rema 1000
+Grønnsaker;chili;Chili rød 1 stk;8.0;Rema 1000
+Grønnsaker;selleri;Selleri 1 stk;22.0;Rema 1000
+Grønnsaker;purre;Purre 1 stk;18.0;Rema 1000
+Grønnsaker;squash;Squash 1 stk;22.0;Rema 1000
+Grønnsaker;aubergine;Aubergine 1 stk;28.0;Rema 1000
+Grønnsaker;sjampinjong;Sjampinjong 300g;28.0;Rema 1000
+Grønnsaker;asparges;Asparges 500g;42.0;Rema 1000
+Grønnsaker;ingefær;Ingefær 1 stk;12.0;Rema 1000
+Grønnsaker;grønnkål;Grønnkål 150g;35.0;Rema 1000
+Grønnsaker;mais fersk;Maiskolk 2 stk;28.0;Rema 1000
+Grønnsaker;erter frosne;Frosne erter 750g;28.0;Rema 1000
+Grønnsaker;grønne bønner;Grønne bønner 350g;32.0;Rema 1000
+Frukt;eple;Epler 1 kg;32.0;Rema 1000
+Frukt;pære;Pærer 1 kg;35.0;Rema 1000
+Frukt;banan;Bananer 1 kg;18.0;Rema 1000
+Frukt;appelsin;Appelsiner 1 kg;28.0;Rema 1000
+Frukt;sitron;Sitroner 3 stk;22.0;Rema 1000
+Frukt;lime;Lime 3 stk;22.0;Rema 1000
+Frukt;jordbær;Jordbær 500g;55.0;Rema 1000
+Frukt;blåbær;Blåbær 125g;35.0;Rema 1000
+Frukt;bringebær;Bringebær 125g;38.0;Rema 1000
+Frukt;drue;Druer 500g;42.0;Rema 1000
+Frukt;mango;Mango 1 stk;22.0;Rema 1000
+Frukt;avokado;Avokado 1 stk;18.0;Rema 1000
+Frukt;ananas;Ananas 1 stk;35.0;Rema 1000
+Frukt;kiwi;Kiwi 4 stk;22.0;Rema 1000
+Frukt;vannmelon;Vannmelon 1 stk;55.0;Rema 1000
+Frukt;melon;Melon 1 stk;38.0;Rema 1000
+Frukt;plomme;Plommer 500g;35.0;Rema 1000
+Frukt;fersken;Fersken 2 stk;22.0;Rema 1000
+Frukt;kirsebær;Kirsebær 300g;55.0;Rema 1000
+Frukt;grapefrukt;Grapefrukt 1 stk;18.0;Rema 1000
+Bakst;hvetemel;Hvetemel 1 kg;18.0;Rema 1000
+Bakst;sammalt hvete;Sammalt hvete grov 1 kg;22.0;Rema 1000
+Bakst;havregryn;Havregryn 1 kg;22.0;Rema 1000
+Bakst;sukker;Sukker 1 kg;22.0;Rema 1000
+Bakst;melis;Melis 1 kg;24.0;Rema 1000
+Bakst;brunt sukker;Brunt sukker 500g;22.0;Rema 1000
+Bakst;fersk gjær;Fersk gjær 50g;10.0;Rema 1000
+Bakst;tørrgjær;Tørrgjær 7g;8.0;Rema 1000
+Bakst;bakepulver;Bakepulver 170g;18.0;Rema 1000
+Bakst;natron;Natron 300g;15.0;Rema 1000
+Bakst;vaniljesukker;Vaniljesukker 8g;8.0;Rema 1000
+Bakst;maisenna;Maisenna 400g;22.0;Rema 1000
+Bakst;potetmel;Potetmel 400g;18.0;Rema 1000
+Bakst;mandelmel;Mandelmel 200g;55.0;Rema 1000
+Bakst;sjokoladedråper;Sjokoladedråper 200g;38.0;Rema 1000
+Bakst;rosiner;Rosiner 500g;32.0;Rema 1000
+Bakst;valnøtter;Valnøtter 200g;48.0;Rema 1000
+Bakst;mandler;Mandler 200g;48.0;Rema 1000
+Bakst;sesamfrø;Sesamfrø 100g;18.0;Rema 1000
+Bakst;solsikkefrø;Solsikkefrø 250g;22.0;Rema 1000
+Brød;grovbrød;Grovbrød 750g;35.0;Rema 1000
+Brød;loff;Loff 500g;28.0;Rema 1000
+Brød;rundstykker;Rundstykker 6 stk;30.0;Rema 1000
+Brød;knekkebrød;Knekkebrød 270g;28.0;Rema 1000
+Brød;kavring;Kavring 540g;38.0;Rema 1000
+Brød;pitabrød;Pitabrød 6 stk;28.0;Rema 1000
+Brød;tortilla;Tortillalefser 8 stk;32.0;Rema 1000
+Brød;ciabatta;Ciabatta 2 stk;28.0;Rema 1000
+Brød;bagel;Bagels 6 stk;35.0;Rema 1000
+Brød;croissant;Croissanter 4 stk;35.0;Rema 1000
+Korn og pasta;spaghetti;Spaghetti 500g;16.0;Rema 1000
+Korn og pasta;penne;Penne 500g;16.0;Rema 1000
+Korn og pasta;fusilli;Fusilli 500g;16.0;Rema 1000
+Korn og pasta;lasagneplater;Lasagneplater 500g;20.0;Rema 1000
+Korn og pasta;eggnudler;Eggnudler 250g;22.0;Rema 1000
+Korn og pasta;risnudler;Risnudler 250g;22.0;Rema 1000
+Korn og pasta;ris;Ris 1 kg;28.0;Rema 1000
+Korn og pasta;basmatiris;Basmatiris 1 kg;35.0;Rema 1000
+Korn og pasta;couscous;Couscous 500g;25.0;Rema 1000
+Korn og pasta;quinoa;Quinoa 500g;48.0;Rema 1000
+Korn og pasta;bulgur;Bulgur 500g;28.0;Rema 1000
+Korn og pasta;polenta;Polenta 500g;28.0;Rema 1000
+Korn og pasta;havregrøt;Havregrøt ferdigpakket 540g;32.0;Rema 1000
+Korn og pasta;bygggryn;Bygggryn 1 kg;22.0;Rema 1000
+Korn og pasta;müsli;Müsli 750g;42.0;Rema 1000
+Hermetikk;hermetiske tomater;Hermetiske tomater 400g;18.0;Rema 1000
+Hermetikk;tomatpuré;Tomatpuré 140g;14.0;Rema 1000
+Hermetikk;tomatpassata;Tomatpassata 700g;22.0;Rema 1000
+Hermetikk;kokosmelk;Kokosmelk 400 ml;22.0;Rema 1000
+Hermetikk;kikerter;Hermetiske kikerter 400g;18.0;Rema 1000
+Hermetikk;linser;Hermetiske linser 400g;18.0;Rema 1000
+Hermetikk;hvite bønner;Hvite bønner 400g;18.0;Rema 1000
+Hermetikk;røde bønner;Røde kidney bønner 400g;18.0;Rema 1000
+Hermetikk;ananas hermetisk;Hermetisk ananas 565g;22.0;Rema 1000
+Hermetikk;oliven;Grønne oliven 185g;28.0;Rema 1000
+Hermetikk;kapers;Kapers 100g;22.0;Rema 1000
+Hermetikk;sylteagurk;Sylteagurk 500g;22.0;Rema 1000
+Hermetikk;rødkål;Rødkål 720g;28.0;Rema 1000
+Hermetikk;surkål;Surkål 720g;22.0;Rema 1000
+Hermetikk;mais hermetisk;Hermetisk mais 340g;16.0;Rema 1000
+Krydder;salt;Havsalt 1 kg;12.0;Rema 1000
+Krydder;pepper;Pepper kvernet 50g;22.0;Rema 1000
+Krydder;karri;Karripulver 45g;20.0;Rema 1000
+Krydder;paprikapulver;Paprikapulver 45g;18.0;Rema 1000
+Krydder;kanel;Kanel malt 28g;18.0;Rema 1000
+Krydder;ingefærpulver;Ingefærpulver 26g;18.0;Rema 1000
+Krydder;muskat;Malt muskat 35g;20.0;Rema 1000
+Krydder;oregano;Tørket oregano 12g;15.0;Rema 1000
+Krydder;basilikum;Tørket basilikum 12g;15.0;Rema 1000
+Krydder;timian;Tørket timian 12g;15.0;Rema 1000
+Krydder;rosmarin;Tørket rosmarin 12g;15.0;Rema 1000
+Krydder;gurkemeie;Gurkemeie 45g;18.0;Rema 1000
+Krydder;spisskummen;Spisskummen 45g;18.0;Rema 1000
+Krydder;korianderpulver;Korianderpulver 30g;18.0;Rema 1000
+Krydder;chiliflak;Chiliflak 25g;18.0;Rema 1000
+Saus;buljong kylling;Kyllingbuljong terninger 6 stk;16.0;Rema 1000
+Saus;buljong okse;Oksekjøttbuljong terninger 6 stk;16.0;Rema 1000
+Saus;soyasaus;Soyasaus 150 ml;25.0;Rema 1000
+Saus;fiskesaus;Fiskesaus 700 ml;38.0;Rema 1000
+Saus;worcestershiresaus;Worcestershiresaus 150 ml;28.0;Rema 1000
+Saus;tabasco;Tabasco 60 ml;28.0;Rema 1000
+Saus;ketsjup;Ketsjup 560g;28.0;Rema 1000
+Saus;sennep;Sennep 200g;22.0;Rema 1000
+Saus;majones;Majones 670g;35.0;Rema 1000
+Saus;ranch dressing;Ranch dressing 350 ml;28.0;Rema 1000
+Saus;sriracha;Sriracha 435 ml;45.0;Rema 1000
+Saus;pesto;Pesto basilikum 190g;38.0;Rema 1000
+Saus;hoisinsaus;Hoisinsaus 220 ml;35.0;Rema 1000
+Saus;sweet chili;Sweet chili saus 190 ml;28.0;Rema 1000
+Saus;teriyakisaus;Teriyakisaus 150 ml;30.0;Rema 1000
+Olje og eddik;olivenolje;Olivenolje 500 ml;55.0;Rema 1000
+Olje og eddik;solsikkeolje;Solsikkeolje 1 liter;30.0;Rema 1000
+Olje og eddik;kokosolje;Kokosolje 500 ml;55.0;Rema 1000
+Olje og eddik;sesamolje;Sesamolje 150 ml;35.0;Rema 1000
+Olje og eddik;rapsolje;Rapsolje 1 liter;28.0;Rema 1000
+Olje og eddik;hvitvinseddik;Hvitvinseddik 500 ml;22.0;Rema 1000
+Olje og eddik;balsamicoeddik;Balsamicoeddik 250 ml;38.0;Rema 1000
+Søtt og snacks;mørk sjokolade;Mørk sjokolade 200g;32.0;Rema 1000
+Søtt og snacks;melkesjokolade;Melkesjokolade 200g;28.0;Rema 1000
+Søtt og snacks;kakao;Kakaopulver 250g;30.0;Rema 1000
+Søtt og snacks;nutella;Nutella 200g;38.0;Rema 1000
+Søtt og snacks;jordbærsyltetøy;Jordbærsyltetøy 450g;32.0;Rema 1000
+Søtt og snacks;blåbærsyltetøy;Blåbærsyltetøy 450g;32.0;Rema 1000
+Søtt og snacks;honning;Honning 500g;55.0;Rema 1000
+Søtt og snacks;lønnesirup;Lønnesirup 189 ml;65.0;Rema 1000
+Søtt og snacks;vaniljeis;Vaniljeis 1 liter;45.0;Rema 1000
+Søtt og snacks;digestive kjeks;Digestive kjeks 400g;28.0;Rema 1000
+Søtt og snacks;potetgull;Potetgull 200g;32.0;Rema 1000
+Søtt og snacks;tortilla chips;Tortilla chips 200g;28.0;Rema 1000
+Søtt og snacks;peanøttsmør;Peanøttsmør 400g;42.0;Rema 1000
+Søtt og snacks;havrebar;Havrebar 6 stk;32.0;Rema 1000
+Søtt og snacks;popcorn;Popcorn 400g;22.0;Rema 1000
+Drikke;kaffe;Kaffe malt 250g;55.0;Rema 1000
+Drikke;kaffekapser;Kaffekapser 10 stk;48.0;Rema 1000
+Drikke;te;Te 25 poser;28.0;Rema 1000
+Drikke;appelsinjuice;Appelsinjuice 1 liter;28.0;Rema 1000
+Drikke;eplejuice;Eplejuice 1 liter;22.0;Rema 1000
+Drikke;saft;Saft 0.5 liter;25.0;Rema 1000
+Drikke;mineralvann;Mineralvann 0.5 liter;22.0;Rema 1000
+Drikke;cola;Cola 1.5 liter;28.0;Rema 1000
+Drikke;energidrikk;Energidrikk 0.5 liter;22.0;Rema 1000
+Drikke;soyamelk;Soyamelk 1 liter;28.0;Rema 1000
+Drikke;havremelk;Havremelk 1 liter;28.0;Rema 1000
+Drikke;mandelmelk;Mandelmelk 1 liter;30.0;Rema 1000
+Frysevarer;frossen spinat;Frossen spinat 750g;28.0;Rema 1000
+Frysevarer;frossen brokkoli;Frossen brokkoli 750g;28.0;Rema 1000
+Frysevarer;pommes frites;Pommes frites 750g;32.0;Rema 1000
+Frysevarer;frossen pizza;Frossen pizza 400g;55.0;Rema 1000
+Frysevarer;frossen bær;Frossen bærblanding 500g;38.0;Rema 1000
+Frysevarer;frossen laks;Frossen laksefilet 400g;68.0;Rema 1000
+Frysevarer;frosne kyllingnuggets;Kyllingnuggets 500g;62.0;Rema 1000
+Diverse;tørkede linser;Tørkede røde linser 500g;28.0;Rema 1000
+Diverse;tørkede kikerter;Tørkede kikerter 500g;28.0;Rema 1000
+Diverse;gelatin;Gelatinplater 12 stk;22.0;Rema 1000
+Diverse;agar agar;Agar agar 30g;35.0;Rema 1000
+Diverse;bakepapir;Bakepapir 1 rull;28.0;Rema 1000
+Diverse;plastfolie;Plastfolie 1 rull;22.0;Rema 1000
