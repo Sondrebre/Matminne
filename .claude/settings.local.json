@@ -5,7 +5,23 @@
       "Skill(claude-api:*)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/)",
       "Bash(ls \"c:/Users/Sondr/Downloads/demo\\(1\\)/MatMinne/\"*.mv.db)",
-      "Bash(ls \"c:/Users/Sondr/Downloads/demo\\(1\\)/MatMinne/matminne_db\"*)"
+      "Bash(ls \"c:/Users/Sondr/Downloads/demo\\(1\\)/MatMinne/matminne_db\"*)",
+      "Bash(cat \"c:/Users/Sondr/Downloads/demo\\(1\\)/MatMinne/src/main/resources/application.properties\")",
+      "Bash(cat \"c:/Users/Sondr/Downloads/demo\\(1\\)/MatMinne/src/main/resources/templates/fragments.html\")",
+      "Bash(wc -l \"c:/Users/Sondr/Downloads/demo\\(1\\)/MatMinne/src/main/resources/templates/fragments.html\")",
+      "Bash(cat \"c:/Users/Sondr/Downloads/demo\\(1\\)/MatMinne/.vscode/launch.json\")",
+      "Bash(cat \"c:/Users/Sondr/Downloads/demo\\(1\\)/MatMinne/src/main/resources/templates/home.html\")",
+      "Bash(ls \"c:/Users/Sondr/Downloads/demo\\(1\\)/MatMinne/src/main/resources/META-INF/\")",
+      "Bash(./mvnw compile:*)",
+      "Bash(cat \"c:/Users/Sondr/Downloads/demo\\(1\\)/MatMinne/src/main/java/com/example/MatMinne/MatMinneApplication.java\")",
+      "Bash(cat \"c:/Users/Sondr/Downloads/demo\\(1\\)/MatMinne/src/main/java/com/example/matminne/MatMinneApplication.java\")",
+      "Bash(GOOGLE_CLIENT_ID=test GOOGLE_CLIENT_SECRET=test ANTHROPIC_API_KEY=test KASSAL_API_KEY=test STRIPE_SECRET_KEY= STRIPE_PRICE_ID= STRIPE_WEBHOOK_SECRET= APP_BASE_URL=http://localhost:8080 ./mvnw spring-boot:run)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill /PID 35124 /F)",
+      "Bash(cmd /c \"taskkill /PID 35124 /F\")",
+      "Bash(powershell -Command \"Stop-Process -Id 35124 -Force\")",
+      "Read(//tmp/**)",
+      "Bash(break)"
     ]
   }
 }
