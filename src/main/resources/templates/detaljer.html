@@ -107,12 +107,12 @@
         .main-card-body { padding: 22px 28px; }
 
         .cook-btn {
-            background: var(--mat-gronn); color: white; border: none;
-            padding: 9px 18px; border-radius: 10px; font-weight: 800; font-size: .8rem;
-            cursor: pointer; display: flex; align-items: center; gap: 7px; transition: .2s;
-            font-family: inherit; box-shadow: 0 4px 14px rgba(46,204,113,.3);
+            background: #111; color: #fff; border: none;
+            padding: 10px 20px; border-radius: 8px; font-weight: 800; font-size: .82rem;
+            cursor: pointer; display: flex; align-items: center; gap: 8px; transition: background .2s;
+            font-family: inherit; letter-spacing: .3px;
         }
-        .cook-btn:hover { background: var(--mat-gronn-m); }
+        .cook-btn:hover { background: #222; }
 
         /* ── STEP LIST ── */
         .step-text { font-size: .96rem; line-height: 1.85; color: #475569; white-space: pre-line; }
@@ -146,104 +146,107 @@
         /* ── FULLSKJERM KOKEMODUS ── */
         #kokeOverlay {
             display: none; position: fixed; inset: 0; z-index: 9999;
-            background: linear-gradient(160deg, #0a1628 0%, #0f2318 60%, #0a1628 100%);
+            background: #0d1117;
             flex-direction: column; overflow: hidden;
         }
-        #kokeOverlay::before {
-            content: ''; position: absolute; inset: 0; pointer-events: none;
-            background: radial-gradient(ellipse 70% 60% at 80% 20%, rgba(46,204,113,.07), transparent 60%),
-                        radial-gradient(ellipse 50% 50% at 20% 80%, rgba(46,204,113,.05), transparent 55%);
-        }
         #kokeOverlay.open { display: flex; }
+
         .koke-topbar {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 18px 32px; flex-shrink: 0; position: relative; z-index: 1;
+            padding: 20px 32px; flex-shrink: 0;
+            border-bottom: 1px solid rgba(255,255,255,.06);
         }
         .koke-title {
-            font-size: .8rem; font-weight: 700; color: rgba(255,255,255,.35);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 55%;
-            letter-spacing: .3px;
-        }
-        .koke-meta {
-            background: rgba(46,204,113,.12); border: 1px solid rgba(46,204,113,.2);
-            color: #4ade80; font-size: .75rem; font-weight: 800;
-            padding: 5px 14px; border-radius: 99px; letter-spacing: .5px;
+            font-size: .82rem; font-weight: 600; color: rgba(255,255,255,.3);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%;
         }
         .koke-close {
-            background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08);
-            color: rgba(255,255,255,.4); width: 38px; height: 38px;
-            border-radius: 12px; font-size: .95rem; cursor: pointer; display: flex;
-            align-items: center; justify-content: center; transition: .2s; flex-shrink: 0;
+            background: none; border: 1px solid rgba(255,255,255,.1);
+            color: rgba(255,255,255,.4); width: 36px; height: 36px;
+            border-radius: 8px; font-size: .9rem; cursor: pointer; display: flex;
+            align-items: center; justify-content: center; transition: .15s; flex-shrink: 0;
         }
-        .koke-close:hover { background: rgba(255,255,255,.12); color: white; }
+        .koke-close:hover { border-color: rgba(255,255,255,.25); color: white; }
+
         .koke-progressbar {
-            height: 2px; background: rgba(255,255,255,.06); flex-shrink: 0; margin: 0 32px;
-            border-radius: 2px; overflow: hidden;
+            height: 3px; background: rgba(255,255,255,.05); flex-shrink: 0;
         }
-        .koke-progressfill { height: 100%; background: linear-gradient(90deg, #22c55e, #4ade80); transition: width .5s cubic-bezier(.4,0,.2,1); border-radius: 2px; }
+        .koke-progressfill {
+            height: 100%; background: #22c55e;
+            transition: width .4s ease; border-radius: 0 3px 3px 0;
+        }
+
         .koke-body {
-            flex: 1; display: flex; flex-direction: column; justify-content: center;
-            padding: 48px 10% 32px; overflow-y: auto; position: relative; z-index: 1;
+            flex: 1; display: flex; flex-direction: column;
+            padding: 0 10%; overflow-y: auto;
+            justify-content: center;
         }
-        .koke-step-badge {
-            display: inline-flex; align-items: center; gap: 10px;
-            margin-bottom: 32px;
+
+        .koke-counter {
+            font-size: .72rem; font-weight: 700; letter-spacing: 2px;
+            text-transform: uppercase; color: rgba(255,255,255,.22);
+            margin-bottom: 24px;
         }
-        .koke-step-pill {
-            background: rgba(46,204,113,.15); border: 1px solid rgba(46,204,113,.25);
-            color: #4ade80; font-size: .72rem; font-weight: 900;
-            padding: 6px 16px; border-radius: 99px; letter-spacing: 2px; text-transform: uppercase;
-        }
-        .koke-step-dots { display: flex; gap: 5px; }
-        .koke-dot {
-            width: 6px; height: 6px; border-radius: 50%;
-            background: rgba(255,255,255,.12); transition: all .3s;
-        }
-        .koke-dot.active { background: #4ade80; width: 20px; border-radius: 3px; }
-        .koke-dot.done { background: rgba(74,222,128,.35); }
+
         .koke-steptext {
-            font-size: clamp(1.3rem, 3.2vw, 2rem); font-weight: 700;
-            color: rgba(255,255,255,.92); line-height: 1.55; max-width: 780px;
-            animation: fadeSlideIn .35s ease;
+            font-size: clamp(1.5rem, 3.5vw, 2.4rem);
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.5;
+            max-width: 820px;
+            animation: fadeIn .25s ease;
         }
-        @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
         .koke-hint {
-            margin-top: 28px; display: flex; align-items: center; gap: 8px;
-            color: rgba(255,255,255,.2); font-size: .78rem;
+            margin-top: 40px;
+            font-size: .75rem;
+            color: rgba(255,255,255,.14);
+            letter-spacing: .5px;
         }
-        .koke-hint i { font-size: .7rem; }
+
         .koke-footer {
-            display: flex; gap: 12px; padding: 24px 32px;
-            flex-shrink: 0; position: relative; z-index: 1;
+            display: flex; gap: 10px; padding: 24px 32px; flex-shrink: 0;
+            border-top: 1px solid rgba(255,255,255,.06);
         }
+
         .koke-btn {
-            flex: 1; padding: 18px; border-radius: 18px; border: none; font-weight: 800;
-            font-size: 1rem; cursor: pointer; font-family: inherit; transition: .2s;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            flex: 1; padding: 16px 20px; border-radius: 10px; border: none;
+            font-weight: 800; font-size: .9rem; cursor: pointer;
+            font-family: inherit; transition: .15s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .koke-btn-prev {
-            background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08);
-            color: rgba(255,255,255,.5); flex: 0 0 auto; padding: 18px 24px;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.08);
+            color: rgba(255,255,255,.45);
+            flex: 0 0 auto; padding: 16px 22px;
         }
-        .koke-btn-prev:hover { background: rgba(255,255,255,.1); color: white; }
+        .koke-btn-prev:hover { background: rgba(255,255,255,.09); color: white; }
         .koke-btn-next {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: white; box-shadow: 0 8px 32px rgba(34,197,94,.3);
+            background: #16a34a; color: white;
         }
-        .koke-btn-next:hover { box-shadow: 0 12px 40px rgba(34,197,94,.45); transform: translateY(-1px); }
-        .koke-btn-next:disabled, .koke-btn-prev:disabled { opacity: .25; cursor: default; transform: none; box-shadow: none; }
+        .koke-btn-next:hover { background: #15803d; }
+        .koke-btn-next:disabled, .koke-btn-prev:disabled {
+            opacity: .2; cursor: default;
+        }
+
         .koke-done-screen {
             display: none; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; flex: 1; padding: 40px; position: relative; z-index: 1;
+            text-align: center; flex: 1; padding: 40px;
         }
         .koke-done-screen.vis { display: flex; }
-        .koke-done-ikon {
-            font-size: 4.5rem; margin-bottom: 24px;
-            animation: pop .5s cubic-bezier(.34,1.56,.64,1);
+        .koke-done-icon {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; margin-bottom: 28px;
+            animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
         }
-        @keyframes pop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .koke-done-screen h2 { font-size: 2.4rem; font-weight: 900; color: white; margin: 0 0 10px; letter-spacing: -1.5px; }
-        .koke-done-screen p { color: rgba(255,255,255,.4); font-size: .95rem; margin: 0 0 32px; }
+        @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .koke-done-screen h2 { font-size: 2.2rem; font-weight: 900; color: white; margin: 0 0 10px; letter-spacing: -1px; }
+        .koke-done-screen p { color: rgba(255,255,255,.35); font-size: .93rem; margin: 0 0 36px; }
 
         /* ── ACTIONS STRIP ── */
         .actions-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
@@ -375,10 +378,9 @@
             .main-card-body { padding: 14px 16px; }
             .side-card-body { padding: 14px 16px; }
             .koke-topbar { padding: 14px 18px; }
-            .koke-body { padding: 32px 6% 20px; }
+            .koke-body { padding: 0 6%; }
             .koke-footer { padding: 16px 18px; gap: 8px; }
-            .koke-btn { padding: 14px; font-size: .9rem; }
-            .koke-progressbar { margin: 0 18px; }
+            .koke-btn { padding: 14px 16px; font-size: .88rem; }
         }
     </style>
 </head>
@@ -720,29 +722,28 @@
         <div id="kokeOverlay">
             <div class="koke-topbar">
                 <span class="koke-title" th:text="${o.tittel}"></span>
-                <span class="koke-meta" id="kokeMetaTekst"></span>
                 <button class="koke-close" onclick="avsluttKoke()"><i class="fas fa-times"></i></button>
             </div>
             <div class="koke-progressbar"><div class="koke-progressfill" id="kokeProgFill"></div></div>
+
             <div class="koke-body" id="kokeBody">
-                <div class="koke-step-badge">
-                    <span class="koke-step-pill" id="kokeStepPill">Steg 1</span>
-                    <div class="koke-step-dots" id="kokeDots"></div>
-                </div>
+                <div class="koke-counter" id="kokeCounter">STEG 1 AV 1</div>
                 <div class="koke-steptext" id="kokeStepText"></div>
-                <div class="koke-hint"><i class="fas fa-hand-pointer"></i> Sveip eller bruk piltaster for å navigere</div>
+                <div class="koke-hint">Sveip eller bruk piltaster for å navigere</div>
             </div>
+
             <div class="koke-done-screen" id="kokeDone">
-                <div class="koke-done-ikon">🎉</div>
-                <h2>Ferdig laget!</h2>
-                <p>Du har fullført alle stegene. God appetitt!</p>
-                <button class="koke-btn koke-btn-next" style="max-width:300px;" onclick="avsluttKoke()">
-                    <i class="fas fa-check"></i> Tilbake til oppskriften
+                <div class="koke-done-icon">✓</div>
+                <h2>God appetitt!</h2>
+                <p>Du har fullført alle stegene.</p>
+                <button class="koke-btn koke-btn-next" style="max-width:280px;" onclick="avsluttKoke()">
+                    Tilbake til oppskriften
                 </button>
             </div>
-            <div class="koke-footer">
+
+            <div class="koke-footer" id="kokeFooter">
                 <button class="koke-btn koke-btn-prev" id="kokePrev" onclick="kokeNav(-1)">
-                    <i class="fas fa-chevron-left"></i>
+                    <i class="fas fa-chevron-left"></i> Forrige
                 </button>
                 <button class="koke-btn koke-btn-next" id="kokeNext" onclick="kokeNav(1)">
                     Neste steg <i class="fas fa-chevron-right"></i>
@@ -815,34 +816,24 @@
             const total = kokeSteg.length;
             const body = document.getElementById('kokeBody');
             const done = document.getElementById('kokeDone');
+            const footer = document.getElementById('kokeFooter');
             const finished = kokeIdx >= total;
 
             body.style.display = finished ? 'none' : 'flex';
             done.classList.toggle('vis', finished);
-            document.querySelector('.koke-footer').style.display = finished ? 'none' : 'flex';
+            footer.style.display = finished ? 'none' : 'flex';
 
             if (!finished) {
-                document.getElementById('kokeStepPill').textContent = `Steg ${kokeIdx + 1} av ${total}`;
+                document.getElementById('kokeCounter').textContent = `STEG ${kokeIdx + 1} AV ${total}`;
                 const el = document.getElementById('kokeStepText');
                 el.style.animation = 'none';
-                el.offsetHeight; // reflow
+                el.offsetHeight;
                 el.style.animation = '';
                 el.textContent = kokeSteg[kokeIdx];
-
-                // dots
-                const dotsEl = document.getElementById('kokeDots');
-                const maxDots = Math.min(total, 9);
-                dotsEl.innerHTML = '';
-                for (let i = 0; i < maxDots; i++) {
-                    const d = document.createElement('div');
-                    d.className = 'koke-dot' + (i === kokeIdx ? ' active' : i < kokeIdx ? ' done' : '');
-                    dotsEl.appendChild(d);
-                }
             }
 
             const pct = Math.min(100, Math.round(((kokeIdx) / total) * 100));
             document.getElementById('kokeProgFill').style.width = pct + '%';
-            document.getElementById('kokeMetaTekst').textContent = finished ? '' : `${kokeIdx + 1} / ${total}`;
             document.getElementById('kokePrev').disabled = kokeIdx <= 0;
         }
 
