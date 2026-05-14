@@ -306,12 +306,122 @@
         }
         .ko-done-btn:hover { opacity: .85; }
 
+        /* Desktop: hide mobile-only elements */
+        .ko-mobile-header { display: none; }
+        .ko-ing-toggle { display: none; }
+        .ko-ing-sheet { display: none; }
+        .ko-ing-sheet-backdrop { display: none; }
+
         @media (max-width: 768px) {
             #kokeOverlay { flex-direction: column; }
-            .ko-left { width: 100%; max-height: 38vh; border-right: none; border-bottom: 1px solid rgba(255,255,255,.06); }
-            .ko-right-body { padding: 32px 28px; }
-            .ko-right-nav { padding: 16px 28px; }
-            .ko-step-bg-num { font-size: 60vw; }
+
+            /* Hide desktop left panel — replaced by photo header + bottom sheet */
+            .ko-left { display: none; }
+
+            /* ── Photo header ── */
+            .ko-mobile-header {
+                display: block; position: relative;
+                height: 210px; flex-shrink: 0; overflow: hidden;
+            }
+            .ko-mobile-header-img {
+                width: 100%; height: 100%; object-fit: cover; opacity: .65;
+            }
+            .ko-mobile-header-overlay {
+                position: absolute; inset: 0;
+                background: linear-gradient(to bottom, rgba(0,0,0,.25) 0%, rgba(15,13,10,.97) 100%);
+                display: flex; flex-direction: column; justify-content: flex-end;
+                padding: 20px;
+            }
+            .ko-mobile-step-pill {
+                display: inline-flex; align-items: center; gap: 6px;
+                background: rgba(34,197,94,.18); border: 1px solid rgba(34,197,94,.35);
+                color: #4ade80; font-size: .62rem; font-weight: 800;
+                letter-spacing: 2px; text-transform: uppercase;
+                padding: 4px 12px; border-radius: 99px; margin-bottom: 8px;
+            }
+            .ko-mobile-recipe-title {
+                font-size: 1.15rem; font-weight: 800; color: white;
+                letter-spacing: -.3px; line-height: 1.2;
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            }
+            .ko-mobile-close {
+                position: absolute; top: 14px; right: 14px;
+                background: rgba(0,0,0,.45); backdrop-filter: blur(8px);
+                border: 1px solid rgba(255,255,255,.14);
+                color: rgba(255,255,255,.8); width: 38px; height: 38px;
+                border-radius: 50%; display: flex; align-items: center;
+                justify-content: center; cursor: pointer; font-size: .88rem;
+                transition: .15s;
+            }
+            .ko-mobile-close:hover { background: rgba(0,0,0,.7); color: white; }
+
+            /* ── Step area ── */
+            .ko-step-bg-num { display: none; }
+            .ko-right { background: #0f0d0a; }
+            .ko-right-body {
+                padding: 22px 22px 16px;
+                justify-content: flex-start;
+            }
+            .ko-step-label { margin-bottom: 14px; font-size: .58rem; }
+            .ko-step-text { font-size: clamp(1.25rem, 5.5vw, 1.75rem); line-height: 1.6; }
+            .ko-swipe-hint { margin-top: 20px; font-size: .65rem; }
+
+            /* ── Nav ── */
+            .ko-right-nav { padding: 14px 22px; gap: 10px; }
+            .ko-nav-btn { padding: 15px; font-size: .88rem; border-radius: 14px; }
+            .ko-nav-prev { flex-shrink: 0; }
+
+            /* ── Ingredient toggle button (floating) ── */
+            .ko-ing-toggle {
+                display: flex; align-items: center; gap: 7px;
+                position: fixed; bottom: 96px; left: 50%; transform: translateX(-50%);
+                background: rgba(30,27,22,.92); backdrop-filter: blur(12px);
+                border: 1px solid rgba(255,255,255,.12);
+                color: rgba(255,255,255,.7); padding: 10px 20px;
+                border-radius: 99px; font-size: .8rem; font-weight: 700;
+                cursor: pointer; font-family: inherit; transition: .15s;
+                z-index: 10002; white-space: nowrap;
+            }
+            .ko-ing-toggle:hover { border-color: rgba(34,197,94,.4); color: #4ade80; }
+
+            /* ── Bottom sheet ── */
+            .ko-ing-sheet-backdrop {
+                display: block; position: fixed; inset: 0;
+                background: rgba(0,0,0,.55); z-index: 10000;
+                opacity: 0; pointer-events: none; transition: opacity .25s;
+            }
+            .ko-ing-sheet-backdrop.open { opacity: 1; pointer-events: auto; }
+            .ko-ing-sheet {
+                display: block; position: fixed;
+                bottom: 0; left: 0; right: 0; z-index: 10001;
+                background: #1c1910;
+                border-top: 1px solid rgba(255,255,255,.07);
+                border-radius: 22px 22px 0 0;
+                max-height: 62vh; overflow-y: auto;
+                transform: translateY(100%);
+                transition: transform .32s cubic-bezier(.34,1.1,.64,1);
+            }
+            .ko-ing-sheet.open { transform: translateY(0); }
+            .ko-ing-sheet-handle {
+                width: 36px; height: 4px; background: rgba(255,255,255,.13);
+                border-radius: 99px; margin: 14px auto 0;
+            }
+            .ko-ing-sheet-head {
+                padding: 16px 22px 10px;
+                display: flex; justify-content: space-between; align-items: center;
+                border-bottom: 1px solid rgba(255,255,255,.05);
+            }
+            .ko-ing-sheet-head span {
+                font-size: .62rem; font-weight: 800; letter-spacing: 2px;
+                text-transform: uppercase; color: rgba(255,255,255,.3);
+            }
+            .ko-ing-sheet-close {
+                background: none; border: none; color: rgba(255,255,255,.28);
+                cursor: pointer; font-size: 1rem; padding: 4px; font-family: inherit;
+                transition: .12s;
+            }
+            .ko-ing-sheet-close:hover { color: rgba(255,255,255,.7); }
+            .ko-ing-sheet-list { padding: 8px 14px 32px; }
         }
 
         /* ── ACTIONS STRIP ── */
@@ -785,9 +895,10 @@
         </div>
 
         <!-- FULLSKJERM KOKEMODUS -->
-        <div id="kokeOverlay" th:attr="data-ing=${o.ingredienser}">
+        <div id="kokeOverlay"
+             th:attr="data-ing=${o.ingredienser},data-img=${o.bildeUrl != null ? o.bildeUrl : ''}">
 
-            <!-- Venstre: Ingrediensliste -->
+            <!-- Venstre: Ingrediensliste (desktop) -->
             <div class="ko-left">
                 <div class="ko-left-head">
                     <div class="ko-recipe-name" th:text="${o.tittel}"></div>
@@ -805,6 +916,19 @@
 
             <!-- Høyre: Gjeldende steg -->
             <div class="ko-right">
+
+                <!-- Mobil: foto-header (skjult på desktop) -->
+                <div class="ko-mobile-header">
+                    <img class="ko-mobile-header-img" id="koMobileImg" src="" alt="">
+                    <div class="ko-mobile-header-overlay">
+                        <div class="ko-mobile-step-pill" id="koMobilePill">STEG 1 AV 1</div>
+                        <div class="ko-mobile-recipe-title" th:text="${o.tittel}"></div>
+                    </div>
+                    <button class="ko-mobile-close" onclick="avsluttKoke()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
                 <div class="ko-step-bg-num" id="koStepBgNum">01</div>
 
                 <div class="ko-right-body" id="koRightBody">
@@ -830,6 +954,24 @@
                         Neste steg <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
+            </div>
+
+            <!-- Mobil: ingrediens-knapp (skjult på desktop) -->
+            <button class="ko-ing-toggle" onclick="toggleIngSheet()">
+                <i class="fas fa-list-ul"></i> Ingredienser
+            </button>
+
+            <!-- Mobil: ingrediens-bunnark -->
+            <div class="ko-ing-sheet-backdrop" id="koIngBackdrop" onclick="toggleIngSheet()"></div>
+            <div class="ko-ing-sheet" id="koIngSheet">
+                <div class="ko-ing-sheet-handle"></div>
+                <div class="ko-ing-sheet-head">
+                    <span>Ingredienser</span>
+                    <button class="ko-ing-sheet-close" onclick="toggleIngSheet()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="ko-ing-sheet-list" id="koIngSheetList"></div>
             </div>
         </div>
 
@@ -890,25 +1032,48 @@
             if (kokeSteg.length === 0) return;
             kokeIdx = 0;
 
-            // Bygg ingrediensliste
             const overlay = document.getElementById('kokeOverlay');
+
+            // Sett mobilbilde
+            const imgUrl = overlay.getAttribute('data-img') || '';
+            const mobileImg = document.getElementById('koMobileImg');
+            if (mobileImg) {
+                mobileImg.src = imgUrl
+                    ? (imgUrl.includes('unsplash.com') && !imgUrl.includes('w=')
+                        ? imgUrl + '?auto=format&fit=crop&w=800&q=80'
+                        : imgUrl)
+                    : 'https://images.unsplash.com/photo-1495521821757-a1efb6729352?auto=format&fit=crop&w=800&q=80';
+            }
+
+            // Bygg ingrediensliste (desktop panel)
             const ingRaw = overlay.getAttribute('data-ing') || '';
             const ingLines = ingRaw.split('\n').map(l => l.trim()).filter(l => l);
-            const ingList = document.getElementById('koIngList');
-            ingList.innerHTML = '';
-            ingLines.forEach(line => {
-                const clean = line.replace(/^[-•*]\s+/, '').replace(/^\d+\.\s+/, '');
-                if (!clean) return;
-                const item = document.createElement('div');
-                item.className = 'ko-ing-item';
-                item.innerHTML = `<div class="ko-ing-check">✓</div><div class="ko-ing-text">${clean}</div>`;
-                item.addEventListener('click', () => item.classList.toggle('done'));
-                ingList.appendChild(item);
-            });
+
+            function byggIngItems(container) {
+                container.innerHTML = '';
+                ingLines.forEach(line => {
+                    const clean = line.replace(/^[-•*]\s+/, '').replace(/^\d+\.\s+/, '');
+                    if (!clean) return;
+                    const item = document.createElement('div');
+                    item.className = 'ko-ing-item';
+                    item.innerHTML = `<div class="ko-ing-check">✓</div><div class="ko-ing-text">${clean}</div>`;
+                    item.addEventListener('click', () => item.classList.toggle('done'));
+                    container.appendChild(item);
+                });
+            }
+            byggIngItems(document.getElementById('koIngList'));
+            byggIngItems(document.getElementById('koIngSheetList'));
 
             overlay.classList.add('open');
             document.body.style.overflow = 'hidden';
             oppdaterKokeSteg();
+        }
+
+        function toggleIngSheet() {
+            const sheet = document.getElementById('koIngSheet');
+            const backdrop = document.getElementById('koIngBackdrop');
+            const open = sheet.classList.toggle('open');
+            backdrop.classList.toggle('open', open);
         }
 
         function oppdaterKokeSteg() {
@@ -923,7 +1088,10 @@
             nav.style.display  = finished ? 'none' : 'flex';
 
             if (!finished) {
-                document.getElementById('koStepLabel').textContent = `STEG ${kokeIdx + 1} AV ${total}`;
+                const stepLbl = `STEG ${kokeIdx + 1} AV ${total}`;
+                document.getElementById('koStepLabel').textContent = stepLbl;
+                const pill = document.getElementById('koMobilePill');
+                if (pill) pill.textContent = stepLbl;
                 document.getElementById('koStepBgNum').textContent = String(kokeIdx + 1).padStart(2, '0');
                 const el = document.getElementById('kokeStepText');
                 el.style.animation = 'none';
@@ -944,11 +1112,16 @@
 
         function kokeNav(retning) {
             kokeIdx = Math.max(0, Math.min(kokeSteg.length, kokeIdx + retning));
+            // Close ingredient sheet when navigating
+            document.getElementById('koIngSheet').classList.remove('open');
+            document.getElementById('koIngBackdrop').classList.remove('open');
             oppdaterKokeSteg();
         }
 
         function avsluttKoke() {
             document.getElementById('kokeOverlay').classList.remove('open');
+            document.getElementById('koIngSheet').classList.remove('open');
+            document.getElementById('koIngBackdrop').classList.remove('open');
             document.body.style.overflow = '';
         }
 
