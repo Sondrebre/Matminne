@@ -94,86 +94,86 @@ public class AiOppskriftService {
         String allergiTekst = (allergier != null && !allergier.isBlank()) ? allergier : "ingen";
 
         String frokostRegel = sameFrokost && frokostType != null && !frokostType.isBlank()
-                ? "Brukeren vil ha NOYAKTIG SAMME frokost ALLE dager: \"" + frokostType.trim() + "\". Ikke variere dette."
-                : "Varier frokost dag for dag (havregrøt, egg, yoghurt, brødmat, smoothie etc.)";
+                ? "FAST frokost alle 7 dager: \"" + frokostType.trim() + "\" - ikke avvik fra dette."
+                : "Varier frokost: roter mellom havregrøt, egg, yoghurt med bær, brødskiver, smoothie.";
 
-        String tidRegel = middagsTid <= 20
-                ? "Middager MÅ lages på under 20 minutter. Kun raske retter (pasta, wok, egg, sandwich, suppe fra boks)."
-                : middagsTid <= 30
-                ? "Middager bør ta maks 30 minutter. Enkle hverdagsretter, ingen lang steketid."
-                : middagsTid <= 45
-                ? "Middager kan ta 30-45 minutter. Kan inkludere retter med litt forberedelse."
-                : "Tid er ikke et problem. Kan inkludere retter som tar over en time.";
+        String tidRegel;
+        if (middagsTid <= 20)      tidRegel = "Maks 20 min. Kun raske retter: pasta, wok, egg, sandwich, suppe fra boks.";
+        else if (middagsTid <= 30) tidRegel = "Maks 30 min. Enkle hverdagsretter, ingen lang steketid eller forpreparering.";
+        else if (middagsTid <= 45) tidRegel = "30-45 min. Ok med lett forpreparering og retter med ovnstid.";
+        else                       tidRegel = "Tid er ikke en begrensning. Kan inkludere langkokte retter.";
 
         String kulturTekst = (matkulturer != null && !matkulturer.isBlank())
-                ? "Foretrukne matkulturer (prioriter disse sterkt): " + matkulturer
-                : "Norsk hverdagsmat som standard";
+                ? matkulturer + " (prioriter disse sterkt i middagsrettene)"
+                : "Norsk og nordisk hverdagsmat";
 
-        String malTekst = (livsstilsMal != null && !livsstilsMal.isBlank())
-                ? "Livsstilsmål: " + livsstilsMal
-                : "Balansert og sunn mat";
+        String malTekst = (livsstilsMal != null && !livsstilsMal.isBlank()) ? livsstilsMal : "balansert og variert kost";
 
-        String lunsjTekst = (lunsjStil != null && !lunsjStil.isBlank())
-                ? "Lunsj-preferanse: " + lunsjStil
-                : "Gjerne rester fra kvelden eller brødretter";
+        String lunsjTekst = (lunsjStil != null && !lunsjStil.isBlank()) ? lunsjStil : "rester fra kvelden eller raske brødretter";
 
         String ekstraTekst = (ekstraOnsker != null && !ekstraOnsker.isBlank()) ? ekstraOnsker.trim() : "";
 
+        int kjott = Math.min(kjottMiddager, 7);
+        int ikkeKjott = 7 - kjott;
         int budsjettPerMiddag = Math.round(ukesbudsjett * 0.55f / 7);
 
-        String dagStruktur =
-                "{\"mandag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
-                "\"tirsdag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
-                "\"onsdag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
-                "\"torsdag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
-                "\"fredag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
-                "\"lordag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
-                "\"sondag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}}";
-
         String prompt =
-            "Du er verdens beste kostholdsplanlegger spesialisert pa norske husholdninger. " +
-            "Lag en PERFEKT personalisert ukesmeny for 7 dager. Du MÅ følge alle reglene nedenfor.\n\n" +
+            "Du er Norges fremste kostholdsplanlegger med dyp kunnskap om norsk dagligvare og matlaging.\n" +
+            "Lag en GJENNOMTENKT og PERSONALISERT ukesmeny for 7 dager (mandag-sondag).\n\n" +
 
-            "--- BRUKERPROFIL ---\n" +
+            "=== BRUKERPROFIL ===\n" +
             "Porsjoner per rett: " + porsjoner + "\n" +
-            "Kjøttbaserte middager: " + Math.min(kjottMiddager, 7) + " av 7 (resten er fisk, vegetar eller egg)\n" +
-            "Allergier/intoleranser: " + allergiTekst + "\n" +
-            "Ukesbudsjett (innkjøp totalt): ca. " + ukesbudsjett + " kr\n" +
-            "Maks budsjett per middag: ca. " + budsjettPerMiddag + " kr per person\n" +
-            "Tid tilgjengelig per kveld: " + tidRegel + "\n" +
+            "Middager: " + kjott + " med kjott, " + ikkeKjott + " med fisk/vegetar/egg\n" +
+            "Allergier (ABSOLUTT FORBUDT): " + allergiTekst + "\n" +
+            "Ukesbudsjett totalt: " + ukesbudsjett + " kr\n" +
+            "Maks per middag: ca. " + budsjettPerMiddag + " kr/person\n" +
+            "Tid per kveld: " + tidRegel + "\n" +
             "Matkulturer: " + kulturTekst + "\n" +
-            "Livsstilsmål: " + malTekst + "\n" +
-            "Lunsj: " + lunsjTekst + "\n" +
+            "Livsstilsmal: " + malTekst + "\n" +
+            "Lunsj-stil: " + lunsjTekst + "\n" +
             "Frokost: " + frokostRegel + "\n" +
-            (ekstraTekst.isBlank() ? "" : "EKSTRA ØNSKER (HØYESTE PRIORITET - bygg menyen rundt dette): " + ekstraTekst + "\n") +
+            (ekstraTekst.isBlank() ? "" : "\nEKSTRA ONSKER - TOPP PRIORITET (bygg menyen rundt dette):\n" + ekstraTekst + "\n") +
 
-            "\n--- ABSOLUTTE REGLER ---\n" +
-            "1. Ekstra ønsker er TOPP PRIORITET. Ignorer aldri brukerens ønsker.\n" +
-            "2. Allergier er ABSOLUTT FORBUDT - bruk aldri forbudte ingredienser, heller ikke i sporstoffer.\n" +
-            "3. Hold middagene innenfor budsjettgrensen.\n" +
-            "4. SMARTERE RESTEUTNYTTELSE - dette er avgjørende for budsjett og matlaging:\n" +
-            "   Norske pakker: pasta 500g (bruk 300g dag 1 -> pastasalat til lunsj dag 2),\n" +
-            "   kyllingfilet 700g (middag dag 1 -> wok/salat til lunsj dag 2),\n" +
-            "   kjøttdeig 400g (bolognese dag 1 -> taco dag 2 eller dag 3),\n" +
-            "   laks 600g (middag dag 1 -> laksepålegg eller fiskesuppe neste dag),\n" +
-            "   linser/kikerter (stor boks -> bruk i 2 retter samme uke).\n" +
-            "   Planlegg ALLTID slik at rester fra kveld brukes til neste dags lunsj eller middag.\n" +
-            "5. Varier proteinkildene - aldri samme kjøtt/fisk to dager på rad.\n" +
-            "6. Rettsnavn skal være KONKRETE: ikke 'pastarett' men 'Spaghetti carbonara med bacon'.\n" +
-            "7. Tilpass til livsstilsmålet (f.eks. slankevennlig = mye grønnsaker og protein, lite karbo).\n" +
-            "8. Tilpass til valgte matkulturer - prioriter disse stilene i middagene.\n" +
+            "\n=== REGLER (alle er obligatoriske) ===\n" +
+            "1. EKSTRA ONSKER har alltid hogste prioritet.\n" +
+            "2. Allergier: null toleranse. Aldri bruk forbudte ingredienser, heller ikke som saus, dressing eller sporstoffer.\n" +
+            "3. Aldri samme proteinkilde to kvelder pa rad (eks: kylling mandag -> ikke kylling tirsdag).\n" +
+            "4. Aldri samme rett to ganger i uken.\n" +
+            "5. RESTEMATLOGIKK - bruk alltid rester smart for a spare penger:\n" +
+            "   * Pasta 500g: bruk 300g til middag -> neste dags lunsj = pastasalat med restene (200g)\n" +
+            "   * Kyllingfilet 700g: middag dag 1 -> neste dags lunsj = kyllingwok eller kyllingsalat med rester\n" +
+            "   * Kjottdeig 400g: bolognese dag 1 -> dag 2 lunsj = tacosalat eller kjottdeigsuppe\n" +
+            "   * Laksfilet 600g: middag dag 1 -> neste dags lunsj = laksepalegg pa brod eller fiskesuppe\n" +
+            "   * Kikerter/linser (stor boks 400g): bruk i 2 forskjellige retter samme uke\n" +
+            "   Skriv lunsj som eks: 'Pastasalat med rester fra mandag' eller 'Kyllingsalat av restekylling'\n" +
+            "6. Rettnavn MÅ vaere konkrete og spesifikke (maks 65 tegn):\n" +
+            "   Bra: 'Spaghetti carbonara med roktegg og parmesan'\n" +
+            "   Darlig: 'Pastarett' eller 'Kyllingmiddag'\n" +
+            "7. Middagsbudsjett: hold deg innenfor " + budsjettPerMiddag + " kr/person.\n" +
+            "8. Matkulturer: bruk minst 60% av middagene til de valgte kulturene.\n" +
+            "9. Livsstilsmal: tilpass alle retter til malet:\n" +
+            "   - Vektnedgang: hoy protein, mye gronnsaker, lite raffinerte karbo\n" +
+            "   - Muskelvekst: stor porsjon protein (minst 30g/maltid), moderate karbo\n" +
+            "   - Budsjettvennlig: belgfrukter, egg, sesongvarer, havregryn\n" +
+            "   - Familie: barnevennlige retter, kjente smaker, enkle ingredienser\n" +
+            "10. Lunsj: tilpass direkte til valgt lunsj-stil.\n" +
 
-            "\n--- NORSKE REFERANSEPRISER 2025 ---\n" +
-            "Pasta 500g: 20kr, Kyllingfilet 700g: 98kr, Kjøttdeig 400g: 55kr, Laks 600g: 110kr,\n" +
-            "Egg 12stk: 38kr, Havregryn 1kg: 28kr, Hermetisk tomat: 12kr, Løk: 8kr,\n" +
-            "Ris 1kg: 22kr, Brød: 30kr, Yoghurt naturell: 28kr, Melk 1l: 18kr, Ost 400g: 55kr,\n" +
-            "Linser 500g: 22kr, Kikerter boks: 18kr, Taco-kjøttdeig 400g: 55kr, Laks-filet 600g: 110kr\n" +
+            "\n=== NORSKE PRISER 2025 (bruk som referanse) ===\n" +
+            "Pasta 500g: 20kr | Kyllingfilet 700g: 98kr | Kjottdeig 400g: 55kr | Laks 600g: 110kr\n" +
+            "Egg 12stk: 38kr | Havregryn 1kg: 28kr | Hermetisk tomat: 12kr | Ris 1kg: 22kr\n" +
+            "Brod 750g: 30kr | Yoghurt 1kg: 28kr | Melk 1L: 18kr | Ost 400g: 55kr\n" +
+            "Linser 500g: 22kr | Kikerter boks: 18kr | Poteter 1kg: 15kr | Gulrot 750g: 12kr\n" +
+            "Tofu 400g: 32kr | Loff: 20kr | Smor 500g: 58kr | Feta 200g: 35kr\n" +
 
-            "\nSvar KUN med gyldig JSON. Absolutt ingen tekst utenfor JSON. Ingen markdown. Bare JSON:\n" +
-            dagStruktur + "\n" +
-            "Erstatt alle '...' med konkrete rettsnavnpå norsk.";
+            "\n=== OUTPUT ===\n" +
+            "Svar KUN med gyldig JSON. Ingen tekst for eller etter. Ingen markdown. Ingen kommentarer.\n" +
+            "Bruk disse eksakte noklene:\n" +
+            "Dager: mandag, tirsdag, onsdag, torsdag, fredag, lordag, sondag\n" +
+            "Maltider: frokost, lunsj, middag\n" +
+            "Format:\n" +
+            "{\"mandag\":{\"frokost\":\"navn\",\"lunsj\":\"navn\",\"middag\":\"navn\"},\"tirsdag\":{\"frokost\":\"navn\",\"lunsj\":\"navn\",\"middag\":\"navn\"},\"onsdag\":{\"frokost\":\"navn\",\"lunsj\":\"navn\",\"middag\":\"navn\"},\"torsdag\":{\"frokost\":\"navn\",\"lunsj\":\"navn\",\"middag\":\"navn\"},\"fredag\":{\"frokost\":\"navn\",\"lunsj\":\"navn\",\"middag\":\"navn\"},\"lordag\":{\"frokost\":\"navn\",\"lunsj\":\"navn\",\"middag\":\"navn\"},\"sondag\":{\"frokost\":\"navn\",\"lunsj\":\"navn\",\"middag\":\"navn\"}}";
 
-        return kallClaude(prompt);
+        return kallClaudeMedModell(prompt, Model.CLAUDE_SONNET_4_5, 4000L);
     }
 
     /**
