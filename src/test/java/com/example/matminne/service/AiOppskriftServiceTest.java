@@ -50,7 +50,7 @@ class AiOppskriftServiceTest {
 
     @Test
     void genererUkesmeny_utenApiNøkkel_returnerFeilmelding() {
-        String resultat = service.genererUkesmeny(3, "", 4, "", 1500, false, "", false);
+        String resultat = service.genererUkesmeny(3, "", 4, "", 1500, false, "", 30, "", "", "");
         assertNotNull(resultat);
         assertTrue(resultat.startsWith("FEIL"), "Forventet FEIL-prefix: " + resultat);
     }

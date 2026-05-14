@@ -10,7 +10,7 @@
         .ai-hero {
             background: linear-gradient(160deg, #ecfdf5 0%, #d1fae5 55%, #bbf7d0 100%);
             border-bottom: 1px solid #a7f3d0;
-            padding: 56px 0 88px;
+            padding: 52px 0 80px;
             position: relative; overflow: hidden; text-align: center;
         }
         .ai-hero::before {
@@ -38,11 +38,10 @@
             letter-spacing: -2px; color: var(--mat-mork); margin-bottom: 10px;
         }
         .ai-hero h1 span { color: var(--mat-gronn); }
-        .ai-hero p { color: #64748b; font-size: .95rem; max-width: 500px; margin: 0 auto; line-height: 1.7; }
+        .ai-hero p { color: #64748b; font-size: .92rem; max-width: 480px; margin: 0 auto; line-height: 1.7; }
 
-        /* ── FORM CARD ── */
         .form-wrap {
-            max-width: 680px; margin: -44px auto 80px; padding: 0 20px;
+            max-width: 700px; margin: -44px auto 80px; padding: 0 20px;
             position: relative; z-index: 10;
         }
         .form-card {
@@ -65,28 +64,26 @@
         .form-card-top h2 { font-weight: 900; font-size: 1.08rem; color: var(--mat-mork); margin: 0 0 3px; }
         .form-card-top p { font-size: .8rem; color: #64748b; margin: 0; }
 
-        .form-body { padding: 28px; display: flex; flex-direction: column; gap: 28px; }
+        .form-body { padding: 28px; display: flex; flex-direction: column; gap: 0; }
 
-        /* ── FIELD ── */
-        .field { display: flex; flex-direction: column; gap: 8px; }
+        /* SECTION */
+        .form-section { padding: 24px 0; border-bottom: 1px solid #f0fdf4; }
+        .form-section:last-of-type { border-bottom: none; }
+        .form-section-title {
+            font-size: .62rem; font-weight: 800; letter-spacing: 2.5px;
+            text-transform: uppercase; color: #22c55e; margin-bottom: 20px;
+        }
+
+        .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .field:last-child { margin-bottom: 0; }
         .field label {
-            font-size: .82rem; font-weight: 800; color: var(--mat-mork);
+            font-size: .84rem; font-weight: 800; color: var(--mat-mork);
             display: flex; align-items: center; gap: 7px;
         }
         .field label i { color: var(--mat-gronn); font-size: .82rem; }
-        .field-hint { font-size: .75rem; color: #94a3b8; font-weight: 500; line-height: 1.45; }
+        .field-hint { font-size: .75rem; color: #94a3b8; font-weight: 500; line-height: 1.5; }
 
-        /* ── SECTION DIVIDER ── */
-        .form-section {
-            border-top: 1px solid #f0fdf4; padding-top: 24px; margin-top: -4px;
-        }
-        .form-section-title {
-            font-size: .65rem; font-weight: 800; letter-spacing: 2.5px;
-            text-transform: uppercase; color: #22c55e; margin-bottom: 18px;
-        }
-
-        /* ── KJØTT SLIDER ── */
-        .kjott-wrap { display: flex; flex-direction: column; gap: 10px; }
+        /* KJØTT */
         .kjott-track { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; }
         .kjott-btn {
             aspect-ratio: 1; border-radius: 12px;
@@ -96,51 +93,34 @@
             color: #94a3b8; font-family: inherit;
         }
         .kjott-btn:hover { border-color: var(--mat-gronn); background: var(--mat-lys-gronn); color: var(--mat-gronn); }
-        .kjott-btn.sel {
-            border-color: var(--mat-gronn); background: var(--mat-gronn);
-            color: white; transform: scale(1.06);
-            box-shadow: 0 4px 14px rgba(34,197,94,.3);
-        }
-        .kjott-desc { font-size: .8rem; color: var(--mat-gronn); font-weight: 700; text-align: center; min-height: 18px; }
+        .kjott-btn.sel { border-color: var(--mat-gronn); background: var(--mat-gronn); color: white; transform: scale(1.06); box-shadow: 0 4px 14px rgba(34,197,94,.3); }
+        .kjott-desc { font-size: .78rem; color: var(--mat-gronn); font-weight: 700; text-align: center; min-height: 16px; margin-top: 8px; }
 
-        /* ── ALLERGI TAGS ── */
-        .allergi-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-        .allergi-tag {
+        /* TAG GRID */
+        .tag-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag {
             padding: 7px 14px; border-radius: 99px;
             border: 2px solid #e8f5e9; background: #f8fafc;
             font-size: .8rem; font-weight: 700; cursor: pointer;
             transition: .15s; color: #64748b; user-select: none;
         }
-        .allergi-tag:hover { border-color: var(--mat-gronn); color: var(--mat-gronn); }
-        .allergi-tag.sel { border-color: #ef4444; background: #fef2f2; color: #dc2626; }
+        .tag:hover { border-color: var(--mat-gronn); color: var(--mat-gronn); background: #f0fdf4; }
+        .tag.sel { border-color: var(--mat-gronn); background: var(--mat-gronn); color: white; }
+        .tag.allergi.sel { border-color: #ef4444; background: #fef2f2; color: #dc2626; }
 
-        /* ── PORSJONER ── */
+        /* PORSJONER */
         .porsjoner-row {
-            display: flex; align-items: center; gap: 0;
+            display: flex; align-items: center;
             background: #f8fafc; border-radius: 14px; overflow: hidden;
             border: 2px solid #e8f5e9; width: fit-content;
         }
-        .pors-btn {
-            width: 46px; height: 46px; border: none; background: none;
-            font-size: 1.3rem; cursor: pointer; color: var(--mat-mork);
-            font-weight: 900; transition: .15s; font-family: inherit;
-        }
+        .pors-btn { width: 46px; height: 46px; border: none; background: none; font-size: 1.3rem; cursor: pointer; color: var(--mat-mork); font-weight: 900; transition: .15s; font-family: inherit; }
         .pors-btn:hover { background: var(--mat-lys-gronn); color: var(--mat-gronn); }
-        .pors-val {
-            width: 52px; text-align: center; font-weight: 900;
-            font-size: 1.1rem; color: var(--mat-mork); border: none;
-            background: none; font-family: inherit;
-        }
+        .pors-val { width: 52px; text-align: center; font-weight: 900; font-size: 1.1rem; color: var(--mat-mork); border: none; background: none; font-family: inherit; }
 
-        /* ── BUDGET SLIDER ── */
-        .budget-wrap { display: flex; flex-direction: column; gap: 10px; }
-        .budget-display {
-            display: flex; align-items: baseline; gap: 6px;
-        }
-        .budget-val {
-            font-size: 2rem; font-weight: 900; color: var(--mat-gronn);
-            letter-spacing: -1px;
-        }
+        /* BUDGET SLIDER */
+        .budget-display { display: flex; align-items: baseline; gap: 6px; margin-bottom: 10px; }
+        .budget-val { font-size: 2rem; font-weight: 900; color: var(--mat-gronn); letter-spacing: -1px; }
         .budget-unit { font-size: .82rem; color: #64748b; font-weight: 600; }
         .budget-slider {
             -webkit-appearance: none; appearance: none;
@@ -148,23 +128,10 @@
             background: linear-gradient(to right, #22c55e 0%, #22c55e var(--pct, 33%), #e8f5e9 var(--pct, 33%));
             outline: none; cursor: pointer;
         }
-        .budget-slider::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 22px; height: 22px;
-            border-radius: 50%; background: #16a34a;
-            border: 3px solid white; box-shadow: 0 2px 8px rgba(22,163,74,.35);
-            cursor: pointer;
-        }
-        .budget-slider::-moz-range-thumb {
-            width: 22px; height: 22px; border-radius: 50%;
-            background: #16a34a; border: 3px solid white;
-            box-shadow: 0 2px 8px rgba(22,163,74,.35); cursor: pointer;
-        }
-        .budget-ticks {
-            display: flex; justify-content: space-between;
-            font-size: .68rem; color: #94a3b8; font-weight: 600;
-        }
+        .budget-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #16a34a; border: 3px solid white; box-shadow: 0 2px 8px rgba(22,163,74,.35); cursor: pointer; }
+        .budget-ticks { display: flex; justify-content: space-between; font-size: .68rem; color: #94a3b8; font-weight: 600; margin-top: 6px; }
 
-        /* ── TOGGLE SWITCH ── */
+        /* TOGGLE */
         .toggle-row {
             display: flex; align-items: center; justify-content: space-between;
             gap: 16px; padding: 14px 16px; border-radius: 14px;
@@ -175,27 +142,34 @@
         .toggle-row.active { border-color: var(--mat-gronn); background: #f0fdf4; }
         .toggle-label { display: flex; flex-direction: column; gap: 2px; }
         .toggle-label strong { font-size: .88rem; font-weight: 800; color: var(--mat-mork); }
-        .toggle-label span { font-size: .75rem; color: #94a3b8; }
-        .toggle-switch {
-            width: 44px; height: 24px; border-radius: 99px;
-            background: #e2e8f0; position: relative; flex-shrink: 0; transition: .2s;
-        }
-        .toggle-switch::after {
-            content: ''; position: absolute; top: 3px; left: 3px;
-            width: 18px; height: 18px; border-radius: 50%;
-            background: white; transition: .2s;
-            box-shadow: 0 1px 4px rgba(0,0,0,.2);
-        }
+        .toggle-label span { font-size: .74rem; color: #94a3b8; }
+        .toggle-switch { width: 44px; height: 24px; border-radius: 99px; background: #e2e8f0; position: relative; flex-shrink: 0; transition: .2s; }
+        .toggle-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: white; transition: .2s; box-shadow: 0 1px 4px rgba(0,0,0,.2); }
         .toggle-row.active .toggle-switch { background: var(--mat-gronn); }
         .toggle-row.active .toggle-switch::after { transform: translateX(20px); }
 
-        /* ── FROKOST INPUT (conditionally shown) ── */
-        .frokost-input-wrap {
-            display: none; margin-top: 6px;
-        }
-        .frokost-input-wrap.vis { display: block; }
+        .slide-in { display: none; margin-top: 10px; }
+        .slide-in.vis { display: block; }
 
-        /* ── TEXTAREA / INPUT ── */
+        /* OPTION BUTTONS (single select) */
+        .option-grid { display: grid; gap: 8px; }
+        .option-grid.col2 { grid-template-columns: 1fr 1fr; }
+        .option-grid.col3 { grid-template-columns: 1fr 1fr 1fr; }
+        .option-btn {
+            padding: 12px 14px; border-radius: 14px;
+            border: 2px solid #e8f5e9; background: #f8fafc;
+            font-size: .82rem; font-weight: 700; cursor: pointer;
+            transition: .15s; color: #475569; font-family: inherit;
+            text-align: left; display: flex; flex-direction: column; gap: 2px;
+        }
+        .option-btn .ob-icon { font-size: 1.1rem; margin-bottom: 2px; }
+        .option-btn .ob-label { font-weight: 800; color: var(--mat-mork); font-size: .84rem; }
+        .option-btn .ob-sub { font-size: .72rem; color: #94a3b8; font-weight: 500; }
+        .option-btn:hover { border-color: var(--mat-gronn); background: #f0fdf4; }
+        .option-btn.sel { border-color: var(--mat-gronn); background: var(--mat-gronn); }
+        .option-btn.sel .ob-label, .option-btn.sel .ob-sub, .option-btn.sel .ob-icon { color: white; }
+
+        /* TEXTAREA / INPUT */
         .field-textarea, .field-input {
             border: 2px solid #e8f5e9; border-radius: 14px;
             padding: 12px 16px; font-family: inherit;
@@ -203,48 +177,37 @@
             outline: none; transition: border-color .2s;
             background: #f8fafc; width: 100%; box-sizing: border-box;
         }
-        .field-textarea { resize: vertical; min-height: 80px; }
+        .field-textarea { resize: vertical; min-height: 88px; }
         .field-textarea:focus, .field-input:focus { border-color: var(--mat-gronn); background: white; }
         .field-textarea::placeholder, .field-input::placeholder { color: #cbd5e1; }
 
-        /* ── DAG EKSKLUDER ── */
-        .dag-grid { display: flex; gap: 8px; flex-wrap: wrap; }
-        .dag-btn {
-            padding: 8px 16px; border-radius: 99px;
-            border: 2px solid #e8f5e9; background: #f8fafc;
-            font-size: .8rem; font-weight: 800; cursor: pointer;
-            transition: .15s; color: #64748b; font-family: inherit;
-        }
-        .dag-btn:hover { border-color: var(--mat-gronn); color: var(--mat-gronn); }
-        .dag-btn.ekskludert { border-color: #fecaca; background: #fef2f2; color: #dc2626; }
-
-        /* ── PREVIEW STRIP ── */
+        /* PREVIEW */
         .preview-strip {
             background: linear-gradient(135deg, #f0fdf4, #dcfce7);
             border: 1px solid #a7f3d0; border-radius: 18px;
-            padding: 16px 20px; display: flex; gap: 14px; flex-wrap: wrap;
+            padding: 16px 20px; display: flex; gap: 12px; flex-wrap: wrap;
+            margin-top: 24px;
         }
-        .preview-item { display: flex; align-items: center; gap: 8px; }
-        .preview-icon { font-size: 1rem; }
-        .preview-text { font-size: .8rem; font-weight: 700; color: var(--mat-mork); }
+        .preview-item { display: flex; align-items: center; gap: 7px; }
+        .preview-icon { font-size: .95rem; }
+        .preview-text { font-size: .78rem; font-weight: 700; color: var(--mat-mork); }
 
-        /* ── SUBMIT ── */
+        /* SUBMIT */
         .btn-generer {
             background: var(--mat-gronn); color: white; border: none;
             padding: 18px; border-radius: 16px; font-weight: 900;
             font-size: 1.02rem; cursor: pointer; font-family: inherit;
             transition: .2s; display: flex; align-items: center;
-            justify-content: center; gap: 10px;
+            justify-content: center; gap: 10px; margin-top: 24px;
             box-shadow: 0 10px 32px rgba(34,197,94,.35);
         }
-        .btn-generer:hover { background: var(--mat-gronn-m); transform: translateY(-2px);
-            box-shadow: 0 16px 40px rgba(34,197,94,.4); }
+        .btn-generer:hover { background: var(--mat-gronn-m); transform: translateY(-2px); box-shadow: 0 16px 40px rgba(34,197,94,.4); }
         .btn-generer:active { transform: scale(.97); }
 
-        /* ── LOADING OVERLAY ── */
+        /* LOADING */
         .loading-overlay {
             display: none; position: fixed; inset: 0;
-            background: rgba(240,253,244,.95); backdrop-filter: blur(14px);
+            background: rgba(240,253,244,.96); backdrop-filter: blur(14px);
             z-index: 9999; flex-direction: column;
             align-items: center; justify-content: center; gap: 28px;
         }
@@ -260,71 +223,67 @@
             50% { transform: scale(1.07); box-shadow: 0 28px 72px rgba(34,197,94,.32); }
         }
         .loading-title { font-size: 1.4rem; font-weight: 900; color: var(--mat-mork); letter-spacing: -.5px; text-align: center; }
-        .loading-sub { font-size: .85rem; color: #64748b; text-align: center; max-width: 300px; line-height: 1.6; }
+        .loading-sub { font-size: .85rem; color: #64748b; text-align: center; max-width: 320px; line-height: 1.6; }
         .loading-steps { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
-        .loading-step {
-            font-size: .88rem; font-weight: 700; color: #64748b;
-            display: flex; align-items: center; gap: 10px; opacity: .35; transition: opacity .4s, color .4s;
-        }
-        .loading-step .ls-dot {
-            width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; transition: .4s;
-        }
+        .loading-step { font-size: .88rem; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 10px; opacity: .3; transition: opacity .4s, color .4s; }
+        .loading-step .ls-dot { width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; transition: .4s; flex-shrink: 0; }
         .loading-step.aktiv { opacity: 1; color: var(--mat-gronn); }
-        .loading-step.aktiv .ls-dot { background: var(--mat-gronn); box-shadow: 0 0 0 3px rgba(34,197,94,.2); }
-        .loading-step.ferdig { opacity: .6; }
-        .loading-step.ferdig .ls-dot { background: #22c55e; }
+        .loading-step.aktiv .ls-dot { background: var(--mat-gronn); box-shadow: 0 0 0 4px rgba(34,197,94,.18); }
+        .loading-step.ferdig { opacity: .55; }
+        .loading-step.ferdig .ls-dot { background: #86efac; }
+
+        @media (max-width: 600px) {
+            .option-grid.col3 { grid-template-columns: 1fr 1fr; }
+            .kjott-track { gap: 4px; }
+        }
     </style>
 </head>
 <body>
     <div th:replace="~{fragments :: navbar}"></div>
 
-    <!-- LOADING OVERLAY -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner">🤖</div>
-        <div class="loading-title">AI bygger ukesmenyen…</div>
-        <div class="loading-sub">Tar 15–25 sekunder. AI analyserer budsjett, ønsker og planlegger smarte rester.</div>
+        <div class="loading-title">AI bygger ukesmenyen din…</div>
+        <div class="loading-sub">Analyserer preferanser, planlegger smarte rester og optimaliserer budsjettet. Ca. 20–30 sek.</div>
         <div class="loading-steps">
-            <div class="loading-step aktiv" id="ls1"><div class="ls-dot"></div> Analyserer ønsker og preferanser</div>
-            <div class="loading-step" id="ls2"><div class="ls-dot"></div> Velger retter etter budsjett</div>
-            <div class="loading-step" id="ls3"><div class="ls-dot"></div> Planlegger smarte rester</div>
-            <div class="loading-step" id="ls4"><div class="ls-dot"></div> Kontrollerer allergier nøye</div>
-            <div class="loading-step" id="ls5"><div class="ls-dot"></div> Ferdigstiller din ukeplan</div>
+            <div class="loading-step aktiv" id="ls1"><div class="ls-dot"></div> Analyserer dine ønsker og mål</div>
+            <div class="loading-step" id="ls2"><div class="ls-dot"></div> Velger retter etter matkulturer</div>
+            <div class="loading-step" id="ls3"><div class="ls-dot"></div> Planlegger smarte rester dag for dag</div>
+            <div class="loading-step" id="ls4"><div class="ls-dot"></div> Optimaliserer mot budsjettet</div>
+            <div class="loading-step" id="ls5"><div class="ls-dot"></div> Kontrollerer allergier nøye</div>
+            <div class="loading-step" id="ls6"><div class="ls-dot"></div> Ferdigstiller din personlige ukeplan</div>
         </div>
     </div>
 
-    <!-- HERO -->
     <div class="ai-hero">
         <div class="ai-hero-glow"></div>
         <div class="container ai-hero-inner">
             <div class="ai-badge"><i class="fas fa-wand-magic-sparkles"></i> AI-funksjon</div>
             <h1>Din personlige<br><span>AI-ukesmeny</span></h1>
-            <p>Fortell oss hva du liker, hva du har råd til, og hva du ikke tåler — så lager AI en komplett ukeplan med smarte rester og budsjettoptimalisering.</p>
+            <p>Fortell oss alt om deg — AI lager en komplett ukeplan med smarte rester, budsjettoptimalisering og retter du faktisk liker.</p>
         </div>
     </div>
 
-    <!-- FORM -->
     <div class="form-wrap">
         <div class="form-card">
-
             <div class="form-card-top">
                 <div class="form-card-top-icon">🗓️</div>
                 <div>
                     <h2>Tilpass din ukesmeny</h2>
-                    <p>Jo mer du forteller, jo bedre blir planen</p>
+                    <p>Jo mer du forteller, jo bedre blir planen din</p>
                 </div>
             </div>
 
             <form class="form-body" id="aiForm" th:action="@{/ukesmeny/ai/generer}" method="POST">
 
-                <!-- ── SEKSJON 1: Grunnleggende ── -->
-                <div class="form-section" style="border-top:none; padding-top:0; margin-top:0;">
+                <!-- ── 1. GRUNNLEGGENDE ── -->
+                <div class="form-section">
                     <div class="form-section-title">Grunnleggende</div>
 
-                    <!-- PORSJONER -->
-                    <div class="field" style="margin-bottom:20px;">
+                    <div class="field">
                         <label><i class="fas fa-users"></i> Antall porsjoner per rett</label>
                         <span class="field-hint">Antall personer du lager mat til</span>
-                        <div style="display:flex; align-items:center; gap:14px; margin-top:4px;">
+                        <div style="display:flex;align-items:center;gap:14px;">
                             <div class="porsjoner-row">
                                 <button type="button" class="pors-btn" onclick="endrePors(-1)">−</button>
                                 <input type="text" class="pors-val" id="porsjoner" value="2" readonly>
@@ -335,140 +294,220 @@
                         <input type="hidden" name="porsjoner" id="porsjInput" value="2">
                     </div>
 
-                    <!-- UKESBUDSJETT -->
                     <div class="field">
                         <label><i class="fas fa-wallet"></i> Ukesbudsjett for mat</label>
-                        <span class="field-hint">Hva du anslår å bruke på dagligvarer denne uken totalt</span>
-                        <div class="budget-wrap">
-                            <div class="budget-display">
-                                <span class="budget-val" id="budgetDisplay">1 500</span>
-                                <span class="budget-unit">kr / uke</span>
-                            </div>
-                            <input type="range" class="budget-slider" id="budgetSlider"
-                                   min="300" max="4000" step="100" value="1500"
-                                   oninput="oppdaterBudsjett(this.value)">
-                            <div class="budget-ticks">
-                                <span>300 kr</span>
-                                <span>1 000 kr</span>
-                                <span>2 000 kr</span>
-                                <span>3 000 kr</span>
-                                <span>4 000 kr</span>
-                            </div>
+                        <span class="field-hint">Totalt anslått dagligvarebudsjett for uken</span>
+                        <div class="budget-display">
+                            <span class="budget-val" id="budgetDisplay">1 500</span>
+                            <span class="budget-unit">kr / uke</span>
+                        </div>
+                        <input type="range" class="budget-slider" id="budgetSlider"
+                               min="300" max="4000" step="100" value="1500"
+                               oninput="oppdaterBudsjett(this.value)">
+                        <div class="budget-ticks">
+                            <span>300 kr</span><span>1 000 kr</span><span>2 000 kr</span><span>3 000 kr</span><span>4 000 kr</span>
                         </div>
                         <input type="hidden" name="ukesbudsjett" id="budgetInput" value="1500">
                     </div>
                 </div>
 
-                <!-- ── SEKSJON 2: Matpreferanser ── -->
+                <!-- ── 2. MATKOSTHOLDSPREFERANSER ── -->
                 <div class="form-section">
                     <div class="form-section-title">Matpreferanser</div>
 
-                    <!-- KJØTTMIDDAGER -->
-                    <div class="field" style="margin-bottom:20px;">
+                    <div class="field">
                         <label><i class="fas fa-drumstick-bite"></i> Kjøttbaserte middager per uke</label>
-                        <span class="field-hint">Resten blir fisk, vegetar eller egg-retter</span>
-                        <div class="kjott-wrap">
-                            <div class="kjott-track">
-                                <button type="button" class="kjott-btn" data-val="0" onclick="velgKjott(this)">0</button>
-                                <button type="button" class="kjott-btn" data-val="1" onclick="velgKjott(this)">1</button>
-                                <button type="button" class="kjott-btn" data-val="2" onclick="velgKjott(this)">2</button>
-                                <button type="button" class="kjott-btn sel" data-val="3" onclick="velgKjott(this)">3</button>
-                                <button type="button" class="kjott-btn" data-val="4" onclick="velgKjott(this)">4</button>
-                                <button type="button" class="kjott-btn" data-val="5" onclick="velgKjott(this)">5</button>
-                                <button type="button" class="kjott-btn" data-val="6" onclick="velgKjott(this)">6</button>
-                                <button type="button" class="kjott-btn" data-val="7" onclick="velgKjott(this)">7</button>
-                            </div>
-                            <div class="kjott-desc" id="kjottDesc">3 kjøttmiddager · 4 fisk/vegetar</div>
+                        <span class="field-hint">Resten blir fisk, vegetar eller eggeretter</span>
+                        <div class="kjott-track">
+                            <button type="button" class="kjott-btn" data-val="0" onclick="velgKjott(this)">0</button>
+                            <button type="button" class="kjott-btn" data-val="1" onclick="velgKjott(this)">1</button>
+                            <button type="button" class="kjott-btn" data-val="2" onclick="velgKjott(this)">2</button>
+                            <button type="button" class="kjott-btn sel" data-val="3" onclick="velgKjott(this)">3</button>
+                            <button type="button" class="kjott-btn" data-val="4" onclick="velgKjott(this)">4</button>
+                            <button type="button" class="kjott-btn" data-val="5" onclick="velgKjott(this)">5</button>
+                            <button type="button" class="kjott-btn" data-val="6" onclick="velgKjott(this)">6</button>
+                            <button type="button" class="kjott-btn" data-val="7" onclick="velgKjott(this)">7</button>
                         </div>
+                        <div class="kjott-desc" id="kjottDesc">3 kjøttmiddager · 4 fisk/vegetar</div>
                         <input type="hidden" name="kjottMiddager" id="kjottInput" value="3">
                     </div>
 
-                    <!-- ALLERGIER -->
                     <div class="field">
-                        <label><i class="fas fa-triangle-exclamation"></i> Allergier og intoleranser</label>
-                        <span class="field-hint">Klikk de som gjelder — AI vil aldri bruke disse ingrediensene</span>
-                        <div class="allergi-grid">
-                            <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="gluten">🌾 Gluten</div>
-                            <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="laktose">🥛 Laktose</div>
-                            <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="egg">🥚 Egg</div>
-                            <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="nøtter">🥜 Nøtter</div>
-                            <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="skalldyr">🦐 Skalldyr</div>
-                            <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="fisk">🐟 Fisk</div>
-                            <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="soya">🌱 Soya</div>
-                            <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="sennep">🌭 Sennep</div>
-                            <div class="allergi-tag" onclick="toggleAllergi(this)" data-val="sesam">🫘 Sesam</div>
+                        <label><i class="fas fa-globe"></i> Foretrukne matkulturer</label>
+                        <span class="field-hint">Velg alle du liker — AI prioriterer disse i middagene</span>
+                        <div class="tag-grid">
+                            <div class="tag" onclick="toggleTag(this,'kultur')" data-val="Norsk/Tradisjonell">🇳🇴 Norsk/Tradisjonell</div>
+                            <div class="tag" onclick="toggleTag(this,'kultur')" data-val="Asiatisk (thai/wok/japansk)">🍜 Asiatisk</div>
+                            <div class="tag" onclick="toggleTag(this,'kultur')" data-val="Italiensk (pasta/pizza)">🍝 Italiensk</div>
+                            <div class="tag" onclick="toggleTag(this,'kultur')" data-val="Meksikansk (taco/burrito)">🌮 Meksikansk</div>
+                            <div class="tag" onclick="toggleTag(this,'kultur')" data-val="Middelhavet (gresk/tyrkisk)">🫒 Middelhavet</div>
+                            <div class="tag" onclick="toggleTag(this,'kultur')" data-val="Indisk (karri/linser)">🍛 Indisk</div>
+                            <div class="tag" onclick="toggleTag(this,'kultur')" data-val="Amerikansk (burger/BBQ)">🍔 Amerikansk</div>
                         </div>
-                        <input type="text" name="allergier" id="allergiInput" class="field-input"
-                               style="margin-top:8px;"
-                               placeholder="Andre allergier eller matvarer du ikke liker…">
+                        <input type="hidden" name="matkulturer" id="kulturInput" value="">
                     </div>
                 </div>
 
-                <!-- ── SEKSJON 3: Frokost og helg ── -->
+                <!-- ── 3. LIVSSTIL OG MÅL ── -->
                 <div class="form-section">
-                    <div class="form-section-title">Frokost og helg</div>
+                    <div class="form-section-title">Livsstil og mål</div>
 
-                    <!-- SAME FROKOST TOGGLE -->
-                    <div class="toggle-row" id="frokostToggle" onclick="toggleFrokost()" style="margin-bottom:10px;">
-                        <div class="toggle-label">
-                            <strong>Samme frokost hver dag</strong>
-                            <span>Veldig vanlig — spar tid og ikke tenk på det</span>
+                    <div class="field">
+                        <label><i class="fas fa-bullseye"></i> Hva er viktigst for deg?</label>
+                        <span class="field-hint">AI tilpasser næringsinnhold og porsjoner etter dette</span>
+                        <div class="option-grid col2">
+                            <button type="button" class="option-btn sel" data-group="mal" data-val="Sunn og balansert - variert med grønnsaker, protein og karbohydrater" onclick="velgOption(this)">
+                                <span class="ob-icon">🥗</span>
+                                <span class="ob-label">Sunn og balansert</span>
+                                <span class="ob-sub">Variert kost, grønnsaker hver dag</span>
+                            </button>
+                            <button type="button" class="option-btn" data-group="mal" data-val="Slankevennlig - lite karbohydrater, mye protein og grønnsaker, ingen tomme kalorier" onclick="velgOption(this)">
+                                <span class="ob-icon">⚖️</span>
+                                <span class="ob-label">Slankevennlig</span>
+                                <span class="ob-sub">Lite karbo, mye protein og grønt</span>
+                            </button>
+                            <button type="button" class="option-btn" data-group="mal" data-val="Proteinrikt for trening - minst 30g protein per middag, lite tomme kalorier" onclick="velgOption(this)">
+                                <span class="ob-icon">💪</span>
+                                <span class="ob-label">Proteinrikt / trening</span>
+                                <span class="ob-sub">Mye protein, støtter muskelbygging</span>
+                            </button>
+                            <button type="button" class="option-btn" data-group="mal" data-val="Barnevennlig - milde smaker, ingen sterk krydder, kjente retter barn liker" onclick="velgOption(this)">
+                                <span class="ob-icon">👨‍👩‍👧</span>
+                                <span class="ob-label">Barnevennlig</span>
+                                <span class="ob-sub">Milde smaker, kjente retter</span>
+                            </button>
                         </div>
-                        <div class="toggle-switch"></div>
-                    </div>
-                    <input type="hidden" name="sameFrokost" id="sameFrokostInput" value="false">
-                    <div class="frokost-input-wrap" id="frokostInputWrap">
-                        <input type="text" name="frokostType" id="frokostTypeInput" class="field-input"
-                               placeholder="F.eks: havregrøt, brødskiver med pålegg, yoghurt med müsli, eggerøre…">
+                        <input type="hidden" name="livsstilsMal" id="malInput" value="Sunn og balansert - variert med grønnsaker, protein og karbohydrater">
                     </div>
 
-                    <!-- HELG TOGGLE -->
-                    <div class="toggle-row" id="helgToggle" onclick="toggleHelg()" style="margin-top:12px;">
-                        <div class="toggle-label">
-                            <strong>Lag kun plan for ukedager</strong>
-                            <span>Ekskluderer lørdag og søndag fra planen</span>
+                    <div class="field">
+                        <label><i class="fas fa-clock"></i> Tid tilgjengelig til matlaging per kveld</label>
+                        <span class="field-hint">Hva er realistisk for deg på en vanlig hverdag?</span>
+                        <div class="option-grid col2">
+                            <button type="button" class="option-btn" data-group="tid" data-val="15" onclick="velgTid(this)">
+                                <span class="ob-icon">⚡</span>
+                                <span class="ob-label">Under 20 min</span>
+                                <span class="ob-sub">Kun superraske retter</span>
+                            </button>
+                            <button type="button" class="option-btn sel" data-group="tid" data-val="30" onclick="velgTid(this)">
+                                <span class="ob-icon">🍳</span>
+                                <span class="ob-label">Ca. 30 min</span>
+                                <span class="ob-sub">Vanlig hverdagsmatlaging</span>
+                            </button>
+                            <button type="button" class="option-btn" data-group="tid" data-val="45" onclick="velgTid(this)">
+                                <span class="ob-icon">🥘</span>
+                                <span class="ob-label">45–60 min</span>
+                                <span class="ob-sub">Kan inkludere mer krevende retter</span>
+                            </button>
+                            <button type="button" class="option-btn" data-group="tid" data-val="120" onclick="velgTid(this)">
+                                <span class="ob-icon">👨‍🍳</span>
+                                <span class="ob-label">Ingen grense</span>
+                                <span class="ob-sub">Kan lage avanserte retter</span>
+                            </button>
                         </div>
-                        <div class="toggle-switch"></div>
+                        <input type="hidden" name="middagsTid" id="tidInput" value="30">
                     </div>
-                    <input type="hidden" name="utelateHelg" id="utelateHelgInput" value="false">
                 </div>
 
-                <!-- ── SEKSJON 4: Dine ønsker ── -->
+                <!-- ── 4. FROKOST OG LUNSJ ── -->
+                <div class="form-section">
+                    <div class="form-section-title">Frokost og lunsj</div>
+
+                    <div class="field">
+                        <div class="toggle-row" id="frokostToggle" onclick="toggleFrokost()">
+                            <div class="toggle-label">
+                                <strong>Samme frokost hver dag</strong>
+                                <span>Veldig vanlig — spar tid og hodebry hver morgen</span>
+                            </div>
+                            <div class="toggle-switch"></div>
+                        </div>
+                        <input type="hidden" name="sameFrokost" id="sameFrokostInput" value="false">
+                        <div class="slide-in" id="frokostInputWrap">
+                            <input type="text" name="frokostType" class="field-input"
+                                   placeholder="F.eks: havregrøt med bær, brødskiver med ost og skinke, yoghurt med müsli…">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label><i class="fas fa-sun"></i> Lunsj-preferanse</label>
+                        <span class="field-hint">Hva passer best til din hverdag?</span>
+                        <div class="option-grid col2">
+                            <button type="button" class="option-btn sel" data-group="lunsj" data-val="Rester fra kvelden er ideelt - planlegg middager slik at det alltid er mat til neste dags lunsj" onclick="velgLunsj(this)">
+                                <span class="ob-icon">♻️</span>
+                                <span class="ob-label">Rester fra kvelden</span>
+                                <span class="ob-sub">Spar tid og penger</span>
+                            </button>
+                            <button type="button" class="option-btn" data-group="lunsj" data-val="Brødretter og smørbrød - enkle lunsjretter som kan lages på 5 minutter" onclick="velgLunsj(this)">
+                                <span class="ob-icon">🥪</span>
+                                <span class="ob-label">Brødretter</span>
+                                <span class="ob-sub">Raskt og enkelt</span>
+                            </button>
+                            <button type="button" class="option-btn" data-group="lunsj" data-val="Salat eller lettvint kald lunsj - frisk og enkel mat midt på dagen" onclick="velgLunsj(this)">
+                                <span class="ob-icon">🥗</span>
+                                <span class="ob-label">Salat / lettmat</span>
+                                <span class="ob-sub">Frisk og kalorifattig</span>
+                            </button>
+                            <button type="button" class="option-btn" data-group="lunsj" data-val="Varm lunsj - gjerne suppe, wrap eller annen varm rett til middag" onclick="velgLunsj(this)">
+                                <span class="ob-icon">🍲</span>
+                                <span class="ob-label">Varm rett</span>
+                                <span class="ob-sub">Skikkelig lunsj</span>
+                            </button>
+                        </div>
+                        <input type="hidden" name="lunsjStil" id="lunsjInput" value="Rester fra kvelden er ideelt - planlegg middager slik at det alltid er mat til neste dags lunsj">
+                    </div>
+                </div>
+
+                <!-- ── 5. ALLERGIER ── -->
+                <div class="form-section">
+                    <div class="form-section-title">Allergier og intoleranser</div>
+
+                    <div class="field">
+                        <label><i class="fas fa-triangle-exclamation"></i> Hva kan du ikke spise?</label>
+                        <span class="field-hint">Klikk alle som gjelder — AI vil aldri bruke disse ingrediensene</span>
+                        <div class="tag-grid">
+                            <div class="tag allergi" onclick="toggleAllergi(this)" data-val="gluten">🌾 Gluten</div>
+                            <div class="tag allergi" onclick="toggleAllergi(this)" data-val="laktose">🥛 Laktose</div>
+                            <div class="tag allergi" onclick="toggleAllergi(this)" data-val="egg">🥚 Egg</div>
+                            <div class="tag allergi" onclick="toggleAllergi(this)" data-val="nøtter">🥜 Nøtter</div>
+                            <div class="tag allergi" onclick="toggleAllergi(this)" data-val="skalldyr">🦐 Skalldyr</div>
+                            <div class="tag allergi" onclick="toggleAllergi(this)" data-val="fisk">🐟 Fisk</div>
+                            <div class="tag allergi" onclick="toggleAllergi(this)" data-val="soya">🌱 Soya</div>
+                            <div class="tag allergi" onclick="toggleAllergi(this)" data-val="sennep">🌭 Sennep</div>
+                        </div>
+                        <input type="text" name="allergier" id="allergiInput" class="field-input" style="margin-top:8px;"
+                               placeholder="Andre ting du ikke liker eller tåler…">
+                    </div>
+                </div>
+
+                <!-- ── 6. DINE ØNSKER ── -->
                 <div class="form-section">
                     <div class="form-section-title">Dine ønsker — viktigst av alt</div>
 
                     <div class="field">
                         <label><i class="fas fa-comment-dots"></i> Fortell AI hva du vil ha</label>
-                        <span class="field-hint">Dette er det viktigste feltet. AI vil bygge hele menyen rundt disse ønskene. Vær gjerne spesifikk.</span>
+                        <span class="field-hint">Dette er det viktigste feltet. AI bygger hele menyen rundt disse ønskene. Vær gjerne spesifikk.</span>
                         <textarea class="field-textarea" name="ekstraOnsker" rows="4"
-                                  placeholder="Eksempler:
-• Vi liker asiatisk mat, gjerne thai eller wok
-• Barna på 8 og 10 år spiser ikke sterk mat
-• Enkel hverdagsmat som ikke tar mer enn 30 min
-• Vi vil gjerne ha fisk to ganger
-• Ingen grøt til frokost
-• Mest mulig variert og sunt&#10;• Vil ha taco på fredagen"></textarea>
+                                  placeholder="Eksempler: Vi liker asiatisk mat, gjerne thai eller wok. Barna vil ikke ha sterk mat. Vi vil ha taco på fredagen. Enkelt og kjent, ikke fancy. Vil ha fisk minst to ganger. Gjerne noe med linser eller kikerter."></textarea>
                     </div>
                 </div>
 
                 <!-- PREVIEW -->
-                <div class="preview-strip" id="previewStrip">
+                <div class="preview-strip">
                     <div class="preview-item"><span class="preview-icon">👥</span><span class="preview-text" id="prevPors">2 porsjoner</span></div>
                     <div class="preview-item"><span class="preview-icon">💰</span><span class="preview-text" id="prevBudget">1 500 kr/uke</span></div>
                     <div class="preview-item"><span class="preview-icon">🥩</span><span class="preview-text" id="prevKjott">3 kjøttmiddager</span></div>
+                    <div class="preview-item"><span class="preview-icon">🌍</span><span class="preview-text" id="prevKultur">Ingen kultur valgt</span></div>
+                    <div class="preview-item"><span class="preview-icon">⏱️</span><span class="preview-text" id="prevTid">30 min/kveld</span></div>
                     <div class="preview-item"><span class="preview-icon">🚫</span><span class="preview-text" id="prevAllergi">Ingen allergier</span></div>
-                    <div class="preview-item"><span class="preview-icon">📅</span><span class="preview-text" id="prevDager">7 dager</span></div>
                 </div>
 
-                <!-- SUBMIT -->
                 <button type="submit" class="btn-generer" id="genererBtn">
                     <i class="fas fa-wand-magic-sparkles"></i>
                     Generer min ukesmeny
                 </button>
 
-                <p style="text-align:center;font-size:.76rem;color:#94a3b8;margin-top:-8px;line-height:1.5;">
-                    AI lager en komplett plan med smarte rester og budsjettoptimalisering.<br>
-                    Tar ca. 15–25 sekunder.
+                <p style="text-align:center;font-size:.75rem;color:#94a3b8;margin-top:12px;line-height:1.5;">
+                    AI lager en komplett plan med smarte rester og budsjettoptimalisering. Ca. 20–30 sekunder.
                 </p>
             </form>
         </div>
@@ -496,7 +535,6 @@
             const fmt = v.toLocaleString('nb-NO');
             document.getElementById('budgetDisplay').textContent = fmt;
             document.getElementById('prevBudget').textContent = fmt + ' kr/uke';
-            // slider gradient
             const pct = ((v - 300) / (4000 - 300)) * 100;
             document.getElementById('budgetSlider').style.setProperty('--pct', pct.toFixed(1) + '%');
         }
@@ -504,84 +542,87 @@
 
         // ── KJØTTMIDDAGER ──
         let kjottVal = 3;
-        const kjottDesc = [
-            'Kun vegetar og fisk hele uken',
-            '1 kjøttmiddag · 6 vegetar/fisk',
-            '2 kjøttmiddager · 5 vegetar/fisk',
-            '3 kjøttmiddager · 4 fisk/vegetar',
-            '4 kjøttmiddager · 3 vegetar/fisk',
-            '5 kjøttmiddager · 2 vegetar/fisk',
-            '6 kjøttmiddager · 1 vegetar/fisk',
-            '7 kjøttmiddager · full kjøttsuke'
-        ];
+        const kjottDesc = ['Kun vegetar og fisk','1 kjøttmiddag','2 kjøttmiddager','3 kjøttmiddager','4 kjøttmiddager','5 kjøttmiddager','6 kjøttmiddager','7 kjøttmiddager — full kjøttsuke'];
         function velgKjott(btn) {
             document.querySelectorAll('.kjott-btn').forEach(b => b.classList.remove('sel'));
             btn.classList.add('sel');
             kjottVal = parseInt(btn.dataset.val);
             document.getElementById('kjottInput').value = kjottVal;
             document.getElementById('kjottDesc').textContent = kjottDesc[kjottVal];
-            document.getElementById('prevKjott').textContent = kjottVal + ' kjøttmiddager';
+            document.getElementById('prevKjott').textContent = kjottDesc[kjottVal];
         }
 
-        // ── ALLERGIER ──
-        const valgte = new Set();
-        function toggleAllergi(el) {
-            const v = el.dataset.val;
+        // ── MATKULTURER (multi-select) ──
+        const valgtKultur = new Set();
+        function toggleTag(el, gruppe) {
             el.classList.toggle('sel');
-            valgte.has(v) ? valgte.delete(v) : valgte.add(v);
-            oppdaterAllergiInput();
+            const v = el.dataset.val;
+            valgtKultur.has(v) ? valgtKultur.delete(v) : valgtKultur.add(v);
+            const joined = [...valgtKultur].join(', ');
+            document.getElementById('kulturInput').value = joined;
+            document.getElementById('prevKultur').textContent = valgtKultur.size === 0 ? 'Ingen kultur valgt' : [...valgtKultur].map(k => k.split('/')[0].split(' (')[0]).join(', ');
         }
-        function oppdaterAllergiInput() {
-            const fritekst = document.getElementById('allergiInput').value;
-            document.getElementById('prevAllergi').textContent =
-                valgte.size === 0 && !fritekst.trim()
-                    ? 'Ingen allergier'
-                    : [...valgte].join(', ') + (fritekst.trim() ? (valgte.size ? ' + ' : '') + fritekst.trim() : '');
-        }
-        document.getElementById('allergiInput').addEventListener('input', oppdaterAllergiInput);
 
-        document.getElementById('aiForm').addEventListener('submit', function() {
-            const tags = [...valgte].join(', ');
-            const fritekst = document.getElementById('allergiInput').value.trim();
-            document.getElementById('allergiInput').value = [tags, fritekst].filter(s => s).join(', ');
-        });
+        // ── LIVSSTILSMÅL (single select) ──
+        function velgOption(btn) {
+            document.querySelectorAll('.option-btn[data-group="mal"]').forEach(b => b.classList.remove('sel'));
+            btn.classList.add('sel');
+            document.getElementById('malInput').value = btn.dataset.val;
+        }
+
+        // ── TID (single select) ──
+        function velgTid(btn) {
+            document.querySelectorAll('.option-btn[data-group="tid"]').forEach(b => b.classList.remove('sel'));
+            btn.classList.add('sel');
+            const val = parseInt(btn.dataset.val);
+            document.getElementById('tidInput').value = val;
+            const labels = {15:'Under 20 min/kveld', 30:'Ca. 30 min/kveld', 45:'45-60 min/kveld', 120:'God tid til matlaging'};
+            document.getElementById('prevTid').textContent = labels[val] || val + ' min/kveld';
+        }
+
+        // ── LUNSJ (single select) ──
+        function velgLunsj(btn) {
+            document.querySelectorAll('.option-btn[data-group="lunsj"]').forEach(b => b.classList.remove('sel'));
+            btn.classList.add('sel');
+            document.getElementById('lunsjInput').value = btn.dataset.val;
+        }
 
         // ── FROKOST TOGGLE ──
         let sameFrokost = false;
         function toggleFrokost() {
             sameFrokost = !sameFrokost;
-            const row = document.getElementById('frokostToggle');
-            const wrap = document.getElementById('frokostInputWrap');
-            row.classList.toggle('active', sameFrokost);
-            wrap.classList.toggle('vis', sameFrokost);
-            document.getElementById('sameFrokostInput').value = sameFrokost;
-            if (sameFrokost) document.getElementById('frokostTypeInput').focus();
+            document.getElementById('frokostToggle').classList.toggle('active', sameFrokost);
+            document.getElementById('frokostInputWrap').classList.toggle('vis', sameFrokost);
+            document.getElementById('sameFrokostInput').value = sameFrokost ? 'true' : 'false';
         }
 
-        // ── HELG TOGGLE ──
-        let utelateHelg = false;
-        function toggleHelg() {
-            utelateHelg = !utelateHelg;
-            document.getElementById('helgToggle').classList.toggle('active', utelateHelg);
-            document.getElementById('utelateHelgInput').value = utelateHelg;
-            document.getElementById('prevDager').textContent = utelateHelg ? '5 dager (man–fre)' : '7 dager';
+        // ── ALLERGIER ──
+        const valgtAllergi = new Set();
+        function toggleAllergi(el) {
+            el.classList.toggle('sel');
+            const v = el.dataset.val;
+            valgtAllergi.has(v) ? valgtAllergi.delete(v) : valgtAllergi.add(v);
+            document.getElementById('prevAllergi').textContent =
+                valgtAllergi.size === 0 ? 'Ingen allergier' : [...valgtAllergi].join(', ');
         }
 
-        // ── LOADING ──
+        // Slå sammen allergi-tags og fritekst ved submit
         document.getElementById('aiForm').addEventListener('submit', function() {
+            const tags = [...valgtAllergi].join(', ');
+            const fri = document.getElementById('allergiInput').value.trim();
+            document.getElementById('allergiInput').value = [tags, fri].filter(Boolean).join(', ');
+            // Start loading
             document.getElementById('loadingOverlay').classList.add('vis');
-            const steps = ['ls1','ls2','ls3','ls4','ls5'];
+            const steps = ['ls1','ls2','ls3','ls4','ls5','ls6'];
             let i = 1;
             const iv = setInterval(() => {
                 if (i < steps.length) {
-                    document.getElementById(steps[i - 1]).classList.remove('aktiv');
-                    document.getElementById(steps[i - 1]).classList.add('ferdig');
+                    document.getElementById(steps[i-1]).classList.remove('aktiv');
+                    document.getElementById(steps[i-1]).classList.add('ferdig');
                     document.getElementById(steps[i]).classList.add('aktiv');
                     i++;
-                } else {
-                    clearInterval(iv);
-                }
-            }, 4000);
+                } else clearInterval(iv);
+            }, 4500);
         });
     </script>
 </body>
