@@ -146,92 +146,94 @@
         /* ── FULLSKJERM KOKEMODUS ── */
         #kokeOverlay {
             display: none; position: fixed; inset: 0; z-index: 9999;
-            background: #0f0d0a;
+            background: #f0fdf4;
             flex-direction: row;
         }
         #kokeOverlay.open { display: flex; }
 
         /* LEFT PANEL */
         .ko-left {
-            width: 280px; flex-shrink: 0;
-            background: #131109;
-            border-right: 1px solid rgba(255,255,255,.06);
+            width: 300px; flex-shrink: 0;
+            background: #fff;
+            border-right: 1px solid #d1fae5;
             display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 4px 0 24px rgba(34,197,94,.07);
         }
         .ko-left-head {
-            padding: 24px 22px 18px;
-            border-bottom: 1px solid rgba(255,255,255,.05);
+            padding: 28px 22px 20px;
+            background: linear-gradient(160deg, #16a34a 0%, #22c55e 100%);
         }
         .ko-recipe-name {
-            font-size: .8rem; font-weight: 600;
-            color: rgba(255,255,255,.45);
+            font-size: .78rem; font-weight: 700;
+            color: rgba(255,255,255,.75);
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            margin-bottom: 14px;
+            margin-bottom: 16px; letter-spacing: .3px;
         }
         .ko-prog-track {
-            height: 3px; background: rgba(255,255,255,.06);
+            height: 5px; background: rgba(255,255,255,.25);
             border-radius: 99px; overflow: hidden; margin-bottom: 8px;
         }
         .ko-prog-fill {
-            height: 100%; background: #22c55e;
+            height: 100%; background: #fff;
             transition: width .4s ease; border-radius: 99px;
         }
         .ko-prog-label {
-            font-size: .62rem; font-weight: 700;
+            font-size: .6rem; font-weight: 700;
             letter-spacing: 1.5px; text-transform: uppercase;
-            color: rgba(255,255,255,.18);
+            color: rgba(255,255,255,.6);
         }
         .ko-ing-head {
             padding: 16px 22px 8px;
-            font-size: .62rem; font-weight: 800;
+            font-size: .6rem; font-weight: 800;
             letter-spacing: 2px; text-transform: uppercase;
-            color: rgba(255,255,255,.18);
+            color: #86efac;
         }
         .ko-ing-list {
             flex: 1; overflow-y: auto; padding: 0 14px 14px;
         }
         .ko-ing-item {
             display: flex; align-items: flex-start; gap: 10px;
-            padding: 8px 10px; border-radius: 8px;
+            padding: 9px 10px; border-radius: 10px;
             cursor: pointer; transition: background .12s; user-select: none;
         }
-        .ko-ing-item:hover { background: rgba(255,255,255,.04); }
-        .ko-ing-item.done { opacity: .3; }
+        .ko-ing-item:hover { background: #f0fdf4; }
+        .ko-ing-item.done { opacity: .4; }
         .ko-ing-check {
-            width: 15px; height: 15px; border-radius: 4px;
-            border: 1.5px solid rgba(255,255,255,.15);
+            width: 17px; height: 17px; border-radius: 5px;
+            border: 1.5px solid #bbf7d0;
             flex-shrink: 0; margin-top: 2px;
             display: flex; align-items: center; justify-content: center;
             transition: .12s; font-size: .55rem; color: transparent;
+            background: #f0fdf4;
         }
         .ko-ing-item.done .ko-ing-check { background: #22c55e; border-color: #22c55e; color: white; }
         .ko-ing-text {
-            font-size: .8rem; color: rgba(255,255,255,.5); line-height: 1.4; font-weight: 500;
+            font-size: .83rem; color: #374151; line-height: 1.45; font-weight: 500;
         }
-        .ko-ing-item.done .ko-ing-text { text-decoration: line-through; color: rgba(255,255,255,.18); }
+        .ko-ing-item.done .ko-ing-text { text-decoration: line-through; color: #9ca3af; }
         .ko-left-footer {
             padding: 14px 22px;
-            border-top: 1px solid rgba(255,255,255,.05);
+            border-top: 1px solid #d1fae5;
         }
         .ko-quit {
-            background: none; border: 1px solid rgba(255,255,255,.08);
-            color: rgba(255,255,255,.28); padding: 9px 14px;
-            border-radius: 8px; font-size: .78rem; font-weight: 700;
-            cursor: pointer; font-family: inherit; width: 100%; transition: .12s;
+            background: none; border: 1.5px solid #d1fae5;
+            color: #6b7280; padding: 9px 14px;
+            border-radius: 10px; font-size: .78rem; font-weight: 700;
+            cursor: pointer; font-family: inherit; width: 100%; transition: .15s;
             display: flex; align-items: center; justify-content: center; gap: 7px;
         }
-        .ko-quit:hover { border-color: rgba(255,255,255,.18); color: rgba(255,255,255,.6); }
+        .ko-quit:hover { border-color: #fca5a5; color: #dc2626; background: #fff5f5; }
 
         /* RIGHT PANEL */
         .ko-right {
             flex: 1; display: flex; flex-direction: column;
-            position: relative; overflow: hidden;
+            position: relative; overflow: hidden; background: #f0fdf4;
         }
         .ko-step-bg-num {
-            position: absolute; right: -2%; bottom: 8%;
-            font-size: 36vw; font-weight: 900;
-            color: rgba(255,255,255,.022);
-            line-height: 1; letter-spacing: -10px;
+            position: absolute; right: -2%; bottom: 4%;
+            font-size: 30vw; font-weight: 900;
+            color: rgba(34,197,94,.07);
+            line-height: 1; letter-spacing: -8px;
             pointer-events: none; user-select: none;
         }
         .ko-right-body {
@@ -240,71 +242,84 @@
             position: relative; z-index: 1; overflow-y: auto;
         }
         .ko-step-label {
-            font-size: .66rem; font-weight: 800;
+            font-size: .64rem; font-weight: 800;
             letter-spacing: 3px; text-transform: uppercase;
-            color: #22c55e; margin-bottom: 28px;
+            color: #16a34a; margin-bottom: 24px;
+        }
+        /* Step card */
+        .ko-step-card {
+            background: #fff;
+            border: 1.5px solid #d1fae5;
+            border-radius: 24px;
+            padding: 40px 44px;
+            box-shadow: 0 8px 40px rgba(34,197,94,.1), 0 2px 8px rgba(0,0,0,.04);
+            max-width: 780px;
+            animation: koFadeIn .28s ease;
         }
         .ko-step-text {
-            font-size: clamp(1.7rem, 3.5vw, 2.9rem);
-            font-weight: 700; color: #fff; line-height: 1.5;
-            max-width: 780px; animation: koFadeIn .28s ease;
+            font-size: clamp(1.35rem, 2.8vw, 2.2rem);
+            font-weight: 700; color: #111827; line-height: 1.55;
         }
-        @keyframes koFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes koFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         .ko-swipe-hint {
-            margin-top: 48px; font-size: .7rem;
-            color: rgba(255,255,255,.1); letter-spacing: .5px;
+            margin-top: 28px; font-size: .7rem;
+            color: #9ca3af; letter-spacing: .5px;
         }
         .ko-right-nav {
-            display: flex; gap: 10px; padding: 18px 72px;
-            border-top: 1px solid rgba(255,255,255,.05);
+            display: flex; gap: 10px; padding: 20px 72px;
+            border-top: 1.5px solid #d1fae5;
+            background: #fff;
             flex-shrink: 0; position: relative; z-index: 1;
         }
         .ko-nav-btn {
-            padding: 14px 22px; border-radius: 10px; border: none;
+            padding: 14px 24px; border-radius: 12px; border: none;
             font-weight: 800; font-size: .88rem; cursor: pointer;
-            font-family: inherit; transition: .12s;
+            font-family: inherit; transition: .15s;
             display: flex; align-items: center; gap: 8px;
         }
         .ko-nav-prev {
-            background: rgba(255,255,255,.05);
-            border: 1px solid rgba(255,255,255,.08);
-            color: rgba(255,255,255,.38);
+            background: #f1f5f9;
+            border: 1.5px solid #e2e8f0;
+            color: #64748b;
         }
-        .ko-nav-prev:hover { background: rgba(255,255,255,.09); color: rgba(255,255,255,.75); }
+        .ko-nav-prev:hover { background: #e2e8f0; color: #1e293b; }
         .ko-nav-next {
             flex: 1; background: #16a34a; color: white;
             justify-content: center;
+            box-shadow: 0 4px 16px rgba(22,163,74,.3);
         }
-        .ko-nav-next:hover { background: #15803d; }
-        .ko-nav-btn:disabled { opacity: .18; cursor: default; }
+        .ko-nav-next:hover { background: #15803d; box-shadow: 0 6px 20px rgba(22,163,74,.4); }
+        .ko-nav-btn:disabled { opacity: .3; cursor: default; box-shadow: none; }
 
         /* DONE SCREEN */
         .ko-done {
             display: none; position: absolute; inset: 0; z-index: 10;
-            background: #0f0d0a;
+            background: #f0fdf4;
             flex-direction: column; align-items: center;
             justify-content: center; text-align: center; padding: 40px;
         }
         .ko-done.vis { display: flex; }
         .ko-done-circle {
-            width: 90px; height: 90px; border-radius: 50%;
-            border: 1px solid rgba(34,197,94,.2);
-            background: rgba(34,197,94,.07);
+            width: 96px; height: 96px; border-radius: 50%;
+            border: 2px solid #bbf7d0;
+            background: #dcfce7;
             display: flex; align-items: center; justify-content: center;
-            font-size: 2.4rem; margin-bottom: 32px;
+            font-size: 2.6rem; margin-bottom: 32px;
             animation: koPopIn .45s cubic-bezier(.34,1.56,.64,1);
+            box-shadow: 0 8px 32px rgba(34,197,94,.2);
         }
         @keyframes koPopIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .ko-done h2 { font-size: 2.4rem; font-weight: 900; color: #fff; letter-spacing: -1.5px; margin: 0 0 10px; }
-        .ko-done p { color: rgba(255,255,255,.28); font-size: .93rem; margin: 0 0 40px; }
+        .ko-done h2 { font-size: 2.4rem; font-weight: 900; color: #111827; letter-spacing: -1.5px; margin: 0 0 10px; }
+        .ko-done p { color: #6b7280; font-size: .95rem; margin: 0 0 40px; }
         .ko-done-btn {
-            background: #fff; color: #111 !important; padding: 14px 32px;
-            border-radius: 10px; font-weight: 900; font-size: .9rem;
+            background: #16a34a; color: white !important; padding: 16px 36px;
+            border-radius: 12px; font-weight: 900; font-size: .92rem;
             border: none; cursor: pointer; font-family: inherit;
             display: inline-flex; align-items: center; gap: 8px;
-            text-decoration: none; transition: opacity .15s;
+            text-decoration: none; transition: .15s;
+            box-shadow: 0 4px 16px rgba(22,163,74,.3);
         }
-        .ko-done-btn:hover { opacity: .85; }
+        .ko-done-btn:hover { background: #15803d; }
 
         /* Desktop: hide mobile-only elements */
         .ko-mobile-header { display: none; }
@@ -357,17 +372,18 @@
 
             /* ── Step area ── */
             .ko-step-bg-num { display: none; }
-            .ko-right { background: #0f0d0a; }
+            .ko-right { background: #f0fdf4; }
             .ko-right-body {
-                padding: 22px 22px 16px;
+                padding: 20px 18px 12px;
                 justify-content: flex-start;
             }
-            .ko-step-label { margin-bottom: 14px; font-size: .58rem; }
-            .ko-step-text { font-size: clamp(1.25rem, 5.5vw, 1.75rem); line-height: 1.6; }
-            .ko-swipe-hint { margin-top: 20px; font-size: .65rem; }
+            .ko-step-label { margin-bottom: 12px; font-size: .58rem; }
+            .ko-step-card { padding: 24px 22px; border-radius: 18px; }
+            .ko-step-text { font-size: clamp(1.15rem, 5vw, 1.6rem); line-height: 1.6; }
+            .ko-swipe-hint { margin-top: 16px; font-size: .64rem; }
 
             /* ── Nav ── */
-            .ko-right-nav { padding: 14px 22px; gap: 10px; }
+            .ko-right-nav { padding: 14px 18px; gap: 10px; background: #fff; }
             .ko-nav-btn { padding: 15px; font-size: .88rem; border-radius: 14px; }
             .ko-nav-prev { flex-shrink: 0; }
 
@@ -375,52 +391,54 @@
             .ko-ing-toggle {
                 display: flex; align-items: center; gap: 7px;
                 position: fixed; bottom: 96px; left: 50%; transform: translateX(-50%);
-                background: rgba(30,27,22,.92); backdrop-filter: blur(12px);
-                border: 1px solid rgba(255,255,255,.12);
-                color: rgba(255,255,255,.7); padding: 10px 20px;
-                border-radius: 99px; font-size: .8rem; font-weight: 700;
+                background: #fff; backdrop-filter: blur(12px);
+                border: 1.5px solid #d1fae5;
+                color: #16a34a; padding: 11px 22px;
+                border-radius: 99px; font-size: .82rem; font-weight: 800;
                 cursor: pointer; font-family: inherit; transition: .15s;
                 z-index: 10002; white-space: nowrap;
+                box-shadow: 0 4px 20px rgba(34,197,94,.18);
             }
-            .ko-ing-toggle:hover { border-color: rgba(34,197,94,.4); color: #4ade80; }
+            .ko-ing-toggle:hover { background: #f0fdf4; border-color: #22c55e; }
 
             /* ── Bottom sheet ── */
             .ko-ing-sheet-backdrop {
                 display: block; position: fixed; inset: 0;
-                background: rgba(0,0,0,.55); z-index: 10000;
+                background: rgba(0,0,0,.35); z-index: 10000;
                 opacity: 0; pointer-events: none; transition: opacity .25s;
             }
             .ko-ing-sheet-backdrop.open { opacity: 1; pointer-events: auto; }
             .ko-ing-sheet {
                 display: block; position: fixed;
                 bottom: 0; left: 0; right: 0; z-index: 10001;
-                background: #1c1910;
-                border-top: 1px solid rgba(255,255,255,.07);
+                background: #fff;
+                border-top: 2px solid #d1fae5;
                 border-radius: 22px 22px 0 0;
                 max-height: 62vh; overflow-y: auto;
                 transform: translateY(100%);
                 transition: transform .32s cubic-bezier(.34,1.1,.64,1);
+                box-shadow: 0 -8px 40px rgba(34,197,94,.12);
             }
             .ko-ing-sheet.open { transform: translateY(0); }
             .ko-ing-sheet-handle {
-                width: 36px; height: 4px; background: rgba(255,255,255,.13);
+                width: 36px; height: 4px; background: #d1fae5;
                 border-radius: 99px; margin: 14px auto 0;
             }
             .ko-ing-sheet-head {
-                padding: 16px 22px 10px;
+                padding: 16px 22px 12px;
                 display: flex; justify-content: space-between; align-items: center;
-                border-bottom: 1px solid rgba(255,255,255,.05);
+                border-bottom: 1px solid #f0fdf4;
             }
             .ko-ing-sheet-head span {
                 font-size: .62rem; font-weight: 800; letter-spacing: 2px;
-                text-transform: uppercase; color: rgba(255,255,255,.3);
+                text-transform: uppercase; color: #16a34a;
             }
             .ko-ing-sheet-close {
-                background: none; border: none; color: rgba(255,255,255,.28);
+                background: none; border: none; color: #9ca3af;
                 cursor: pointer; font-size: 1rem; padding: 4px; font-family: inherit;
                 transition: .12s;
             }
-            .ko-ing-sheet-close:hover { color: rgba(255,255,255,.7); }
+            .ko-ing-sheet-close:hover { color: #374151; }
             .ko-ing-sheet-list { padding: 8px 14px 32px; }
         }
 
@@ -933,7 +951,9 @@
 
                 <div class="ko-right-body" id="koRightBody">
                     <div class="ko-step-label" id="koStepLabel">STEG 1 AV 1</div>
-                    <div class="ko-step-text" id="kokeStepText"></div>
+                    <div class="ko-step-card">
+                        <div class="ko-step-text" id="kokeStepText"></div>
+                    </div>
                     <div class="ko-swipe-hint">Sveip eller bruk piltastene for å navigere</div>
                 </div>
 
