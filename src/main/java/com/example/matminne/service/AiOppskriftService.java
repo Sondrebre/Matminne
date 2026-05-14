@@ -85,32 +85,80 @@ public class AiOppskriftService {
     }
 
     /**
-     * Genererer en personalisert ukesmeny for 7 dager.
-     * Returnerer strukturert tekst med dag, frokost, lunsj og middag.
+     * Genererer en svært personalisert ukesmeny med budsjett, restematlogikk og frukostsvalg.
      */
-    public String genererUkesmeny(int kjottMiddager, String allergier, int porsjoner, String ekstraOnsker) {
+    public String genererUkesmeny(int kjottMiddager, String allergier, int porsjoner, String ekstraOnsker,
+                                   int ukesbudsjett, boolean sameFrokost, String frokostType, boolean utelateHelg) {
+        int antallDager = utelateHelg ? 5 : 7;
+        int antallMiddager = utelateHelg
+                ? Math.min(kjottMiddager, 5)
+                : Math.min(kjottMiddager, 7);
+
         String allergiTekst = (allergier != null && !allergier.isBlank())
-                ? "Allergier/intoleranser: " + allergier + "."
-                : "Ingen kjente allergier.";
+                ? allergier
+                : "ingen";
+
+        String frokostRegel = sameFrokost && frokostType != null && !frokostType.isBlank()
+                ? "SAMME frokost ALLE dager: \"" + frokostType.trim() + "\" — bruk dette nøyaktig"
+                : "Varier frokost dag for dag (havregrøt, egg, yoghurt, brødmat, etc.)";
+
+        String dagStruktur = utelateHelg
+                ? "{\"mandag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
+                  "\"tirsdag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
+                  "\"onsdag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
+                  "\"torsdag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
+                  "\"fredag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}}"
+                : "{\"mandag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
+                  "\"tirsdag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
+                  "\"onsdag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
+                  "\"torsdag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
+                  "\"fredag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
+                  "\"lordag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
+                  "\"sondag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}}";
+
         String ekstraTekst = (ekstraOnsker != null && !ekstraOnsker.isBlank())
-                ? "Andre ønsker: " + ekstraOnsker + "."
+                ? ekstraOnsker.trim()
                 : "";
-        String prompt = "Du er en erfaren norsk kostholdsekspert. Lag en variert og sunn ukesmeny for 7 dager.\n\n" +
-                "Brukerprofil:\n" +
-                "- Antall kjøttbaserte middager: " + kjottMiddager + " av 7\n" +
-                "- Porsjoner: " + porsjoner + "\n" +
-                "- " + allergiTekst + "\n" +
-                (ekstraTekst.isBlank() ? "" : "- " + ekstraTekst + "\n") +
-                "\nSvar KUN med gyldig JSON, ingen annen tekst:\n" +
-                "{\"mandag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
-                "\"tirsdag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
-                "\"onsdag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
-                "\"torsdag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
-                "\"fredag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
-                "\"lordag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}," +
-                "\"sondag\":{\"frokost\":\"...\",\"lunsj\":\"...\",\"middag\":\"...\"}}\n\n" +
-                "Fyll inn realistiske norske hverdagsretter. Varier frokost og lunsj. " +
-                "Overhold kjøttmiddager-kravet nøyaktig. Ingen markdown, ingen forklaring — kun JSON.";
+
+        String prompt =
+            "Du er Norges fremste kostholdsplanlegger og matekspert. Din jobb er å lage en PERFEKT personalisert " +
+            "ukesmeny. Brukeren stoler fullt på deg. Vær kreativ, presis og gjennomtenkt.\n\n" +
+
+            "═══ BRUKERPROFIL ═══\n" +
+            "• Antall porsjoner per rett: " + porsjoner + "\n" +
+            "• Kjøttbaserte middager: " + antallMiddager + " av " + antallDager + " (resten er fisk, vegetar eller egg)\n" +
+            "• Allergier/intoleranser: " + allergiTekst + "\n" +
+            "• Ukesbudsjett for mat (innkjøp): ca. " + ukesbudsjett + " kr for " + porsjoner + " pers. i " + antallDager + " dager\n" +
+            "• Frokost: " + frokostRegel + "\n" +
+            (ekstraTekst.isBlank() ? "" : "• EKSTRA ØNSKER (HØYESTE PRIORITET): " + ekstraTekst + "\n") +
+
+            "\n═══ REGLER DU MÅ FØLGE ═══\n" +
+            "1. EKSTRA ØNSKER er absolutt topp prioritet. Bygge hele menyen rundt disse\n" +
+            "2. Allergier er ABSOLUTT — aldri bruk en forbudt ingrediens, ikke en gang i lite mengde\n" +
+            "3. Hold middager innenfor budsjett på ca. " + Math.round(ukesbudsjett * 0.55 / antallDager) + " kr/middag/pers.\n" +
+            "4. RESTEMATLOGIKK (svært viktig): Norske pakker selges i standardstørrelser.\n" +
+            "   Eksempler på pakker som gir rester:\n" +
+            "   - Pasta 500g → bruk 300-350g til middag dag 1, planlegg pastasalat/pastasupe til lunsj dag 2\n" +
+            "   - Kyllingfilet 700-800g → bruk til middag, resten til wok/salat neste dag\n" +
+            "   - Kjøttdeig 400g → pastasaus gir rester til tacofyll eller lasagne dagen etter\n" +
+            "   - Laks 600g → rester til laksepålegg eller fiskesuppe\n" +
+            "   - Couscous, linser, kikerter: store pakker, bruk i to-tre retter\n" +
+            "   Planlegg lunsj/neste middag slik at restene fra kvelden før utnyttes!\n" +
+            "5. Varier proteinkildene gjennom uken (ikke kylling tre dager på rad)\n" +
+            "6. Lunsj skal helst være enkelt: brødretter, rester fra kvelden, smoothie, salat\n" +
+            "7. Bruk kjente, realiserbare norske hverdagsretter med norske navn\n" +
+            "8. Middagsnavnene skal være konkrete (ikke bare 'pastamiddag' — skriv 'Spaghetti bolognese')\n" +
+
+            "\n═══ BUDSJETTANKER (norske 2025-priser) ═══\n" +
+            "Pasta 500g=20kr, Kyllingfilet 700g=98kr, Kjøttdeig 400g=55kr, Laks 600g=110kr,\n" +
+            "Egg 12stk=38kr, Havregryn 1kg=28kr, Tomat boks=12kr, Løk=8kr, Hvitløk=10kr,\n" +
+            "Ris 1kg=22kr, Brød=30kr, Yoghurt=28kr, Melk 1l=18kr, Ost 400g=55kr\n" +
+
+            "\n═══ OUTPUT ═══\n" +
+            "Svar KUN med gyldig JSON. Ingen tekst før eller etter. Ingen markdown. Kun JSON:\n" +
+            dagStruktur + "\n\n" +
+            "Fyll inn konkrete rettsnavn på norsk. Matrettene skal høres appetittlige ut.";
+
         return kallClaude(prompt);
     }
 

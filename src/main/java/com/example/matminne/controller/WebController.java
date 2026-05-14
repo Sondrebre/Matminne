@@ -917,12 +917,17 @@ public class WebController {
             @RequestParam(defaultValue = "") String allergier,
             @RequestParam(defaultValue = "2") int porsjoner,
             @RequestParam(defaultValue = "") String ekstraOnsker,
+            @RequestParam(defaultValue = "1500") int ukesbudsjett,
+            @RequestParam(defaultValue = "false") boolean sameFrokost,
+            @RequestParam(defaultValue = "") String frokostType,
+            @RequestParam(defaultValue = "false") boolean utelateHelg,
             @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) return "redirect:/";
         Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
         if (meg == null || !meg.isHarAbonnement()) return "redirect:/abonnement?krever=ai";
         String aiSvar = aiOppskriftService.genererUkesmeny(
-                Math.max(0, Math.min(7, kjottMiddager)), allergier, porsjoner, ekstraOnsker);
+                Math.max(0, Math.min(7, kjottMiddager)), allergier, porsjoner, ekstraOnsker,
+                Math.max(200, Math.min(5000, ukesbudsjett)), sameFrokost, frokostType, utelateHelg);
         if (aiSvar.startsWith("FEIL") || aiSvar.startsWith("RATE_LIMIT")) {
             return "redirect:/ukesmeny?feil=ai";
         }
