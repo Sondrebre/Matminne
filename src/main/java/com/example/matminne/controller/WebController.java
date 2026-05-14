@@ -924,15 +924,17 @@ public class WebController {
             @RequestParam(defaultValue = "") String matkulturer,
             @RequestParam(defaultValue = "") String livsstilsMal,
             @RequestParam(defaultValue = "") String lunsjStil,
+            @RequestParam(defaultValue = "false") String kunMiddager,
             @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) return "redirect:/";
         Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
         if (meg == null || !meg.isHarAbonnement()) return "redirect:/abonnement?krever=ai";
         boolean sameFrokostBool = "true".equalsIgnoreCase(sameFrokost);
+        boolean kunMiddagerBool = "true".equalsIgnoreCase(kunMiddager);
         String aiSvar = aiOppskriftService.genererUkesmeny(
                 Math.max(0, Math.min(7, kjottMiddager)), allergier, porsjoner, ekstraOnsker,
                 Math.max(200, Math.min(5000, ukesbudsjett)), sameFrokostBool, frokostType,
-                middagsTid, matkulturer, livsstilsMal, lunsjStil);
+                middagsTid, matkulturer, livsstilsMal, lunsjStil, kunMiddagerBool);
         if (aiSvar.startsWith("FEIL") || aiSvar.startsWith("RATE_LIMIT")) {
             return "redirect:/ukesmeny?feil=ai";
         }
@@ -942,7 +944,6 @@ public class WebController {
             {"mandag","Mandag"},{"tirsdag","Tirsdag"},{"onsdag","Onsdag"},
             {"torsdag","Torsdag"},{"fredag","Fredag"},{"lordag","Lørdag"},{"sondag","Søndag"}
         };
-        String[][] maltidPar = {{"frokost","Frokost"},{"lunsj","Lunsj"},{"middag","Middag"}};
         String jsonSvar = aiSvar.replaceAll("(?s)```json\\s*", "").replaceAll("```\\s*", "").trim();
         int start = jsonSvar.indexOf('{');
         int end = jsonSvar.lastIndexOf('}');
@@ -950,21 +951,40 @@ public class WebController {
         int lagret = 0;
         try {
             ObjectMapper mapper = new ObjectMapper();
-            @SuppressWarnings("unchecked")
-            Map<String, Map<String, String>> meny = mapper.readValue(jsonSvar, Map.class);
-            for (String[] dp : dagPar) {
-                Map<String, String> dagMeny = meny.get(dp[0]);
-                if (dagMeny == null) continue;
-                for (String[] mp : maltidPar) {
-                    String tittel = dagMeny.get(mp[0]);
+            if (kunMiddagerBool) {
+                // Enklere JSON: {"mandag":"rettnavn", ...}
+                @SuppressWarnings("unchecked")
+                Map<String, String> meny = mapper.readValue(jsonSvar, Map.class);
+                for (String[] dp : dagPar) {
+                    String tittel = meny.get(dp[0]);
                     if (tittel != null && !tittel.isBlank()) {
                         UkesmenyItem item = new UkesmenyItem();
                         item.setBrukerId(meg.getId());
                         item.setDag(dp[1]);
-                        item.setMaltid(mp[1]);
+                        item.setMaltid("Middag");
                         item.setOppskriftTittel(tittel.trim());
                         ukesmenyRepository.save(item);
                         lagret++;
+                    }
+                }
+            } else {
+                String[][] maltidPar = {{"frokost","Frokost"},{"lunsj","Lunsj"},{"middag","Middag"}};
+                @SuppressWarnings("unchecked")
+                Map<String, Map<String, String>> meny = mapper.readValue(jsonSvar, Map.class);
+                for (String[] dp : dagPar) {
+                    Map<String, String> dagMeny = meny.get(dp[0]);
+                    if (dagMeny == null) continue;
+                    for (String[] mp : maltidPar) {
+                        String tittel = dagMeny.get(mp[0]);
+                        if (tittel != null && !tittel.isBlank()) {
+                            UkesmenyItem item = new UkesmenyItem();
+                            item.setBrukerId(meg.getId());
+                            item.setDag(dp[1]);
+                            item.setMaltid(mp[1]);
+                            item.setOppskriftTittel(tittel.trim());
+                            ukesmenyRepository.save(item);
+                            lagret++;
+                        }
                     }
                 }
             }

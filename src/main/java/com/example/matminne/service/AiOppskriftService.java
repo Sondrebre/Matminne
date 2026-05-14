@@ -89,7 +89,13 @@ public class AiOppskriftService {
      */
     public String genererUkesmeny(int kjottMiddager, String allergier, int porsjoner, String ekstraOnsker,
                                    int ukesbudsjett, boolean sameFrokost, String frokostType,
-                                   int middagsTid, String matkulturer, String livsstilsMal, String lunsjStil) {
+                                   int middagsTid, String matkulturer, String livsstilsMal, String lunsjStil,
+                                   boolean kunMiddager) {
+
+        if (kunMiddager) {
+            return genererKunMiddager(kjottMiddager, allergier, porsjoner, ekstraOnsker,
+                    ukesbudsjett, middagsTid, matkulturer, livsstilsMal);
+        }
 
         String allergiTekst = (allergier != null && !allergier.isBlank()) ? allergier : "ingen";
 
@@ -174,6 +180,77 @@ public class AiOppskriftService {
             "{\"mandag\":{\"frokost\":\"navn\",\"lunsj\":\"navn\",\"middag\":\"navn\"},\"tirsdag\":{\"frokost\":\"navn\",\"lunsj\":\"navn\",\"middag\":\"navn\"},\"onsdag\":{\"frokost\":\"navn\",\"lunsj\":\"navn\",\"middag\":\"navn\"},\"torsdag\":{\"frokost\":\"navn\",\"lunsj\":\"navn\",\"middag\":\"navn\"},\"fredag\":{\"frokost\":\"navn\",\"lunsj\":\"navn\",\"middag\":\"navn\"},\"lordag\":{\"frokost\":\"navn\",\"lunsj\":\"navn\",\"middag\":\"navn\"},\"sondag\":{\"frokost\":\"navn\",\"lunsj\":\"navn\",\"middag\":\"navn\"}}";
 
         return kallClaudeMedModell(prompt, Model.CLAUDE_SONNET_4_5, 4000L);
+    }
+
+    /**
+     * Genererer kun 7 middager (ingen frokost/lunsj).
+     */
+    private String genererKunMiddager(int kjottMiddager, String allergier, int porsjoner,
+                                      String ekstraOnsker, int ukesbudsjett,
+                                      int middagsTid, String matkulturer, String livsstilsMal) {
+
+        String allergiTekst = (allergier != null && !allergier.isBlank()) ? allergier : "ingen";
+
+        String tidRegel;
+        if (middagsTid <= 20)      tidRegel = "Maks 20 min. Kun raske retter.";
+        else if (middagsTid <= 30) tidRegel = "Maks 30 min. Enkle hverdagsretter.";
+        else if (middagsTid <= 45) tidRegel = "30-45 min. Kan inkludere lett forpreparering.";
+        else                       tidRegel = "Ingen tidsbegrensning.";
+
+        String kulturTekst = (matkulturer != null && !matkulturer.isBlank())
+                ? matkulturer + " (prioriter disse sterkt)"
+                : "Norsk og nordisk hverdagsmat";
+
+        String malTekst = (livsstilsMal != null && !livsstilsMal.isBlank()) ? livsstilsMal : "balansert og variert kost";
+
+        String ekstraTekst = (ekstraOnsker != null && !ekstraOnsker.isBlank()) ? ekstraOnsker.trim() : "";
+
+        int kjott = Math.min(kjottMiddager, 7);
+        int ikkeKjott = 7 - kjott;
+        int budsjettPerMiddag = Math.round(ukesbudsjett * 0.8f / 7);
+
+        String prompt =
+            "Du er Norges fremste middagsplanlegger. Lag 7 KONKRETE og VARIERTE middager, en per dag.\n\n" +
+
+            "=== BRUKERPROFIL ===\n" +
+            "Porsjoner: " + porsjoner + "\n" +
+            "Middager: " + kjott + " med kjott, " + ikkeKjott + " med fisk/vegetar/egg\n" +
+            "Allergier (ABSOLUTT FORBUDT): " + allergiTekst + "\n" +
+            "Ukesbudsjett (kun middag): " + ukesbudsjett + " kr\n" +
+            "Maks per middag: ca. " + budsjettPerMiddag + " kr/person\n" +
+            "Tid per kveld: " + tidRegel + "\n" +
+            "Matkulturer: " + kulturTekst + "\n" +
+            "Livsstilsmal: " + malTekst + "\n" +
+            (ekstraTekst.isBlank() ? "" : "\nEKSTRA ONSKER (TOPP PRIORITET):\n" + ekstraTekst + "\n") +
+
+            "\n=== REGLER ===\n" +
+            "1. Ekstra onsker har hogste prioritet.\n" +
+            "2. Allergier: null toleranse.\n" +
+            "3. Aldri samme proteinkilde to kvelder pa rad.\n" +
+            "4. Aldri samme rett to ganger i uken.\n" +
+            "5. RESTEMATLOGIKK: planlegg slik at pakker utnyttes fullt:\n" +
+            "   - Pasta 500g: bruk to dager (eks bolognese + carbonara)\n" +
+            "   - Kyllingfilet 700g: bruk i to retter (eks ovnskylling + wok)\n" +
+            "   - Kjottdeig 400g: bruk i to retter (eks bolognese + taco)\n" +
+            "   - Laksfilet 600g: bruk i to retter (eks stekt laks + fiskesuppe)\n" +
+            "6. Rettnavn MÅ vaere konkrete og spesifikke (maks 65 tegn).\n" +
+            "   Bra: 'Spaghetti bolognese med hjemmelaget kjotsaus'\n" +
+            "   Darlig: 'Pastarett' eller 'Kyllingmiddag'\n" +
+            "7. Hold deg under " + budsjettPerMiddag + " kr/person per middag.\n" +
+            "8. Matkulturer: minst 60% av middagene skal folge valgte kulturer.\n" +
+
+            "\n=== NORSKE PRISER 2025 ===\n" +
+            "Pasta 500g: 20kr | Kyllingfilet 700g: 98kr | Kjottdeig 400g: 55kr | Laks 600g: 110kr\n" +
+            "Egg 12stk: 38kr | Ris 1kg: 22kr | Poteter 1kg: 15kr | Hermetisk tomat: 12kr\n" +
+            "Linser 500g: 22kr | Kikerter boks: 18kr | Tofu 400g: 32kr | Gulrot 750g: 12kr\n" +
+
+            "\n=== OUTPUT ===\n" +
+            "Svar KUN med gyldig JSON. Ingen tekst for eller etter. Ingen markdown.\n" +
+            "Noyaktig dette formatet (dagnavn som nokler, rettnavn som verdier):\n" +
+            "{\"mandag\":\"rettnavn\",\"tirsdag\":\"rettnavn\",\"onsdag\":\"rettnavn\"," +
+            "\"torsdag\":\"rettnavn\",\"fredag\":\"rettnavn\",\"lordag\":\"rettnavn\",\"sondag\":\"rettnavn\"}";
+
+        return kallClaudeMedModell(prompt, Model.CLAUDE_SONNET_4_5, 2000L);
     }
 
     /**

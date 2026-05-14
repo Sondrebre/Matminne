@@ -192,6 +192,28 @@
         .preview-icon { font-size: .95rem; }
         .preview-text { font-size: .78rem; font-weight: 700; color: var(--mat-mork); }
 
+        /* MODUS-VELGER */
+        .modus-velger {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            margin-bottom: 28px;
+        }
+        .modus-btn {
+            padding: 16px 14px; border-radius: 16px;
+            border: 2px solid #e8f5e9; background: #f8fafc;
+            font-family: inherit; cursor: pointer; transition: .18s;
+            display: flex; flex-direction: column; align-items: flex-start; gap: 3px;
+            text-align: left;
+        }
+        .modus-btn .mb-icon { font-size: 1.4rem; margin-bottom: 4px; }
+        .modus-btn .mb-label { font-size: .88rem; font-weight: 800; color: var(--mat-mork); }
+        .modus-btn .mb-sub { font-size: .73rem; color: #94a3b8; font-weight: 500; }
+        .modus-btn:hover { border-color: var(--mat-gronn); background: #f0fdf4; }
+        .modus-btn.sel {
+            border-color: var(--mat-gronn); background: var(--mat-gronn);
+            box-shadow: 0 6px 20px rgba(34,197,94,.3);
+        }
+        .modus-btn.sel .mb-label, .modus-btn.sel .mb-sub { color: white; }
+
         /* SUBMIT */
         .btn-generer {
             background: var(--mat-gronn); color: white; border: none;
@@ -275,6 +297,24 @@
             </div>
 
             <form class="form-body" id="aiForm" th:action="@{/ukesmeny/ai/generer}" method="POST">
+
+                <!-- ── MODUS ── -->
+                <div class="form-section" style="padding-bottom:20px;">
+                    <div class="form-section-title">Hva vil du planlegge?</div>
+                    <div class="modus-velger">
+                        <button type="button" class="modus-btn sel" id="modusKomplett" onclick="velgModus('komplett')">
+                            <span class="mb-icon">🗓️</span>
+                            <span class="mb-label">Komplett uke</span>
+                            <span class="mb-sub">Frokost, lunsj og middag alle 7 dager</span>
+                        </button>
+                        <button type="button" class="modus-btn" id="modusMiddag" onclick="velgModus('middag')">
+                            <span class="mb-icon">🍽️</span>
+                            <span class="mb-label">Kun middager</span>
+                            <span class="mb-sub">7 middager — ingen frokost eller lunsj</span>
+                        </button>
+                    </div>
+                    <input type="hidden" name="kunMiddager" id="kunMiddagerInput" value="false">
+                </div>
 
                 <!-- ── 1. GRUNNLEGGENDE ── -->
                 <div class="form-section">
@@ -410,7 +450,7 @@
                 </div>
 
                 <!-- ── 4. FROKOST OG LUNSJ ── -->
-                <div class="form-section">
+                <div class="form-section" id="seksjonFrokostLunsj">
                     <div class="form-section-title">Frokost og lunsj</div>
 
                     <div class="field">
@@ -517,6 +557,24 @@
     <div th:replace="~{fragments :: scripts}"></div>
 
     <script>
+        // ── MODUS ──
+        let aktivModus = 'komplett';
+        function velgModus(modus) {
+            aktivModus = modus;
+            document.getElementById('modusKomplett').classList.toggle('sel', modus === 'komplett');
+            document.getElementById('modusMiddag').classList.toggle('sel', modus === 'middag');
+            document.getElementById('kunMiddagerInput').value = modus === 'middag' ? 'true' : 'false';
+            document.getElementById('seksjonFrokostLunsj').style.display = modus === 'middag' ? 'none' : '';
+            const btn = document.getElementById('genererBtn');
+            btn.innerHTML = modus === 'middag'
+                ? '<i class="fas fa-wand-magic-sparkles"></i> Generer 7 middager'
+                : '<i class="fas fa-wand-magic-sparkles"></i> Generer min ukesmeny';
+            const loadTitle = document.querySelector('.loading-title');
+            if (loadTitle) loadTitle.textContent = modus === 'middag'
+                ? 'AI velger 7 perfekte middager…'
+                : 'AI bygger ukesmenyen din…';
+        }
+
         // ── PORSJONER ──
         let porsVal = 2;
         function endrePors(delta) {
