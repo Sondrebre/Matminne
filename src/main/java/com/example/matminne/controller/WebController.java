@@ -1055,6 +1055,38 @@ public class WebController {
         return "redirect:/ukesmeny";
     }
 
+    @PostMapping("/api/ukesmeny/nytt-forslag")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> nyttMaltidForslag(
+            @RequestBody Map<String, Object> body,
+            @AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        String maltid = (String) body.getOrDefault("maltid", "Middag");
+        String dag = (String) body.getOrDefault("dag", "Mandag");
+        String hint = (String) body.getOrDefault("hint", "");
+        @SuppressWarnings("unchecked")
+        List<String> eksisterende = (List<String>) body.getOrDefault("eksisterende", List.of());
+        String tittel = aiOppskriftService.genererAlternativMaltid(maltid, dag, eksisterende, hint);
+        Map<String, String> res = new HashMap<>();
+        if (tittel.startsWith("FEIL") || tittel.startsWith("RATE_LIMIT")) {
+            res.put("feil", tittel);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+        }
+        res.put("tittel", tittel.trim());
+        return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/ukesmeny/erstatt/{id}")
+    public String erstattMaltid(@PathVariable Long id, @RequestParam String tittel,
+                                @AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) return "redirect:/ukesmeny";
+        ukesmenyRepository.findById(id).ifPresent(item -> {
+            item.setOppskriftTittel(tittel.trim());
+            ukesmenyRepository.save(item);
+        });
+        return "redirect:/ukesmeny";
+    }
+
     @PostMapping("/ukesmeny/til-handleliste")
     public String ukesmenyTilHandelListe(@AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) return "redirect:/handleliste";

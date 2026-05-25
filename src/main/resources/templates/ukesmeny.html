@@ -300,6 +300,64 @@
             display: flex; align-items: center; gap: 6px;
         }
         .lagre-btn:hover { background: #22c55e; color: white; border-color: transparent; }
+
+        /* Bytt-forslag */
+        .bytt-btn {
+            background: none; border: none; color: #a78bfa;
+            cursor: pointer; font-size: .72rem; font-family: inherit;
+            font-weight: 700; padding: 4px 8px; border-radius: 8px; transition: .15s;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .bytt-btn:hover { background: #ede9fe; color: #7c3aed; }
+
+        /* Swap modal */
+        .swap-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,.45); backdrop-filter: blur(6px);
+            z-index: 3000; align-items: center; justify-content: center; padding: 20px;
+        }
+        .swap-overlay.vis { display: flex; }
+        .swap-boks {
+            background: white; border-radius: 22px; max-width: 420px; width: 100%;
+            border: 1px solid #e5e7eb; box-shadow: 0 40px 80px rgba(0,0,0,.2);
+            animation: modalSlideUp .22s ease;
+            padding: 24px;
+        }
+        .swap-tittel { font-size: 1rem; font-weight: 900; color: #1f2937; margin: 0 0 4px; }
+        .swap-sub { font-size: .8rem; color: #9ca3af; margin: 0 0 16px; }
+        .swap-forslag {
+            background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 14px;
+            padding: 14px 16px; font-size: .92rem; font-weight: 700; color: #15803d;
+            margin-bottom: 14px; min-height: 48px; display: flex; align-items: center;
+        }
+        .swap-hint-input {
+            width: 100%; border: 1.5px solid #e5e7eb; border-radius: 10px;
+            padding: 9px 12px; font-size: .82rem; font-family: inherit;
+            color: #374151; outline: none; transition: .2s; margin-bottom: 14px; box-sizing: border-box;
+        }
+        .swap-hint-input:focus { border-color: #a78bfa; }
+        .swap-knappar { display: flex; gap: 8px; flex-wrap: wrap; }
+        .swap-prøv-btn {
+            background: linear-gradient(135deg, #a78bfa, #7c3aed); color: white;
+            border: none; border-radius: 10px; padding: 9px 16px;
+            font-weight: 800; font-size: .8rem; cursor: pointer; font-family: inherit;
+            display: flex; align-items: center; gap: 5px; transition: .15s;
+        }
+        .swap-prøv-btn:hover { opacity: .88; }
+        .swap-prøv-btn:disabled { opacity: .4; cursor: not-allowed; }
+        .swap-behold-btn {
+            background: #f3f4f6; color: #6b7280; border: none; border-radius: 10px;
+            padding: 9px 14px; font-weight: 700; font-size: .8rem;
+            cursor: pointer; font-family: inherit; transition: .15s;
+        }
+        .swap-behold-btn:hover { background: #e5e7eb; }
+        .swap-bruk-btn {
+            background: #dcfce7; color: #16a34a; border: 1.5px solid #86efac;
+            border-radius: 10px; padding: 9px 14px; font-weight: 800; font-size: .8rem;
+            cursor: pointer; font-family: inherit; transition: .15s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .swap-bruk-btn:hover { background: #22c55e; color: white; border-color: transparent; }
     </style>
 </head>
 <body style="background:#f0fdf4!important;margin:0;">
@@ -397,9 +455,18 @@
                                             th:data-tittel="${dp.frokost.oppskriftTittel}"
                                             onclick="apneModal(this.dataset.tittel)"
                                     ><i class="fa-solid fa-wand-magic-sparkles"></i> Vis oppskrift</button>
-                                    <form th:action="@{'/ukesmeny/fjern/' + ${dp.frokost.id}}" method="POST" style="margin:0;">
-                                        <button type="submit" class="fjern-btn"><i class="fa-solid fa-xmark"></i> Fjern</button>
-                                    </form>
+                                    <div style="display:flex;gap:4px;align-items:center;">
+                                        <button class="bytt-btn"
+                                                th:data-id="${dp.frokost.id}"
+                                                th:data-dag="${dp.dag}"
+                                                th:data-maltid="Frokost"
+                                                th:data-tittel="${dp.frokost.oppskriftTittel}"
+                                                onclick="apneBytt(this)"
+                                        ><i class="fa-solid fa-shuffle"></i> Bytt</button>
+                                        <form th:action="@{'/ukesmeny/fjern/' + ${dp.frokost.id}}" method="POST" style="margin:0;">
+                                            <button type="submit" class="fjern-btn"><i class="fa-solid fa-xmark"></i> Fjern</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                             <div th:unless="${dp.frokost != null}" class="tom-slot">
@@ -433,9 +500,18 @@
                                             th:data-tittel="${dp.lunsj.oppskriftTittel}"
                                             onclick="apneModal(this.dataset.tittel)"
                                     ><i class="fa-solid fa-wand-magic-sparkles"></i> Vis oppskrift</button>
-                                    <form th:action="@{'/ukesmeny/fjern/' + ${dp.lunsj.id}}" method="POST" style="margin:0;">
-                                        <button type="submit" class="fjern-btn"><i class="fa-solid fa-xmark"></i> Fjern</button>
-                                    </form>
+                                    <div style="display:flex;gap:4px;align-items:center;">
+                                        <button class="bytt-btn"
+                                                th:data-id="${dp.lunsj.id}"
+                                                th:data-dag="${dp.dag}"
+                                                th:data-maltid="Lunsj"
+                                                th:data-tittel="${dp.lunsj.oppskriftTittel}"
+                                                onclick="apneBytt(this)"
+                                        ><i class="fa-solid fa-shuffle"></i> Bytt</button>
+                                        <form th:action="@{'/ukesmeny/fjern/' + ${dp.lunsj.id}}" method="POST" style="margin:0;">
+                                            <button type="submit" class="fjern-btn"><i class="fa-solid fa-xmark"></i> Fjern</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                             <div th:unless="${dp.lunsj != null}" class="tom-slot">
@@ -469,9 +545,18 @@
                                             th:data-tittel="${dp.middag.oppskriftTittel}"
                                             onclick="apneModal(this.dataset.tittel)"
                                     ><i class="fa-solid fa-wand-magic-sparkles"></i> Vis oppskrift</button>
-                                    <form th:action="@{'/ukesmeny/fjern/' + ${dp.middag.id}}" method="POST" style="margin:0;">
-                                        <button type="submit" class="fjern-btn"><i class="fa-solid fa-xmark"></i> Fjern</button>
-                                    </form>
+                                    <div style="display:flex;gap:4px;align-items:center;">
+                                        <button class="bytt-btn"
+                                                th:data-id="${dp.middag.id}"
+                                                th:data-dag="${dp.dag}"
+                                                th:data-maltid="Middag"
+                                                th:data-tittel="${dp.middag.oppskriftTittel}"
+                                                onclick="apneBytt(this)"
+                                        ><i class="fa-solid fa-shuffle"></i> Bytt</button>
+                                        <form th:action="@{'/ukesmeny/fjern/' + ${dp.middag.id}}" method="POST" style="margin:0;">
+                                            <button type="submit" class="fjern-btn"><i class="fa-solid fa-xmark"></i> Fjern</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                             <div th:unless="${dp.middag != null}" class="tom-slot">
@@ -513,6 +598,27 @@
         </div>
     </div>
 
+    <!-- BYTT-FORSLAG MODAL -->
+    <div class="swap-overlay" id="swapOverlay" onclick="lukkSwapHvis(event)">
+        <div class="swap-boks">
+            <p class="swap-tittel" id="swapTittel">Bytt forslag</p>
+            <p class="swap-sub" id="swapSub">Genererer alternativ...</p>
+            <div class="swap-forslag" id="swapForslag">
+                <span id="swapForslagTekst" style="color:#9ca3af;font-weight:500;">Laster...</span>
+            </div>
+            <input type="text" class="swap-hint-input" id="swapHint" placeholder="Ønske? (f.eks. vegetar, asiatisk...)" />
+            <div class="swap-knappar">
+                <button class="swap-prøv-btn" id="swapPrøvBtn" onclick="hentNyttForslag()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Prøv igjen
+                </button>
+                <button class="swap-bruk-btn" id="swapBrukBtn" onclick="brukForslag()" disabled>
+                    <i class="fa-solid fa-check"></i> Bruk dette
+                </button>
+                <button class="swap-behold-btn" onclick="lukkSwap()">Behold</button>
+            </div>
+        </div>
+    </div>
+
     <div th:replace="~{fragments :: bottom_nav}"></div>
     <div th:replace="~{fragments :: scripts}"></div>
 </div>
@@ -529,6 +635,84 @@
             var offset = circ * (1 - total / 21);
             document.getElementById('heroRing').style.strokeDashoffset = offset;
         });
+
+        // ── Bytt-forslag ──────────────────────────────────────────
+        var _swapId = null, _swapDag = null, _swapMaltid = null, _swapForslag = null;
+
+        function alleNavn() {
+            return Array.from(document.querySelectorAll('.maltid-navn')).map(el => el.textContent.trim());
+        }
+
+        function apneBytt(btn) {
+            _swapId      = btn.dataset.id;
+            _swapDag     = btn.dataset.dag;
+            _swapMaltid  = btn.dataset.maltid;
+            _swapForslag = null;
+            document.getElementById('swapTittel').textContent = 'Bytt ' + _swapMaltid.toLowerCase() + ' – ' + _swapDag;
+            document.getElementById('swapSub').textContent    = 'Forrige: ' + btn.dataset.tittel;
+            document.getElementById('swapForslagTekst').textContent = 'Laster...';
+            document.getElementById('swapForslagTekst').style.color = '#9ca3af';
+            document.getElementById('swapBrukBtn').disabled   = true;
+            document.getElementById('swapHint').value         = '';
+            document.getElementById('swapOverlay').classList.add('vis');
+            hentNyttForslag();
+        }
+
+        function hentNyttForslag() {
+            var btn = document.getElementById('swapPrøvBtn');
+            btn.disabled = true;
+            document.getElementById('swapForslagTekst').textContent = 'Henter forslag...';
+            document.getElementById('swapForslagTekst').style.color = '#9ca3af';
+            document.getElementById('swapBrukBtn').disabled = true;
+            var hint = document.getElementById('swapHint').value.trim();
+            fetch('/api/ukesmeny/nytt-forslag', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    maltid: _swapMaltid,
+                    dag: _swapDag,
+                    hint: hint,
+                    eksisterende: alleNavn()
+                })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                btn.disabled = false;
+                if (data.feil) {
+                    document.getElementById('swapForslagTekst').textContent = 'Feil: ' + data.feil;
+                    document.getElementById('swapForslagTekst').style.color = '#ef4444';
+                } else {
+                    _swapForslag = data.tittel;
+                    document.getElementById('swapForslagTekst').textContent = data.tittel;
+                    document.getElementById('swapForslagTekst').style.color = '#15803d';
+                    document.getElementById('swapBrukBtn').disabled = false;
+                }
+            })
+            .catch(function() {
+                btn.disabled = false;
+                document.getElementById('swapForslagTekst').textContent = 'Noe gikk galt. Prøv igjen.';
+                document.getElementById('swapForslagTekst').style.color = '#ef4444';
+            });
+        }
+
+        function brukForslag() {
+            if (!_swapForslag || !_swapId) return;
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/ukesmeny/erstatt/' + _swapId;
+            var input = document.createElement('input');
+            input.type = 'hidden'; input.name = 'tittel'; input.value = _swapForslag;
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        function lukkSwap() {
+            document.getElementById('swapOverlay').classList.remove('vis');
+        }
+        function lukkSwapHvis(e) {
+            if (e.target === document.getElementById('swapOverlay')) lukkSwap();
+        }
     </script>
 </body>
 </html>

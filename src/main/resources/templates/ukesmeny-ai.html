@@ -254,6 +254,23 @@
         .loading-step.ferdig { opacity: .55; }
         .loading-step.ferdig .ls-dot { background: #86efac; }
 
+        /* PRESETS */
+        .preset-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 600px) { .preset-grid { grid-template-columns: 1fr 1fr; } }
+        .preset-card {
+            border: 2px solid #e8f5e9; border-radius: 16px; background: #f8fafc;
+            padding: 14px 12px; cursor: pointer; transition: .18s;
+            display: flex; flex-direction: column; align-items: flex-start; gap: 3px;
+            font-family: inherit; text-align: left;
+        }
+        .preset-card:hover { border-color: var(--mat-gronn); background: #f0fdf4; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(34,197,94,.13); }
+        .preset-card .pc-icon { font-size: 1.35rem; margin-bottom: 4px; }
+        .preset-card .pc-label { font-size: .82rem; font-weight: 900; color: var(--mat-mork); }
+        .preset-card .pc-sub { font-size: .7rem; color: #94a3b8; font-weight: 500; line-height: 1.4; }
+
         @media (max-width: 600px) {
             .option-grid.col3 { grid-template-columns: 1fr 1fr; }
             .kjott-track { gap: 4px; }
@@ -297,6 +314,33 @@
             </div>
 
             <form class="form-body" id="aiForm" th:action="@{/ukesmeny/ai/generer}" method="POST">
+
+                <!-- ── HURTIGSTART-PROFILER ── -->
+                <div class="form-section" style="padding-bottom:20px;">
+                    <div class="form-section-title">Hurtigstart — velg en profil</div>
+                    <div class="preset-grid">
+                        <button type="button" class="preset-card" onclick="brukPreset('familie')">
+                            <span class="pc-icon">👨‍👩‍👧‍👦</span>
+                            <span class="pc-label">Familie</span>
+                            <span class="pc-sub">4 pers, norsk mat, enkle hverdagsretter</span>
+                        </button>
+                        <button type="button" class="preset-card" onclick="brukPreset('trening')">
+                            <span class="pc-icon">💪</span>
+                            <span class="pc-label">Aktiv / Trening</span>
+                            <span class="pc-sub">Høy protein, sunn, for 2 pers</span>
+                        </button>
+                        <button type="button" class="preset-card" onclick="brukPreset('budsjett')">
+                            <span class="pc-icon">💰</span>
+                            <span class="pc-label">Budsjettvennlig</span>
+                            <span class="pc-sub">Maks rester, billig, for 2 pers</span>
+                        </button>
+                        <button type="button" class="preset-card" onclick="brukPreset('variasjon')">
+                            <span class="pc-icon">🌍</span>
+                            <span class="pc-label">Variasjon</span>
+                            <span class="pc-sub">Internasjonal mat, eksperimentell</span>
+                        </button>
+                    </div>
+                </div>
 
                 <!-- ── MODUS ── -->
                 <div class="form-section" style="padding-bottom:20px;">
@@ -526,7 +570,7 @@
                     <div class="field">
                         <label><i class="fas fa-comment-dots"></i> Fortell AI hva du vil ha</label>
                         <span class="field-hint">Dette er det viktigste feltet. AI bygger hele menyen rundt disse ønskene. Vær gjerne spesifikk.</span>
-                        <textarea class="field-textarea" name="ekstraOnsker" rows="4"
+                        <textarea class="field-textarea" id="ekstraInput" name="ekstraOnsker" rows="4"
                                   placeholder="Eksempler: Vi liker asiatisk mat, gjerne thai eller wok. Barna vil ikke ha sterk mat. Vi vil ha taco på fredagen. Enkelt og kjent, ikke fancy. Vil ha fisk minst to ganger. Gjerne noe med linser eller kikerter."></textarea>
                     </div>
                 </div>
@@ -557,6 +601,104 @@
     <div th:replace="~{fragments :: scripts}"></div>
 
     <script>
+        // ── HURTIGSTART-PRESETS ──
+        const PRESETS = {
+            familie: {
+                modus: 'komplett', pors: 4, budsjett: 1800, kjott: 3,
+                kulturer: ['Norsk/Tradisjonell'],
+                mal: 'Barnevennlig - milde smaker, ingen sterk krydder, kjente retter barn liker',
+                tid: 30,
+                lunsj: 'Rester fra kvelden er ideelt - planlegg middager slik at det alltid er mat til neste dags lunsj',
+                ekstra: 'Enkle hverdagsretter hele familien liker. Norsk husmannskost og kjente favoritter.'
+            },
+            trening: {
+                modus: 'komplett', pors: 2, budsjett: 1500, kjott: 4,
+                kulturer: [],
+                mal: 'Proteinrikt for trening - minst 30g protein per middag, lite tomme kalorier',
+                tid: 30,
+                lunsj: 'Rester fra kvelden er ideelt - planlegg middager slik at det alltid er mat til neste dags lunsj',
+                ekstra: 'Høy protein. Kylling, laks og egg er foretrukne proteiner. Treningsvennlig og næringsrik.'
+            },
+            budsjett: {
+                modus: 'komplett', pors: 2, budsjett: 800, kjott: 2,
+                kulturer: ['Norsk/Tradisjonell'],
+                mal: 'Sunn og balansert - variert med grønnsaker, protein og karbohydrater',
+                tid: 30,
+                lunsj: 'Rester fra kvelden er ideelt - planlegg middager slik at det alltid er mat til neste dags lunsj',
+                ekstra: 'Billigste råvarer, maks rester, minimalt svinn. Strekk budsjettet lengst mulig.'
+            },
+            variasjon: {
+                modus: 'komplett', pors: 2, budsjett: 2000, kjott: 3,
+                kulturer: ['Asiatisk (thai/wok/japansk)', 'Italiensk (pasta/pizza)', 'Meksikansk (taco/burrito)', 'Indisk (karri/linser)'],
+                mal: 'Sunn og balansert - variert med grønnsaker, protein og karbohydrater',
+                tid: 45,
+                lunsj: 'Rester fra kvelden er ideelt - planlegg middager slik at det alltid er mat til neste dags lunsj',
+                ekstra: 'Variasjon er viktigst — prøv retter fra ulike verdenskjøkken. Gjerne noe nytt og spennende.'
+            }
+        };
+
+        function brukPreset(key) {
+            const p = PRESETS[key];
+            if (!p) return;
+            // Modus
+            velgModus(p.modus);
+            // Porsjoner
+            porsVal = p.pors;
+            document.getElementById('porsjoner').value = porsVal;
+            document.getElementById('porsjInput').value = porsVal;
+            document.getElementById('porsLabel').textContent = porsVal + ' porsjoner';
+            const prevPors = document.getElementById('prevPors');
+            if (prevPors) prevPors.textContent = porsVal + ' porsjoner';
+            // Budsjett
+            document.getElementById('budgetSlider').value = p.budsjett;
+            oppdaterBudsjett(p.budsjett);
+            // Kjøttmiddager
+            const kjottBtns = document.querySelectorAll('.kjott-btn');
+            kjottBtns.forEach(b => {
+                const isTarget = parseInt(b.dataset.val) === p.kjott;
+                b.classList.toggle('sel', isTarget);
+                if (isTarget) {
+                    kjottVal = p.kjott;
+                    document.getElementById('kjottInput').value = kjottVal;
+                    document.getElementById('kjottDesc').textContent = kjottDesc[kjottVal];
+                    const prevKjott = document.getElementById('prevKjott');
+                    if (prevKjott) prevKjott.textContent = kjottDesc[kjottVal];
+                }
+            });
+            // Kulturer — reset, then select
+            valgtKultur.clear();
+            document.querySelectorAll('.tag[data-val]').forEach(t => {
+                const inPreset = p.kulturer.includes(t.dataset.val);
+                t.classList.toggle('sel', inPreset);
+                if (inPreset) valgtKultur.add(t.dataset.val);
+            });
+            document.getElementById('kulturInput').value = [...valgtKultur].join(', ');
+            const prevKultur = document.getElementById('prevKultur');
+            if (prevKultur) prevKultur.textContent = valgtKultur.size === 0 ? 'Ingen kultur valgt' : [...valgtKultur].map(k => k.split('/')[0].split(' (')[0]).join(', ');
+            // Livsstilsmål
+            document.querySelectorAll('.option-btn[data-group="mal"]').forEach(b => {
+                b.classList.toggle('sel', b.dataset.val === p.mal);
+            });
+            document.getElementById('malInput').value = p.mal;
+            // Tid
+            document.querySelectorAll('.option-btn[data-group="tid"]').forEach(b => {
+                b.classList.toggle('sel', parseInt(b.dataset.val) === p.tid);
+            });
+            document.getElementById('tidInput').value = p.tid;
+            // Lunsj
+            document.querySelectorAll('.option-btn[data-group="lunsj"]').forEach(b => {
+                b.classList.toggle('sel', b.dataset.val === p.lunsj);
+            });
+            document.getElementById('lunsjInput').value = p.lunsj;
+            // Ekstra ønsker
+            const ekstraEl = document.getElementById('ekstraInput');
+            if (ekstraEl) ekstraEl.value = p.ekstra;
+            // Visual feedback
+            document.querySelectorAll('.preset-card').forEach(c => c.style.borderColor = '');
+            event.currentTarget.style.borderColor = 'var(--mat-gronn)';
+            event.currentTarget.style.background = '#f0fdf4';
+        }
+
         // ── MODUS ──
         let aktivModus = 'komplett';
         function velgModus(modus) {

@@ -523,16 +523,37 @@ public class AiOppskriftService {
         return kallClaudeMedModell(prompt, Model.CLAUDE_SONNET_4_5, 4096L);
     }
 
+    /**
+     * Genererer ett alternativt maltid-navn. Unngår eksisterende titler.
+     */
+    public String genererAlternativMaltid(String maltid, String dag, List<String> eksisterende, String hint) {
+        String eksListe = eksisterende.isEmpty() ? "ingen" : String.join(", ", eksisterende);
+        String hintTekst = (hint != null && !hint.isBlank()) ? "\nBrukers ønske: " + hint.trim() : "";
+        String prompt =
+            "Du er en norsk matplanlegger. Foreslå ÉN konkret " + maltid + " for " + dag + ".\n" +
+            "Disse rettene er allerede planlagt denne uken (IKKE gjenta dem): " + eksListe + "\n" +
+            hintTekst + "\n" +
+            "Krav: konkret norsk rettnavn, maks 65 tegn, ingen forklaring.\n" +
+            "Svar KUN med rettsnavnet. Ingenting annet.";
+        return kallClaudeMedModell(prompt, Model.CLAUDE_HAIKU_4_5_20251001, 100L);
+    }
+
     private String kallClaudeMedModell(String prompt, Model modell, long maxTokens) {
+        return kallClaudeMedSystemOgModell(prompt, null, modell, maxTokens);
+    }
+
+    private String kallClaudeMedSystemOgModell(String prompt, String systemPrompt, Model modell, long maxTokens) {
         if (client == null) {
             return "FEIL: Anthropic API-nøkkel mangler.";
         }
         try {
-            MessageCreateParams params = MessageCreateParams.builder()
+            MessageCreateParams.Builder builder = MessageCreateParams.builder()
                     .model(modell)
-                    .maxTokens(maxTokens)
-                    .addUserMessage(prompt)
-                    .build();
+                    .maxTokens(maxTokens);
+            if (systemPrompt != null && !systemPrompt.isBlank()) {
+                builder.system(systemPrompt);
+            }
+            MessageCreateParams params = builder.addUserMessage(prompt).build();
             Message response = client.messages().create(params);
             return response.content().stream()
                     .flatMap(block -> block.text().stream())
