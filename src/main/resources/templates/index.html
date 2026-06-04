@@ -5,354 +5,271 @@
     <title>MatMinne | Din digitale kokebok</title>
 
     <style>
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { background: #f7f2eb; }
 
         /* ── HERO ── */
         .hero {
-            position: relative;
-            min-height: 100vh;
-            background: #071a0d;
-            overflow: hidden;
+            display: grid;
+            grid-template-columns: 44fr 56fr;
+            min-height: calc(100vh - 68px);
+        }
+
+        .hero-left {
             display: flex;
-            align-items: center;
-        }
-
-        .hero-img {
-            position: absolute;
-            right: 0; top: 0;
-            width: 54%; height: 100%;
-            object-fit: cover;
-            object-position: center;
-        }
-
-        .hero-fade {
-            position: absolute;
-            right: 0; top: 0;
-            width: 54%; height: 100%;
-            background: linear-gradient(to right, #071a0d 0%, #071a0d 8%, rgba(7,26,13,.65) 35%, rgba(7,26,13,.05) 70%, transparent 100%);
-            z-index: 2;
-        }
-
-        .hero-fade-y {
-            position: absolute;
-            right: 0; top: 0;
-            width: 54%; height: 100%;
-            background: linear-gradient(to bottom, #071a0d 0%, transparent 15%, transparent 82%, #071a0d 100%);
-            z-index: 2;
-        }
-
-        .hero-body {
-            position: relative;
-            z-index: 3;
-            padding: 100px 0 160px 80px;
-            max-width: 560px;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(46,204,113,.12);
-            border: 1px solid rgba(46,204,113,.25);
-            color: #5eebb4;
-            font-size: .72rem;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            padding: 6px 14px;
-            border-radius: 100px;
-            margin-bottom: 32px;
-        }
-
-        .hero-badge-dot {
-            width: 6px; height: 6px;
-            background: #2ecc71;
-            border-radius: 50%;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px 56px 80px 72px;
+            background: #f7f2eb;
         }
 
         .hero-h1 {
-            font-size: clamp(3rem, 5vw, 5rem);
+            font-size: clamp(2.6rem, 4.2vw, 4.2rem);
             font-weight: 900;
-            line-height: 1.0;
-            letter-spacing: -3px;
-            color: #fff;
+            color: #0d200d;
+            line-height: 1.05;
+            letter-spacing: -2.5px;
             margin-bottom: 22px;
         }
 
-        .hero-h1 em {
-            font-style: normal;
-            color: #2ecc71;
-        }
-
         .hero-p {
-            font-size: 1.05rem;
-            color: rgba(255,255,255,.45);
-            line-height: 1.9;
-            margin-bottom: 44px;
-            max-width: 420px;
+            font-size: 1rem;
+            color: #3d3d3d;
+            line-height: 1.75;
+            margin-bottom: 38px;
+            max-width: 400px;
         }
 
-        .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-
-        .btn-primary {
-            background: #2ecc71;
-            color: #fff !important;
-            text-decoration: none;
-            padding: 14px 28px;
-            border-radius: 10px;
-            font-weight: 800;
-            font-size: .9rem;
+        .btn-cta {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: background .2s, transform .2s;
-        }
-
-        .btn-primary:hover { background: #27ae60; transform: translateY(-1px); }
-
-        .btn-secondary {
-            background: transparent;
-            color: rgba(255,255,255,.6) !important;
+            gap: 10px;
+            background: #1e4d1e;
+            color: white !important;
             text-decoration: none;
-            padding: 14px 24px;
-            border-radius: 10px;
+            padding: 15px 30px;
+            border-radius: 8px;
             font-weight: 700;
-            font-size: .9rem;
+            font-size: .95rem;
+            transition: background .2s, transform .15s;
+            align-self: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .btn-cta:hover { background: #143614; transform: translateY(-1px); }
+
+        .btn-utforsk {
+            color: #2d5a2d !important;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: .95rem;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            border: 1px solid rgba(255,255,255,.15);
-            transition: border-color .2s, color .2s;
+            gap: 6px;
+            transition: gap .2s;
         }
 
-        .btn-secondary:hover { border-color: rgba(255,255,255,.35); color: #fff !important; }
+        .btn-utforsk:hover { gap: 10px; }
 
-        .hero-strip {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            z-index: 3;
-            display: flex;
-            border-top: 1px solid rgba(255,255,255,.06);
-            background: rgba(7,26,13,.88);
-            backdrop-filter: blur(16px);
+        .hero-right {
+            overflow: hidden;
+            position: relative;
         }
 
-        .hs-item {
-            flex: 1;
-            padding: 20px 24px;
-            border-right: 1px solid rgba(255,255,255,.06);
+        .hero-right img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        /* ── FEATURES ── */
+        .s-features {
+            background: #fff;
+            padding: 80px 0 88px;
+            border-top: 1px solid #eee;
+        }
+
+        .feat-heading {
+            text-align: center;
+            font-size: clamp(1.3rem, 2vw, 1.6rem);
+            font-weight: 800;
+            color: #0d200d;
+            margin-bottom: 56px;
+            letter-spacing: -.5px;
+        }
+
+        .feat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .feat-item {
             display: flex;
+            flex-direction: column;
             align-items: center;
+            text-align: center;
             gap: 14px;
         }
 
-        .hs-item:last-child { border: none; }
-
-        .hs-ico {
-            width: 36px; height: 36px;
-            border-radius: 9px;
-            background: rgba(46,204,113,.12);
+        .feat-ico {
+            width: 68px; height: 68px;
+            border-radius: 50%;
+            background: #f0e9de;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: .95rem;
+            font-size: 1.5rem;
             flex-shrink: 0;
         }
 
-        .hs-text strong { display: block; font-size: .88rem; font-weight: 800; color: #fff; line-height: 1.2; }
-        .hs-text span   { font-size: .72rem; color: rgba(255,255,255,.35); font-weight: 600; }
+        .feat-name {
+            font-weight: 800;
+            font-size: .92rem;
+            color: #0d200d;
+        }
 
-        /* ── INTRO ── */
-        .s-intro { background: #fff; padding: 96px 0; }
+        .feat-desc {
+            font-size: .8rem;
+            color: #64748b;
+            line-height: 1.65;
+        }
 
-        .intro-grid {
+        /* ── HOW IT WORKS ── */
+        .s-how {
+            background: #f7f2eb;
+            padding: 88px 0;
+        }
+
+        .how-inner {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 80px;
             align-items: center;
         }
 
-        .intro-label {
+        .how-label {
             font-size: .68rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 2.5px;
-            color: #2ecc71;
+            color: #2d5a2d;
             display: block;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
-        .intro-h2 {
-            font-size: clamp(2rem, 3vw, 2.8rem);
+        .how-h2 {
+            font-size: clamp(1.8rem, 2.5vw, 2.4rem);
             font-weight: 900;
             letter-spacing: -1.5px;
-            color: #0f172a;
-            line-height: 1.1;
-            margin-bottom: 20px;
+            color: #0d200d;
+            line-height: 1.15;
+            margin-bottom: 16px;
         }
 
-        .intro-p { font-size: 1rem; color: #64748b; line-height: 1.85; margin-bottom: 32px; }
+        .how-p { font-size: .95rem; color: #555; line-height: 1.8; margin-bottom: 32px; }
 
         .istep {
             display: flex;
             align-items: flex-start;
-            gap: 18px;
-            padding: 20px 0;
-            border-bottom: 1px solid #f1f5f9;
+            gap: 16px;
+            padding: 18px 0;
+            border-bottom: 1px solid #e5ddd3;
         }
 
         .istep:last-child { border: none; }
 
         .istep-num {
-            width: 32px; height: 32px;
+            width: 30px; height: 30px;
             border-radius: 8px;
-            background: #ecfdf5;
-            color: #2ecc71;
+            background: #e6f4e6;
+            color: #2d5a2d;
             font-weight: 900;
-            font-size: .82rem;
+            font-size: .8rem;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            margin-top: 2px;
+            margin-top: 1px;
         }
 
-        .istep-t { font-weight: 800; font-size: .95rem; color: #0f172a; margin-bottom: 3px; }
-        .istep-d { font-size: .85rem; color: #64748b; line-height: 1.6; }
+        .istep-t { font-weight: 800; font-size: .9rem; color: #0d200d; margin-bottom: 3px; }
+        .istep-d { font-size: .82rem; color: #64748b; line-height: 1.6; }
 
-        .intro-photo {
-            border-radius: 20px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 32px 80px rgba(0,0,0,.12);
-        }
-
-        .intro-photo img { width: 100%; height: 480px; object-fit: cover; display: block; }
-
-        .intro-photo-badge {
-            position: absolute;
-            bottom: 20px; left: 20px;
-            background: rgba(7,26,13,.9);
-            backdrop-filter: blur(12px);
-            border-radius: 14px;
-            padding: 14px 18px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border: 1px solid rgba(46,204,113,.2);
-        }
-
-        .ipb-ico {
-            width: 38px; height: 38px;
-            border-radius: 10px;
-            background: rgba(46,204,113,.15);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem;
-        }
-
-        .ipb-t strong { display: block; font-size: .88rem; font-weight: 800; color: #fff; }
-        .ipb-t span   { font-size: .72rem; color: rgba(255,255,255,.4); }
-
-        /* ── FEATURES ── */
-        .s-feat { background: #f8fafc; padding: 96px 0; }
-
-        .section-label {
-            font-size: .68rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-            color: #2ecc71;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .section-h2 {
-            font-size: clamp(1.9rem, 3vw, 2.6rem);
-            font-weight: 900;
-            letter-spacing: -1.5px;
-            color: #0f172a;
-            margin-bottom: 48px;
-        }
-
-        .feat-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        .feat {
-            background: #fff;
+        .how-photo {
             border-radius: 18px;
-            padding: 30px 26px;
-            border: 1px solid #e8f5e9;
-            transition: box-shadow .2s, transform .2s;
+            overflow: hidden;
+            box-shadow: 0 24px 64px rgba(0,0,0,.1);
         }
 
-        .feat:hover { box-shadow: 0 12px 40px rgba(0,0,0,.07); transform: translateY(-3px); }
-
-        .feat-ico { font-size: 1.5rem; margin-bottom: 16px; display: block; }
-        .feat-t   { font-weight: 800; font-size: .95rem; color: #0f172a; margin-bottom: 8px; }
-        .feat-d   { font-size: .85rem; color: #64748b; line-height: 1.7; margin: 0; }
+        .how-photo img { width: 100%; height: 440px; object-fit: cover; display: block; }
 
         /* ── DARK BAND ── */
-        .s-band { background: #071a0d; padding: 96px 0; position: relative; overflow: hidden; }
-
-        .band-glow {
-            position: absolute;
-            width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(46,204,113,.1), transparent 70%);
-            top: 50%; left: 30%;
-            transform: translate(-50%,-50%);
-            pointer-events: none;
+        .s-band {
+            background: #0d200d;
+            padding: 88px 0;
         }
 
         .band-inner {
-            position: relative;
-            z-index: 1;
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 80px;
             align-items: center;
         }
 
+        .band-label {
+            font-size: .68rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            color: #6ee7b7;
+            display: block;
+            margin-bottom: 12px;
+        }
+
         .band-h2 {
-            font-size: clamp(2rem, 3vw, 2.8rem);
+            font-size: clamp(1.8rem, 2.5vw, 2.6rem);
             font-weight: 900;
             letter-spacing: -1.5px;
             color: #fff;
             line-height: 1.1;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
-        .band-h2 em { font-style: normal; color: #2ecc71; }
-
-        .band-p { font-size: 1rem; color: rgba(255,255,255,.4); line-height: 1.85; margin-bottom: 32px; }
+        .band-h2 em { font-style: normal; color: #4ade80; }
+        .band-p { font-size: .95rem; color: rgba(255,255,255,.45); line-height: 1.85; margin-bottom: 28px; }
 
         .band-list {
             list-style: none;
             padding: 0; margin: 0 0 36px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .band-list li {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: .9rem;
+            font-size: .88rem;
             color: rgba(255,255,255,.65);
             font-weight: 600;
         }
 
         .band-list li::before {
             content: '';
-            width: 18px; height: 18px;
-            border-radius: 5px;
-            background: rgba(46,204,113,.15);
-            border: 1px solid rgba(46,204,113,.3);
+            width: 16px; height: 16px;
+            border-radius: 4px;
+            background: rgba(78,205,128,.15);
+            border: 1px solid rgba(78,205,128,.3);
             flex-shrink: 0;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%232ecc71' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%234ade80' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: center;
         }
@@ -366,55 +283,70 @@
         .bcard {
             background: rgba(255,255,255,.05);
             border: 1px solid rgba(255,255,255,.08);
-            border-radius: 16px;
-            padding: 22px 18px;
+            border-radius: 14px;
+            padding: 20px 16px;
         }
 
-        .bcard:nth-child(2), .bcard:nth-child(4) { margin-top: 24px; }
+        .bcard:nth-child(2), .bcard:nth-child(4) { margin-top: 20px; }
 
-        .bcard-ico { font-size: 1.5rem; margin-bottom: 10px; display: block; }
-        .bcard-t   { font-size: .88rem; font-weight: 800; color: #fff; margin-bottom: 5px; }
-        .bcard-d   { font-size: .78rem; color: rgba(255,255,255,.35); line-height: 1.5; }
+        .bcard-ico { font-size: 1.4rem; margin-bottom: 10px; display: block; }
+        .bcard-t   { font-size: .85rem; font-weight: 800; color: #fff; margin-bottom: 5px; }
+        .bcard-d   { font-size: .75rem; color: rgba(255,255,255,.35); line-height: 1.5; }
+
+        .btn-cta-dark {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #4ade80;
+            color: #0d200d !important;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: .9rem;
+            transition: background .2s;
+        }
+
+        .btn-cta-dark:hover { background: #22c55e; }
 
         /* ── CTA ── */
         .s-cta {
             background: #fff;
-            padding: 110px 0;
+            padding: 100px 0;
             text-align: center;
             border-top: 1px solid #f1f5f9;
         }
 
         .cta-h2 {
-            font-size: clamp(2.2rem, 4vw, 3.6rem);
+            font-size: clamp(2rem, 3.5vw, 3.2rem);
             font-weight: 900;
             letter-spacing: -2px;
-            color: #0f172a;
+            color: #0d200d;
             line-height: 1.05;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
 
-        .cta-h2 em { font-style: normal; color: #2ecc71; }
-        .cta-sub   { color: #94a3b8; font-size: .97rem; margin-bottom: 40px; }
+        .cta-h2 em { font-style: normal; color: #2d5a2d; }
+        .cta-sub { color: #94a3b8; font-size: .95rem; margin-bottom: 36px; }
 
         /* ── RESPONSIVE ── */
         @media (max-width: 960px) {
-            .intro-grid, .band-inner { grid-template-columns: 1fr; gap: 48px; }
-            .intro-photo { display: none; }
-            .hero-img, .hero-fade, .hero-fade-y { display: none; }
-            .hero-body { padding: 80px 24px 160px; max-width: 100%; }
+            .hero { grid-template-columns: 1fr; min-height: auto; }
+            .hero-right { height: 320px; }
+            .hero-left { padding: 60px 24px; }
+            .how-inner, .band-inner { grid-template-columns: 1fr; gap: 40px; }
+            .how-photo { display: none; }
         }
 
-        @media (max-width: 720px) {
-            .feat-grid { grid-template-columns: 1fr 1fr; }
+        @media (max-width: 640px) {
+            .feat-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
             .band-cards { grid-template-columns: 1fr; }
             .bcard:nth-child(2), .bcard:nth-child(4) { margin-top: 0; }
-            .hs-item { padding: 14px 12px; gap: 10px; }
-            .hs-ico  { display: none; }
         }
 
-        @media (max-width: 480px) {
-            .feat-grid { grid-template-columns: 1fr; }
-            .hero-actions { flex-direction: column; }
+        @media (max-width: 400px) {
+            .feat-grid { grid-template-columns: 1fr 1fr; }
+            .btn-cta { align-self: stretch; justify-content: center; }
         }
     </style>
 </head>
@@ -423,67 +355,71 @@
 
     <!-- HERO -->
     <section class="hero">
-        <img class="hero-img"
-             src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=80"
-             alt="">
-        <div class="hero-fade"></div>
-        <div class="hero-fade-y"></div>
-
-        <div class="hero-body">
-            <div class="hero-badge">
-                <div class="hero-badge-dot"></div>
-                Din personlige kokebok
-            </div>
-
-            <h1 class="hero-h1">
-                Samle alle<br>
-                oppskriftene<br>
-                <em>på ett sted.</em>
-            </h1>
-
+        <div class="hero-left">
+            <h1 class="hero-h1">Din digitale<br>kokebok</h1>
             <p class="hero-p">
-                Lim inn en lenke fra Matprat, Godt.no eller et annet nettsted —
-                oppskriften hentes automatisk og lagres trygt i din kokebok.
+                Samle, lagre og del oppskriftene dine.
+                Lim inn fra nettet, importer fra Matprat
+                eller skriv dine egne – enkelt og gratis.
             </p>
-
-            <div class="hero-actions">
-                <a href="/oauth2/authorization/google" class="btn-primary">
-                    <i class="fa-brands fa-google"></i> Start gratis med Google
-                </a>
-                <a href="/oppdag" class="btn-secondary">
-                    Utforsk oppskrifter <i class="fa-solid fa-arrow-right"></i>
-                </a>
-            </div>
+            <a href="/oauth2/authorization/google" class="btn-cta">
+                <i class="fa-brands fa-google"></i> Start gratis med Google
+            </a>
+            <a href="/oppdag" class="btn-utforsk">
+                Utforsk oppskrifter <i class="fa-solid fa-arrow-right" style="font-size:.8rem;"></i>
+            </a>
         </div>
+        <div class="hero-right">
+            <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=1400&q=85"
+                 alt="Matoppskrift med ferske råvarer">
+        </div>
+    </section>
 
-        <div class="hero-strip">
-            <div class="hs-item">
-                <div class="hs-ico">🔗</div>
-                <div class="hs-text"><strong>Hent fra nett</strong><span>Lim inn URL, ferdig</span></div>
-            </div>
-            <div class="hs-item">
-                <div class="hs-ico">📄</div>
-                <div class="hs-text"><strong>Last ned PDF</strong><span>Ta med uten nett</span></div>
-            </div>
-            <div class="hs-item">
-                <div class="hs-ico">👥</div>
-                <div class="hs-text"><strong>Del med venner</strong><span>Kopier og følg</span></div>
-            </div>
-            <div class="hs-item">
-                <div class="hs-ico">🍳</div>
-                <div class="hs-text"><strong>Kokemodus</strong><span>Hak av steg for steg</span></div>
+    <!-- FEATURES -->
+    <section class="s-features">
+        <div class="container">
+            <h2 class="feat-heading">Alt du trenger – samlet på ett sted</h2>
+            <div class="feat-grid">
+                <div class="feat-item">
+                    <div class="feat-ico">
+                        <i class="fa-regular fa-heart" style="color:#2d5a2d;font-size:1.3rem;"></i>
+                    </div>
+                    <div class="feat-name">Samle oppskrifter</div>
+                    <div class="feat-desc">Lagre fra nett, Matprat eller skriv dine egne favoritter.</div>
+                </div>
+                <div class="feat-item">
+                    <div class="feat-ico">
+                        <i class="fa-regular fa-clipboard-list" style="color:#2d5a2d;font-size:1.3rem;"></i>
+                    </div>
+                    <div class="feat-name">Lag handleliste</div>
+                    <div class="feat-desc">Få automatisk handleliste fra oppskriftene dine.</div>
+                </div>
+                <div class="feat-item">
+                    <div class="feat-ico">
+                        <i class="fa-regular fa-calendar" style="color:#2d5a2d;font-size:1.3rem;"></i>
+                    </div>
+                    <div class="feat-name">Planlegg ukemeny</div>
+                    <div class="feat-desc">Planlegg måltider og få oversikt over uken.</div>
+                </div>
+                <div class="feat-item">
+                    <div class="feat-ico">
+                        <i class="fa-regular fa-circle-user" style="color:#2d5a2d;font-size:1.3rem;"></i>
+                    </div>
+                    <div class="feat-name">Del med andre</div>
+                    <div class="feat-desc">Del oppskrifter og inspirasjon med venner og familie.</div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- INTRO / HOW IT WORKS -->
-    <section class="s-intro">
+    <!-- HOW IT WORKS -->
+    <section class="s-how">
         <div class="container">
-            <div class="intro-grid">
+            <div class="how-inner">
                 <div>
-                    <span class="intro-label">Slik fungerer det</span>
-                    <h2 class="intro-h2">Fra lenke til kokebok på under ett minutt</h2>
-                    <p class="intro-p">Du trenger ikke skrive ett ord. Finn en oppskrift du liker, kopier lenken og MatMinne gjør resten.</p>
+                    <span class="how-label">Slik fungerer det</span>
+                    <h2 class="how-h2">Fra lenke til kokebok på under ett minutt</h2>
+                    <p class="how-p">Du trenger ikke skrive ett ord. Finn en oppskrift du liker, kopier lenken og MatMinne gjør resten.</p>
 
                     <div class="istep">
                         <div class="istep-num">1</div>
@@ -508,68 +444,19 @@
                     </div>
                 </div>
 
-                <div class="intro-photo">
+                <div class="how-photo">
                     <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80" alt="Matlaging">
-                    <div class="intro-photo-badge">
-                        <div class="ipb-ico">✨</div>
-                        <div class="ipb-t">
-                            <strong>Oppskrift hentet!</strong>
-                            <span>Automatisk fra Matprat.no</span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FEATURES -->
-    <section class="s-feat">
-        <div class="container">
-            <span class="section-label">Funksjoner</span>
-            <h2 class="section-h2">Alt du trenger på ett sted</h2>
-
-            <div class="feat-grid">
-                <div class="feat">
-                    <span class="feat-ico">🔗</span>
-                    <div class="feat-t">Hent fra URL</div>
-                    <p class="feat-d">Lim inn en lenke og AI fyller inn tittel, ingredienser og fremgangsmåte automatisk.</p>
-                </div>
-                <div class="feat">
-                    <span class="feat-ico">📄</span>
-                    <div class="feat-t">Last ned som PDF</div>
-                    <p class="feat-d">Ta oppskriften med på hytta eller kjøkkenet uten internett.</p>
-                </div>
-                <div class="feat">
-                    <span class="feat-ico">🍳</span>
-                    <div class="feat-t">Kokemodus</div>
-                    <p class="feat-d">Hak av ingredienser og steg mens du lager maten — enkelt og oversiktlig.</p>
-                </div>
-                <div class="feat">
-                    <span class="feat-ico">💰</span>
-                    <div class="feat-t">Prisestimat</div>
-                    <p class="feat-d">Se estimert kostnad per oppskrift basert på norske butikkpriser.</p>
-                </div>
-                <div class="feat">
-                    <span class="feat-ico">👥</span>
-                    <div class="feat-t">Følg venner</div>
-                    <p class="feat-d">Se hva vennene dine lager og kopier favorittene til din kokebok.</p>
-                </div>
-                <div class="feat">
-                    <span class="feat-ico">🔍</span>
-                    <div class="feat-t">Utforsk</div>
-                    <p class="feat-d">Finn inspirasjon blant offentlige oppskrifter fra MatMinne-brukere.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- AI FEATURES BAND -->
+    <!-- AI BAND -->
     <section class="s-band">
-        <div class="band-glow"></div>
         <div class="container">
             <div class="band-inner">
                 <div>
-                    <span class="intro-label">AI-funksjoner</span>
+                    <span class="band-label">AI-funksjoner</span>
                     <h2 class="band-h2">La AI gjøre<br><em>jobben for deg</em></h2>
                     <p class="band-p">
                         Med abonnement får du tilgang til avanserte verktøy som
@@ -582,7 +469,7 @@
                         <li>Personlig ukesmeny basert på dine mål</li>
                         <li>Prisestimat per oppskrift</li>
                     </ul>
-                    <a href="/oauth2/authorization/google" class="btn-primary">
+                    <a href="/oauth2/authorization/google" class="btn-cta-dark">
                         <i class="fa-brands fa-google"></i> Kom i gang gratis
                     </a>
                 </div>
@@ -618,7 +505,7 @@
         <div class="container">
             <h2 class="cta-h2">Klar for å starte?<br><em>Det er gratis.</em></h2>
             <p class="cta-sub">Ingen installasjon — bare logg inn med Google og begynn å samle oppskriftene dine.</p>
-            <a href="/oauth2/authorization/google" class="btn-primary" style="font-size:.95rem;padding:15px 36px;display:inline-flex;">
+            <a href="/oauth2/authorization/google" class="btn-cta" style="margin: 0 auto; justify-content: center;">
                 <i class="fa-brands fa-google"></i> Start med Google
             </a>
         </div>
