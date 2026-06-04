@@ -3,78 +3,74 @@
 <head>
     <div th:replace="~{fragments :: header_links}"></div>
     <title>MatMinne | Din digitale kokebok</title>
-
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body { background: #f7f2eb; }
+        a { text-decoration: none; }
+        body { background: #f5f0e8; }
 
         /* ── HERO ── */
         .hero {
             display: grid;
-            grid-template-columns: 44fr 56fr;
+            grid-template-columns: 43fr 57fr;
             min-height: calc(100vh - 68px);
+            overflow: hidden;
         }
 
         .hero-left {
+            background: #f5f0e8;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 80px 56px 80px 72px;
-            background: #f7f2eb;
+            padding: 80px 52px 80px 64px;
         }
 
         .hero-h1 {
-            font-size: clamp(2.6rem, 4.2vw, 4.2rem);
+            font-size: clamp(2.8rem, 4vw, 4.2rem);
             font-weight: 900;
-            color: #0d200d;
+            color: #111f11;
             line-height: 1.05;
             letter-spacing: -2.5px;
-            margin-bottom: 22px;
+            margin-bottom: 24px;
         }
 
         .hero-p {
-            font-size: 1rem;
-            color: #3d3d3d;
-            line-height: 1.75;
-            margin-bottom: 38px;
-            max-width: 400px;
+            font-size: .97rem;
+            color: #444;
+            line-height: 1.72;
+            margin-bottom: 40px;
+            max-width: 380px;
         }
 
-        .btn-cta {
+        .btn-google {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            background: #1e4d1e;
-            color: white !important;
-            text-decoration: none;
-            padding: 15px 30px;
+            background: #1e4d20;
+            color: #fff !important;
+            padding: 14px 26px;
             border-radius: 8px;
             font-weight: 700;
-            font-size: .95rem;
-            transition: background .2s, transform .15s;
+            font-size: .92rem;
+            transition: background .18s, transform .15s;
             align-self: flex-start;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
-        .btn-cta:hover { background: #143614; transform: translateY(-1px); }
+        .btn-google:hover { background: #163a18; transform: translateY(-1px); }
 
         .btn-utforsk {
-            color: #2d5a2d !important;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: .95rem;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            transition: gap .2s;
+            gap: 7px;
+            color: #1e4d20 !important;
+            font-weight: 600;
+            font-size: .93rem;
         }
 
-        .btn-utforsk:hover { gap: 10px; }
+        .btn-utforsk:hover { gap: 11px; }
 
         .hero-right {
             overflow: hidden;
-            position: relative;
         }
 
         .hero-right img {
@@ -88,24 +84,24 @@
         /* ── FEATURES ── */
         .s-features {
             background: #fff;
-            padding: 80px 0 88px;
-            border-top: 1px solid #eee;
+            padding: 72px 0 80px;
+            border-top: 1px solid #e8e0d4;
         }
 
         .feat-heading {
             text-align: center;
-            font-size: clamp(1.3rem, 2vw, 1.6rem);
+            font-size: 1.35rem;
             font-weight: 800;
-            color: #0d200d;
-            margin-bottom: 56px;
-            letter-spacing: -.5px;
+            color: #111f11;
+            margin-bottom: 52px;
+            letter-spacing: -.4px;
         }
 
         .feat-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
-            max-width: 860px;
+            gap: 16px;
+            max-width: 820px;
             margin: 0 auto;
             padding: 0 24px;
         }
@@ -115,35 +111,36 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            gap: 14px;
+            gap: 13px;
         }
 
         .feat-ico {
-            width: 68px; height: 68px;
+            width: 70px; height: 70px;
             border-radius: 50%;
-            background: #f0e9de;
+            background: #ede8df;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            color: #3a3a3a;
+            font-size: 1.3rem;
             flex-shrink: 0;
         }
 
         .feat-name {
             font-weight: 800;
-            font-size: .92rem;
-            color: #0d200d;
+            font-size: .88rem;
+            color: #111f11;
         }
 
         .feat-desc {
-            font-size: .8rem;
-            color: #64748b;
-            line-height: 1.65;
+            font-size: .78rem;
+            color: #6b7280;
+            line-height: 1.6;
         }
 
         /* ── HOW IT WORKS ── */
         .s-how {
-            background: #f7f2eb;
+            background: #f5f0e8;
             padding: 88px 0;
         }
 
@@ -159,39 +156,39 @@
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 2.5px;
-            color: #2d5a2d;
+            color: #1e4d20;
             display: block;
             margin-bottom: 12px;
         }
 
         .how-h2 {
-            font-size: clamp(1.8rem, 2.5vw, 2.4rem);
+            font-size: clamp(1.8rem, 2.4vw, 2.3rem);
             font-weight: 900;
             letter-spacing: -1.5px;
-            color: #0d200d;
+            color: #111f11;
             line-height: 1.15;
             margin-bottom: 16px;
         }
 
-        .how-p { font-size: .95rem; color: #555; line-height: 1.8; margin-bottom: 32px; }
+        .how-p { font-size: .92rem; color: #555; line-height: 1.8; margin-bottom: 32px; }
 
         .istep {
             display: flex;
             align-items: flex-start;
             gap: 16px;
-            padding: 18px 0;
-            border-bottom: 1px solid #e5ddd3;
+            padding: 16px 0;
+            border-bottom: 1px solid #e0d8cc;
         }
 
         .istep:last-child { border: none; }
 
         .istep-num {
-            width: 30px; height: 30px;
-            border-radius: 8px;
-            background: #e6f4e6;
-            color: #2d5a2d;
+            width: 28px; height: 28px;
+            border-radius: 7px;
+            background: #e0ece0;
+            color: #1e4d20;
             font-weight: 900;
-            font-size: .8rem;
+            font-size: .78rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -199,22 +196,19 @@
             margin-top: 1px;
         }
 
-        .istep-t { font-weight: 800; font-size: .9rem; color: #0d200d; margin-bottom: 3px; }
-        .istep-d { font-size: .82rem; color: #64748b; line-height: 1.6; }
+        .istep-t { font-weight: 800; font-size: .88rem; color: #111f11; margin-bottom: 3px; }
+        .istep-d { font-size: .8rem; color: #64748b; line-height: 1.6; }
 
         .how-photo {
-            border-radius: 18px;
+            border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 24px 64px rgba(0,0,0,.1);
         }
 
-        .how-photo img { width: 100%; height: 440px; object-fit: cover; display: block; }
+        .how-photo img { width: 100%; height: 420px; object-fit: cover; display: block; }
 
         /* ── DARK BAND ── */
-        .s-band {
-            background: #0d200d;
-            padding: 88px 0;
-        }
+        .s-band { background: #0d1f0d; padding: 88px 0; }
 
         .band-inner {
             display: grid;
@@ -224,129 +218,62 @@
         }
 
         .band-label {
-            font-size: .68rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-            color: #6ee7b7;
-            display: block;
-            margin-bottom: 12px;
+            font-size: .68rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 2.5px;
+            color: #6ee7b7; display: block; margin-bottom: 12px;
         }
 
         .band-h2 {
-            font-size: clamp(1.8rem, 2.5vw, 2.6rem);
-            font-weight: 900;
-            letter-spacing: -1.5px;
-            color: #fff;
-            line-height: 1.1;
-            margin-bottom: 16px;
+            font-size: clamp(1.8rem, 2.4vw, 2.4rem);
+            font-weight: 900; letter-spacing: -1.5px;
+            color: #fff; line-height: 1.1; margin-bottom: 16px;
         }
 
         .band-h2 em { font-style: normal; color: #4ade80; }
-        .band-p { font-size: .95rem; color: rgba(255,255,255,.45); line-height: 1.85; margin-bottom: 28px; }
+        .band-p { font-size: .92rem; color: rgba(255,255,255,.4); line-height: 1.85; margin-bottom: 28px; }
 
-        .band-list {
-            list-style: none;
-            padding: 0; margin: 0 0 36px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .band-list li {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: .88rem;
-            color: rgba(255,255,255,.65);
-            font-weight: 600;
-        }
-
+        .band-list { list-style: none; padding: 0; margin: 0 0 36px; display: flex; flex-direction: column; gap: 10px; }
+        .band-list li { display: flex; align-items: center; gap: 10px; font-size: .86rem; color: rgba(255,255,255,.65); font-weight: 600; }
         .band-list li::before {
-            content: '';
-            width: 16px; height: 16px;
-            border-radius: 4px;
-            background: rgba(78,205,128,.15);
-            border: 1px solid rgba(78,205,128,.3);
-            flex-shrink: 0;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%234ade80' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: center;
+            content: ''; width: 16px; height: 16px; border-radius: 4px;
+            background: rgba(74,222,128,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%234ade80' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center;
+            border: 1px solid rgba(74,222,128,.3); flex-shrink: 0;
         }
 
-        .band-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .bcard {
-            background: rgba(255,255,255,.05);
-            border: 1px solid rgba(255,255,255,.08);
-            border-radius: 14px;
-            padding: 20px 16px;
-        }
-
+        .band-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .bcard { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 20px 16px; }
         .bcard:nth-child(2), .bcard:nth-child(4) { margin-top: 20px; }
-
-        .bcard-ico { font-size: 1.4rem; margin-bottom: 10px; display: block; }
-        .bcard-t   { font-size: .85rem; font-weight: 800; color: #fff; margin-bottom: 5px; }
-        .bcard-d   { font-size: .75rem; color: rgba(255,255,255,.35); line-height: 1.5; }
+        .bcard-ico { font-size: 1.3rem; margin-bottom: 10px; display: block; }
+        .bcard-t { font-size: .83rem; font-weight: 800; color: #fff; margin-bottom: 5px; }
+        .bcard-d { font-size: .74rem; color: rgba(255,255,255,.35); line-height: 1.5; }
 
         .btn-cta-dark {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: #4ade80;
-            color: #0d200d !important;
-            text-decoration: none;
-            padding: 14px 28px;
-            border-radius: 8px;
-            font-weight: 800;
-            font-size: .9rem;
-            transition: background .2s;
+            display: inline-flex; align-items: center; gap: 10px;
+            background: #4ade80; color: #0d1f0d !important;
+            padding: 13px 26px; border-radius: 8px;
+            font-weight: 800; font-size: .88rem; transition: background .18s;
         }
-
         .btn-cta-dark:hover { background: #22c55e; }
 
         /* ── CTA ── */
-        .s-cta {
-            background: #fff;
-            padding: 100px 0;
-            text-align: center;
-            border-top: 1px solid #f1f5f9;
-        }
-
-        .cta-h2 {
-            font-size: clamp(2rem, 3.5vw, 3.2rem);
-            font-weight: 900;
-            letter-spacing: -2px;
-            color: #0d200d;
-            line-height: 1.05;
-            margin-bottom: 14px;
-        }
-
-        .cta-h2 em { font-style: normal; color: #2d5a2d; }
-        .cta-sub { color: #94a3b8; font-size: .95rem; margin-bottom: 36px; }
+        .s-cta { background: #fff; padding: 100px 0; text-align: center; border-top: 1px solid #f1f5f9; }
+        .cta-h2 { font-size: clamp(2rem, 3.2vw, 3rem); font-weight: 900; letter-spacing: -2px; color: #111f11; line-height: 1.05; margin-bottom: 14px; }
+        .cta-h2 em { font-style: normal; color: #1e4d20; }
+        .cta-sub { color: #94a3b8; font-size: .93rem; margin-bottom: 36px; }
 
         /* ── RESPONSIVE ── */
         @media (max-width: 960px) {
             .hero { grid-template-columns: 1fr; min-height: auto; }
-            .hero-right { height: 320px; }
-            .hero-left { padding: 60px 24px; }
+            .hero-right { height: 300px; }
+            .hero-left { padding: 52px 24px; }
             .how-inner, .band-inner { grid-template-columns: 1fr; gap: 40px; }
             .how-photo { display: none; }
         }
 
         @media (max-width: 640px) {
-            .feat-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+            .feat-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
             .band-cards { grid-template-columns: 1fr; }
             .bcard:nth-child(2), .bcard:nth-child(4) { margin-top: 0; }
-        }
-
-        @media (max-width: 400px) {
-            .feat-grid { grid-template-columns: 1fr 1fr; }
-            .btn-cta { align-self: stretch; justify-content: center; }
         }
     </style>
 </head>
@@ -362,16 +289,16 @@
                 Lim inn fra nettet, importer fra Matprat
                 eller skriv dine egne – enkelt og gratis.
             </p>
-            <a href="/oauth2/authorization/google" class="btn-cta">
+            <a href="/oauth2/authorization/google" class="btn-google">
                 <i class="fa-brands fa-google"></i> Start gratis med Google
             </a>
             <a href="/oppdag" class="btn-utforsk">
-                Utforsk oppskrifter <i class="fa-solid fa-arrow-right" style="font-size:.8rem;"></i>
+                Utforsk oppskrifter <i class="fa-solid fa-arrow-right" style="font-size:.75rem;"></i>
             </a>
         </div>
         <div class="hero-right">
-            <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=1400&q=85"
-                 alt="Matoppskrift med ferske råvarer">
+            <img src="https://images.unsplash.com/photo-1466637574441-749b8f19452f?auto=format&fit=crop&w=1400&q=85"
+                 alt="Matoppskrift flatlay">
         </div>
     </section>
 
@@ -382,28 +309,28 @@
             <div class="feat-grid">
                 <div class="feat-item">
                     <div class="feat-ico">
-                        <i class="fa-regular fa-heart" style="color:#2d5a2d;font-size:1.3rem;"></i>
+                        <i class="fa-regular fa-heart"></i>
                     </div>
                     <div class="feat-name">Samle oppskrifter</div>
                     <div class="feat-desc">Lagre fra nett, Matprat eller skriv dine egne favoritter.</div>
                 </div>
                 <div class="feat-item">
                     <div class="feat-ico">
-                        <i class="fa-regular fa-clipboard-list" style="color:#2d5a2d;font-size:1.3rem;"></i>
+                        <i class="fa-regular fa-clipboard-list"></i>
                     </div>
                     <div class="feat-name">Lag handleliste</div>
                     <div class="feat-desc">Få automatisk handleliste fra oppskriftene dine.</div>
                 </div>
                 <div class="feat-item">
                     <div class="feat-ico">
-                        <i class="fa-regular fa-calendar" style="color:#2d5a2d;font-size:1.3rem;"></i>
+                        <i class="fa-regular fa-calendar"></i>
                     </div>
                     <div class="feat-name">Planlegg ukemeny</div>
                     <div class="feat-desc">Planlegg måltider og få oversikt over uken.</div>
                 </div>
                 <div class="feat-item">
                     <div class="feat-ico">
-                        <i class="fa-regular fa-circle-user" style="color:#2d5a2d;font-size:1.3rem;"></i>
+                        <i class="fa-regular fa-circle-user"></i>
                     </div>
                     <div class="feat-name">Del med andre</div>
                     <div class="feat-desc">Del oppskrifter og inspirasjon med venner og familie.</div>
@@ -420,30 +347,19 @@
                     <span class="how-label">Slik fungerer det</span>
                     <h2 class="how-h2">Fra lenke til kokebok på under ett minutt</h2>
                     <p class="how-p">Du trenger ikke skrive ett ord. Finn en oppskrift du liker, kopier lenken og MatMinne gjør resten.</p>
-
                     <div class="istep">
                         <div class="istep-num">1</div>
-                        <div>
-                            <div class="istep-t">Kopier lenken</div>
-                            <div class="istep-d">Fra Matprat, Godt.no, VG Mat eller et annet nettsted.</div>
-                        </div>
+                        <div><div class="istep-t">Kopier lenken</div><div class="istep-d">Fra Matprat, Godt.no, VG Mat eller et annet nettsted.</div></div>
                     </div>
                     <div class="istep">
                         <div class="istep-num">2</div>
-                        <div>
-                            <div class="istep-t">AI henter innholdet</div>
-                            <div class="istep-d">Tittel, ingredienser og fremgangsmåte fylles inn automatisk.</div>
-                        </div>
+                        <div><div class="istep-t">AI henter innholdet</div><div class="istep-d">Tittel, ingredienser og fremgangsmåte fylles inn automatisk.</div></div>
                     </div>
                     <div class="istep">
                         <div class="istep-num">3</div>
-                        <div>
-                            <div class="istep-t">Lagret i din kokebok</div>
-                            <div class="istep-d">Alle oppskriftene dine samlet, søkbare og alltid tilgjengelige.</div>
-                        </div>
+                        <div><div class="istep-t">Lagret i din kokebok</div><div class="istep-d">Alle oppskriftene dine samlet, søkbare og alltid tilgjengelige.</div></div>
                     </div>
                 </div>
-
                 <div class="how-photo">
                     <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80" alt="Matlaging">
                 </div>
@@ -458,11 +374,7 @@
                 <div>
                     <span class="band-label">AI-funksjoner</span>
                     <h2 class="band-h2">La AI gjøre<br><em>jobben for deg</em></h2>
-                    <p class="band-p">
-                        Med abonnement får du tilgang til avanserte verktøy som
-                        analyserer ernæring, genererer ukesmenyer og estimerer priser
-                        basert på norske butikkpriser.
-                    </p>
+                    <p class="band-p">Med abonnement får du tilgang til avanserte verktøy som analyserer ernæring, genererer ukesmenyer og estimerer priser basert på norske butikkpriser.</p>
                     <ul class="band-list">
                         <li>Automatisk henting av oppskrifter fra nettet</li>
                         <li>Næringsstoffanalyse og kalorioversikt</li>
@@ -473,28 +385,11 @@
                         <i class="fa-brands fa-google"></i> Kom i gang gratis
                     </a>
                 </div>
-
                 <div class="band-cards">
-                    <div class="bcard">
-                        <span class="bcard-ico">🧠</span>
-                        <div class="bcard-t">Smart henting</div>
-                        <div class="bcard-d">AI leser nettsiden og henter ut det som trengs</div>
-                    </div>
-                    <div class="bcard">
-                        <span class="bcard-ico">📊</span>
-                        <div class="bcard-t">Næringsstoffer</div>
-                        <div class="bcard-d">Kalorier, protein, fett og karbohydrater per porsjon</div>
-                    </div>
-                    <div class="bcard">
-                        <span class="bcard-ico">📅</span>
-                        <div class="bcard-t">Ukesmeny</div>
-                        <div class="bcard-d">Forslag til hele uken basert på dine preferanser</div>
-                    </div>
-                    <div class="bcard">
-                        <span class="bcard-ico">💰</span>
-                        <div class="bcard-t">Prisestimat</div>
-                        <div class="bcard-d">Hva koster handlelisten fra Rema eller Kiwi?</div>
-                    </div>
+                    <div class="bcard"><span class="bcard-ico">🧠</span><div class="bcard-t">Smart henting</div><div class="bcard-d">AI leser nettsiden og henter ut det som trengs</div></div>
+                    <div class="bcard"><span class="bcard-ico">📊</span><div class="bcard-t">Næringsstoffer</div><div class="bcard-d">Kalorier, protein, fett og karbohydrater per porsjon</div></div>
+                    <div class="bcard"><span class="bcard-ico">📅</span><div class="bcard-t">Ukesmeny</div><div class="bcard-d">Forslag til hele uken basert på dine preferanser</div></div>
+                    <div class="bcard"><span class="bcard-ico">💰</span><div class="bcard-t">Prisestimat</div><div class="bcard-d">Hva koster handlelisten fra Rema eller Kiwi?</div></div>
                 </div>
             </div>
         </div>
@@ -505,7 +400,7 @@
         <div class="container">
             <h2 class="cta-h2">Klar for å starte?<br><em>Det er gratis.</em></h2>
             <p class="cta-sub">Ingen installasjon — bare logg inn med Google og begynn å samle oppskriftene dine.</p>
-            <a href="/oauth2/authorization/google" class="btn-cta" style="margin: 0 auto; justify-content: center;">
+            <a href="/oauth2/authorization/google" class="btn-google" style="margin: 0 auto; justify-content: center;">
                 <i class="fa-brands fa-google"></i> Start med Google
             </a>
         </div>
