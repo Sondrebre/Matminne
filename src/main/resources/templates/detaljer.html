@@ -955,6 +955,26 @@
                         <div class="ko-step-text" id="kokeStepText"></div>
                     </div>
                     <div class="ko-swipe-hint">Sveip eller bruk piltastene for å navigere</div>
+                <!-- Mini timer -->
+                <div id="koTimer" style="display:flex;align-items:center;gap:8px;padding:10px 28px 0;flex-wrap:wrap;">
+                    <select id="koTimerMin" style="border:1.5px solid #d1fae5;border-radius:10px;padding:6px 10px;font-family:inherit;font-size:.82rem;font-weight:700;color:#374151;background:#f0fdf4;outline:none;cursor:pointer;">
+                        <option value="1">1 min</option>
+                        <option value="2">2 min</option>
+                        <option value="3">3 min</option>
+                        <option value="5" selected>5 min</option>
+                        <option value="10">10 min</option>
+                        <option value="15">15 min</option>
+                        <option value="20">20 min</option>
+                        <option value="30">30 min</option>
+                        <option value="45">45 min</option>
+                        <option value="60">60 min</option>
+                    </select>
+                    <button onclick="startKoTimer()" id="koTimerBtn"
+                            style="background:#16a34a;color:white;border:none;border-radius:10px;padding:7px 14px;font-weight:800;font-size:.82rem;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;">
+                        <i class="fas fa-clock"></i> Start timer
+                    </button>
+                    <span id="koTimerDisplay" style="font-weight:900;font-size:1.1rem;color:#16a34a;display:none;min-width:56px;text-align:center;letter-spacing:.5px;"></span>
+                </div>
                 </div>
 
                 <div class="ko-done" id="kokeDone">
@@ -999,11 +1019,12 @@
         <div class="qr-modal" id="qrModal" onclick="lukkQr(event)">
             <div class="qr-box">
                 <h3>Del oppskriften</h3>
-                <img id="qrImg" src="" alt="QR-kode" style="width:200px;height:200px;border-radius:10px;display:block;margin:8px auto;">
+                <canvas id="qrCanvas" style="border-radius:10px;display:block;margin:8px auto;max-width:200px;width:100%;"></canvas>
                 <p>Skann koden for å åpne oppskriften</p>
                 <button class="btn-qr-close" onclick="document.getElementById('qrModal').classList.remove('open')">Lukk</button>
             </div>
         </div>
+        <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
 
     </th:block>
 
@@ -1047,8 +1068,23 @@
         function startKokemodus() {
             const stepText = document.getElementById('stepText');
             if (!stepText) return;
-            const lines = stepText.innerText.split('\n').map(l => l.trim()).filter(l => l);
-            kokeSteg = lines.map(l => l.replace(/^[-•*]\s+/, '').replace(/^\d+\.\s+/, ''));
+            const rawText = stepText.innerText;
+
+            // Prøv linjeskift-splitting først
+            let lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 5);
+            lines = lines.map(l => l.replace(/^[-•*]\s+/, '').replace(/^\d+\.\s+/, ''));
+
+            // Fallback: split på nummererte mønstre eller punktum-separerte setninger
+            if (lines.length <= 1) {
+                const numMatch = rawText.match(/\d+\.\s+[^\d]/g);
+                if (numMatch && numMatch.length > 1) {
+                    lines = rawText.split(/(?=\d+\.\s)/).map(l => l.replace(/^\d+\.\s+/, '').trim()).filter(l => l.length > 5);
+                } else {
+                    lines = rawText.split(/(?<=[.!?])\s+(?=[A-ZÆØÅ])/).map(l => l.trim()).filter(l => l.length > 10);
+                }
+            }
+
+            kokeSteg = lines;
             if (kokeSteg.length === 0) return;
             kokeIdx = 0;
 
@@ -1143,6 +1179,51 @@
             document.getElementById('koIngSheet').classList.remove('open');
             document.getElementById('koIngBackdrop').classList.remove('open');
             document.body.style.overflow = '';
+            stoppKoTimer();
+        }
+
+        let _koTimerInterval = null;
+        let _koTimerSek = 0;
+
+        function startKoTimer() {
+            stoppKoTimer();
+            const min = parseInt(document.getElementById('koTimerMin').value);
+            _koTimerSek = min * 60;
+            const disp = document.getElementById('koTimerDisplay');
+            const btn  = document.getElementById('koTimerBtn');
+            disp.style.display = 'inline-block';
+            btn.innerHTML = '<i class="fas fa-stop"></i> Stopp';
+            btn.onclick = stoppKoTimer;
+            oppdaterTimerDisplay();
+            _koTimerInterval = setInterval(() => {
+                _koTimerSek--;
+                if (_koTimerSek <= 0) {
+                    stoppKoTimer();
+                    disp.textContent = '⏰ Ferdig!';
+                    disp.style.color = '#dc2626';
+                    if (Notification && Notification.permission === 'granted') {
+                        new Notification('Timer ferdig! 🍳', { body: 'Timeren din er ferdig.' });
+                    } else {
+                        alert('⏰ Timeren er ferdig!');
+                    }
+                    return;
+                }
+                oppdaterTimerDisplay();
+            }, 1000);
+        }
+
+        function stoppKoTimer() {
+            if (_koTimerInterval) { clearInterval(_koTimerInterval); _koTimerInterval = null; }
+            const btn = document.getElementById('koTimerBtn');
+            const disp = document.getElementById('koTimerDisplay');
+            if (btn) { btn.innerHTML = '<i class="fas fa-clock"></i> Start timer'; btn.onclick = startKoTimer; }
+            if (disp) { disp.style.display = 'none'; disp.style.color = '#16a34a'; }
+        }
+
+        function oppdaterTimerDisplay() {
+            const m = Math.floor(_koTimerSek / 60);
+            const s = _koTimerSek % 60;
+            document.getElementById('koTimerDisplay').textContent = m + ':' + String(s).padStart(2, '0');
         }
 
         // Sveipestøtte
@@ -1190,9 +1271,10 @@
             });
         }
         function visQr() {
-            const url = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&color=0f172a&bgcolor=ffffff&data=' + encodeURIComponent(window.location.href);
-            const img = document.getElementById('qrImg');
-            img.src = url;
+            const canvas = document.getElementById('qrCanvas');
+            QRCode.toCanvas(canvas, window.location.href,
+                { width: 200, margin: 2, color: { dark: '#0f172a', light: '#ffffff' } },
+                err => { if (err) console.error('QR feil:', err); });
             document.getElementById('qrModal').classList.add('open');
         }
         function lukkQr(e) {

@@ -216,12 +216,22 @@ public class WebController {
         Bruker meg = principal != null ? brukerService.finnVedEpost(principal.getAttribute("email")) : null;
         model.addAttribute("oppskrifter", Collections.emptyList());
         model.addAttribute("sokeTekst", sok);
+        Map<String, String> brukerBildeMap = new HashMap<>();
         if (meg != null) {
             List<Long> vennerIds = vennskapRepository.findByBrukerId(meg.getId())
                     .stream().map(Vennskap::getVennId).collect(Collectors.toList());
             if (!vennerIds.isEmpty()) {
-                model.addAttribute("oppskrifter",
-                    repository.findByBrukerIdInAndErOffentligTrueOrderByIdDesc(vennerIds));
+                List<com.example.matminne.model.Oppskrift> oppskrifter =
+                    repository.findByBrukerIdInAndErOffentligTrueOrderByIdDesc(vennerIds);
+                model.addAttribute("oppskrifter", oppskrifter);
+                oppskrifter.forEach(o -> {
+                    if (o.getBrukerEpost() != null && !brukerBildeMap.containsKey(o.getBrukerEpost())) {
+                        Bruker b = brukerService.finnVedEpost(o.getBrukerEpost());
+                        if (b != null && b.getBildeUrl() != null) {
+                            brukerBildeMap.put(o.getBrukerEpost(), b.getBildeUrl());
+                        }
+                    }
+                });
             }
             if (sok != null && !sok.isBlank()) {
                 List<Bruker> sokResultater = brukerService.sokEtterNavn(sok);
@@ -230,6 +240,7 @@ public class WebController {
                 model.addAttribute("fulgteBrukerIds", fulgte);
             }
         }
+        model.addAttribute("brukerBildeMap", brukerBildeMap);
         return "vennefeed";
     }
 

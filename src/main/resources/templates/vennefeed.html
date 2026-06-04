@@ -383,7 +383,10 @@
              th:text="${sokResultater.isEmpty() ? 'Ingen treff' : sokResultater.size() + ' person(er) funnet'}"></div>
 
         <div th:each="bruker : ${sokResultater}" class="person-card">
-            <div class="person-avatar" th:text="${#strings.substring(bruker.fulltNavn, 0, 1)}">N</div>
+            <img th:if="${bruker.bildeUrl != null}" class="person-avatar"
+                 th:src="${bruker.bildeUrl}" alt="" style="object-fit:cover;">
+            <div th:unless="${bruker.bildeUrl != null}" class="person-avatar"
+                 th:text="${#strings.substring(bruker.fulltNavn, 0, 1)}">N</div>
             <div style="flex:1;min-width:0;">
                 <p class="person-name" th:text="${bruker.fulltNavn}">Navn</p>
                 <p class="person-sub"><i class="fa-solid fa-utensils me-1"></i>MatMinne-kokk</p>
@@ -419,8 +422,10 @@
         <div th:each="o : ${oppskrifter}" class="post-card">
             <div class="post-header">
                 <a th:href="@{'/profil/' + ${o.brukerEpost}}" class="post-user">
-                    <div class="post-avatar"
-                         th:text="${#strings.substring(o.brukerNavn, 0, 1)}">U</div>
+                    <img th:if="${brukerBildeMap != null and brukerBildeMap.containsKey(o.brukerEpost)}"
+                         class="post-avatar" th:src="${brukerBildeMap.get(o.brukerEpost)}" alt="" style="object-fit:cover;">
+                    <div th:unless="${brukerBildeMap != null and brukerBildeMap.containsKey(o.brukerEpost)}"
+                         class="post-avatar" th:text="${#strings.substring(o.brukerNavn, 0, 1)}">U</div>
                     <div>
                         <div class="post-username" th:text="${o.brukerNavn}">Navn</div>
                         <div class="post-time"><i class="fa-regular fa-clock me-1"></i>nylig</div>
