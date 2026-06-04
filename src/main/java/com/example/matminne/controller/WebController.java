@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.util.Collections;
 import java.util.Set;
+import java.util.Random;
 import jakarta.transaction.Transactional;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
@@ -41,8 +42,22 @@ public class WebController {
     @Autowired private SamlingOppskriftRepository samlingOppskriftRepository;
     @Autowired private RatingRepository ratingRepository;
     @Autowired private HandelListeRepository handelListeRepository;
+    @Autowired private HandlelisteGruppeRepository handlelisteGruppeRepository;
+    @Autowired private HandlelisteGruppeMedlemRepository handlelisteGruppeMedlemRepository;
     @Autowired private UkesmenyRepository ukesmenyRepository;
     @Autowired private UtfordringRepository utfordringRepository;
+
+    private static final String KODE_TEGN = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    private static final Random KODE_RND = new Random();
+    private String genererGruppeKode() {
+        String kode;
+        do {
+            StringBuilder sb = new StringBuilder(6);
+            for (int i = 0; i < 6; i++) sb.append(KODE_TEGN.charAt(KODE_RND.nextInt(KODE_TEGN.length())));
+            kode = sb.toString();
+        } while (handlelisteGruppeRepository.existsByInviteringskode(kode));
+        return kode;
+    }
 
     private static final String DEFAULT_IMAGE = "https://images.unsplash.com/photo-1495195129352-aeb325a55b65?auto=format&fit=crop&w=1600&q=90";
 
@@ -790,19 +805,41 @@ public class WebController {
     }
 
     @GetMapping("/handleliste")
-    public String visHandelListe(Model model, @AuthenticationPrincipal OAuth2User principal) {
+    public String visHandelListe(@RequestParam(required = false) Long gruppe,
+                                 @RequestParam(required = false) String feil,
+                                 Model model, @AuthenticationPrincipal OAuth2User principal) {
         Bruker meg = principal != null ? brukerService.finnVedEpost(principal.getAttribute("email")) : null;
         List<HandelListeItem> items = Collections.emptyList();
-        if (meg != null) items = handelListeRepository.findByBrukerIdOrderByFerdigAscOpprettetDesc(meg.getId());
+        List<HandlelisteGruppe> grupper = Collections.emptyList();
+        HandlelisteGruppe aktivGruppe = null;
+
+        if (meg != null) {
+            List<Long> gruppeIds = handlelisteGruppeMedlemRepository.findByBrukerId(meg.getId())
+                    .stream().map(HandlelisteGruppeMedlem::getGruppeId).collect(Collectors.toList());
+            if (!gruppeIds.isEmpty()) {
+                grupper = handlelisteGruppeRepository.findAllById(gruppeIds);
+            }
+            if (gruppe != null && handlelisteGruppeMedlemRepository.existsByGruppeIdAndBrukerId(gruppe, meg.getId())) {
+                aktivGruppe = handlelisteGruppeRepository.findById(gruppe).orElse(null);
+                items = handelListeRepository.findByGruppeIdOrderByFerdigAscOpprettetDesc(gruppe);
+            } else {
+                items = handelListeRepository.findByBrukerIdAndGruppeIdIsNullOrderByFerdigAscOpprettetDesc(meg.getId());
+            }
+        }
+
         model.addAttribute("items", items);
         model.addAttribute("antall", items.size());
         model.addAttribute("antallFerdig", items.stream().filter(HandelListeItem::isFerdig).count());
+        model.addAttribute("grupper", grupper);
+        model.addAttribute("aktivGruppe", aktivGruppe);
+        model.addAttribute("feil", feil);
         return "handleliste";
     }
 
     @PostMapping("/handleliste/legg-til")
     public String leggTilHandelVare(@RequestParam String tekst,
                                     @RequestParam(required = false) String kategori,
+                                    @RequestParam(required = false) Long gruppeId,
                                     @AuthenticationPrincipal OAuth2User principal) {
         if (principal != null) {
             Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
@@ -811,10 +848,14 @@ public class WebController {
                 item.setBrukerId(meg.getId());
                 item.setTekst(tekst.trim());
                 item.setKategori(kategori);
+                if (gruppeId != null && handlelisteGruppeMedlemRepository.existsByGruppeIdAndBrukerId(gruppeId, meg.getId())) {
+                    item.setGruppeId(gruppeId);
+                }
                 handelListeRepository.save(item);
             }
         }
-        return "redirect:/handleliste";
+        String redirect = gruppeId != null ? "redirect:/handleliste?gruppe=" + gruppeId : "redirect:/handleliste";
+        return redirect;
     }
 
     @PostMapping("/handleliste/fra-oppskrift/{id}")
@@ -858,22 +899,117 @@ public class WebController {
 
     @PostMapping("/handleliste/rydd")
     @ResponseBody
-    public ResponseEntity<String> ryddHandelListe(@AuthenticationPrincipal OAuth2User principal) {
+    public ResponseEntity<String> ryddHandelListe(@RequestParam(required = false) Long gruppeId,
+                                                  @AuthenticationPrincipal OAuth2User principal) {
         if (principal != null) {
             Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
-            if (meg != null) handelListeRepository.deleteByBrukerIdAndFerdigTrue(meg.getId());
+            if (meg != null) {
+                if (gruppeId != null && handlelisteGruppeMedlemRepository.existsByGruppeIdAndBrukerId(gruppeId, meg.getId())) {
+                    handelListeRepository.deleteByGruppeIdAndFerdigTrue(gruppeId);
+                } else {
+                    handelListeRepository.deleteByBrukerIdAndFerdigTrue(meg.getId());
+                }
+            }
         }
         return ResponseEntity.ok("ok");
     }
 
     @PostMapping("/handleliste/slett-alt")
     @ResponseBody
-    public ResponseEntity<String> slettAltHandelListe(@AuthenticationPrincipal OAuth2User principal) {
+    public ResponseEntity<String> slettAltHandelListe(@RequestParam(required = false) Long gruppeId,
+                                                      @AuthenticationPrincipal OAuth2User principal) {
         if (principal != null) {
             Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
-            if (meg != null) handelListeRepository.deleteByBrukerId(meg.getId());
+            if (meg != null) {
+                if (gruppeId != null && handlelisteGruppeMedlemRepository.existsByGruppeIdAndBrukerId(gruppeId, meg.getId())) {
+                    handelListeRepository.deleteByGruppeId(gruppeId);
+                } else {
+                    handelListeRepository.deleteByBrukerId(meg.getId());
+                }
+            }
         }
         return ResponseEntity.ok("ok");
+    }
+
+    @PostMapping("/handleliste/opprett-gruppe")
+    public String opprettGruppe(@RequestParam String navn,
+                                @AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) return "redirect:/handleliste";
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg == null || navn == null || navn.isBlank()) return "redirect:/handleliste";
+
+        HandlelisteGruppe gruppe = new HandlelisteGruppe();
+        gruppe.setNavn(navn.trim());
+        gruppe.setEierBrukerId(meg.getId());
+        gruppe.setInviteringskode(genererGruppeKode());
+        gruppe = handlelisteGruppeRepository.save(gruppe);
+
+        HandlelisteGruppeMedlem medl = new HandlelisteGruppeMedlem();
+        medl.setGruppeId(gruppe.getId());
+        medl.setBrukerId(meg.getId());
+        handlelisteGruppeMedlemRepository.save(medl);
+
+        return "redirect:/handleliste?gruppe=" + gruppe.getId();
+    }
+
+    @PostMapping("/handleliste/bli-med")
+    public String bliMedIGruppe(@RequestParam String kode,
+                                @AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) return "redirect:/handleliste";
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg == null) return "redirect:/handleliste";
+
+        HandlelisteGruppe gruppe = handlelisteGruppeRepository
+                .findByInviteringskode(kode.trim().toUpperCase()).orElse(null);
+        if (gruppe == null) return "redirect:/handleliste?feil=ugyldig-kode";
+
+        if (!handlelisteGruppeMedlemRepository.existsByGruppeIdAndBrukerId(gruppe.getId(), meg.getId())) {
+            HandlelisteGruppeMedlem medl = new HandlelisteGruppeMedlem();
+            medl.setGruppeId(gruppe.getId());
+            medl.setBrukerId(meg.getId());
+            handlelisteGruppeMedlemRepository.save(medl);
+        }
+        return "redirect:/handleliste?gruppe=" + gruppe.getId();
+    }
+
+    @PostMapping("/handleliste/forlat/{gruppeId}")
+    public String forlatGruppe(@PathVariable Long gruppeId,
+                               @AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) return "redirect:/handleliste";
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg == null) return "redirect:/handleliste";
+
+        handlelisteGruppeMedlemRepository.deleteByGruppeIdAndBrukerId(gruppeId, meg.getId());
+
+        HandlelisteGruppe gruppe = handlelisteGruppeRepository.findById(gruppeId).orElse(null);
+        if (gruppe != null && gruppe.getEierBrukerId().equals(meg.getId())
+                && handlelisteGruppeMedlemRepository.countByGruppeId(gruppeId) == 0) {
+            handelListeRepository.deleteByGruppeId(gruppeId);
+            handlelisteGruppeRepository.deleteById(gruppeId);
+        }
+        return "redirect:/handleliste";
+    }
+
+    @GetMapping("/api/handleliste/gruppe/{id}")
+    @ResponseBody
+    public ResponseEntity<List<Map<String, Object>>> pollGruppe(@PathVariable Long id,
+                                                                @AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg == null || !handlelisteGruppeMedlemRepository.existsByGruppeIdAndBrukerId(id, meg.getId()))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        List<Map<String, Object>> result = handelListeRepository
+                .findByGruppeIdOrderByFerdigAscOpprettetDesc(id)
+                .stream().map(item -> {
+                    Map<String, Object> m = new HashMap<>();
+                    m.put("id", item.getId());
+                    m.put("tekst", item.getTekst());
+                    m.put("ferdig", item.isFerdig());
+                    m.put("kategori", item.getKategori() != null ? item.getKategori() : "");
+                    return m;
+                }).collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/handleliste/endre/{id}")

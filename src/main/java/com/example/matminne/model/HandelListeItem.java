@@ -14,7 +14,8 @@ public class HandelListeItem {
     private Long brukerId;
     private String tekst;
     private boolean ferdig = false;
-    private String kategori; // valgfritt
+    private String kategori;
+    private Long gruppeId; // null = personlig liste
 
     @Column(updatable = false)
     private LocalDateTime opprettet;
@@ -34,6 +35,8 @@ public class HandelListeItem {
     public void setFerdig(boolean ferdig) { this.ferdig = ferdig; }
     public String getKategori() { return kategori; }
     public void setKategori(String kategori) { this.kategori = kategori; }
+    public Long getGruppeId() { return gruppeId; }
+    public void setGruppeId(Long gruppeId) { this.gruppeId = gruppeId; }
     public LocalDateTime getOpprettet() { return opprettet; }
     public void setOpprettet(LocalDateTime opprettet) { this.opprettet = opprettet; }
 }

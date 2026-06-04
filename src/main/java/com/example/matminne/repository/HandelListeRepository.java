@@ -7,8 +7,14 @@ import java.util.List;
 
 public interface HandelListeRepository extends JpaRepository<HandelListeItem, Long> {
     List<HandelListeItem> findByBrukerIdOrderByFerdigAscOpprettetDesc(Long brukerId);
+    List<HandelListeItem> findByBrukerIdAndGruppeIdIsNullOrderByFerdigAscOpprettetDesc(Long brukerId);
+    List<HandelListeItem> findByGruppeIdOrderByFerdigAscOpprettetDesc(Long gruppeId);
     @Transactional
     void deleteByBrukerIdAndFerdigTrue(Long brukerId);
     @Transactional
     void deleteByBrukerId(Long brukerId);
+    @Transactional
+    void deleteByGruppeIdAndFerdigTrue(Long gruppeId);
+    @Transactional
+    void deleteByGruppeId(Long gruppeId);
 }

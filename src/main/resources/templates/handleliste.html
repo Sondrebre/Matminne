@@ -216,6 +216,99 @@
         .liste-item { transition: opacity .2s; }
         .liste-item.removing { opacity: 0; transform: translateX(20px); transition: opacity .25s, transform .25s; }
 
+        /* GRUPPE TABS */
+        .gruppe-tabs {
+            display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;
+        }
+        .gruppe-tab {
+            padding:8px 16px; border-radius:12px; font-size:.82rem; font-weight:700;
+            border:2px solid #e2e8f0; background:white; color:#64748b;
+            cursor:pointer; text-decoration:none; transition:.15s; font-family:inherit;
+        }
+        .gruppe-tab:hover { border-color:var(--mat-gronn); color:var(--mat-gronn); }
+        .gruppe-tab.aktiv { background:var(--mat-gronn); border-color:var(--mat-gronn); color:white; }
+
+        /* GRUPPE BANNER */
+        .gruppe-banner {
+            background:white; border:1px solid #e0f2fe; border-radius:18px;
+            padding:16px 20px; margin-bottom:14px;
+            display:flex; align-items:center; justify-content:space-between;
+            gap:12px; flex-wrap:wrap;
+            box-shadow:0 2px 12px rgba(14,165,233,.08);
+        }
+        .gruppe-banner-left { display:flex; align-items:center; gap:12px; }
+        .gruppe-banner-ikon {
+            width:40px; height:40px; border-radius:12px;
+            background:linear-gradient(135deg,#0ea5e9,#38bdf8);
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.1rem; flex-shrink:0;
+        }
+        .gruppe-banner-navn { font-weight:800; color:#0f172a; font-size:.95rem; }
+        .gruppe-banner-kode {
+            font-size:.78rem; color:#64748b; margin-top:2px;
+            display:flex; align-items:center; gap:6px;
+        }
+        .kode-chip {
+            background:#f0f9ff; border:1px solid #bae6fd; color:#0369a1;
+            font-weight:800; letter-spacing:2px; padding:2px 9px; border-radius:8px;
+            font-size:.8rem; cursor:pointer; transition:.15s;
+        }
+        .kode-chip:hover { background:#e0f2fe; }
+        .kode-kopiert { color:#16a34a !important; border-color:#bbf7d0 !important; background:#f0fdf4 !important; }
+        .btn-forlat {
+            background:none; border:1px solid #fecaca; color:#dc2626; padding:7px 14px;
+            border-radius:10px; font-weight:700; font-size:.8rem; cursor:pointer;
+            font-family:inherit; transition:.2s; white-space:nowrap;
+        }
+        .btn-forlat:hover { background:#fee2e2; }
+
+        /* DELT HANDLELISTE SECTION */
+        .delt-seksjon {
+            margin-top:20px; background:white; border-radius:20px;
+            border:1px solid #f1f5f9; overflow:hidden;
+        }
+        .delt-header {
+            padding:14px 20px; display:flex; align-items:center; justify-content:space-between;
+            cursor:pointer; gap:10px;
+        }
+        .delt-header-left { display:flex; align-items:center; gap:10px; }
+        .delt-ikon {
+            width:36px; height:36px; border-radius:10px;
+            background:linear-gradient(135deg,#0ea5e9,#38bdf8);
+            display:flex; align-items:center; justify-content:center; font-size:.95rem;
+        }
+        .delt-tittel { font-weight:800; font-size:.88rem; color:#0f172a; }
+        .delt-sub { font-size:.75rem; color:#94a3b8; margin-top:1px; }
+        .delt-chevron { color:#94a3b8; font-size:.8rem; transition:transform .2s; }
+        .delt-chevron.open { transform:rotate(180deg); }
+        .delt-body { padding:0 20px 18px; display:none; }
+        .delt-body.vis { display:block; }
+        .delt-rad { display:flex; gap:10px; margin-top:12px; }
+        .delt-input {
+            flex:1; border:2px solid #f1f5f9; border-radius:12px; padding:10px 14px;
+            font-size:.88rem; font-family:inherit; font-weight:600; color:#0f172a;
+            background:#f8fafc; outline:none; transition:.2s;
+        }
+        .delt-input:focus { border-color:#0ea5e9; background:white; }
+        .btn-delt {
+            background:linear-gradient(135deg,#0ea5e9,#0284c7); color:white; border:none;
+            padding:10px 18px; border-radius:12px; font-weight:800; font-size:.85rem;
+            cursor:pointer; font-family:inherit; white-space:nowrap; transition:.2s;
+        }
+        .btn-delt:hover { opacity:.88; }
+        .delt-divider {
+            display:flex; align-items:center; gap:10px; margin:14px 0 2px;
+            color:#94a3b8; font-size:.78rem; font-weight:700;
+        }
+        .delt-divider::before, .delt-divider::after {
+            content:''; flex:1; height:1px; background:#f1f5f9;
+        }
+        .feil-melding {
+            background:#fee2e2; color:#dc2626; border-radius:12px; padding:10px 14px;
+            font-size:.82rem; font-weight:700; margin-bottom:14px;
+            display:flex; align-items:center; gap:8px;
+        }
+
         @media (max-width: 600px) {
             .page-hero { padding: 32px 0 48px; }
             .page-hero h1 { font-size: 2rem; letter-spacing: -1.5px; }
@@ -257,9 +350,52 @@
     <div class="container">
         <div class="content-wrap">
 
+            <!-- FEIL MELDING -->
+            <div class="feil-melding" th:if="${feil != null}">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span th:text="${feil == 'ugyldig-kode'} ? 'Ugyldig kode — sjekk at du skrev riktig.' : feil"></span>
+            </div>
+
+            <!-- GRUPPE TABS -->
+            <div class="gruppe-tabs" th:if="${!grupper.isEmpty()}">
+                <a th:href="@{/handleliste}" class="gruppe-tab"
+                   th:classappend="${aktivGruppe == null} ? ' aktiv' : ''">
+                    <i class="fa-solid fa-user" style="margin-right:5px;"></i>Min liste
+                </a>
+                <a th:each="g : ${grupper}"
+                   th:href="@{/handleliste(gruppe=${g.id})}"
+                   class="gruppe-tab"
+                   th:classappend="${aktivGruppe != null and aktivGruppe.id == g.id} ? ' aktiv' : ''">
+                    <i class="fa-solid fa-users" style="margin-right:5px;"></i>
+                    <span th:text="${g.navn}"></span>
+                </a>
+            </div>
+
+            <!-- GRUPPE BANNER -->
+            <div class="gruppe-banner" th:if="${aktivGruppe != null}">
+                <div class="gruppe-banner-left">
+                    <div class="gruppe-banner-ikon">👥</div>
+                    <div>
+                        <div class="gruppe-banner-navn" th:text="${aktivGruppe.navn}"></div>
+                        <div class="gruppe-banner-kode">
+                            Inviteringskode:
+                            <span class="kode-chip" th:id="'kodeChip'" th:data-kode="${aktivGruppe.inviteringskode}"
+                                  th:text="${aktivGruppe.inviteringskode}" onclick="kopierKode(this)"></span>
+                        </div>
+                    </div>
+                </div>
+                <form th:action="@{/handleliste/forlat/{id}(id=${aktivGruppe.id})}" method="POST"
+                      onsubmit="return confirm('Forlate denne gruppen?')">
+                    <button type="submit" class="btn-forlat">
+                        <i class="fa-solid fa-right-from-bracket"></i> Forlat
+                    </button>
+                </form>
+            </div>
+
             <!-- LEGG TIL -->
             <div class="add-card">
                 <form th:action="@{/handleliste/legg-til}" method="POST" class="add-row">
+                    <input th:if="${aktivGruppe != null}" type="hidden" name="gruppeId" th:value="${aktivGruppe.id}">
                     <input type="text" name="tekst" class="add-input" placeholder="f.eks. 500g kyllingfilet" required>
                     <button type="submit" class="btn-add">
                         <i class="fa-solid fa-plus me-1"></i> Legg til
@@ -309,14 +445,17 @@
 
             <!-- ACTIONS -->
             <div class="action-row" th:if="${antall > 0}">
-                <button class="btn-action ai-btn" id="smartSorterBtn" onclick="smartSorter(this)">
+                <button class="btn-action ai-btn" id="smartSorterBtn" onclick="smartSorter(this)"
+                        th:if="${aktivGruppe == null}">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> Smartsorter
                 </button>
-                <button class="btn-action" id="ryddBtn" onclick="ryddFerdig()"
+                <button class="btn-action" id="ryddBtn"
+                        th:attr="onclick=${'ryddFerdig(' + (aktivGruppe != null ? aktivGruppe.id : 'null') + ')'}"
                         th:style="${antallFerdig > 0} ? '' : 'display:none'">
                     <i class="fa-solid fa-broom"></i> Rydd ferdiggjorte
                 </button>
-                <button class="btn-slett-alt" onclick="slettAlt()">
+                <button class="btn-slett-alt"
+                        th:attr="onclick=${'slettAlt(' + (aktivGruppe != null ? aktivGruppe.id : 'null') + ')'}">
                     <i class="fa-solid fa-trash"></i> Slett alt
                 </button>
             </div>
@@ -324,6 +463,35 @@
                 <a href="/ukesmeny" class="btn-action green">
                     <i class="fa-solid fa-calendar-week"></i> Gå til ukesmenyen
                 </a>
+            </div>
+
+            <!-- DELT HANDLELISTE SEKSJON -->
+            <div class="delt-seksjon">
+                <div class="delt-header" onclick="toggleDelt()">
+                    <div class="delt-header-left">
+                        <div class="delt-ikon">👥</div>
+                        <div>
+                            <div class="delt-tittel">Delt handleliste</div>
+                            <div class="delt-sub">Inviter samboer, partner eller familie</div>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down delt-chevron" id="deltChevron"></i>
+                </div>
+                <div class="delt-body" id="deltBody">
+                    <p style="font-size:.8rem;color:#64748b;margin:0 0 4px;">
+                        Opprett en ny delt liste og del koden med de du vil handle med.
+                    </p>
+                    <form action="/handleliste/opprett-gruppe" method="POST" class="delt-rad">
+                        <input type="text" name="navn" class="delt-input" placeholder="Navn på listen (f.eks. «Familie»)" required maxlength="40">
+                        <button type="submit" class="btn-delt"><i class="fa-solid fa-plus"></i> Opprett</button>
+                    </form>
+                    <div class="delt-divider">eller bli med i en eksisterende</div>
+                    <form action="/handleliste/bli-med" method="POST" class="delt-rad">
+                        <input type="text" name="kode" class="delt-input" placeholder="Skriv inn kode (f.eks. MAT4X2)" required maxlength="10"
+                               style="text-transform:uppercase;letter-spacing:2px;">
+                        <button type="submit" class="btn-delt"><i class="fa-solid fa-right-to-bracket"></i> Bli med</button>
+                    </form>
+                </div>
             </div>
 
         </div>
@@ -348,9 +516,99 @@
     <div th:replace="~{fragments :: bottom_nav}"></div>
     <div th:replace="~{fragments :: scripts}"></div>
 
+    <!-- Thymeleaf sender gruppeId til JS -->
+    <div id="jsData"
+         th:attr="data-gruppe-id=${aktivGruppe != null ? aktivGruppe.id : ''},
+                  data-gruppe-navn=${aktivGruppe != null ? aktivGruppe.navn : ''}"
+         style="display:none;"></div>
+
     <script>
+        const _jsData = document.getElementById('jsData');
+        const _gruppeId = _jsData.dataset.gruppeId || null;
+
         function getItemId(el) {
             return el.closest('.liste-item').dataset.id;
+        }
+
+        /* ── GRUPPE POLLING ── */
+        let _pollingTimer = null;
+
+        function startPolling() {
+            if (!_gruppeId) return;
+            _pollingTimer = setInterval(() => {
+                fetch('/api/handleliste/gruppe/' + _gruppeId)
+                    .then(r => r.ok ? r.json() : null)
+                    .then(items => { if (items) oppdaterListeMedPoll(items); })
+                    .catch(() => {});
+            }, 4000);
+        }
+
+        function oppdaterListeMedPoll(items) {
+            const kort = document.getElementById('listeKort');
+            if (!kort) return;
+            const eksisterendeIds = new Set([...kort.querySelectorAll('.liste-item')].map(el => el.dataset.id));
+            const nyeIds = new Set(items.map(i => String(i.id)));
+
+            // Fjern slettede
+            eksisterendeIds.forEach(id => {
+                if (!nyeIds.has(id)) {
+                    const el = kort.querySelector(`.liste-item[data-id="${id}"]`);
+                    if (el) { el.classList.add('removing'); setTimeout(() => el.remove(), 260); }
+                }
+            });
+
+            // Legg til nye
+            items.forEach(item => {
+                const id = String(item.id);
+                if (!eksisterendeIds.has(id)) {
+                    const div = document.createElement('div');
+                    div.className = 'liste-item' + (item.ferdig ? ' ferdig' : '');
+                    div.dataset.id = id;
+                    div.dataset.kat = item.kategori || '';
+                    div.innerHTML =
+                        `<button class="check-btn${item.ferdig ? ' ferdig' : ''}" onclick="toggleItem(this)" title="${item.ferdig ? 'Merk ugjort' : 'Merk gjort'}">
+                            ${item.ferdig ? '<i class="fa-solid fa-check"></i>' : ''}
+                         </button>
+                         <span class="item-tekst" onclick="startRediger(this)" title="Klikk for å redigere">${escHtml(item.tekst)}</span>
+                         ${item.kategori ? `<span class="item-kat-badge">${escHtml(item.kategori)}</span>` : ''}
+                         <button class="btn-slett-item" title="Slett" onclick="slettItem(this)"><i class="fa-solid fa-xmark"></i></button>`;
+                    kort.appendChild(div);
+                } else {
+                    // Synkroniser ferdig-tilstand
+                    const el = kort.querySelector(`.liste-item[data-id="${id}"]`);
+                    if (el && el.classList.contains('ferdig') !== item.ferdig) {
+                        el.classList.toggle('ferdig', item.ferdig);
+                        const btn = el.querySelector('.check-btn');
+                        if (btn) {
+                            btn.classList.toggle('ferdig', item.ferdig);
+                            btn.innerHTML = item.ferdig ? '<i class="fa-solid fa-check"></i>' : '';
+                        }
+                    }
+                }
+            });
+
+            if (kort.querySelectorAll('.liste-item').length === 0) {
+                kort.innerHTML = '<div class="empty-state"><div class="empty-icon">🛒</div><h3>Handlelisten er tom</h3><p>Legg til varer manuelt.</p></div>';
+            }
+            oppdaterStats();
+        }
+
+        /* ── DELT SEKSJON TOGGLE ── */
+        function toggleDelt() {
+            const body = document.getElementById('deltBody');
+            const chev = document.getElementById('deltChevron');
+            body.classList.toggle('vis');
+            chev.classList.toggle('open');
+        }
+
+        /* ── KOPIER KODE ── */
+        function kopierKode(el) {
+            const kode = el.dataset.kode;
+            navigator.clipboard.writeText(kode).then(() => {
+                el.textContent = 'Kopiert!';
+                el.classList.add('kode-kopiert');
+                setTimeout(() => { el.textContent = kode; el.classList.remove('kode-kopiert'); }, 1800);
+            });
         }
 
         function oppdaterStats() {
@@ -383,8 +641,8 @@
             }
         }
 
-        // Init ring on page load
-        document.addEventListener('DOMContentLoaded', oppdaterStats);
+        // Init ring on page load + start polling
+        document.addEventListener('DOMContentLoaded', () => { oppdaterStats(); startPolling(); });
 
         function toggleItem(btn) {
             const item = btn.closest('.liste-item');
@@ -428,19 +686,20 @@
                 .catch(() => location.reload());
         }
 
-        function ryddFerdig() {
+        function ryddFerdig(gId) {
             if (!confirm('Fjerne alle gjorte varer?')) return;
             document.querySelectorAll('.liste-item.ferdig').forEach(item => {
                 item.classList.add('removing');
                 setTimeout(() => item.remove(), 260);
             });
             setTimeout(oppdaterStats, 300);
-            csrfFetch('/handleliste/rydd', { method: 'POST' })
+            const url = '/handleliste/rydd' + (gId ? '?gruppeId=' + gId : '');
+            csrfFetch(url, { method: 'POST' })
                 .then(r => { if (!r.ok) location.reload(); })
                 .catch(() => location.reload());
         }
 
-        function slettAlt() {
+        function slettAlt(gId) {
             if (!confirm('Slette hele handlelisten?')) return;
             document.querySelectorAll('.liste-item').forEach(item => {
                 item.classList.add('removing');
@@ -451,7 +710,8 @@
                 if (kort) kort.innerHTML = '<div class="empty-state"><div class="empty-icon">🛒</div><h3>Handlelisten er tom</h3><p>Legg til varer manuelt, eller gå til en oppskrift og klikk "Legg i handleliste".</p></div>';
                 oppdaterStats();
             }, 300);
-            csrfFetch('/handleliste/slett-alt', { method: 'POST' })
+            const url = '/handleliste/slett-alt' + (gId ? '?gruppeId=' + gId : '');
+            csrfFetch(url, { method: 'POST' })
                 .then(r => { if (!r.ok) location.reload(); })
                 .catch(() => location.reload());
         }
