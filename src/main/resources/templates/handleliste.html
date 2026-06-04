@@ -317,6 +317,39 @@
             display:flex; align-items:center; gap:8px;
         }
 
+        /* DISAMBIGUATION MODAL */
+        .disamb-overlay {
+            display:none; position:fixed; inset:0; z-index:9500;
+            background:rgba(15,23,42,.55); backdrop-filter:blur(4px);
+            align-items:center; justify-content:center; padding:16px;
+        }
+        .disamb-overlay.vis { display:flex; }
+        .disamb-panel {
+            background:white; border-radius:24px; padding:28px 24px;
+            width:min(380px, 100%);
+            box-shadow: 0 24px 64px rgba(0,0,0,.15);
+            animation: slideUp .25s ease;
+        }
+        .disamb-tittel { font-weight:900; font-size:1.1rem; color:#1e293b; margin-bottom:4px; }
+        .disamb-sub { font-size:.82rem; color:#94a3b8; margin-bottom:18px; }
+        .disamb-valg { display:flex; flex-direction:column; gap:10px; }
+        .disamb-btn {
+            display:flex; align-items:center; gap:12px;
+            background:#f8fafc; border:2px solid #f1f5f9; border-radius:14px;
+            padding:14px 16px; cursor:pointer; font-family:inherit;
+            transition:.15s; text-align:left; width:100%;
+        }
+        .disamb-btn:hover { border-color:var(--mat-gronn); background:#f0fdf4; }
+        .disamb-btn-ikon { font-size:1.4rem; flex-shrink:0; }
+        .disamb-btn-tekst { font-weight:700; font-size:.92rem; color:#1e293b; }
+        .disamb-btn-sub { font-size:.75rem; color:#94a3b8; margin-top:2px; }
+        .disamb-avbryt {
+            width:100%; margin-top:12px; background:none; border:none;
+            color:#94a3b8; font-family:inherit; font-size:.82rem;
+            font-weight:700; cursor:pointer; padding:8px;
+        }
+        .disamb-avbryt:hover { color:#64748b; }
+
         @media (max-width: 600px) {
             .page-hero { padding: 32px 0 48px; }
             .page-hero h1 { font-size: 2rem; letter-spacing: -1.5px; }
@@ -505,6 +538,16 @@
         </div>
     </div>
 
+    <!-- DISAMBIGUATION MODAL -->
+    <div class="disamb-overlay" id="disambOverlay">
+        <div class="disamb-panel">
+            <div class="disamb-tittel" id="disambTittel"></div>
+            <div class="disamb-sub">Velg hvilken variant du vil legge til:</div>
+            <div class="disamb-valg" id="disambValg"></div>
+            <button class="disamb-avbryt" onclick="lukkDisamb()">Avbryt</button>
+        </div>
+    </div>
+
     <!-- SMART SORT OVERLAY -->
     <div class="smart-overlay" id="smartOverlay" onclick="lukkSmartOverlay(event)">
         <div class="smart-panel" id="smartPanel">
@@ -649,8 +692,132 @@
             }
         }
 
+        // ── DISAMBIGUATION ──────────────────────────────────────────────
+        const DISAMB = {
+            'erter':          { navn: 'Erter', valg: [
+                { tekst: 'Erter (frosne)',      sub: 'Frysedisk ❄️',              ikon: '❄️' },
+                { tekst: 'Erter (hermetisk)',   sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+            'mais':           { navn: 'Mais', valg: [
+                { tekst: 'Maiskolbe',           sub: 'Frukt & Grønt 🥦',          ikon: '🌽' },
+                { tekst: 'Mais (hermetisk)',    sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+            'pitabrød':       { navn: 'Pitabrød', valg: [
+                { tekst: 'Pitabrød (fersk)',    sub: 'Bakeri & Brød 🍞',          ikon: '🍞' },
+                { tekst: 'Pitabrød (fryst)',    sub: 'Frysedisk ❄️',              ikon: '❄️' }
+            ]},
+            'appelsinjuice':  { navn: 'Appelsinjuice', valg: [
+                { tekst: 'Appelsinjuice (kjølt)', sub: 'Kjølevarer 🧊',           ikon: '🧃' },
+                { tekst: 'Appelsinjuice',       sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+            'mineralvann':    { navn: 'Mineralvann', valg: [
+                { tekst: 'Mineralvann (kjølt)', sub: 'Kjølevarer 🧊',             ikon: '🧊' },
+                { tekst: 'Mineralvann',         sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+            'kyllingnuggets': { navn: 'Kyllingnuggets', valg: [
+                { tekst: 'Kyllingnuggets (kjølt)', sub: 'Kjølevarer 🧊',          ikon: '🧊' },
+                { tekst: 'Kyllingnuggets (fryst)', sub: 'Frysedisk ❄️',           ikon: '❄️' }
+            ]},
+            'guacamole':      { navn: 'Guacamole', valg: [
+                { tekst: 'Guacamole (kjølt)',   sub: 'Kjølevarer 🧊',             ikon: '🧊' },
+                { tekst: 'Guacamole',           sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+            'eplejuice':      { navn: 'Eplejuice', valg: [
+                { tekst: 'Eplejuice (kjølt)',   sub: 'Kjølevarer 🧊',             ikon: '🧃' },
+                { tekst: 'Eplejuice',           sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+            'risgrøt':        { navn: 'Risgrøt', valg: [
+                { tekst: 'Risgrøt (ferdig, kjølt)', sub: 'Kjølevarer 🧊',         ikon: '🧊' },
+                { tekst: 'Risgrøt (pose)',      sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+            'leverpostei':    { navn: 'Leverpostei', valg: [
+                { tekst: 'Leverpostei (kjølt)', sub: 'Kjølevarer 🧊',             ikon: '🧊' },
+                { tekst: 'Leverpostei',         sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+            'basilikum':      { navn: 'Basilikum', valg: [
+                { tekst: 'Basilikum (fersk)',   sub: 'Frukt & Grønt 🥦',          ikon: '🌿' },
+                { tekst: 'Basilikum (tørket)', sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+            'timian':         { navn: 'Timian', valg: [
+                { tekst: 'Timian (fersk)',      sub: 'Frukt & Grønt 🥦',          ikon: '🌿' },
+                { tekst: 'Timian (tørket)',     sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+            'rosmarin':       { navn: 'Rosmarin', valg: [
+                { tekst: 'Rosmarin (fersk)',    sub: 'Frukt & Grønt 🥦',          ikon: '🌿' },
+                { tekst: 'Rosmarin (tørket)',   sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+            'koriander':      { navn: 'Koriander', valg: [
+                { tekst: 'Koriander (fersk)',   sub: 'Frukt & Grønt 🥦',          ikon: '🌿' },
+                { tekst: 'Koriander (tørket)',  sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+            'persille':       { navn: 'Persille', valg: [
+                { tekst: 'Persille (fersk)',    sub: 'Frukt & Grønt 🥦',          ikon: '🌿' },
+                { tekst: 'Persille (tørket)',   sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+            'dill':           { navn: 'Dill', valg: [
+                { tekst: 'Dill (fersk)',        sub: 'Frukt & Grønt 🥦',          ikon: '🌿' },
+                { tekst: 'Dill (tørket)',       sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+            'mynte':          { navn: 'Mynte', valg: [
+                { tekst: 'Mynte (fersk)',       sub: 'Frukt & Grønt 🥦',          ikon: '🌿' },
+                { tekst: 'Mynte (tørket)',      sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
+            ]},
+        };
+
+        let _disambForm = null;
+        let _disambInput = null;
+
+        function sjekkDisamb(e) {
+            const form = e.target;
+            const input = form.querySelector('input[name="tekst"]');
+            if (!input) return;
+            const tekst = input.value.trim().toLowerCase();
+            for (const [nokkel, data] of Object.entries(DISAMB)) {
+                if (tekst === nokkel || tekst.startsWith(nokkel + ' ') || tekst.startsWith(nokkel + ',')) {
+                    e.preventDefault();
+                    _disambForm = form;
+                    _disambInput = input;
+                    visDisamb(data);
+                    return;
+                }
+            }
+        }
+
+        function visDisamb(data) {
+            document.getElementById('disambTittel').textContent = data.navn;
+            const valgDiv = document.getElementById('disambValg');
+            valgDiv.innerHTML = '';
+            data.valg.forEach(v => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'disamb-btn';
+                btn.innerHTML =
+                    '<span class="disamb-btn-ikon">' + v.ikon + '</span>' +
+                    '<div><div class="disamb-btn-tekst">' + escHtml(v.tekst) + '</div>' +
+                    '<div class="disamb-btn-sub">' + escHtml(v.sub) + '</div></div>';
+                btn.onclick = () => velgDisamb(v.tekst);
+                valgDiv.appendChild(btn);
+            });
+            document.getElementById('disambOverlay').classList.add('vis');
+        }
+
+        function velgDisamb(tekst) {
+            if (_disambInput) _disambInput.value = tekst;
+            lukkDisamb();
+            if (_disambForm) _disambForm.submit();
+        }
+
+        function lukkDisamb() {
+            document.getElementById('disambOverlay').classList.remove('vis');
+        }
+
         // Init ring on page load + start polling
-        document.addEventListener('DOMContentLoaded', () => { oppdaterStats(); startPolling(); });
+        document.addEventListener('DOMContentLoaded', () => {
+            oppdaterStats();
+            startPolling();
+            const addForm = document.querySelector('.add-card form');
+            if (addForm) addForm.addEventListener('submit', sjekkDisamb);
+        });
 
         function toggleItem(btn) {
             const item = btn.closest('.liste-item');
