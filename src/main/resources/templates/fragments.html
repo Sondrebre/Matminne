@@ -401,6 +401,25 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 24px rgba(46,204,113,.35);
         }
+
+        /* ── MOBIL: FASTE MENYER ── */
+        @media (max-width: 991.98px) {
+            #mainNav {
+                position: fixed !important;
+                top: 0; left: 0; right: 0;
+                z-index: 1030 !important;
+            }
+            body {
+                padding-top: 65px;
+            }
+        }
+
+        /* Bottom nav alltid fast — vises kun på mobil via scripts-CSS */
+        .bottom-nav {
+            position: fixed !important;
+            bottom: 0; left: 0; right: 0;
+            z-index: 1050 !important;
+        }
     </style>
 </head>
 
