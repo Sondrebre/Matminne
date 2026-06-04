@@ -481,12 +481,12 @@
                     <p style="font-size:.8rem;color:#64748b;margin:0 0 4px;">
                         Opprett en ny delt liste og del koden med de du vil handle med.
                     </p>
-                    <form action="/handleliste/opprett-gruppe" method="POST" class="delt-rad">
+                    <form th:action="@{/handleliste/opprett-gruppe}" method="POST" class="delt-rad">
                         <input type="text" name="navn" class="delt-input" placeholder="Navn på listen (f.eks. «Familie»)" required maxlength="40">
                         <button type="submit" class="btn-delt"><i class="fa-solid fa-plus"></i> Opprett</button>
                     </form>
                     <div class="delt-divider">eller bli med i en eksisterende</div>
-                    <form action="/handleliste/bli-med" method="POST" class="delt-rad">
+                    <form th:action="@{/handleliste/bli-med}" method="POST" class="delt-rad">
                         <input type="text" name="kode" class="delt-input" placeholder="Skriv inn kode (f.eks. MAT4X2)" required maxlength="10"
                                style="text-transform:uppercase;letter-spacing:2px;">
                         <button type="submit" class="btn-delt"><i class="fa-solid fa-right-to-bracket"></i> Bli med</button>
