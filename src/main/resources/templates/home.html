@@ -4,614 +4,679 @@
     <div th:replace="~{fragments :: header_links}"></div>
     <title>MatMinne | Din digitale kokebok</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        a { text-decoration: none; }
-        body { background: #fff; color: #0f172a; }
+        :root {
+            --bg:       #07080f;
+            --bg2:      #0d0f1a;
+            --surface:  rgba(255,255,255,.04);
+            --border:   rgba(255,255,255,.07);
+            --t1: #f0f4ff;
+            --t2: #6b7a99;
+            --t3: #3a4460;
+            --green: #26d870;
+            --green-dim: rgba(38,216,112,.10);
+            --green-glow: rgba(38,216,112,.40);
+        }
+        *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg); color: var(--t1); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; overflow-x: hidden; }
+        a { text-decoration: none; color: inherit; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
 
-        /* ── HERO ── */
+        /* ───── HERO ───── */
         .hero {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
             min-height: calc(100vh - 68px);
-            align-items: center;
-            gap: 0;
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 60px 48px 60px 64px;
-        }
-
-        .hero-left { padding-right: 48px; }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #16a34a;
-            font-size: .72rem;
-            font-weight: 700;
-            letter-spacing: .8px;
-            padding: 5px 12px;
-            border-radius: 100px;
-            margin-bottom: 28px;
-        }
-
-        .hero-badge-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; }
-
-        .hero-h1 {
-            font-size: clamp(2.6rem, 4vw, 4rem);
-            font-weight: 900;
-            color: #0f172a;
-            line-height: 1.05;
-            letter-spacing: -2.5px;
-            margin-bottom: 20px;
-        }
-
-        .hero-h1 .accent { color: #16a34a; }
-
-        .hero-p {
-            font-size: 1rem;
-            color: #64748b;
-            line-height: 1.75;
-            margin-bottom: 36px;
-            max-width: 420px;
-        }
-
-        .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px; }
-
-        .btn-primary-hero {
-            display: inline-flex; align-items: center; gap: 9px;
-            background: #16a34a; color: #fff !important;
-            padding: 13px 24px; border-radius: 10px;
-            font-weight: 700; font-size: .9rem;
-            transition: background .18s, transform .15s;
-            box-shadow: 0 4px 16px rgba(22,163,74,.28);
-        }
-        .btn-primary-hero:hover { background: #15803d; transform: translateY(-1px); }
-
-        .btn-secondary-hero {
-            display: inline-flex; align-items: center; gap: 9px;
-            background: #f8fafc; color: #334155 !important;
-            padding: 13px 22px; border-radius: 10px;
-            font-weight: 700; font-size: .9rem;
-            border: 1px solid #e2e8f0;
-            transition: border-color .18s, background .18s;
-        }
-        .btn-secondary-hero:hover { border-color: #cbd5e1; background: #f1f5f9; }
-
-        .hero-trust {
-            display: flex; align-items: center; gap: 20px;
-            font-size: .78rem; color: #94a3b8; font-weight: 600;
-        }
-
-        .hero-trust-item { display: flex; align-items: center; gap: 6px; }
-        .hero-trust-item i { color: #22c55e; }
-
-        /* ── MOCKUP ── */
-        .hero-right { position: relative; }
-
-        .mockup-wrap {
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow:
-                0 0 0 1px rgba(0,0,0,.06),
-                0 24px 64px rgba(0,0,0,.14),
-                0 8px 24px rgba(0,0,0,.06);
-            background: #fff;
-        }
-
-        .mockup-bar {
-            background: #f8fafc;
-            padding: 10px 16px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .md { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-        .md-r { background: #fc5f5a; }
-        .md-y { background: #fdbe40; }
-        .md-g { background: #35cd4b; }
-
-        .mockup-url {
-            flex: 1; margin: 0 20px;
-            background: #f1f5f9; border-radius: 6px;
-            padding: 4px 12px; font-size: .72rem;
-            color: #94a3b8; text-align: center; font-weight: 500;
-        }
-
-        .mockup-body {
-            background: #f0fdf4;
-            padding: 16px;
-        }
-
-        /* Fake navbar inside mockup */
-        .mk-nav {
-            background: rgba(240,253,244,.97);
-            border-bottom: 1px solid #d1fae5;
-            padding: 8px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: -16px -16px 14px;
-        }
-
-        .mk-nav-logo { font-weight: 900; font-size: .82rem; color: #0f172a; letter-spacing: -.5px; }
-        .mk-nav-logo span { color: #22c55e; }
-        .mk-nav-links { display: flex; gap: 14px; }
-        .mk-nav-link { font-size: .65rem; font-weight: 600; color: #64748b; }
-        .mk-nav-btn { background: #22c55e; color: white; font-size: .62rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; }
-
-        /* Hero section inside mockup */
-        .mk-hero {
-            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
-            border-radius: 10px;
-            padding: 16px;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-        .mk-hero-txt h3 { font-size: .8rem; font-weight: 900; color: #0f172a; margin-bottom: 3px; }
-        .mk-hero-txt p { font-size: .62rem; color: #64748b; }
-        .mk-hero-badge {
-            margin-left: auto; flex-shrink: 0;
-            background: #22c55e; color: white;
-            font-size: .58rem; font-weight: 700;
-            padding: 3px 8px; border-radius: 6px;
-        }
-
-        /* Recipe grid */
-        .mk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-
-        .mk-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid #e8f5e9;
-            box-shadow: 0 2px 8px rgba(0,0,0,.05);
-        }
-
-        .mk-card-img { height: 70px; overflow: hidden; }
-        .mk-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-        .mk-card-body { padding: 8px 10px; }
-        .mk-card-title { font-size: .68rem; font-weight: 800; color: #0f172a; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .mk-card-meta { display: flex; align-items: center; gap: 6px; font-size: .58rem; color: #94a3b8; font-weight: 600; }
-        .mk-card-tag { background: #f0fdf4; color: #16a34a; font-size: .55rem; font-weight: 700; padding: 1px 5px; border-radius: 4px; }
-
-        /* Floating badge on mockup */
-        .mockup-badge {
-            position: absolute;
-            bottom: -16px; left: -24px;
-            background: white;
-            border-radius: 14px;
-            padding: 12px 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,.12);
-            border: 1px solid #f1f5f9;
-            display: flex; align-items: center; gap: 10px;
-            z-index: 10;
-        }
-        .mb-ico { width: 36px; height: 36px; background: #f0fdf4; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
-        .mb-txt strong { display: block; font-size: .78rem; font-weight: 800; color: #0f172a; }
-        .mb-txt span { font-size: .68rem; color: #94a3b8; }
-
-        .mockup-badge2 {
-            position: absolute;
-            top: 24px; right: -20px;
-            background: white;
-            border-radius: 12px;
-            padding: 10px 14px;
-            box-shadow: 0 8px 28px rgba(0,0,0,.1);
-            border: 1px solid #f1f5f9;
-            display: flex; align-items: center; gap: 8px;
-            z-index: 10;
-        }
-        .mb2-stars { color: #fbbf24; font-size: .7rem; letter-spacing: 1px; }
-        .mb2-txt { font-size: .7rem; font-weight: 700; color: #0f172a; }
-        .mb2-sub { font-size: .62rem; color: #94a3b8; }
-
-        /* ── LOGO STRIP ── */
-        .s-strip {
-            border-top: 1px solid #f1f5f9;
-            border-bottom: 1px solid #f1f5f9;
-            padding: 22px 0;
-            background: #fafafa;
-        }
-        .strip-inner {
-            max-width: 900px; margin: 0 auto;
-            display: flex; align-items: center; justify-content: center;
-            gap: 10px; padding: 0 24px; flex-wrap: wrap;
-        }
-        .strip-label { font-size: .72rem; color: #94a3b8; font-weight: 600; margin-right: 8px; white-space: nowrap; }
-        .strip-chip {
-            background: #f1f5f9; color: #475569;
-            font-size: .72rem; font-weight: 700;
-            padding: 5px 12px; border-radius: 8px;
-            display: flex; align-items: center; gap: 6px;
-        }
-
-        /* ── FEATURES ── */
-        .s-features {
-            background: #fff;
-            padding: 88px 0;
-        }
-
-        .section-eyebrow {
-            font-size: .68rem; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 2.5px;
-            color: #16a34a; display: block; margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .section-h2 {
-            font-size: clamp(1.8rem, 2.5vw, 2.4rem);
-            font-weight: 900; letter-spacing: -1.5px;
-            color: #0f172a; text-align: center;
-            margin-bottom: 56px;
-        }
-
-        .feat-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-
-        .feat {
-            background: #f8fafc;
-            border-radius: 18px;
-            padding: 28px 24px;
-            border: 1px solid #f1f5f9;
-            transition: box-shadow .2s, transform .2s, border-color .2s;
-        }
-
-        .feat:hover { box-shadow: 0 12px 40px rgba(0,0,0,.07); transform: translateY(-3px); border-color: #d1fae5; }
-
-        .feat-ico-wrap {
-            width: 44px; height: 44px; border-radius: 12px;
-            background: #f0fdf4; display: flex; align-items: center;
-            justify-content: center; font-size: 1.1rem; margin-bottom: 16px;
-        }
-
-        .feat-t { font-weight: 800; font-size: .95rem; color: #0f172a; margin-bottom: 8px; }
-        .feat-d { font-size: .84rem; color: #64748b; line-height: 1.7; }
-
-        /* ── HOW ── */
-        .s-how { background: #f8fafc; padding: 88px 0; }
-
-        .how-inner {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 80px; align-items: center;
-        }
-
-        .how-steps { display: flex; flex-direction: column; gap: 0; }
-
-        .hstep {
-            display: flex; gap: 20px; padding: 20px 0;
-            border-bottom: 1px solid #e8f5e9;
-        }
-        .hstep:last-child { border: none; }
-
-        .hstep-num {
-            width: 36px; height: 36px; border-radius: 10px;
-            background: #16a34a; color: white;
-            font-weight: 900; font-size: .82rem;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; margin-top: 2px;
-        }
-
-        .hstep-t { font-weight: 800; font-size: .95rem; color: #0f172a; margin-bottom: 4px; }
-        .hstep-d { font-size: .84rem; color: #64748b; line-height: 1.6; }
-
-        .how-img-wrap {
-            border-radius: 20px; overflow: hidden;
-            box-shadow: 0 32px 80px rgba(0,0,0,.1);
-            position: relative;
-        }
-        .how-img-wrap img { width: 100%; height: 460px; object-fit: cover; display: block; }
-
-        /* ── CTA BAND ── */
-        .s-cta {
-            background: linear-gradient(135deg, #0f172a 0%, #1a2e1a 100%);
-            padding: 96px 0;
-            text-align: center;
+            align-items: center;
             position: relative;
             overflow: hidden;
         }
 
-        .cta-glow {
-            position: absolute; inset: 0;
-            background: radial-gradient(ellipse at 50% 120%, rgba(34,197,94,.15) 0%, transparent 60%);
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%; left: -10%;
+            width: 70%; height: 120%;
+            background: radial-gradient(ellipse at 30% 40%, rgba(38,216,112,.13) 0%, transparent 65%);
             pointer-events: none;
         }
 
-        .cta-h2 {
-            font-size: clamp(2rem, 3.5vw, 3.2rem);
+        .hero::after {
+            content: '';
+            position: absolute; inset: 0;
+            background-image: radial-gradient(circle, rgba(255,255,255,.035) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+        }
+
+        .hero-left {
+            padding: 80px 56px 80px 80px;
+            position: relative; z-index: 2;
+        }
+
+        .hero-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(38,216,112,.08);
+            border: 1px solid rgba(38,216,112,.2);
+            color: var(--green);
+            font-size: .72rem; font-weight: 700;
+            letter-spacing: 1px; text-transform: uppercase;
+            padding: 6px 14px; border-radius: 100px;
+            margin-bottom: 32px;
+        }
+        .pill-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 6px var(--green-glow);
+            animation: pulse 2.4s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+        .hero-h1 {
+            font-size: clamp(3rem, 4.5vw, 5rem);
+            font-weight: 900;
+            line-height: 1.0;
+            letter-spacing: -3px;
+            color: var(--t1);
+            margin-bottom: 24px;
+        }
+
+        .grad-text {
+            background: linear-gradient(130deg, #26d870 0%, #4ef09a 40%, #a8ffce 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            font-size: 1.05rem;
+            color: var(--t2);
+            line-height: 1.75;
+            margin-bottom: 40px;
+            max-width: 400px;
+        }
+
+        .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+
+        .btn-hero-primary {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--green);
+            color: #07080f !important;
+            font-weight: 800; font-size: .9rem;
+            padding: 14px 26px; border-radius: 12px;
+            transition: all .18s;
+        }
+        .btn-hero-primary:hover {
+            background: #2ef07e;
+            box-shadow: 0 8px 32px rgba(38,216,112,.35), 0 0 0 1px rgba(38,216,112,.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-hero-secondary {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: var(--surface);
+            color: var(--t1) !important;
+            font-weight: 700; font-size: .9rem;
+            padding: 14px 24px; border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all .18s;
+            backdrop-filter: blur(12px);
+        }
+        .btn-hero-secondary:hover { border-color: rgba(255,255,255,.15); background: rgba(255,255,255,.07); transform: translateY(-2px); }
+
+        .trust-row { display: flex; gap: 28px; flex-wrap: wrap; }
+        .trust-item {
+            display: flex; align-items: center; gap: 7px;
+            font-size: .78rem; color: var(--t3); font-weight: 600;
+        }
+        .trust-item i { color: var(--green); font-size: .7rem; }
+
+        /* ───── MOCKUP ───── */
+        .hero-right {
+            position: relative; z-index: 2;
+            padding: 60px 80px 60px 20px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .mockup-outer {
+            position: relative;
+            width: 100%;
+            max-width: 560px;
+        }
+
+        .mockup-outer::before {
+            content: '';
+            position: absolute;
+            inset: -30px;
+            background: radial-gradient(ellipse at 50% 50%, rgba(38,216,112,.1) 0%, transparent 65%);
+            pointer-events: none;
+        }
+
+        .browser {
+            background: #0e1120;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,.10);
+            overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(255,255,255,.04),
+                0 40px 100px rgba(0,0,0,.7),
+                0 20px 40px rgba(0,0,0,.4),
+                inset 0 1px 0 rgba(255,255,255,.06);
+        }
+
+        .browser-bar {
+            background: #13162a;
+            padding: 11px 16px;
+            display: flex; align-items: center; gap: 7px;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+        }
+        .bm { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
+        .bm-r { background: #ff5f56; }
+        .bm-y { background: #ffbd2e; }
+        .bm-g { background: #27c93f; }
+
+        .browser-url {
+            flex: 1; margin: 0 16px;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.07);
+            border-radius: 6px;
+            padding: 4px 12px;
+            font-size: .68rem; color: var(--t2);
+            text-align: center; font-weight: 500;
+        }
+
+        .browser-body { padding: 14px; }
+
+        .mk-topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .mk-logo { font-weight: 900; font-size: .78rem; color: #f0f4ff; letter-spacing: -.5px; }
+        .mk-logo span { color: var(--green); }
+        .mk-links { display: flex; gap: 12px; }
+        .mk-link { font-size: .6rem; color: #4a5580; font-weight: 600; }
+        .mk-add-btn {
+            background: var(--green); color: #07080f;
+            font-size: .6rem; font-weight: 800;
+            padding: 4px 10px; border-radius: 6px;
+        }
+
+        .mk-search {
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.07);
+            border-radius: 8px;
+            padding: 7px 12px;
+            display: flex; align-items: center; gap: 8px;
+            margin-bottom: 12px;
+        }
+        .mk-search-ico { color: #3a4460; font-size: .65rem; }
+        .mk-search-txt { font-size: .65rem; color: #3a4460; }
+
+        .mk-section-label { font-size: .58rem; font-weight: 700; color: #3a4460; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+
+        .mk-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        .mk-card {
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(255,255,255,.07);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .mk-card-img { height: 64px; overflow: hidden; position: relative; }
+        .mk-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .9; }
+        .mk-card-img::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 30px;
+            background: linear-gradient(to bottom, transparent, rgba(10,12,22,.6));
+        }
+        .mk-card-info { padding: 7px 9px; }
+        .mk-card-title { font-size: .63rem; font-weight: 700; color: #d0d8f0; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mk-card-row { display: flex; align-items: center; justify-content: space-between; }
+        .mk-card-time { font-size: .55rem; color: #3a4460; font-weight: 600; }
+        .mk-tag { background: rgba(38,216,112,.12); color: #26d870; font-size: .5rem; font-weight: 800; padding: 1px 5px; border-radius: 4px; }
+
+        /* Floating glass badges */
+        .float-badge {
+            position: absolute;
+            background: rgba(13,15,26,.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 16px 48px rgba(0,0,0,.5);
+            z-index: 5;
+        }
+        .fb-bottom { bottom: -16px; left: -28px; animation: floatY 4s ease-in-out infinite; }
+        .fb-top { top: 16px; right: -20px; animation: floatY 4s ease-in-out infinite 1.5s; }
+        @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+        .fb-ico {
+            width: 34px; height: 34px; border-radius: 9px;
+            background: rgba(38,216,112,.12);
+            display: flex; align-items: center; justify-content: center;
+            font-size: .9rem; flex-shrink: 0;
+        }
+        .fb-text strong { display: block; font-size: .75rem; font-weight: 800; color: var(--t1); }
+        .fb-text span { font-size: .65rem; color: var(--t2); }
+        .fb-stars { color: #fbbf24; font-size: .65rem; margin-bottom: 2px; }
+
+        /* ───── LOGOS ───── */
+        .s-logos { border-top: 1px solid var(--border); padding: 24px 0; background: var(--bg2); }
+        .logos-inner { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .logos-label { font-size: .7rem; color: var(--t3); font-weight: 600; margin-right: 12px; white-space: nowrap; }
+        .logo-chip {
+            display: flex; align-items: center; gap: 6px;
+            background: var(--surface); border: 1px solid var(--border);
+            color: var(--t2); font-size: .7rem; font-weight: 700;
+            padding: 5px 12px; border-radius: 8px;
+            transition: border-color .15s, color .15s;
+        }
+        .logo-chip:hover { border-color: rgba(38,216,112,.3); color: var(--green); }
+        .logo-chip i { color: var(--green); }
+
+        /* ───── STATS ───── */
+        .s-stats { background: var(--bg); padding: 56px 0; border-top: 1px solid var(--border); }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+        .stat { text-align: center; padding: 24px; border-right: 1px solid var(--border); }
+        .stat:last-child { border: none; }
+        .stat-num {
+            font-size: 2.8rem; font-weight: 900; letter-spacing: -2px;
+            background: linear-gradient(130deg, #26d870, #4ef09a);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 4px;
+        }
+        .stat-label { font-size: .78rem; color: var(--t2); font-weight: 600; }
+
+        /* ───── FEATURES ───── */
+        .s-features { padding: 100px 0; background: var(--bg); }
+        .eyebrow {
+            display: block; text-align: center;
+            font-size: .68rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 2.5px; color: var(--green); margin-bottom: 12px;
+        }
+        .section-h {
+            font-size: clamp(2rem, 3vw, 2.8rem);
             font-weight: 900; letter-spacing: -2px;
-            color: #fff; line-height: 1.05;
-            margin-bottom: 14px; position: relative;
+            color: var(--t1); text-align: center; margin-bottom: 16px;
         }
-        .cta-h2 em { font-style: normal; color: #4ade80; }
-        .cta-sub { color: rgba(255,255,255,.45); font-size: .93rem; margin-bottom: 36px; position: relative; }
+        .section-sub {
+            font-size: .95rem; color: var(--t2); text-align: center;
+            max-width: 480px; margin: 0 auto 64px; line-height: 1.7;
+        }
+        .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 
-        /* ── RESPONSIVE ── */
+        .feat-card {
+            background: var(--bg2); border: 1px solid var(--border);
+            border-radius: 18px; padding: 28px 26px;
+            transition: all .22s; position: relative; overflow: hidden;
+        }
+        .feat-card::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 0% 0%, rgba(38,216,112,.06) 0%, transparent 55%);
+            opacity: 0; transition: opacity .22s;
+        }
+        .feat-card:hover { border-color: rgba(38,216,112,.22); transform: translateY(-4px); box-shadow: 0 24px 64px rgba(0,0,0,.4); }
+        .feat-card:hover::before { opacity: 1; }
+
+        .feat-icon {
+            width: 44px; height: 44px; border-radius: 12px;
+            background: rgba(38,216,112,.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; margin-bottom: 18px;
+        }
+        .feat-title { font-size: .95rem; font-weight: 800; color: var(--t1); margin-bottom: 8px; }
+        .feat-desc { font-size: .83rem; color: var(--t2); line-height: 1.7; }
+
+        /* ───── HOW ───── */
+        .s-how { background: var(--bg2); padding: 100px 0; }
+        .how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 88px; align-items: center; }
+
+        .how-step {
+            display: flex; gap: 20px; padding: 20px 0;
+            border-bottom: 1px solid var(--border); transition: border-color .2s;
+        }
+        .how-step:last-child { border: none; }
+        .how-step:hover { border-color: rgba(38,216,112,.25); }
+
+        .step-num {
+            width: 38px; height: 38px; border-radius: 10px;
+            background: rgba(38,216,112,.08); border: 1px solid rgba(38,216,112,.18);
+            color: var(--green); font-weight: 900; font-size: .85rem;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .step-title { font-size: .95rem; font-weight: 800; color: var(--t1); margin-bottom: 5px; }
+        .step-desc { font-size: .83rem; color: var(--t2); line-height: 1.6; }
+
+        .how-visual {
+            border-radius: 20px; overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 40px 100px rgba(0,0,0,.6);
+            position: relative;
+        }
+        .how-visual img { width: 100%; height: 460px; object-fit: cover; display: block; }
+        .how-visual::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(38,216,112,.06) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* ───── CTA ───── */
+        .s-cta {
+            padding: 120px 0; text-align: center;
+            background: var(--bg2); position: relative; overflow: hidden;
+        }
+        .s-cta::before {
+            content: ''; position: absolute;
+            left: 50%; top: 50%; transform: translate(-50%,-50%);
+            width: 600px; height: 300px;
+            background: radial-gradient(ellipse at center, rgba(38,216,112,.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .cta-h {
+            font-size: clamp(2.4rem, 4vw, 3.8rem);
+            font-weight: 900; letter-spacing: -2.5px;
+            color: var(--t1); margin-bottom: 14px;
+            position: relative; z-index: 1; line-height: 1.05;
+        }
+        .cta-sub {
+            color: var(--t2); font-size: .95rem;
+            margin-bottom: 40px; position: relative; z-index: 1;
+        }
+
+        /* ───── FOOTER ───── */
+        .s-footer-note {
+            background: var(--bg); border-top: 1px solid var(--border);
+            padding: 20px 0; text-align: center;
+        }
+        .s-footer-note p { font-size: .72rem; color: var(--t3); }
+        .s-footer-note a { color: var(--t2); }
+        .s-footer-note a:hover { color: var(--green); }
+
+        /* ───── RESPONSIVE ───── */
         @media (max-width: 1024px) {
-            .hero { padding: 48px 32px; gap: 40px; }
-            .hero-left { padding-right: 0; }
+            .hero-left { padding: 60px 32px 60px 48px; }
+            .hero-right { padding: 60px 40px 60px 16px; }
         }
-
         @media (max-width: 860px) {
-            .hero { grid-template-columns: 1fr; min-height: auto; padding: 48px 24px; }
+            .hero { grid-template-columns: 1fr; }
+            .hero-left { padding: 60px 24px; text-align: center; }
+            .hero-sub { max-width: 100%; }
+            .hero-ctas { justify-content: center; }
+            .trust-row { justify-content: center; }
             .hero-right { display: none; }
-            .how-inner { grid-template-columns: 1fr; gap: 40px; }
-            .how-img-wrap { display: none; }
             .feat-grid { grid-template-columns: 1fr 1fr; }
+            .how-grid { grid-template-columns: 1fr; gap: 40px; }
+            .how-visual { display: none; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .stat { border-right: none; border-bottom: 1px solid var(--border); }
+            .stat:last-child { border: none; }
         }
-
         @media (max-width: 540px) {
             .feat-grid { grid-template-columns: 1fr; }
-            .hero-btns { flex-direction: column; }
-            .btn-primary-hero, .btn-secondary-hero { justify-content: center; }
+            .hero-h1 { font-size: 2.8rem; letter-spacing: -2px; }
+            .container { padding: 0 20px; }
         }
     </style>
 </head>
 <body>
-    <div th:replace="~{fragments :: navbar}"></div>
+<div th:replace="~{fragments :: navbar}"></div>
 
-    <!-- HERO -->
-    <section class="hero">
-        <div class="hero-left">
-            <div class="hero-badge">
-                <div class="hero-badge-dot"></div>
-                Gratis å bruke · Ingen installasjon
-            </div>
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+    <div class="hero-left">
+        <div class="hero-pill"><div class="pill-dot"></div> Gratis · Ingen installasjon</div>
 
-            <h1 class="hero-h1">
-                Samle alle<br>oppskriftene<br>
-                <span class="accent">på ett sted.</span>
-            </h1>
+        <h1 class="hero-h1">
+            Samle alle<br>
+            oppskriftene dine<br>
+            <span class="grad-text">på ett sted.</span>
+        </h1>
 
-            <p class="hero-p">
-                Lim inn en lenke fra Matprat, Godt.no eller et hvilket som helst
-                nettsted — MatMinne henter oppskriften automatisk og lagrer den
-                trygt i din personlige kokebok.
-            </p>
+        <p class="hero-sub">
+            Lim inn en lenke fra Matprat, Godt.no eller et annet nettsted —
+            MatMinne henter oppskriften og lagrer den i din personlige
+            kokebok. Automatisk.
+        </p>
 
-            <div class="hero-btns">
-                <a href="/oauth2/authorization/google" class="btn-primary-hero">
-                    <i class="fa-brands fa-google"></i> Start gratis med Google
-                </a>
-                <a href="/oppdag" class="btn-secondary-hero">
-                    <i class="fa-solid fa-compass"></i> Utforsk oppskrifter
-                </a>
-            </div>
-
-            <div class="hero-trust">
-                <div class="hero-trust-item">
-                    <i class="fa-solid fa-circle-check"></i> 100% gratis
-                </div>
-                <div class="hero-trust-item">
-                    <i class="fa-solid fa-circle-check"></i> Ingen kredittkort
-                </div>
-                <div class="hero-trust-item">
-                    <i class="fa-solid fa-circle-check"></i> Logg inn med Google
-                </div>
-            </div>
+        <div class="hero-ctas">
+            <a href="/oauth2/authorization/google" class="btn-hero-primary">
+                <i class="fa-brands fa-google"></i> Start gratis med Google
+            </a>
+            <a href="/oppdag" class="btn-hero-secondary">
+                <i class="fa-regular fa-compass"></i> Utforsk oppskrifter
+            </a>
         </div>
 
-        <!-- APP MOCKUP -->
-        <div class="hero-right">
-            <div style="position:relative; padding: 0 24px 32px 8px;">
-                <div class="mockup-wrap">
-                    <!-- Browser bar -->
-                    <div class="mockup-bar">
-                        <div class="md md-r"></div>
-                        <div class="md md-y"></div>
-                        <div class="md md-g"></div>
-                        <div class="mockup-url">matminne.no/kokebok</div>
-                    </div>
-                    <!-- App content -->
-                    <div class="mockup-body">
-                        <!-- Fake mini navbar -->
-                        <div class="mk-nav">
-                            <span class="mk-nav-logo">mat<span>minne.</span></span>
-                            <div class="mk-nav-links">
-                                <span class="mk-nav-link">Min bok</span>
-                                <span class="mk-nav-link">Utforsk</span>
-                                <span class="mk-nav-link">Handleliste</span>
-                            </div>
-                            <span class="mk-nav-btn">+ Ny</span>
-                        </div>
-
-                        <!-- Hero strip -->
-                        <div class="mk-hero">
-                            <div class="mk-hero-txt">
-                                <h3>Min Kokebok</h3>
-                                <p>12 oppskrifter lagret</p>
-                            </div>
-                            <span class="mk-hero-badge">✨ AI-klar</span>
-                        </div>
-
-                        <!-- Recipe cards -->
-                        <div class="mk-grid">
-                            <div class="mk-card">
-                                <div class="mk-card-img">
-                                    <img src="https://images.unsplash.com/photo-1546549032-9571cd6b27df?auto=format&fit=crop&w=400&q=80" alt="">
-                                </div>
-                                <div class="mk-card-body">
-                                    <div class="mk-card-title">Pasta Carbonara</div>
-                                    <div class="mk-card-meta">
-                                        <i class="fa-regular fa-clock" style="font-size:.55rem;"></i> 20 min
-                                        <span class="mk-card-tag">Middag</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mk-card">
-                                <div class="mk-card-img">
-                                    <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=400&q=80" alt="">
-                                </div>
-                                <div class="mk-card-body">
-                                    <div class="mk-card-title">Grillet laks</div>
-                                    <div class="mk-card-meta">
-                                        <i class="fa-regular fa-clock" style="font-size:.55rem;"></i> 25 min
-                                        <span class="mk-card-tag">Fisk</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mk-card">
-                                <div class="mk-card-img">
-                                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80" alt="">
-                                </div>
-                                <div class="mk-card-body">
-                                    <div class="mk-card-title">Sommersalat</div>
-                                    <div class="mk-card-meta">
-                                        <i class="fa-regular fa-clock" style="font-size:.55rem;"></i> 10 min
-                                        <span class="mk-card-tag">Lett</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mk-card">
-                                <div class="mk-card-img">
-                                    <img src="https://images.unsplash.com/photo-1574894709920-11b28e7367e3?auto=format&fit=crop&w=400&q=80" alt="">
-                                </div>
-                                <div class="mk-card-body">
-                                    <div class="mk-card-title">Hjemmelaget pizza</div>
-                                    <div class="mk-card-meta">
-                                        <i class="fa-regular fa-clock" style="font-size:.55rem;"></i> 45 min
-                                        <span class="mk-card-tag">Bakst</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Floating badges -->
-                <div class="mockup-badge">
-                    <div class="mb-ico">🔗</div>
-                    <div class="mb-txt">
-                        <strong>Hentet fra Matprat.no</strong>
-                        <span>Automatisk · Akkurat nå</span>
-                    </div>
-                </div>
-
-                <div class="mockup-badge2">
-                    <div>
-                        <div class="mb2-stars">★★★★★</div>
-                        <div class="mb2-txt">Veldig fornøyd!</div>
-                        <div class="mb2-sub">4.9 av 5 · 200+ brukere</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- STRIP -->
-    <div class="s-strip">
-        <div class="strip-inner">
-            <span class="strip-label">Henter oppskrifter fra</span>
-            <span class="strip-chip"><i class="fa-solid fa-utensils" style="color:#16a34a;"></i> Matprat.no</span>
-            <span class="strip-chip"><i class="fa-solid fa-utensils" style="color:#16a34a;"></i> Godt.no</span>
-            <span class="strip-chip"><i class="fa-solid fa-utensils" style="color:#16a34a;"></i> VG Mat</span>
-            <span class="strip-chip"><i class="fa-solid fa-utensils" style="color:#16a34a;"></i> Tine.no</span>
-            <span class="strip-chip"><i class="fa-solid fa-globe" style="color:#16a34a;"></i> Alle nettsider</span>
+        <div class="trust-row">
+            <div class="trust-item"><i class="fa-solid fa-check"></i> 100% gratis</div>
+            <div class="trust-item"><i class="fa-solid fa-check"></i> Ingen kredittkort</div>
+            <div class="trust-item"><i class="fa-solid fa-check"></i> Google-innlogging</div>
         </div>
     </div>
 
-    <!-- FEATURES -->
-    <section class="s-features">
-        <div class="container">
-            <span class="section-eyebrow">Funksjoner</span>
-            <h2 class="section-h2">Alt du trenger på ett sted</h2>
-            <div class="feat-grid">
-                <div class="feat">
-                    <div class="feat-ico-wrap">🔗</div>
-                    <div class="feat-t">Hent fra URL</div>
-                    <p class="feat-d">Lim inn en lenke og AI fyller inn tittel, ingredienser og fremgangsmåte automatisk.</p>
+    <div class="hero-right">
+        <div class="mockup-outer">
+            <div class="browser">
+                <div class="browser-bar">
+                    <div class="bm bm-r"></div>
+                    <div class="bm bm-y"></div>
+                    <div class="bm bm-g"></div>
+                    <div class="browser-url">matminne.no/kokebok</div>
                 </div>
-                <div class="feat">
-                    <div class="feat-ico-wrap">🛒</div>
-                    <div class="feat-t">Automatisk handleliste</div>
-                    <p class="feat-d">Velg en oppskrift og ingrediensene legges rett i handlelisten — med smartsortering.</p>
-                </div>
-                <div class="feat">
-                    <div class="feat-ico-wrap">🍳</div>
-                    <div class="feat-t">Kokemodus</div>
-                    <p class="feat-d">Hak av ingredienser og steg mens du lager maten. Skjermen slukner ikke.</p>
-                </div>
-                <div class="feat">
-                    <div class="feat-ico-wrap">📅</div>
-                    <div class="feat-t">Ukesmeny</div>
-                    <p class="feat-d">Planlegg hele uken, generer handleliste automatisk og hold oversikten.</p>
-                </div>
-                <div class="feat">
-                    <div class="feat-ico-wrap">👥</div>
-                    <div class="feat-t">Del med venner</div>
-                    <p class="feat-d">Følg venner, se hva de lager og kopier favorittoppskrifter til din kokebok.</p>
-                </div>
-                <div class="feat">
-                    <div class="feat-ico-wrap">💰</div>
-                    <div class="feat-t">Prisestimat</div>
-                    <p class="feat-d">Se estimert kostnad per oppskrift basert på norske butikkpriser.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- HOW IT WORKS -->
-    <section class="s-how">
-        <div class="container">
-            <div class="how-inner">
-                <div>
-                    <span class="section-eyebrow" style="text-align:left;">Slik fungerer det</span>
-                    <h2 class="section-h2" style="text-align:left;margin-bottom:32px;">Fra lenke til kokebok<br>på 30 sekunder</h2>
-                    <div class="how-steps">
-                        <div class="hstep">
-                            <div class="hstep-num">1</div>
-                            <div>
-                                <div class="hstep-t">Finn en oppskrift du liker</div>
-                                <div class="hstep-d">Fra Matprat, Godt.no, VG Mat eller et annet nettsted.</div>
+                <div class="browser-body">
+                    <div class="mk-topbar">
+                        <span class="mk-logo">mat<span>minne.</span></span>
+                        <div class="mk-links">
+                            <span class="mk-link">Min bok</span>
+                            <span class="mk-link">Utforsk</span>
+                            <span class="mk-link">Handleliste</span>
+                        </div>
+                        <span class="mk-add-btn">+ Legg til</span>
+                    </div>
+                    <div class="mk-search">
+                        <i class="fa-solid fa-magnifying-glass mk-search-ico"></i>
+                        <span class="mk-search-txt">Søk i kokebok…</span>
+                    </div>
+                    <div class="mk-section-label">Min kokebok · 12 oppskrifter</div>
+                    <div class="mk-cards">
+                        <div class="mk-card">
+                            <div class="mk-card-img">
+                                <img src="https://images.unsplash.com/photo-1546549032-9571cd6b27df?auto=format&fit=crop&w=400&q=80" alt="">
+                            </div>
+                            <div class="mk-card-info">
+                                <div class="mk-card-title">Pasta Carbonara</div>
+                                <div class="mk-card-row"><span class="mk-card-time">⏱ 20 min</span><span class="mk-tag">Middag</span></div>
                             </div>
                         </div>
-                        <div class="hstep">
-                            <div class="hstep-num">2</div>
-                            <div>
-                                <div class="hstep-t">Kopier lenken og lim inn</div>
-                                <div class="hstep-d">MatMinne leser siden og henter tittel, ingredienser og fremgangsmåte.</div>
+                        <div class="mk-card">
+                            <div class="mk-card-img">
+                                <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=400&q=80" alt="">
+                            </div>
+                            <div class="mk-card-info">
+                                <div class="mk-card-title">Grillet laks</div>
+                                <div class="mk-card-row"><span class="mk-card-time">⏱ 25 min</span><span class="mk-tag">Fisk</span></div>
                             </div>
                         </div>
-                        <div class="hstep">
-                            <div class="hstep-num">3</div>
-                            <div>
-                                <div class="hstep-t">Lagret i din kokebok</div>
-                                <div class="hstep-d">Alle oppskriftene dine samlet, søkbare og tilgjengelige overalt.</div>
+                        <div class="mk-card">
+                            <div class="mk-card-img">
+                                <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80" alt="">
+                            </div>
+                            <div class="mk-card-info">
+                                <div class="mk-card-title">Sommersalat</div>
+                                <div class="mk-card-row"><span class="mk-card-time">⏱ 10 min</span><span class="mk-tag">Lett</span></div>
+                            </div>
+                        </div>
+                        <div class="mk-card">
+                            <div class="mk-card-img">
+                                <img src="https://images.unsplash.com/photo-1574894709920-11b28e7367e3?auto=format&fit=crop&w=400&q=80" alt="">
+                            </div>
+                            <div class="mk-card-info">
+                                <div class="mk-card-title">Hjemmelaget pizza</div>
+                                <div class="mk-card-row"><span class="mk-card-time">⏱ 45 min</span><span class="mk-tag">Bakst</span></div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="how-img-wrap">
-                    <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80" alt="Matlaging">
+            </div>
+
+            <div class="float-badge fb-bottom">
+                <div class="fb-ico">🔗</div>
+                <div class="fb-text">
+                    <strong>Hentet fra Matprat.no</strong>
+                    <span>Automatisk · Akkurat nå</span>
+                </div>
+            </div>
+
+            <div class="float-badge fb-top">
+                <div class="fb-text" style="text-align:center;">
+                    <div class="fb-stars">★★★★★</div>
+                    <strong>Veldig fornøyd!</strong>
+                    <span>4.9 · 200+ brukere</span>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- CTA -->
-    <section class="s-cta">
-        <div class="cta-glow"></div>
-        <div class="container" style="position:relative;">
-            <h2 class="cta-h2">Klar for å starte?<br><em>Det er gratis.</em></h2>
-            <p class="cta-sub">Ingen installasjon — logg inn med Google og begynn å samle oppskriftene dine.</p>
-            <a href="/oauth2/authorization/google" class="btn-primary-hero" style="display:inline-flex;margin:0 auto;">
-                <i class="fa-brands fa-google"></i> Start gratis med Google
-            </a>
+<!-- ═══ LOGOS ═══ -->
+<div class="s-logos">
+    <div class="container">
+        <div class="logos-inner">
+            <span class="logos-label">Henter automatisk fra</span>
+            <span class="logo-chip"><i class="fa-solid fa-utensils"></i> Matprat.no</span>
+            <span class="logo-chip"><i class="fa-solid fa-utensils"></i> Godt.no</span>
+            <span class="logo-chip"><i class="fa-solid fa-utensils"></i> VG Mat</span>
+            <span class="logo-chip"><i class="fa-solid fa-utensils"></i> Tine.no</span>
+            <span class="logo-chip"><i class="fa-solid fa-globe"></i> Alle nettsider</span>
         </div>
-    </section>
+    </div>
+</div>
 
-    <div th:replace="~{fragments :: scripts}"></div>
+<!-- ═══ STATS ═══ -->
+<div class="s-stats">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat">
+                <div class="stat-num">200+</div>
+                <div class="stat-label">Aktive brukere</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">5 000+</div>
+                <div class="stat-label">Lagrede oppskrifter</div>
+            </div>
+            <div class="stat">
+                <div class="stat-num">30 sek</div>
+                <div class="stat-label">Fra lenke til kokebok</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ FEATURES ═══ -->
+<section class="s-features">
+    <div class="container">
+        <span class="eyebrow">Funksjoner</span>
+        <h2 class="section-h">Alt i én kokebok</h2>
+        <p class="section-sub">Fra oppskrifter og handleliste til ukesmeny og prisestimater — samlet på ett sted.</p>
+        <div class="feat-grid">
+            <div class="feat-card">
+                <div class="feat-icon">🔗</div>
+                <div class="feat-title">Hent fra URL</div>
+                <p class="feat-desc">Lim inn en lenke og AI fyller inn tittel, ingredienser og fremgangsmåte — på sekunder.</p>
+            </div>
+            <div class="feat-card">
+                <div class="feat-icon">🛒</div>
+                <div class="feat-title">Smart handleliste</div>
+                <p class="feat-desc">Velg en oppskrift og ingrediensene legges rett i handlelisten med smartsortering etter butikkseksjon.</p>
+            </div>
+            <div class="feat-card">
+                <div class="feat-icon">🍳</div>
+                <div class="feat-title">Kokemodus</div>
+                <p class="feat-desc">Hak av ingredienser og steg mens du lager maten. Skjermen slukner ikke mens du har hendene fulle.</p>
+            </div>
+            <div class="feat-card">
+                <div class="feat-icon">📅</div>
+                <div class="feat-title">Ukesmeny</div>
+                <p class="feat-desc">Planlegg hele uken og generer handleliste for alle dager automatisk.</p>
+            </div>
+            <div class="feat-card">
+                <div class="feat-icon">👥</div>
+                <div class="feat-title">Del med venner</div>
+                <p class="feat-desc">Følg venner, se hva de lager og kopier favorittoppskrifter til din kokebok med ett klikk.</p>
+            </div>
+            <div class="feat-card">
+                <div class="feat-icon">💰</div>
+                <div class="feat-title">Prisestimat</div>
+                <p class="feat-desc">Se estimert kostnad per oppskrift basert på norske butikkpriser. Spar penger, spis bedre.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ HOW ═══ -->
+<section class="s-how">
+    <div class="container">
+        <div class="how-grid">
+            <div>
+                <span class="eyebrow" style="text-align:left;">Slik fungerer det</span>
+                <h2 class="section-h" style="text-align:left;margin-bottom:40px;">
+                    Fra lenke til kokebok<br>
+                    <span class="grad-text">på 30 sekunder</span>
+                </h2>
+                <div>
+                    <div class="how-step">
+                        <div class="step-num">1</div>
+                        <div>
+                            <div class="step-title">Finn en oppskrift du liker</div>
+                            <div class="step-desc">Fra Matprat, Godt.no, VG Mat eller et annet nettsted du stoler på.</div>
+                        </div>
+                    </div>
+                    <div class="how-step">
+                        <div class="step-num">2</div>
+                        <div>
+                            <div class="step-title">Kopier og lim inn lenken</div>
+                            <div class="step-desc">MatMinne leser siden automatisk og henter tittel, ingredienser og fremgangsmåte.</div>
+                        </div>
+                    </div>
+                    <div class="how-step">
+                        <div class="step-num">3</div>
+                        <div>
+                            <div class="step-title">Lagret i din kokebok</div>
+                            <div class="step-desc">Alle oppskriftene samlet, søkbare og tilgjengelige fra alle enheter.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="how-visual">
+                <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80" alt="Matlaging">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="s-cta">
+    <div class="container" style="position:relative;z-index:1;">
+        <div class="hero-pill" style="margin-bottom:28px;"><div class="pill-dot"></div> Klar for å starte?</div>
+        <h2 class="cta-h">
+            Din kokebok venter.<br>
+            <span class="grad-text">Det er gratis.</span>
+        </h2>
+        <p class="cta-sub">Logg inn med Google og begynn å samle oppskriftene dine i dag. Ingen installasjon, ingen kredittkort.</p>
+        <a href="/oauth2/authorization/google" class="btn-hero-primary" style="display:inline-flex;">
+            <i class="fa-brands fa-google"></i> Start gratis med Google
+        </a>
+    </div>
+</section>
+
+<div class="s-footer-note">
+    <div class="container">
+        <p>Laget med kjærlighet i Norge &middot; <a href="/personvern">Personvern</a> &middot; <a href="/vilkår">Vilkår</a></p>
+    </div>
+</div>
+
+<div th:replace="~{fragments :: scripts}"></div>
 </body>
 </html>
