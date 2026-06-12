@@ -6,274 +6,356 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         a { text-decoration: none; }
-        body { background: #f5f0e8; }
+        body { background: #fff; color: #0f172a; }
 
         /* ── HERO ── */
         .hero {
             display: grid;
-            grid-template-columns: 43fr 57fr;
+            grid-template-columns: 1fr 1fr;
             min-height: calc(100vh - 68px);
-            overflow: hidden;
-        }
-
-        .hero-left {
-            background: #f5f0e8;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: 80px 52px 80px 64px;
-        }
-
-        .hero-h1 {
-            font-size: clamp(2.8rem, 4vw, 4.2rem);
-            font-weight: 900;
-            color: #111f11;
-            line-height: 1.05;
-            letter-spacing: -2.5px;
-            margin-bottom: 24px;
-        }
-
-        .hero-p {
-            font-size: .97rem;
-            color: #444;
-            line-height: 1.72;
-            margin-bottom: 40px;
-            max-width: 380px;
-        }
-
-        .btn-google {
-            display: inline-flex;
             align-items: center;
-            gap: 10px;
-            background: #1e4d20;
-            color: #fff !important;
-            padding: 14px 26px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: .92rem;
-            transition: background .18s, transform .15s;
-            align-self: flex-start;
-            margin-bottom: 20px;
+            gap: 0;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 60px 48px 60px 64px;
         }
 
-        .btn-google:hover { background: #163a18; transform: translateY(-1px); }
+        .hero-left { padding-right: 48px; }
 
-        .btn-utforsk {
+        .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 7px;
-            color: #1e4d20 !important;
-            font-weight: 600;
-            font-size: .93rem;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .8px;
+            padding: 5px 12px;
+            border-radius: 100px;
+            margin-bottom: 28px;
         }
 
-        .btn-utforsk:hover { gap: 11px; }
+        .hero-badge-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; }
 
-        .hero-right {
+        .hero-h1 {
+            font-size: clamp(2.6rem, 4vw, 4rem);
+            font-weight: 900;
+            color: #0f172a;
+            line-height: 1.05;
+            letter-spacing: -2.5px;
+            margin-bottom: 20px;
+        }
+
+        .hero-h1 .accent { color: #16a34a; }
+
+        .hero-p {
+            font-size: 1rem;
+            color: #64748b;
+            line-height: 1.75;
+            margin-bottom: 36px;
+            max-width: 420px;
+        }
+
+        .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px; }
+
+        .btn-primary-hero {
+            display: inline-flex; align-items: center; gap: 9px;
+            background: #16a34a; color: #fff !important;
+            padding: 13px 24px; border-radius: 10px;
+            font-weight: 700; font-size: .9rem;
+            transition: background .18s, transform .15s;
+            box-shadow: 0 4px 16px rgba(22,163,74,.28);
+        }
+        .btn-primary-hero:hover { background: #15803d; transform: translateY(-1px); }
+
+        .btn-secondary-hero {
+            display: inline-flex; align-items: center; gap: 9px;
+            background: #f8fafc; color: #334155 !important;
+            padding: 13px 22px; border-radius: 10px;
+            font-weight: 700; font-size: .9rem;
+            border: 1px solid #e2e8f0;
+            transition: border-color .18s, background .18s;
+        }
+        .btn-secondary-hero:hover { border-color: #cbd5e1; background: #f1f5f9; }
+
+        .hero-trust {
+            display: flex; align-items: center; gap: 20px;
+            font-size: .78rem; color: #94a3b8; font-weight: 600;
+        }
+
+        .hero-trust-item { display: flex; align-items: center; gap: 6px; }
+        .hero-trust-item i { color: #22c55e; }
+
+        /* ── MOCKUP ── */
+        .hero-right { position: relative; }
+
+        .mockup-wrap {
+            position: relative;
+            border-radius: 16px;
             overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(0,0,0,.06),
+                0 24px 64px rgba(0,0,0,.14),
+                0 8px 24px rgba(0,0,0,.06);
+            background: #fff;
         }
 
-        .hero-right img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            display: block;
+        .mockup-bar {
+            background: #f8fafc;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .md { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .md-r { background: #fc5f5a; }
+        .md-y { background: #fdbe40; }
+        .md-g { background: #35cd4b; }
+
+        .mockup-url {
+            flex: 1; margin: 0 20px;
+            background: #f1f5f9; border-radius: 6px;
+            padding: 4px 12px; font-size: .72rem;
+            color: #94a3b8; text-align: center; font-weight: 500;
+        }
+
+        .mockup-body {
+            background: #f0fdf4;
+            padding: 16px;
+        }
+
+        /* Fake navbar inside mockup */
+        .mk-nav {
+            background: rgba(240,253,244,.97);
+            border-bottom: 1px solid #d1fae5;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: -16px -16px 14px;
+        }
+
+        .mk-nav-logo { font-weight: 900; font-size: .82rem; color: #0f172a; letter-spacing: -.5px; }
+        .mk-nav-logo span { color: #22c55e; }
+        .mk-nav-links { display: flex; gap: 14px; }
+        .mk-nav-link { font-size: .65rem; font-weight: 600; color: #64748b; }
+        .mk-nav-btn { background: #22c55e; color: white; font-size: .62rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; }
+
+        /* Hero section inside mockup */
+        .mk-hero {
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .mk-hero-txt h3 { font-size: .8rem; font-weight: 900; color: #0f172a; margin-bottom: 3px; }
+        .mk-hero-txt p { font-size: .62rem; color: #64748b; }
+        .mk-hero-badge {
+            margin-left: auto; flex-shrink: 0;
+            background: #22c55e; color: white;
+            font-size: .58rem; font-weight: 700;
+            padding: 3px 8px; border-radius: 6px;
+        }
+
+        /* Recipe grid */
+        .mk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        .mk-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #e8f5e9;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+        }
+
+        .mk-card-img { height: 70px; overflow: hidden; }
+        .mk-card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        .mk-card-body { padding: 8px 10px; }
+        .mk-card-title { font-size: .68rem; font-weight: 800; color: #0f172a; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mk-card-meta { display: flex; align-items: center; gap: 6px; font-size: .58rem; color: #94a3b8; font-weight: 600; }
+        .mk-card-tag { background: #f0fdf4; color: #16a34a; font-size: .55rem; font-weight: 700; padding: 1px 5px; border-radius: 4px; }
+
+        /* Floating badge on mockup */
+        .mockup-badge {
+            position: absolute;
+            bottom: -16px; left: -24px;
+            background: white;
+            border-radius: 14px;
+            padding: 12px 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,.12);
+            border: 1px solid #f1f5f9;
+            display: flex; align-items: center; gap: 10px;
+            z-index: 10;
+        }
+        .mb-ico { width: 36px; height: 36px; background: #f0fdf4; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+        .mb-txt strong { display: block; font-size: .78rem; font-weight: 800; color: #0f172a; }
+        .mb-txt span { font-size: .68rem; color: #94a3b8; }
+
+        .mockup-badge2 {
+            position: absolute;
+            top: 24px; right: -20px;
+            background: white;
+            border-radius: 12px;
+            padding: 10px 14px;
+            box-shadow: 0 8px 28px rgba(0,0,0,.1);
+            border: 1px solid #f1f5f9;
+            display: flex; align-items: center; gap: 8px;
+            z-index: 10;
+        }
+        .mb2-stars { color: #fbbf24; font-size: .7rem; letter-spacing: 1px; }
+        .mb2-txt { font-size: .7rem; font-weight: 700; color: #0f172a; }
+        .mb2-sub { font-size: .62rem; color: #94a3b8; }
+
+        /* ── LOGO STRIP ── */
+        .s-strip {
+            border-top: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 22px 0;
+            background: #fafafa;
+        }
+        .strip-inner {
+            max-width: 900px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: center;
+            gap: 10px; padding: 0 24px; flex-wrap: wrap;
+        }
+        .strip-label { font-size: .72rem; color: #94a3b8; font-weight: 600; margin-right: 8px; white-space: nowrap; }
+        .strip-chip {
+            background: #f1f5f9; color: #475569;
+            font-size: .72rem; font-weight: 700;
+            padding: 5px 12px; border-radius: 8px;
+            display: flex; align-items: center; gap: 6px;
         }
 
         /* ── FEATURES ── */
         .s-features {
             background: #fff;
-            padding: 72px 0 80px;
-            border-top: 1px solid #e8e0d4;
+            padding: 88px 0;
         }
 
-        .feat-heading {
+        .section-eyebrow {
+            font-size: .68rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 2.5px;
+            color: #16a34a; display: block; margin-bottom: 10px;
             text-align: center;
-            font-size: 1.35rem;
-            font-weight: 800;
-            color: #111f11;
-            margin-bottom: 52px;
-            letter-spacing: -.4px;
+        }
+
+        .section-h2 {
+            font-size: clamp(1.8rem, 2.5vw, 2.4rem);
+            font-weight: 900; letter-spacing: -1.5px;
+            color: #0f172a; text-align: center;
+            margin-bottom: 56px;
         }
 
         .feat-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            max-width: 820px;
-            margin: 0 auto;
-            padding: 0 24px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
         }
 
-        .feat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 13px;
+        .feat {
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 28px 24px;
+            border: 1px solid #f1f5f9;
+            transition: box-shadow .2s, transform .2s, border-color .2s;
         }
 
-        .feat-ico {
-            width: 70px; height: 70px;
-            border-radius: 50%;
-            background: #ede8df;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #3a3a3a;
-            font-size: 1.3rem;
-            flex-shrink: 0;
+        .feat:hover { box-shadow: 0 12px 40px rgba(0,0,0,.07); transform: translateY(-3px); border-color: #d1fae5; }
+
+        .feat-ico-wrap {
+            width: 44px; height: 44px; border-radius: 12px;
+            background: #f0fdf4; display: flex; align-items: center;
+            justify-content: center; font-size: 1.1rem; margin-bottom: 16px;
         }
 
-        .feat-name {
-            font-weight: 800;
-            font-size: .88rem;
-            color: #111f11;
-        }
+        .feat-t { font-weight: 800; font-size: .95rem; color: #0f172a; margin-bottom: 8px; }
+        .feat-d { font-size: .84rem; color: #64748b; line-height: 1.7; }
 
-        .feat-desc {
-            font-size: .78rem;
-            color: #6b7280;
-            line-height: 1.6;
-        }
-
-        /* ── HOW IT WORKS ── */
-        .s-how {
-            background: #f5f0e8;
-            padding: 88px 0;
-        }
+        /* ── HOW ── */
+        .s-how { background: #f8fafc; padding: 88px 0; }
 
         .how-inner {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
+            gap: 80px; align-items: center;
         }
 
-        .how-label {
-            font-size: .68rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-            color: #1e4d20;
-            display: block;
-            margin-bottom: 12px;
+        .how-steps { display: flex; flex-direction: column; gap: 0; }
+
+        .hstep {
+            display: flex; gap: 20px; padding: 20px 0;
+            border-bottom: 1px solid #e8f5e9;
+        }
+        .hstep:last-child { border: none; }
+
+        .hstep-num {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: #16a34a; color: white;
+            font-weight: 900; font-size: .82rem;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; margin-top: 2px;
         }
 
-        .how-h2 {
-            font-size: clamp(1.8rem, 2.4vw, 2.3rem);
-            font-weight: 900;
-            letter-spacing: -1.5px;
-            color: #111f11;
-            line-height: 1.15;
-            margin-bottom: 16px;
+        .hstep-t { font-weight: 800; font-size: .95rem; color: #0f172a; margin-bottom: 4px; }
+        .hstep-d { font-size: .84rem; color: #64748b; line-height: 1.6; }
+
+        .how-img-wrap {
+            border-radius: 20px; overflow: hidden;
+            box-shadow: 0 32px 80px rgba(0,0,0,.1);
+            position: relative;
         }
+        .how-img-wrap img { width: 100%; height: 460px; object-fit: cover; display: block; }
 
-        .how-p { font-size: .92rem; color: #555; line-height: 1.8; margin-bottom: 32px; }
-
-        .istep {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            padding: 16px 0;
-            border-bottom: 1px solid #e0d8cc;
-        }
-
-        .istep:last-child { border: none; }
-
-        .istep-num {
-            width: 28px; height: 28px;
-            border-radius: 7px;
-            background: #e0ece0;
-            color: #1e4d20;
-            font-weight: 900;
-            font-size: .78rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            margin-top: 1px;
-        }
-
-        .istep-t { font-weight: 800; font-size: .88rem; color: #111f11; margin-bottom: 3px; }
-        .istep-d { font-size: .8rem; color: #64748b; line-height: 1.6; }
-
-        .how-photo {
-            border-radius: 16px;
+        /* ── CTA BAND ── */
+        .s-cta {
+            background: linear-gradient(135deg, #0f172a 0%, #1a2e1a 100%);
+            padding: 96px 0;
+            text-align: center;
+            position: relative;
             overflow: hidden;
-            box-shadow: 0 24px 64px rgba(0,0,0,.1);
         }
 
-        .how-photo img { width: 100%; height: 420px; object-fit: cover; display: block; }
-
-        /* ── DARK BAND ── */
-        .s-band { background: #0d1f0d; padding: 88px 0; }
-
-        .band-inner {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
+        .cta-glow {
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 120%, rgba(34,197,94,.15) 0%, transparent 60%);
+            pointer-events: none;
         }
 
-        .band-label {
-            font-size: .68rem; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 2.5px;
-            color: #6ee7b7; display: block; margin-bottom: 12px;
+        .cta-h2 {
+            font-size: clamp(2rem, 3.5vw, 3.2rem);
+            font-weight: 900; letter-spacing: -2px;
+            color: #fff; line-height: 1.05;
+            margin-bottom: 14px; position: relative;
         }
-
-        .band-h2 {
-            font-size: clamp(1.8rem, 2.4vw, 2.4rem);
-            font-weight: 900; letter-spacing: -1.5px;
-            color: #fff; line-height: 1.1; margin-bottom: 16px;
-        }
-
-        .band-h2 em { font-style: normal; color: #4ade80; }
-        .band-p { font-size: .92rem; color: rgba(255,255,255,.4); line-height: 1.85; margin-bottom: 28px; }
-
-        .band-list { list-style: none; padding: 0; margin: 0 0 36px; display: flex; flex-direction: column; gap: 10px; }
-        .band-list li { display: flex; align-items: center; gap: 10px; font-size: .86rem; color: rgba(255,255,255,.65); font-weight: 600; }
-        .band-list li::before {
-            content: ''; width: 16px; height: 16px; border-radius: 4px;
-            background: rgba(74,222,128,.12) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%234ade80' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat center;
-            border: 1px solid rgba(74,222,128,.3); flex-shrink: 0;
-        }
-
-        .band-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .bcard { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 20px 16px; }
-        .bcard:nth-child(2), .bcard:nth-child(4) { margin-top: 20px; }
-        .bcard-ico { font-size: 1.3rem; margin-bottom: 10px; display: block; }
-        .bcard-t { font-size: .83rem; font-weight: 800; color: #fff; margin-bottom: 5px; }
-        .bcard-d { font-size: .74rem; color: rgba(255,255,255,.35); line-height: 1.5; }
-
-        .btn-cta-dark {
-            display: inline-flex; align-items: center; gap: 10px;
-            background: #4ade80; color: #0d1f0d !important;
-            padding: 13px 26px; border-radius: 8px;
-            font-weight: 800; font-size: .88rem; transition: background .18s;
-        }
-        .btn-cta-dark:hover { background: #22c55e; }
-
-        /* ── CTA ── */
-        .s-cta { background: #fff; padding: 100px 0; text-align: center; border-top: 1px solid #f1f5f9; }
-        .cta-h2 { font-size: clamp(2rem, 3.2vw, 3rem); font-weight: 900; letter-spacing: -2px; color: #111f11; line-height: 1.05; margin-bottom: 14px; }
-        .cta-h2 em { font-style: normal; color: #1e4d20; }
-        .cta-sub { color: #94a3b8; font-size: .93rem; margin-bottom: 36px; }
+        .cta-h2 em { font-style: normal; color: #4ade80; }
+        .cta-sub { color: rgba(255,255,255,.45); font-size: .93rem; margin-bottom: 36px; position: relative; }
 
         /* ── RESPONSIVE ── */
-        @media (max-width: 960px) {
-            .hero { grid-template-columns: 1fr; min-height: auto; }
-            .hero-right { height: 300px; }
-            .hero-left { padding: 52px 24px; }
-            .how-inner, .band-inner { grid-template-columns: 1fr; gap: 40px; }
-            .how-photo { display: none; }
+        @media (max-width: 1024px) {
+            .hero { padding: 48px 32px; gap: 40px; }
+            .hero-left { padding-right: 0; }
         }
 
-        @media (max-width: 640px) {
-            .feat-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
-            .band-cards { grid-template-columns: 1fr; }
-            .bcard:nth-child(2), .bcard:nth-child(4) { margin-top: 0; }
+        @media (max-width: 860px) {
+            .hero { grid-template-columns: 1fr; min-height: auto; padding: 48px 24px; }
+            .hero-right { display: none; }
+            .how-inner { grid-template-columns: 1fr; gap: 40px; }
+            .how-img-wrap { display: none; }
+            .feat-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 540px) {
+            .feat-grid { grid-template-columns: 1fr; }
+            .hero-btns { flex-direction: column; }
+            .btn-primary-hero, .btn-secondary-hero { justify-content: center; }
         }
     </style>
 </head>
@@ -283,57 +365,198 @@
     <!-- HERO -->
     <section class="hero">
         <div class="hero-left">
-            <h1 class="hero-h1">Din digitale<br>kokebok</h1>
+            <div class="hero-badge">
+                <div class="hero-badge-dot"></div>
+                Gratis å bruke · Ingen installasjon
+            </div>
+
+            <h1 class="hero-h1">
+                Samle alle<br>oppskriftene<br>
+                <span class="accent">på ett sted.</span>
+            </h1>
+
             <p class="hero-p">
-                Samle, lagre og del oppskriftene dine.
-                Lim inn fra nettet, importer fra Matprat
-                eller skriv dine egne – enkelt og gratis.
+                Lim inn en lenke fra Matprat, Godt.no eller et hvilket som helst
+                nettsted — MatMinne henter oppskriften automatisk og lagrer den
+                trygt i din personlige kokebok.
             </p>
-            <a href="/oauth2/authorization/google" class="btn-google">
-                <i class="fa-brands fa-google"></i> Start gratis med Google
-            </a>
-            <a href="/oppdag" class="btn-utforsk">
-                Utforsk oppskrifter <i class="fa-solid fa-arrow-right" style="font-size:.75rem;"></i>
-            </a>
+
+            <div class="hero-btns">
+                <a href="/oauth2/authorization/google" class="btn-primary-hero">
+                    <i class="fa-brands fa-google"></i> Start gratis med Google
+                </a>
+                <a href="/oppdag" class="btn-secondary-hero">
+                    <i class="fa-solid fa-compass"></i> Utforsk oppskrifter
+                </a>
+            </div>
+
+            <div class="hero-trust">
+                <div class="hero-trust-item">
+                    <i class="fa-solid fa-circle-check"></i> 100% gratis
+                </div>
+                <div class="hero-trust-item">
+                    <i class="fa-solid fa-circle-check"></i> Ingen kredittkort
+                </div>
+                <div class="hero-trust-item">
+                    <i class="fa-solid fa-circle-check"></i> Logg inn med Google
+                </div>
+            </div>
         </div>
+
+        <!-- APP MOCKUP -->
         <div class="hero-right">
-            <img src="https://images.unsplash.com/photo-1466637574441-749b8f19452f?auto=format&fit=crop&w=1400&q=85"
-                 alt="Matoppskrift flatlay">
+            <div style="position:relative; padding: 0 24px 32px 8px;">
+                <div class="mockup-wrap">
+                    <!-- Browser bar -->
+                    <div class="mockup-bar">
+                        <div class="md md-r"></div>
+                        <div class="md md-y"></div>
+                        <div class="md md-g"></div>
+                        <div class="mockup-url">matminne.no/kokebok</div>
+                    </div>
+                    <!-- App content -->
+                    <div class="mockup-body">
+                        <!-- Fake mini navbar -->
+                        <div class="mk-nav">
+                            <span class="mk-nav-logo">mat<span>minne.</span></span>
+                            <div class="mk-nav-links">
+                                <span class="mk-nav-link">Min bok</span>
+                                <span class="mk-nav-link">Utforsk</span>
+                                <span class="mk-nav-link">Handleliste</span>
+                            </div>
+                            <span class="mk-nav-btn">+ Ny</span>
+                        </div>
+
+                        <!-- Hero strip -->
+                        <div class="mk-hero">
+                            <div class="mk-hero-txt">
+                                <h3>Min Kokebok</h3>
+                                <p>12 oppskrifter lagret</p>
+                            </div>
+                            <span class="mk-hero-badge">✨ AI-klar</span>
+                        </div>
+
+                        <!-- Recipe cards -->
+                        <div class="mk-grid">
+                            <div class="mk-card">
+                                <div class="mk-card-img">
+                                    <img src="https://images.unsplash.com/photo-1546549032-9571cd6b27df?auto=format&fit=crop&w=400&q=80" alt="">
+                                </div>
+                                <div class="mk-card-body">
+                                    <div class="mk-card-title">Pasta Carbonara</div>
+                                    <div class="mk-card-meta">
+                                        <i class="fa-regular fa-clock" style="font-size:.55rem;"></i> 20 min
+                                        <span class="mk-card-tag">Middag</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mk-card">
+                                <div class="mk-card-img">
+                                    <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=400&q=80" alt="">
+                                </div>
+                                <div class="mk-card-body">
+                                    <div class="mk-card-title">Grillet laks</div>
+                                    <div class="mk-card-meta">
+                                        <i class="fa-regular fa-clock" style="font-size:.55rem;"></i> 25 min
+                                        <span class="mk-card-tag">Fisk</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mk-card">
+                                <div class="mk-card-img">
+                                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80" alt="">
+                                </div>
+                                <div class="mk-card-body">
+                                    <div class="mk-card-title">Sommersalat</div>
+                                    <div class="mk-card-meta">
+                                        <i class="fa-regular fa-clock" style="font-size:.55rem;"></i> 10 min
+                                        <span class="mk-card-tag">Lett</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mk-card">
+                                <div class="mk-card-img">
+                                    <img src="https://images.unsplash.com/photo-1574894709920-11b28e7367e3?auto=format&fit=crop&w=400&q=80" alt="">
+                                </div>
+                                <div class="mk-card-body">
+                                    <div class="mk-card-title">Hjemmelaget pizza</div>
+                                    <div class="mk-card-meta">
+                                        <i class="fa-regular fa-clock" style="font-size:.55rem;"></i> 45 min
+                                        <span class="mk-card-tag">Bakst</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating badges -->
+                <div class="mockup-badge">
+                    <div class="mb-ico">🔗</div>
+                    <div class="mb-txt">
+                        <strong>Hentet fra Matprat.no</strong>
+                        <span>Automatisk · Akkurat nå</span>
+                    </div>
+                </div>
+
+                <div class="mockup-badge2">
+                    <div>
+                        <div class="mb2-stars">★★★★★</div>
+                        <div class="mb2-txt">Veldig fornøyd!</div>
+                        <div class="mb2-sub">4.9 av 5 · 200+ brukere</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
+
+    <!-- STRIP -->
+    <div class="s-strip">
+        <div class="strip-inner">
+            <span class="strip-label">Henter oppskrifter fra</span>
+            <span class="strip-chip"><i class="fa-solid fa-utensils" style="color:#16a34a;"></i> Matprat.no</span>
+            <span class="strip-chip"><i class="fa-solid fa-utensils" style="color:#16a34a;"></i> Godt.no</span>
+            <span class="strip-chip"><i class="fa-solid fa-utensils" style="color:#16a34a;"></i> VG Mat</span>
+            <span class="strip-chip"><i class="fa-solid fa-utensils" style="color:#16a34a;"></i> Tine.no</span>
+            <span class="strip-chip"><i class="fa-solid fa-globe" style="color:#16a34a;"></i> Alle nettsider</span>
+        </div>
+    </div>
 
     <!-- FEATURES -->
     <section class="s-features">
         <div class="container">
-            <h2 class="feat-heading">Alt du trenger – samlet på ett sted</h2>
+            <span class="section-eyebrow">Funksjoner</span>
+            <h2 class="section-h2">Alt du trenger på ett sted</h2>
             <div class="feat-grid">
-                <div class="feat-item">
-                    <div class="feat-ico">
-                        <i class="fa-regular fa-heart"></i>
-                    </div>
-                    <div class="feat-name">Samle oppskrifter</div>
-                    <div class="feat-desc">Lagre fra nett, Matprat eller skriv dine egne favoritter.</div>
+                <div class="feat">
+                    <div class="feat-ico-wrap">🔗</div>
+                    <div class="feat-t">Hent fra URL</div>
+                    <p class="feat-d">Lim inn en lenke og AI fyller inn tittel, ingredienser og fremgangsmåte automatisk.</p>
                 </div>
-                <div class="feat-item">
-                    <div class="feat-ico">
-                        <i class="fa-regular fa-clipboard-list"></i>
-                    </div>
-                    <div class="feat-name">Lag handleliste</div>
-                    <div class="feat-desc">Få automatisk handleliste fra oppskriftene dine.</div>
+                <div class="feat">
+                    <div class="feat-ico-wrap">🛒</div>
+                    <div class="feat-t">Automatisk handleliste</div>
+                    <p class="feat-d">Velg en oppskrift og ingrediensene legges rett i handlelisten — med smartsortering.</p>
                 </div>
-                <div class="feat-item">
-                    <div class="feat-ico">
-                        <i class="fa-regular fa-calendar"></i>
-                    </div>
-                    <div class="feat-name">Planlegg ukemeny</div>
-                    <div class="feat-desc">Planlegg måltider og få oversikt over uken.</div>
+                <div class="feat">
+                    <div class="feat-ico-wrap">🍳</div>
+                    <div class="feat-t">Kokemodus</div>
+                    <p class="feat-d">Hak av ingredienser og steg mens du lager maten. Skjermen slukner ikke.</p>
                 </div>
-                <div class="feat-item">
-                    <div class="feat-ico">
-                        <i class="fa-regular fa-circle-user"></i>
-                    </div>
-                    <div class="feat-name">Del med andre</div>
-                    <div class="feat-desc">Del oppskrifter og inspirasjon med venner og familie.</div>
+                <div class="feat">
+                    <div class="feat-ico-wrap">📅</div>
+                    <div class="feat-t">Ukesmeny</div>
+                    <p class="feat-d">Planlegg hele uken, generer handleliste automatisk og hold oversikten.</p>
+                </div>
+                <div class="feat">
+                    <div class="feat-ico-wrap">👥</div>
+                    <div class="feat-t">Del med venner</div>
+                    <p class="feat-d">Følg venner, se hva de lager og kopier favorittoppskrifter til din kokebok.</p>
+                </div>
+                <div class="feat">
+                    <div class="feat-ico-wrap">💰</div>
+                    <div class="feat-t">Prisestimat</div>
+                    <p class="feat-d">Se estimert kostnad per oppskrift basert på norske butikkpriser.</p>
                 </div>
             </div>
         </div>
@@ -344,52 +567,34 @@
         <div class="container">
             <div class="how-inner">
                 <div>
-                    <span class="how-label">Slik fungerer det</span>
-                    <h2 class="how-h2">Fra lenke til kokebok på under ett minutt</h2>
-                    <p class="how-p">Du trenger ikke skrive ett ord. Finn en oppskrift du liker, kopier lenken og MatMinne gjør resten.</p>
-                    <div class="istep">
-                        <div class="istep-num">1</div>
-                        <div><div class="istep-t">Kopier lenken</div><div class="istep-d">Fra Matprat, Godt.no, VG Mat eller et annet nettsted.</div></div>
-                    </div>
-                    <div class="istep">
-                        <div class="istep-num">2</div>
-                        <div><div class="istep-t">AI henter innholdet</div><div class="istep-d">Tittel, ingredienser og fremgangsmåte fylles inn automatisk.</div></div>
-                    </div>
-                    <div class="istep">
-                        <div class="istep-num">3</div>
-                        <div><div class="istep-t">Lagret i din kokebok</div><div class="istep-d">Alle oppskriftene dine samlet, søkbare og alltid tilgjengelige.</div></div>
+                    <span class="section-eyebrow" style="text-align:left;">Slik fungerer det</span>
+                    <h2 class="section-h2" style="text-align:left;margin-bottom:32px;">Fra lenke til kokebok<br>på 30 sekunder</h2>
+                    <div class="how-steps">
+                        <div class="hstep">
+                            <div class="hstep-num">1</div>
+                            <div>
+                                <div class="hstep-t">Finn en oppskrift du liker</div>
+                                <div class="hstep-d">Fra Matprat, Godt.no, VG Mat eller et annet nettsted.</div>
+                            </div>
+                        </div>
+                        <div class="hstep">
+                            <div class="hstep-num">2</div>
+                            <div>
+                                <div class="hstep-t">Kopier lenken og lim inn</div>
+                                <div class="hstep-d">MatMinne leser siden og henter tittel, ingredienser og fremgangsmåte.</div>
+                            </div>
+                        </div>
+                        <div class="hstep">
+                            <div class="hstep-num">3</div>
+                            <div>
+                                <div class="hstep-t">Lagret i din kokebok</div>
+                                <div class="hstep-d">Alle oppskriftene dine samlet, søkbare og tilgjengelige overalt.</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="how-photo">
+                <div class="how-img-wrap">
                     <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=800&q=80" alt="Matlaging">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- AI BAND -->
-    <section class="s-band">
-        <div class="container">
-            <div class="band-inner">
-                <div>
-                    <span class="band-label">AI-funksjoner</span>
-                    <h2 class="band-h2">La AI gjøre<br><em>jobben for deg</em></h2>
-                    <p class="band-p">Med abonnement får du tilgang til avanserte verktøy som analyserer ernæring, genererer ukesmenyer og estimerer priser basert på norske butikkpriser.</p>
-                    <ul class="band-list">
-                        <li>Automatisk henting av oppskrifter fra nettet</li>
-                        <li>Næringsstoffanalyse og kalorioversikt</li>
-                        <li>Personlig ukesmeny basert på dine mål</li>
-                        <li>Prisestimat per oppskrift</li>
-                    </ul>
-                    <a href="/oauth2/authorization/google" class="btn-cta-dark">
-                        <i class="fa-brands fa-google"></i> Kom i gang gratis
-                    </a>
-                </div>
-                <div class="band-cards">
-                    <div class="bcard"><span class="bcard-ico">🧠</span><div class="bcard-t">Smart henting</div><div class="bcard-d">AI leser nettsiden og henter ut det som trengs</div></div>
-                    <div class="bcard"><span class="bcard-ico">📊</span><div class="bcard-t">Næringsstoffer</div><div class="bcard-d">Kalorier, protein, fett og karbohydrater per porsjon</div></div>
-                    <div class="bcard"><span class="bcard-ico">📅</span><div class="bcard-t">Ukesmeny</div><div class="bcard-d">Forslag til hele uken basert på dine preferanser</div></div>
-                    <div class="bcard"><span class="bcard-ico">💰</span><div class="bcard-t">Prisestimat</div><div class="bcard-d">Hva koster handlelisten fra Rema eller Kiwi?</div></div>
                 </div>
             </div>
         </div>
@@ -397,11 +602,12 @@
 
     <!-- CTA -->
     <section class="s-cta">
-        <div class="container">
+        <div class="cta-glow"></div>
+        <div class="container" style="position:relative;">
             <h2 class="cta-h2">Klar for å starte?<br><em>Det er gratis.</em></h2>
-            <p class="cta-sub">Ingen installasjon — bare logg inn med Google og begynn å samle oppskriftene dine.</p>
-            <a href="/oauth2/authorization/google" class="btn-google" style="margin: 0 auto; justify-content: center;">
-                <i class="fa-brands fa-google"></i> Start med Google
+            <p class="cta-sub">Ingen installasjon — logg inn med Google og begynn å samle oppskriftene dine.</p>
+            <a href="/oauth2/authorization/google" class="btn-primary-hero" style="display:inline-flex;margin:0 auto;">
+                <i class="fa-brands fa-google"></i> Start gratis med Google
             </a>
         </div>
     </section>
