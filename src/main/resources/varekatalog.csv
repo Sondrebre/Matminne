@@ -1,0 +1,458 @@
+# MatMinne varekatalog — format: vare;kategori
+# Kategorier: 1=Frukt & Grønt, 2=Meieri & Egg, 3=Kjøtt & Fisk, 4=Bakeri & Brød,
+#             5=Tørrvarer & Hermetikk, 6=Frysedisk, 7=Brus/Øl, 8=Annet, 9=Kjølevarer
+poteter;1
+potet;1
+nypoteter;1
+mandelpoteter;1
+søtpotet;1
+løk;1
+hvitløk;1
+gulrot;1
+gulrøtter;1
+brokkoli;1
+blomkål;1
+spinat;1
+salat;1
+tomat;1
+tomater;1
+cherrytomater;1
+agurk;1
+paprika;1
+chili;1
+squash;1
+sjampinjong;1
+aromasopp;1
+portobello;1
+sopp;1
+purre;1
+purreløk;1
+rødløk;1
+vårløk;1
+sjalottløk;1
+ingefær;1
+avokado;1
+eple;1
+epler;1
+pære;1
+pærer;1
+banan;1
+bananer;1
+appelsin;1
+appelsiner;1
+sitron;1
+lime;1
+jordbær;1
+blåbær;1
+bringebær;1
+bjørnebær;1
+druer;1
+mango;1
+ananas;1
+kiwi;1
+vannmelon;1
+honningmelon;1
+melon;1
+granateple;1
+nektarin;1
+fersken;1
+plommer;1
+klementiner;1
+basilikum;1
+basilikum (fersk);1
+timian;1
+timian (fersk);1
+rosmarin;1
+rosmarin (fersk);1
+koriander;1
+koriander (fersk);1
+persille;1
+persille (fersk);1
+dill;1
+dill (fersk);1
+mynte;1
+mynte (fersk);1
+gressløk;1
+salvie;1
+sitrongress;1
+ruccola;1
+babyleaf;1
+isbergsalat;1
+hjertesalat;1
+grønnkål;1
+rosenkål;1
+hodekål;1
+kålrot;1
+sukkererter;1
+asparges;1
+aspargesbønner;1
+stangselleri;1
+sellerirot;1
+fennikel;1
+rødbeter;1
+pastinakk;1
+maiskolbe;1
+egg;2
+lettmelk;2
+helmelk;2
+skummet melk;2
+laktosefri melk;2
+melk;2
+kulturmelk;2
+smør;2
+rømme;2
+lettrømme;2
+seterrømme;2
+fløte;2
+kremfløte;2
+matfløte;2
+piskefløte;2
+yoghurt;2
+gresk yoghurt;2
+vaniljeyoghurt;2
+ost;2
+norvegia;2
+jarlsberg;2
+cheddar;2
+mozzarella;2
+parmesan;2
+fetaost;2
+brunost;2
+gudbrandsdalsost;2
+snøfrisk;2
+port salut;2
+revet ost;2
+kesam;2
+cottage cheese;2
+crème fraîche;2
+creme fraiche;2
+kefir;2
+margarin;2
+havremelk;2
+soyamelk;2
+mandelmelk;2
+skyr;2
+ricotta;2
+mascarpone;2
+halloumi;2
+kjøttdeig;3
+karbonadedeig;3
+kyllingfilet;3
+kylling;3
+hel kylling;3
+kyllinglår;3
+kyllingvinger;3
+strimlet kylling;3
+kalkunfilet;3
+kalkun;3
+laks;3
+røkt laks;3
+torsk;3
+sei;3
+hyse;3
+ørret;3
+steinbit;3
+kveite;3
+makrell;3
+sild;3
+klippfisk;3
+bacon;3
+pølser;3
+grillpølser;3
+wienerpølser;3
+svinekjøtt;3
+strimlet svinekjøtt;3
+svinekoteletter;3
+lammekjøtt;3
+fårikålkjøtt;3
+ribbe;3
+flintstek;3
+entrecôte;3
+entrecote;3
+indrefilet;3
+ytrefilet;3
+biff;3
+kjøttkaker;3
+medisterkaker;3
+kjøttboller;3
+reker;3
+scampi;3
+blåskjell;3
+fiskekaker;3
+fiskeboller;3
+fiskepudding;3
+spekeskinke;3
+fenalår;3
+salami;3
+chorizo;3
+pepperoni;3
+kokt skinke;3
+skinke;3
+kjøttpålegg;3
+hvetemel;4
+sammalt hvete;4
+grovt mel;4
+rugmel;4
+speltmel;4
+pizzamel;4
+sukker;4
+brunt sukker;4
+melis;4
+gjær;4
+tørrgjær;4
+bakepulver;4
+natron;4
+vaniljesukker;4
+grovbrød;4
+kneippbrød;4
+fullkornsbrød;4
+loff;4
+brød;4
+toastbrød;4
+rundstykker;4
+hamburgerbrød;4
+pølsebrød;4
+pitabrød;4
+pitabrød (fersk);4
+ciabatta;4
+baguette;4
+focaccia;4
+croissant;4
+boller;4
+muffins;4
+wienerbrød;4
+lefser;4
+polarbrød;4
+bagels;4
+kakemiks;4
+havregryn;5
+knekkebrød;5
+tortillalefser;5
+spaghetti;5
+penne;5
+fusilli;5
+makaroni;5
+tagliatelle;5
+lasagneplater;5
+pasta;5
+nudler;5
+risnudler;5
+ris;5
+basmatiris;5
+jasminris;5
+grøtris;5
+fullkornsris;5
+risgrøt (pose);5
+couscous;5
+quinoa;5
+bulgur;5
+hermetiske tomater;5
+hakkede tomater;5
+tomatpuré;5
+tomatpure;5
+pastasaus;5
+pesto;5
+tacosaus;5
+tacokrydder;5
+taco lefser;5
+salsa;5
+kokosmelk;5
+kikerter;5
+linser;5
+hvite bønner;5
+kidneybønner;5
+sorte bønner;5
+bønner;5
+erter (hermetisk);5
+mais (hermetisk);5
+hermetisk mais;5
+oliven;5
+kapers;5
+sylteagurk;5
+salt;5
+pepper;5
+karri;5
+paprikapulver;5
+kanel;5
+kardemomme;5
+oregano;5
+gurkemeie;5
+spisskummen;5
+garam masala;5
+muskatnøtt;5
+laurbærblad;5
+chiliflak;5
+hvitløkspulver;5
+løkpulver;5
+basilikum (tørket);5
+timian (tørket);5
+rosmarin (tørket);5
+koriander (tørket);5
+persille (tørket);5
+dill (tørket);5
+mynte (tørket);5
+soyasaus;5
+fiskesaus;5
+østerssaus;5
+sweet chili saus;5
+sriracha;5
+ketsjup;5
+ketchup;5
+sennep;5
+olivenolje;5
+rapsolje;5
+rapsolle;5
+solsikkeolje;5
+sesamolje;5
+honning;5
+syltetøy;5
+peanøttsmør;5
+nutella;5
+sjokoladepålegg;5
+kaffe;5
+kaffekapsler;5
+te;5
+kakao;5
+sjokolade;5
+kjeks;5
+tunfisk;5
+makrell i tomat;5
+sardiner;5
+ansjos;5
+leverpostei;5
+potetgull;5
+chips;5
+nøtter;5
+mandler;5
+valnøtter;5
+cashewnøtter;5
+peanøtter;5
+rosiner;5
+chiafrø;5
+linfrø;5
+solsikkefrø;5
+gresskarkjerner;5
+müsli;5
+musli;5
+cornflakes;5
+granola;5
+buljong;5
+buljongterninger;5
+eddik;5
+balsamico;5
+sirup;5
+lønnesirup;5
+risgrøt;5
+reker (frosne);6
+frosne reker;6
+frosne erter;6
+erter (frosne);6
+frossen spinat;6
+frossen brokkoli;6
+pommes frites;6
+frossen pizza;6
+grandiosa;6
+frosne bær;6
+frosne jordbær;6
+frosne blåbær;6
+frosne bringebær;6
+frossen mango;6
+frossen laks;6
+frossen torsk;6
+frossen kylling;6
+kyllingnuggets;6
+kyllingnuggets (fryst);6
+fiskepinner;6
+pitabrød (fryst);6
+frosne rundstykker;6
+is;6
+iskrem;6
+vaniljeis;6
+saftis;6
+ispinner;6
+sorbet;6
+softis;6
+wok-grønnsaker;6
+wokgrønnsaker;6
+isbiter;6
+cola;7
+pepsi;7
+pepsi max;7
+fanta;7
+sprite;7
+solo;7
+urge;7
+brus;7
+øl;7
+alkoholfri øl;7
+vin;7
+rødvin;7
+hvitvin;7
+cider;7
+energidrikk;7
+red bull;7
+monster;7
+battery;7
+tonic water;7
+mineralvann;7
+farris;7
+saft;7
+iste;7
+kombucha;7
+bakepapir;8
+matfilm;8
+plastfolie;8
+aluminiumsfolie;8
+oppvaskmiddel;8
+oppvaskbørste;8
+svamp;8
+klut;8
+tørkepapir;8
+toalettpapir;8
+såpe;8
+håndsåpe;8
+vaskemiddel;8
+tøymykner;8
+søppelposer;8
+fryseposer;8
+kaffefilter;8
+tannkrem;8
+tannbørste;8
+sjampo;8
+balsam;8
+deodorant;8
+stearinlys;8
+batterier;8
+lyspærer;8
+tape;8
+majones;9
+aioli;9
+remulade;9
+hummus;9
+guacamole;9
+guacamole (kjølt);9
+tzatziki;9
+rekesalat;9
+italiensk salat;9
+potetsalat;9
+coleslaw;9
+smøreost;9
+kaviar;9
+leverpostei (kjølt);9
+fersk pasta;9
+fersk suppe;9
+pizzabunn;9
+wraps;9
+dressing;9
+salatdressing;9
+rømmedressing;9
+juice;9
+appelsinjuice;9
+appelsinjuice (kjølt);9
+eplejuice;9
+eplejuice (kjølt);9
+smoothie;9
+risgrøt (ferdig, kjølt);9
+mineralvann (kjølt);9
+kyllingnuggets (kjølt);9
+sushi;9

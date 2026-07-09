@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Set;
 import java.util.Random;
 import jakarta.transaction.Transactional;
@@ -46,6 +47,7 @@ public class WebController {
     @Autowired private HandlelisteGruppeMedlemRepository handlelisteGruppeMedlemRepository;
     @Autowired private UkesmenyRepository ukesmenyRepository;
     @Autowired private UtfordringRepository utfordringRepository;
+    @Autowired private VarekatalogService varekatalogService;
 
     private static final String KODE_TEGN = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private static final Random KODE_RND = new Random();
@@ -838,6 +840,14 @@ public class WebController {
             }
         }
 
+        // Server-side gruppering: sorter etter kategori-rekkefølge
+        // (1=Frukt&Grønt ... 9=Kjølevarer, null=sist). Stabil sortering bevarer
+        // eksisterende rekkefølge (uferdige først) innenfor hver kategori.
+        items = new ArrayList<>(items);
+        items.sort(Comparator
+                .comparingInt((HandelListeItem i) -> varekatalogService.kategoriRekkefolge(i.getKategori()))
+                .thenComparing(i -> i.getKategori() == null ? "" : i.getKategori()));
+
         model.addAttribute("items", items);
         model.addAttribute("antall", items.size());
         model.addAttribute("antallFerdig", items.stream().filter(HandelListeItem::isFerdig).count());
@@ -858,7 +868,14 @@ public class WebController {
                 HandelListeItem item = new HandelListeItem();
                 item.setBrukerId(meg.getId());
                 item.setTekst(tekst.trim());
-                item.setKategori(kategori);
+                // Slå opp i statisk varekatalog FØRST — kall bare AI hvis varen ikke finnes der
+                String kat = kategori;
+                if (kat == null || kat.isBlank()) {
+                    kat = varekatalogService.finnKategori(tekst)
+                            .map(varekatalogService::kategoriNavn)
+                            .orElseGet(() -> aiOppskriftService.kategoriserVare(tekst));
+                }
+                item.setKategori(kat);
                 if (gruppeId != null && handlelisteGruppeMedlemRepository.existsByGruppeIdAndBrukerId(gruppeId, meg.getId())) {
                     item.setGruppeId(gruppeId);
                 }
@@ -882,6 +899,8 @@ public class WebController {
                     HandelListeItem item = new HandelListeItem();
                     item.setBrukerId(meg.getId());
                     item.setTekst(trimmet);
+                    varekatalogService.finnKategori(trimmet)
+                            .ifPresent(k -> item.setKategori(varekatalogService.kategoriNavn(k)));
                     handelListeRepository.save(item);
                 }
             }
@@ -1040,14 +1059,73 @@ public class WebController {
     @PostMapping("/api/handleliste/smartsorter")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> smartSorterHandleliste(
-            @RequestBody Map<String, List<String>> body,
+            @RequestBody Map<String, Object> body,
             @AuthenticationPrincipal OAuth2User principal) {
-        List<String> varer = body.getOrDefault("varer", List.of());
+        List<String> varer = new ArrayList<>();
+        if (body.get("varer") instanceof List<?> liste) {
+            for (Object v : liste) if (v != null) varer.add(v.toString());
+        }
+        Long gruppeId = null;
+        Object gObj = body.get("gruppeId");
+        if (gObj != null && !gObj.toString().isBlank()) {
+            try { gruppeId = Long.parseLong(gObj.toString()); } catch (NumberFormatException ignored) {}
+        }
         Map<String, Object> res = aiOppskriftService.smartSorterHandleliste(varer);
         if (res.containsKey("feil")) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
         }
+        lagreSmartKategorier(res, gruppeId, principal);
         return ResponseEntity.ok(res);
+    }
+
+    /**
+     * Lagrer kategoriene fra smartsorter-resultatet på HandelListeItem i databasen,
+     * slik at sorteringen overlever refresh (listen rendres server-side gruppert).
+     */
+    private void lagreSmartKategorier(Map<String, Object> res, Long gruppeId, OAuth2User principal) {
+        if (principal == null) return;
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg == null) return;
+
+        List<HandelListeItem> items;
+        if (gruppeId != null && handlelisteGruppeMedlemRepository.existsByGruppeIdAndBrukerId(gruppeId, meg.getId())) {
+            items = handelListeRepository.findByGruppeIdOrderByFerdigAscOpprettetDesc(gruppeId);
+        } else {
+            items = handelListeRepository.findByBrukerIdAndGruppeIdIsNullOrderByFerdigAscOpprettetDesc(meg.getId());
+        }
+        if (items.isEmpty()) return;
+
+        // Bygg oppslagskart: normalisert varetekst -> kategori-navn fra AI-svaret
+        Map<String, String> vareTilKategori = new HashMap<>();
+        if (res.get("grupper") instanceof List<?> grupper) {
+            for (Object gruppeObj : grupper) {
+                if (!(gruppeObj instanceof Map<?, ?> g)) continue;
+                String navn = g.get("navn") != null ? g.get("navn").toString() : null;
+                if (navn == null || navn.isBlank()) continue;
+                if (g.get("varer") instanceof List<?> gVarer) {
+                    for (Object v : gVarer) {
+                        if (v != null) vareTilKategori.put(v.toString().trim().toLowerCase(), navn);
+                    }
+                }
+            }
+        }
+
+        List<HandelListeItem> endret = new ArrayList<>();
+        for (HandelListeItem item : items) {
+            String tekst = item.getTekst() != null ? item.getTekst().trim().toLowerCase() : "";
+            String kategori = vareTilKategori.get(tekst);
+            if (kategori == null) {
+                // Fallback: statisk varekatalog (AI kan ha slått sammen/omskrevet varen)
+                kategori = varekatalogService.finnKategori(item.getTekst())
+                        .map(varekatalogService::kategoriNavn)
+                        .orElse(null);
+            }
+            if (kategori != null && !kategori.equals(item.getKategori())) {
+                item.setKategori(kategori);
+                endret.add(item);
+            }
+        }
+        if (!endret.isEmpty()) handelListeRepository.saveAll(endret);
     }
 
     @GetMapping("/ukesmeny/ai")

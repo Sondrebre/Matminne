@@ -465,29 +465,34 @@
             </div>
 
             <div th:unless="${items.isEmpty()}" class="liste-card" id="listeKort">
-                <div th:each="item : ${items}"
-                     th:classappend="${item.ferdig} ? ' ferdig' : ''"
-                     th:attr="data-id=${item.id}, data-kat=${item.kategori != null ? item.kategori : ''}"
-                     class="liste-item">
-                    <button class="check-btn"
-                            th:classappend="${item.ferdig} ? ' ferdig' : ''"
-                            th:title="${item.ferdig ? 'Merk ugjort' : 'Merk gjort'}"
-                            onclick="toggleItem(this)">
-                        <i th:if="${item.ferdig}" class="fa-solid fa-check"></i>
-                    </button>
-                    <span class="item-tekst" th:text="${item.tekst}" onclick="startRediger(this)" title="Klikk for å redigere">Vare</span>
-                    <span th:if="${item.kategori != null and !#strings.isEmpty(item.kategori)}"
-                          class="item-kat-badge" th:text="${item.kategori}"></span>
-                    <button class="btn-slett-item" title="Slett" onclick="slettItem(this)">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
+                <!-- Server-side gruppert etter kategori: header vises når kategorien endrer seg -->
+                <th:block th:each="item, stat : ${items}">
+                    <div class="liste-gruppe-header"
+                         th:if="${item.kategori != null and !#strings.isEmpty(item.kategori)
+                                  and (stat.first or !item.kategori.equals(items[stat.index - 1].kategori))}">
+                        <i class="fa-solid fa-tag"></i>
+                        <span th:text="${item.kategori}"></span>
+                    </div>
+                    <div th:classappend="${item.ferdig} ? ' ferdig' : ''"
+                         th:attr="data-id=${item.id}, data-kat=${item.kategori != null ? item.kategori : ''}"
+                         class="liste-item">
+                        <button class="check-btn"
+                                th:classappend="${item.ferdig} ? ' ferdig' : ''"
+                                th:title="${item.ferdig ? 'Merk ugjort' : 'Merk gjort'}"
+                                onclick="toggleItem(this)">
+                            <i th:if="${item.ferdig}" class="fa-solid fa-check"></i>
+                        </button>
+                        <span class="item-tekst" th:text="${item.tekst}" onclick="startRediger(this)" title="Klikk for å redigere">Vare</span>
+                        <button class="btn-slett-item" title="Slett" onclick="slettItem(this)">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </th:block>
             </div>
 
             <!-- ACTIONS -->
             <div class="action-row" th:if="${antall > 0}">
-                <button class="btn-action ai-btn" id="smartSorterBtn" onclick="smartSorter(this)"
-                        th:if="${aktivGruppe == null}">
+                <button class="btn-action ai-btn" id="smartSorterBtn" onclick="smartSorter(this)">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> Smartsorter
                 </button>
                 <button class="btn-action" id="ryddBtn"
@@ -916,7 +921,7 @@
             csrfFetch('/api/handleliste/smartsorter', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ varer: varer })
+                body: JSON.stringify({ varer: varer, gruppeId: _gruppeId })
             })
             .then(r => r.json())
             .then(data => {
@@ -967,39 +972,9 @@
         }
 
         function brukSmartSortering() {
-            if (!smartResultat || !smartResultat.grupper) return;
-            const kort = document.getElementById('listeKort');
-            if (!kort) return;
-
-            // Build a map: normalized tekst -> existing DOM element
-            const itemMap = {};
-            kort.querySelectorAll('.liste-item').forEach(el => {
-                const tekst = el.querySelector('.item-tekst');
-                if (tekst) itemMap[tekst.textContent.trim().toLowerCase()] = el;
-            });
-
-            kort.innerHTML = '';
-            smartResultat.grupper.forEach(g => {
-                const headerDiv = document.createElement('div');
-                headerDiv.className = 'liste-gruppe-header';
-                headerDiv.innerHTML = '<span>' + g.ikon + '</span>' + escHtml(g.navn);
-                kort.appendChild(headerDiv);
-                (g.varer || []).forEach(v => {
-                    const existing = itemMap[v.trim().toLowerCase()];
-                    if (existing) {
-                        kort.appendChild(existing);
-                    }
-                    // Items not matched are simply not added back (they were unrecognized)
-                });
-            });
-
-            // Add any unmatched items at the bottom
-            Object.values(itemMap).forEach(el => {
-                if (!el.parentNode || el.parentNode !== kort) kort.appendChild(el);
-            });
-
-            lukkSmartOverlay(null);
-            oppdaterStats();
+            // Kategoriene er allerede lagret i databasen av smartsorter-endepunktet.
+            // Last siden på nytt slik at listen rendres server-side gruppert etter kategori.
+            location.reload();
         }
 
         function lukkSmartOverlay(e) {

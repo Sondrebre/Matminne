@@ -498,6 +498,30 @@ public class AiOppskriftService {
         }
     }
 
+    /** Gyldige kategori-navn for handleliste-varer. */
+    private static final List<String> HANDLELISTE_KATEGORIER = List.of(
+            "Frukt & Grønt", "Meieri & Egg", "Kjøtt & Fisk", "Bakeri & Brød",
+            "Tørrvarer & Hermetikk", "Frysedisk", "Brus/Øl", "Kjølevarer", "Annet");
+
+    /**
+     * Kategoriserer én enkelt vare til en butikkavdeling.
+     * Brukes kun som fallback når varen ikke finnes i den statiske varekatalogen.
+     * Returnerer kategori-navn, eller null hvis AI ikke er tilgjengelig / svaret er ugyldig.
+     */
+    public String kategoriserVare(String vare) {
+        if (client == null || vare == null || vare.isBlank()) return null;
+        String prompt = "Hvilken butikkavdeling hører varen \"" + vare.trim() + "\" til?\n" +
+                "Svar KUN med ett av disse navnene, ingenting annet:\n" +
+                String.join("\n", HANDLELISTE_KATEGORIER);
+        String svar = kallClaudeMedModell(prompt, Model.CLAUDE_HAIKU_4_5_20251001, 30L);
+        if (svar == null || svar.startsWith("FEIL") || svar.startsWith("RATE_LIMIT")) return null;
+        String trimmet = svar.trim();
+        for (String kategori : HANDLELISTE_KATEGORIER) {
+            if (trimmet.equalsIgnoreCase(kategori)) return kategori;
+        }
+        return null;
+    }
+
     /**
      * Genererer 3 substitutter for en ingrediens.
      * Returnerer en enkel tekst med bullet-punkter.
