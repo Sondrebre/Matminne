@@ -152,6 +152,14 @@ function visDagsmeny(data) {
             lagreMaltid(idx);
         });
     });
+
+    // Logg måltid-knapper (til næringstracker)
+    res.querySelectorAll('.logg-maltid-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var idx = parseInt(btn.getAttribute('data-idx'));
+            loggFraDagsmeny(idx, btn);
+        });
+    });
 }
 
 function lagMaltidKort(m, i) {
@@ -180,7 +188,10 @@ function lagMaltidKort(m, i) {
                 '<div class="opp-seksjon-tittel">Fremgangsmåte</div>' +
                 '<div class="opp-tekst">' + escHtml(m.fremgangsmate || '') + '</div>' +
             '</div>' +
-            '<button class="lagre-btn" data-idx="' + i + '">+ Lagre i kokebok</button>' +
+            '<div class="maltid-knapper">' +
+                '<button class="lagre-btn" data-idx="' + i + '">+ Lagre i kokebok</button>' +
+                '<button class="logg-maltid-btn" data-idx="' + i + '"><i class="fa-solid fa-utensils"></i> Logg dette måltidet</button>' +
+            '</div>' +
         '</div>' +
     '</div>';
 }
@@ -225,3 +236,308 @@ function escHtml(str) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
 }
+
+/* ══════════════════════════════════════════════════════════
+   NÆRINGSTRACKER — mål, logging, historikk og streaks
+   Lagres lokalt i nettleseren (localStorage).
+══════════════════════════════════════════════════════════ */
+var NT_MAAL_KEY = 'mm-nt-maal';
+var NT_LOGG_KEY = 'mm-nt-logg';
+var NT_STANDARD_MAAL = { kcal: 2000, protein: 100, karbo: 250, fett: 70 };
+
+function ntDatoKey(d) {
+    var dt = d || new Date();
+    return dt.getFullYear() + '-' +
+        String(dt.getMonth() + 1).padStart(2, '0') + '-' +
+        String(dt.getDate()).padStart(2, '0');
+}
+
+function hentMaal() {
+    try {
+        var m = JSON.parse(localStorage.getItem(NT_MAAL_KEY));
+        if (m && m.kcal) return m;
+    } catch (e) {}
+    return Object.assign({}, NT_STANDARD_MAAL);
+}
+
+function hentLogg() {
+    try {
+        var l = JSON.parse(localStorage.getItem(NT_LOGG_KEY));
+        if (l && typeof l === 'object') return l;
+    } catch (e) {}
+    return {};
+}
+
+function lagreLogg(logg) {
+    // Rydd bort oppføringer eldre enn 30 dager
+    var grense = new Date();
+    grense.setDate(grense.getDate() - 30);
+    var grenseKey = ntDatoKey(grense);
+    Object.keys(logg).forEach(function(k) {
+        if (k < grenseKey) delete logg[k];
+    });
+    try { localStorage.setItem(NT_LOGG_KEY, JSON.stringify(logg)); } catch (e) {}
+}
+
+function dagsSum(entries) {
+    var sum = { kcal: 0, protein: 0, karbo: 0, fett: 0 };
+    (entries || []).forEach(function(e) {
+        sum.kcal    += e.kcal    || 0;
+        sum.protein += e.protein || 0;
+        sum.karbo   += e.karbo   || 0;
+        sum.fett    += e.fett    || 0;
+    });
+    return sum;
+}
+
+/* Fargekoding: grønn = under mål, gul = nær mål, rød = over mål */
+function makroStatus(verdi, maal) {
+    if (!maal || maal <= 0) return 'under';
+    var pct = verdi / maal;
+    if (pct > 1.0)  return 'over';
+    if (pct >= 0.85) return 'naer';
+    return 'under';
+}
+
+/* ── MÅL-EDITOR ─────────────────────────────────────────── */
+function toggleMaalEditor() {
+    var ed = document.getElementById('maalEditor');
+    if (!ed) return;
+    var vis = ed.classList.toggle('vis');
+    if (vis) {
+        var m = hentMaal();
+        document.getElementById('inpMaalKcal').value    = m.kcal;
+        document.getElementById('inpMaalProtein').value = m.protein;
+        document.getElementById('inpMaalKarbo').value   = m.karbo;
+        document.getElementById('inpMaalFett').value    = m.fett;
+    }
+}
+
+function lagreMaal() {
+    var m = {
+        kcal:    parseInt(document.getElementById('inpMaalKcal').value, 10)    || NT_STANDARD_MAAL.kcal,
+        protein: parseInt(document.getElementById('inpMaalProtein').value, 10) || NT_STANDARD_MAAL.protein,
+        karbo:   parseInt(document.getElementById('inpMaalKarbo').value, 10)   || NT_STANDARD_MAAL.karbo,
+        fett:    parseInt(document.getElementById('inpMaalFett').value, 10)    || NT_STANDARD_MAAL.fett
+    };
+    try { localStorage.setItem(NT_MAAL_KEY, JSON.stringify(m)); } catch (e) {}
+    document.getElementById('maalEditor').classList.remove('vis');
+    renderTracker();
+    if (typeof showToast === 'function') showToast('Målene dine er lagret! 🎯');
+}
+
+/* ── LOGGING ────────────────────────────────────────────── */
+function fyllLoggNavn(tittel) {
+    var inp = document.getElementById('loggNavn');
+    if (!inp) return;
+    inp.value = tittel;
+    var kcal = document.getElementById('loggKcal');
+    if (kcal) kcal.focus();
+}
+
+function loggMaltidSkjema() {
+    var navn = (document.getElementById('loggNavn').value || '').trim();
+    var kcal = parseInt(document.getElementById('loggKcal').value, 10) || 0;
+    if (!navn) { document.getElementById('loggNavn').focus(); return; }
+    if (kcal <= 0) { document.getElementById('loggKcal').focus(); return; }
+    loggEntry({
+        navn: navn,
+        kcal: kcal,
+        protein: parseInt(document.getElementById('loggProtein').value, 10) || 0,
+        karbo:   parseInt(document.getElementById('loggKarbo').value, 10)   || 0,
+        fett:    parseInt(document.getElementById('loggFett').value, 10)    || 0
+    });
+    ['loggNavn','loggKcal','loggProtein','loggKarbo','loggFett'].forEach(function(id) {
+        document.getElementById(id).value = '';
+    });
+}
+
+function loggFraDagsmeny(idx, btn) {
+    if (!sisteDagsmeny || !sisteDagsmeny.maltider) return;
+    var m = sisteDagsmeny.maltider[idx];
+    if (!m) return;
+    loggEntry({
+        navn: m.navn || 'Måltid',
+        kcal:    m.kcal    || 0,
+        protein: m.protein || 0,
+        karbo:   m.karbo   || 0,
+        fett:    m.fett    || 0
+    });
+    if (btn) {
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Logget!';
+        btn.disabled = true;
+    }
+}
+
+function loggEntry(entry) {
+    var logg = hentLogg();
+    var key = ntDatoKey();
+    if (!logg[key]) logg[key] = [];
+    entry.ts = Date.now();
+    logg[key].push(entry);
+    lagreLogg(logg);
+    renderTracker();
+    if (typeof showToast === 'function') showToast('Måltid logget: ' + entry.navn);
+}
+
+function slettLoggEntry(idx) {
+    var logg = hentLogg();
+    var key = ntDatoKey();
+    if (!logg[key]) return;
+    logg[key].splice(idx, 1);
+    if (logg[key].length === 0) delete logg[key];
+    lagreLogg(logg);
+    renderTracker();
+}
+
+/* ── STREAK ─────────────────────────────────────────────── */
+function beregnStreak(logg) {
+    var streak = 0;
+    var d = new Date();
+    // Hvis ingenting er logget i dag, kan streaken fortsatt leve fra i går
+    if (!logg[ntDatoKey(d)] || logg[ntDatoKey(d)].length === 0) {
+        d.setDate(d.getDate() - 1);
+    }
+    while (logg[ntDatoKey(d)] && logg[ntDatoKey(d)].length > 0) {
+        streak++;
+        d.setDate(d.getDate() - 1);
+    }
+    return streak;
+}
+
+function motivasjonsMelding(streak, harLoggetIDag, kcalStatus) {
+    if (!harLoggetIDag && streak === 0) return 'Logg ditt første måltid for å komme i gang!';
+    if (!harLoggetIDag) return 'Logg et måltid i dag for å holde streaken i live! 🔥';
+    if (kcalStatus === 'over') return 'Litt over kalorimålet i dag — i morgen er en ny dag! 🌱';
+    if (kcalStatus === 'naer') return 'Nesten i mål — hold deg til planen! 💪';
+    if (streak >= 7) return 'En hel uke på rad — imponerende! Du er på rett spor! 🎯';
+    if (streak >= 3) return 'Sterk innsats flere dager på rad — du er på rett spor! 🎯';
+    return 'Du er på rett spor! 🎯';
+}
+
+/* ── RENDER ─────────────────────────────────────────────── */
+function renderTracker() {
+    // Kjør kun på sider som har dashboardet
+    if (!document.getElementById('vKcal')) return;
+
+    var maal = hentMaal();
+    var logg = hentLogg();
+    var iDagKey = ntDatoKey();
+    var dagens = logg[iDagKey] || [];
+    var sum = dagsSum(dagens);
+
+    // Makro-tiles
+    var makroer = [
+        { id: 'Kcal',    verdi: sum.kcal,    maal: maal.kcal    },
+        { id: 'Protein', verdi: sum.protein, maal: maal.protein },
+        { id: 'Karbo',   verdi: sum.karbo,   maal: maal.karbo   },
+        { id: 'Fett',    verdi: sum.fett,    maal: maal.fett    }
+    ];
+    makroer.forEach(function(mk) {
+        document.getElementById('v' + mk.id).textContent = mk.verdi;
+        document.getElementById('m' + mk.id).textContent = mk.maal;
+        var pct = mk.maal > 0 ? Math.min(100, Math.round(mk.verdi / mk.maal * 100)) : 0;
+        document.getElementById('bar' + mk.id).style.width = pct + '%';
+        var tile = document.getElementById('tile' + mk.id);
+        tile.classList.remove('status-under', 'status-naer', 'status-over');
+        tile.classList.add('status-' + makroStatus(mk.verdi, mk.maal));
+    });
+
+    // Streak + melding
+    var streak = beregnStreak(logg);
+    var harLoggetIDag = dagens.length > 0;
+    document.getElementById('streakTall').textContent =
+        streak === 1 ? '1 dag på rad' : streak + ' dager på rad';
+    document.getElementById('streakMelding').textContent =
+        motivasjonsMelding(streak, harLoggetIDag, makroStatus(sum.kcal, maal.kcal));
+
+    // Dagens logg-liste
+    var liste = document.getElementById('loggListe');
+    if (liste) {
+        if (dagens.length === 0) {
+            liste.innerHTML = '<div class="logg-tom">Ingen måltider logget i dag ennå.</div>';
+        } else {
+            liste.innerHTML = dagens.map(function(e, i) {
+                return '<div class="logg-rad">' +
+                    '<span class="logg-rad-navn">' + escHtml(e.navn) + '</span>' +
+                    '<span class="logg-rad-makro">' + (e.kcal || 0) + ' kcal · ' +
+                        (e.protein || 0) + 'p / ' + (e.karbo || 0) + 'k / ' + (e.fett || 0) + 'f</span>' +
+                    '<button type="button" class="logg-rad-slett" title="Slett" onclick="slettLoggEntry(' + i + ')">' +
+                        '<i class="fa-solid fa-xmark"></i></button>' +
+                '</div>';
+            }).join('');
+        }
+    }
+
+    renderHistorikk(logg, maal);
+}
+
+function renderHistorikk(logg, maal) {
+    var chart = document.getElementById('histChart');
+    if (!chart) return;
+
+    var DAG_BOKSTAV = ['Man','Tir','Ons','Tor','Fre','Lør','Søn'];
+    var dager = [];
+    var maksKcal = maal.kcal;
+    for (var i = 6; i >= 0; i--) {
+        var d = new Date();
+        d.setDate(d.getDate() - i);
+        var sum = dagsSum(logg[ntDatoKey(d)]);
+        if (sum.kcal > maksKcal) maksKcal = sum.kcal;
+        dager.push({
+            navn: DAG_BOKSTAV[(d.getDay() + 6) % 7],
+            sum: sum,
+            erIDag: i === 0,
+            harData: !!(logg[ntDatoKey(d)] && logg[ntDatoKey(d)].length)
+        });
+    }
+    var chartMax = maksKcal * 1.15;
+    var barMaxPx = 96;   // maks søylehøyde i px
+    var bunnPx   = 22;   // plass til dag-label under søylene
+
+    var html = '';
+    // Mål-linje (stiplet)
+    var maalPos = bunnPx + Math.round(maal.kcal / chartMax * barMaxPx);
+    html += '<div class="hist-maal-linje" style="bottom:' + maalPos + 'px;">' +
+        '<span class="hist-maal-label">Mål ' + maal.kcal + '</span></div>';
+
+    dager.forEach(function(dag) {
+        var h = Math.max(3, Math.round(dag.sum.kcal / chartMax * barMaxPx));
+        var status = dag.harData ? makroStatus(dag.sum.kcal, maal.kcal) : 'tom';
+        var klasse = status === 'over' ? ' over' : (status === 'naer' ? ' naer' : (status === 'tom' ? ' tom' : ''));
+        html += '<div class="hist-kol">' +
+            '<div class="hist-bar' + klasse + '" style="height:' + h + 'px;" title="' + dag.sum.kcal + ' kcal">' +
+                (dag.harData ? '<span class="hist-verdi">' + dag.sum.kcal + '</span>' : '') +
+            '</div>' +
+            '<span class="hist-dag' + (dag.erIDag ? ' idag' : '') + '">' + dag.navn + '</span>' +
+        '</div>';
+    });
+    chart.innerHTML = html;
+
+    // Ukessnitt (over dager med logget data)
+    var dagerMedData = dager.filter(function(d) { return d.harData; });
+    var n = dagerMedData.length || 1;
+    var tot = { kcal: 0, protein: 0, karbo: 0, fett: 0 };
+    dagerMedData.forEach(function(d) {
+        tot.kcal += d.sum.kcal; tot.protein += d.sum.protein;
+        tot.karbo += d.sum.karbo; tot.fett += d.sum.fett;
+    });
+    document.getElementById('snittKcal').textContent    = Math.round(tot.kcal / n);
+    document.getElementById('snittProtein').textContent = Math.round(tot.protein / n) + ' g';
+    document.getElementById('snittKarbo').textContent   = Math.round(tot.karbo / n) + ' g';
+    document.getElementById('snittFett').textContent    = Math.round(tot.fett / n) + ' g';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    renderTracker();
+    // Enter i logg-skjemaet = logg måltid
+    var loggNavn = document.getElementById('loggNavn');
+    if (loggNavn) {
+        ['loggNavn','loggKcal','loggProtein','loggKarbo','loggFett'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') { e.preventDefault(); loggMaltidSkjema(); }
+            });
+        });
+    }
+});

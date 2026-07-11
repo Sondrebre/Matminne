@@ -1312,6 +1312,37 @@ public class WebController {
         return "redirect:/ukesmeny";
     }
 
+    @PostMapping("/ukesmeny/flytt/{id}")
+    public String flyttMaltid(@PathVariable Long id,
+                              @RequestParam String dag,
+                              @RequestParam String maltid,
+                              @AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) return "redirect:/ukesmeny";
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg == null) return "redirect:/ukesmeny";
+        ukesmenyRepository.findById(id).ifPresent(item -> {
+            if (item.getBrukerId() == null || !item.getBrukerId().equals(meg.getId())) return;
+            String gammelDag = item.getDag();
+            String gammeltMaltid = item.getMaltid();
+            if (dag.equals(gammelDag) && maltid.equals(gammeltMaltid)) return;
+            // Hvis mål-slot allerede har et måltid: bytt plass (swap)
+            ukesmenyRepository.findByBrukerId(meg.getId()).stream()
+                .filter(a -> !a.getId().equals(id)
+                        && dag.equals(a.getDag())
+                        && maltid.equals(a.getMaltid()))
+                .findFirst()
+                .ifPresent(annet -> {
+                    annet.setDag(gammelDag);
+                    annet.setMaltid(gammeltMaltid);
+                    ukesmenyRepository.save(annet);
+                });
+            item.setDag(dag);
+            item.setMaltid(maltid);
+            ukesmenyRepository.save(item);
+        });
+        return "redirect:/ukesmeny";
+    }
+
     @PostMapping("/ukesmeny/til-handleliste")
     public String ukesmenyTilHandelListe(@AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) return "redirect:/handleliste";
@@ -1438,6 +1469,16 @@ public class WebController {
         Bruker meg = principal != null ? brukerService.finnVedEpost(principal.getAttribute("email")) : null;
         model.addAttribute("harAbonnement", meg != null && meg.isHarAbonnement());
         model.addAttribute("brukerEpost", principal != null ? principal.getAttribute("email") : null);
+        // Dagens måltider fra ukesmenyen — brukes som forslag i måltidsloggen
+        List<UkesmenyItem> dagensMaltider = Collections.emptyList();
+        if (meg != null) {
+            String[] dagNavn = {"Mandag","Tirsdag","Onsdag","Torsdag","Fredag","Lørdag","Søndag"};
+            String iDag = dagNavn[java.time.LocalDate.now().getDayOfWeek().getValue() - 1];
+            dagensMaltider = ukesmenyRepository.findByBrukerId(meg.getId()).stream()
+                .filter(i -> iDag.equals(i.getDag()))
+                .collect(Collectors.toList());
+        }
+        model.addAttribute("dagensMaltider", dagensMaltider);
         return "naeringstrener";
     }
 
