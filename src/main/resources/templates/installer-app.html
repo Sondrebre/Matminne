@@ -331,9 +331,40 @@
             }
         }
 
-        // Vis knapp om PWA allerede er installert
         window.addEventListener('appinstalled', () => {
             document.getElementById('quickInstallCard').style.display = 'none';
+        });
+
+        // Auto-fremhev riktig guide basert på enhet
+        window.addEventListener('DOMContentLoaded', () => {
+            var ua = navigator.userAgent;
+            var isIos    = /iphone|ipad|ipod/i.test(ua);
+            var isAndroid = /android/i.test(ua);
+            var cards = document.querySelectorAll('.guide-card');
+
+            // Flytt iOS-kortet øverst om vi er på iOS
+            if (isIos && cards.length >= 2) {
+                var grid = cards[0].parentElement;
+                var iosCard = cards[1]; // iOS er kort nr 2
+                grid.insertBefore(iosCard, cards[0]);
+                iosCard.style.border = '2px solid #22c55e';
+                iosCard.style.boxShadow = '0 4px 24px rgba(34,197,94,.15)';
+            } else if (isAndroid && cards.length >= 1) {
+                cards[0].style.border = '2px solid #22c55e';
+                cards[0].style.boxShadow = '0 4px 24px rgba(34,197,94,.15)';
+            }
+
+            // Allerede installert? Vis melding
+            if (window.navigator.standalone === true ||
+                window.matchMedia('(display-mode: standalone)').matches) {
+                document.querySelector('.content-wrap').insertAdjacentHTML('afterbegin',
+                    '<div style="background:#f0fdf4;border:2px solid #22c55e;border-radius:20px;' +
+                    'padding:20px 24px;margin-bottom:24px;display:flex;align-items:center;gap:14px;">' +
+                    '<span style="font-size:2rem;">✅</span>' +
+                    '<div><strong style="color:#14532d;font-size:1rem;">MatMinne er allerede installert!</strong>' +
+                    '<p style="color:#16a34a;margin:4px 0 0;font-size:.85rem;">Du kjører appen fra hjemskjermen.</p></div></div>'
+                );
+            }
         });
     </script>
 </body>

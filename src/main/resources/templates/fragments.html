@@ -731,10 +731,29 @@
                     const banner = document.getElementById('installBanner');
                     if (banner) banner.remove();
                 }
+
+                // iOS Safari: vises kun i Safari på iOS, ikke i standalone, ikke avvist før
+                var isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+                var isSafari = /safari/i.test(navigator.userAgent) && !/chrome|crios|fxios|opios/i.test(navigator.userAgent);
+                var isStandalone = window.navigator.standalone === true;
+                var iosAvvist = localStorage.getItem('iosBannerSkjult');
+                if (isIos && isSafari && !isStandalone && !iosAvvist) {
+                    // Vis etter 3 sekunder (brukeren har sett litt av appen)
+                    setTimeout(function() {
+                        var b = document.getElementById('iosBanner');
+                        if (b) b.style.display = 'block';
+                    }, 3000);
+                }
             });
+
+            function skjulIosBanner() {
+                var b = document.getElementById('iosBanner');
+                if (b) b.style.display = 'none';
+                localStorage.setItem('iosBannerSkjult', '1');
+            }
         </script>
 
-        <!-- Install banner (vises automatisk av JS hvis tilgjengelig) -->
+        <!-- Install banner: Android/Desktop (beforeinstallprompt) -->
         <div id="installBanner" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;max-width:420px;margin:0 auto;
              background:white;border-radius:20px;box-shadow:0 16px 48px rgba(0,0,0,.14);border:1px solid #f1f5f9;
              padding:16px 18px;align-items:center;gap:14px;z-index:2000;">
@@ -745,6 +764,43 @@
             </div>
             <button onclick="installApp()" style="background:#2ecc71;color:white;border:none;padding:9px 16px;border-radius:11px;font-weight:800;font-size:.8rem;cursor:pointer;font-family:inherit;white-space:nowrap;">Installer</button>
             <button onclick="skjulInstallBanner()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:1rem;padding:4px;flex-shrink:0;">✕</button>
+        </div>
+
+        <!-- iOS Safari install banner (ingen beforeinstallprompt på iOS) -->
+        <div id="iosBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:2001;
+             padding:0 12px calc(12px + env(safe-area-inset-bottom, 0px));">
+            <div style="background:white;border-radius:20px;box-shadow:0 -4px 48px rgba(0,0,0,.18);
+                 border:1px solid #f1f5f9;padding:18px 18px 16px;position:relative;">
+                <button onclick="skjulIosBanner()" style="position:absolute;top:12px;right:14px;
+                        background:#f1f5f9;border:none;width:26px;height:26px;border-radius:50%;
+                        font-size:.75rem;cursor:pointer;color:#64748b;display:flex;align-items:center;justify-content:center;">✕</button>
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                    <div style="width:40px;height:40px;background:#22c55e;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;">🍎</div>
+                    <div>
+                        <div style="font-weight:900;font-size:.95rem;color:#0f172a;">Installer MatMinne</div>
+                        <div style="font-size:.74rem;color:#94a3b8;font-weight:600;">Legg til på hjemskjermen — gratis</div>
+                    </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:9px;">
+                    <div style="display:flex;align-items:center;gap:10px;font-size:.84rem;color:#475569;font-weight:600;">
+                        <span style="background:#f0fdf4;color:#16a34a;border-radius:8px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0;font-size:.75rem;">1</span>
+                        Trykk på
+                        <span style="display:inline-flex;align-items:center;gap:4px;background:#f1f5f9;border-radius:7px;padding:3px 9px;">
+                            <svg width="13" height="16" viewBox="0 0 13 16" fill="none" style="flex-shrink:0;"><path d="M6.5 1v9.5M3.5 4L6.5 1l3 3" stroke="#3b82f6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="1" y="7" width="11" height="8" rx="2" stroke="#3b82f6" stroke-width="1.5"/></svg>
+                            <span style="font-weight:800;color:#3b82f6;font-size:.78rem;">Del</span>
+                        </span>
+                        nederst i Safari
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;font-size:.84rem;color:#475569;font-weight:600;">
+                        <span style="background:#f0fdf4;color:#16a34a;border-radius:8px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0;font-size:.75rem;">2</span>
+                        Velg <strong style="color:#0f172a;">"Legg til på hjem-skjerm"</strong>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;font-size:.84rem;color:#475569;font-weight:600;">
+                        <span style="background:#f0fdf4;color:#16a34a;border-radius:8px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0;font-size:.75rem;">3</span>
+                        Trykk <strong style="color:#0f172a;">"Legg til"</strong> — ferdig! 🎉
+                    </div>
+                </div>
+            </div>
         </div>
 
         <script>
