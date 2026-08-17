@@ -1,0 +1,12 @@
+{
+  "name": "matminne-mobile",
+  "version": "1.0.0",
+  "description": "MatMinne iOS app (Capacitor wrapper)",
+  "private": true,
+  "dependencies": {
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/ios": "^6.0.0",
+    "@capacitor/camera": "^6.0.0",
+    "@capacitor/cli": "^6.0.0"
+  }
+}

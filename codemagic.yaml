@@ -1,0 +1,68 @@
+workflows:
+  ios-app-store:
+    name: MatMinne — App Store
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+
+    integrations:
+      app_store_connect: App Store Connect API Key  # navn du setter i Codemagic
+
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: no.matminne.app
+      node: 20.11.0
+      xcode: latest
+
+    scripts:
+      - name: Installer Capacitor-avhengigheter
+        script: |
+          cd mobile
+          npm install
+
+      - name: Lag iOS-prosjekt (kjøres én gang)
+        script: |
+          cd mobile
+          if [ ! -d "ios" ]; then
+            npx cap add ios
+          fi
+
+      - name: Synkroniser web-innhold
+        script: |
+          cd mobile
+          npx cap sync ios
+
+      - name: Oppdater build-nummer automatisk
+        script: |
+          LATEST=$(app-store-connect get-latest-build-number \
+            --app-id $APP_STORE_APP_ID 2>/dev/null || echo "0")
+          BUILD=$((LATEST + 1))
+          cd mobile/ios/App
+          xcrun agvtool new-marketing-version 1.0.0
+          xcrun agvtool new-version -all $BUILD
+
+      - name: Sett opp kodesignering
+        script: xcode-project use-profiles
+
+      - name: Bygg IPA
+        script: |
+          xcode-project build-ipa \
+            --project mobile/ios/App/App.xcodeproj \
+            --scheme App
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true   # TestFlight: intern testing
+        submit_to_app_store: false   # sett true når du er klar for offentlig release
+
+      email:
+        recipients:
+          - sondre.bretten@gmail.com
+        notify:
+          success: true
+          failure: true

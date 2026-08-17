@@ -1,0 +1,25 @@
+{
+  "appId": "no.matminne.app",
+  "appName": "MatMinne",
+  "webDir": "www",
+  "server": {
+    "url": "https://ENDRE_MEG.up.railway.app",
+    "cleartext": false,
+    "allowNavigation": [
+      "*.up.railway.app",
+      "accounts.google.com",
+      "*.googleapis.com"
+    ]
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "scrollEnabled": true,
+    "backgroundColor": "#f0fdf4",
+    "preferredContentMode": "mobile"
+  },
+  "plugins": {
+    "Camera": {
+      "iosPromptMessage": "MatMinne trenger kameratilgang for å ta bilder av oppskrifter"
+    }
+  }
+}
