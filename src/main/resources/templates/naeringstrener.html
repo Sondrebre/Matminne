@@ -68,32 +68,57 @@
         .streak-tall { font-size: .92rem; font-weight: 900; color: #14532d; }
         .streak-melding { font-size: .78rem; color: #15803d; font-weight: 600; }
 
-        .makro-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+        /* ── KALORI-HERO: big ring + tall ── */
+        .kcal-hero {
+            display: flex; align-items: center; gap: 24px;
+            margin-bottom: 24px; flex-wrap: wrap;
         }
-        @media (max-width: 560px) { .makro-grid { grid-template-columns: repeat(2, 1fr); } }
+        .kcal-ring-wrap { position: relative; width: 130px; height: 130px; flex-shrink: 0; }
+        .kcal-ring { width: 130px; height: 130px; transform: rotate(-90deg); }
+        .kcal-ring circle { fill: none; stroke-width: 10; stroke-linecap: round; }
+        .kcal-ring-bg { stroke: #f1f5f9; }
+        .kcal-ring-fill { stroke: #22c55e; stroke-dasharray: 345; stroke-dashoffset: 345; transition: stroke-dashoffset .8s cubic-bezier(.4,0,.2,1), stroke .3s; }
+        .status-naer .kcal-ring-fill { stroke: #f59e0b; }
+        .status-over .kcal-ring-fill { stroke: #ef4444; }
+        .kcal-ring-tekst {
+            position: absolute; inset: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+        }
+        .kcal-ring-tall { font-size: 1.9rem; font-weight: 900; line-height: 1; color: #0f172a; }
+        .kcal-ring-enhet { font-size: .62rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .kcal-ring-rest { font-size: .68rem; font-weight: 700; color: #22c55e; margin-top: 2px; }
+        .status-naer .kcal-ring-rest { color: #f59e0b; }
+        .status-over .kcal-ring-rest { color: #ef4444; }
+
+        .kcal-info { flex: 1; min-width: 180px; }
+        .kcal-maal-tekst { font-size: .72rem; font-weight: 700; color: #94a3b8; margin-bottom: 4px; }
+        .kcal-melding { font-size: 1rem; font-weight: 800; color: #0f172a; margin-bottom: 12px; line-height: 1.4; }
+
+        .makro-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+        }
+        @media (max-width: 480px) { .makro-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; } }
 
         .makro-tile {
-            border-radius: 16px; padding: 14px 12px 12px;
+            border-radius: 14px; padding: 12px 10px 10px;
             background: #f8fafc; border: 1px solid #f1f5f9;
-            display: flex; flex-direction: column; gap: 3px;
+            display: flex; flex-direction: column; gap: 2px;
         }
         .makro-navn {
-            font-size: .62rem; font-weight: 800; text-transform: uppercase;
-            letter-spacing: 1.2px; color: #94a3b8;
+            font-size: .58rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 1px; color: #94a3b8;
         }
-        .makro-verdi { font-size: 1.7rem; font-weight: 900; line-height: 1.05; color: #0f172a; }
-        .makro-verdi small { font-size: .72rem; font-weight: 700; color: #94a3b8; margin-left: 2px; }
-        .makro-maal { font-size: .68rem; font-weight: 600; color: #94a3b8; }
+        .makro-verdi { font-size: 1.4rem; font-weight: 900; line-height: 1.1; color: #0f172a; }
+        .makro-verdi small { font-size: .65rem; font-weight: 700; color: #94a3b8; margin-left: 1px; }
+        .makro-maal { font-size: .62rem; font-weight: 600; color: #94a3b8; }
         .makro-bar {
-            height: 7px; border-radius: 99px; background: #e2e8f0;
-            margin-top: 7px; overflow: hidden;
+            height: 5px; border-radius: 99px; background: #e2e8f0;
+            margin-top: 6px; overflow: hidden;
         }
         .makro-bar-fyll {
             height: 100%; border-radius: 99px; width: 0%;
             transition: width .6s ease, background .3s;
         }
-        /* Fargekoding: grønn = under mål, gul = nær mål, rød = over mål */
         .status-under .makro-bar-fyll { background: #22c55e; }
         .status-naer  .makro-bar-fyll { background: #f59e0b; }
         .status-over  .makro-bar-fyll { background: #ef4444; }
@@ -437,31 +462,42 @@
                 </div>
             </div>
 
-            <!-- Makro-tiles med progress -->
-            <div class="makro-grid">
-                <div class="makro-tile" id="tileKcal">
-                    <span class="makro-navn">Kalorier</span>
-                    <span class="makro-verdi"><span id="vKcal">0</span><small>kcal</small></span>
-                    <span class="makro-maal">av <span id="mKcal">2000</span> kcal</span>
-                    <div class="makro-bar"><div class="makro-bar-fyll" id="barKcal"></div></div>
+            <!-- Kalori-ring + 3 makro-tiles -->
+            <div class="kcal-hero" id="kcalHero">
+                <div class="kcal-ring-wrap">
+                    <svg class="kcal-ring" viewBox="0 0 130 130">
+                        <circle class="kcal-ring-bg" cx="65" cy="65" r="55"/>
+                        <circle class="kcal-ring-fill" id="kcalRingFill" cx="65" cy="65" r="55"/>
+                    </svg>
+                    <div class="kcal-ring-tekst">
+                        <span class="kcal-ring-tall" id="vKcal">0</span>
+                        <span class="kcal-ring-enhet">kcal</span>
+                        <span class="kcal-ring-rest" id="kcalRest">av <span id="mKcal">2000</span></span>
+                    </div>
                 </div>
-                <div class="makro-tile" id="tileProtein">
-                    <span class="makro-navn">Protein</span>
-                    <span class="makro-verdi"><span id="vProtein">0</span><small>g</small></span>
-                    <span class="makro-maal">av <span id="mProtein">100</span> g</span>
-                    <div class="makro-bar"><div class="makro-bar-fyll" id="barProtein"></div></div>
-                </div>
-                <div class="makro-tile" id="tileKarbo">
-                    <span class="makro-navn">Karbohydrater</span>
-                    <span class="makro-verdi"><span id="vKarbo">0</span><small>g</small></span>
-                    <span class="makro-maal">av <span id="mKarbo">250</span> g</span>
-                    <div class="makro-bar"><div class="makro-bar-fyll" id="barKarbo"></div></div>
-                </div>
-                <div class="makro-tile" id="tileFett">
-                    <span class="makro-navn">Fett</span>
-                    <span class="makro-verdi"><span id="vFett">0</span><small>g</small></span>
-                    <span class="makro-maal">av <span id="mFett">70</span> g</span>
-                    <div class="makro-bar"><div class="makro-bar-fyll" id="barFett"></div></div>
+                <div class="kcal-info">
+                    <div class="kcal-maal-tekst">Dagsmål</div>
+                    <div class="kcal-melding" id="kcalMelding">Logg ditt første måltid!</div>
+                    <div class="makro-grid">
+                        <div class="makro-tile" id="tileProtein">
+                            <span class="makro-navn">Protein</span>
+                            <span class="makro-verdi"><span id="vProtein">0</span><small>g</small></span>
+                            <span class="makro-maal">av <span id="mProtein">100</span> g</span>
+                            <div class="makro-bar"><div class="makro-bar-fyll" id="barProtein"></div></div>
+                        </div>
+                        <div class="makro-tile" id="tileKarbo">
+                            <span class="makro-navn">Karbo</span>
+                            <span class="makro-verdi"><span id="vKarbo">0</span><small>g</small></span>
+                            <span class="makro-maal">av <span id="mKarbo">250</span> g</span>
+                            <div class="makro-bar"><div class="makro-bar-fyll" id="barKarbo"></div></div>
+                        </div>
+                        <div class="makro-tile" id="tileFett">
+                            <span class="makro-navn">Fett</span>
+                            <span class="makro-verdi"><span id="vFett">0</span><small>g</small></span>
+                            <span class="makro-maal">av <span id="mFett">70</span> g</span>
+                            <div class="makro-bar"><div class="makro-bar-fyll" id="barFett"></div></div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

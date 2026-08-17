@@ -316,37 +316,13 @@
             padding: 10px 10px 24px;
         }
 
-        /* Accordion group */
-        .dw-group { margin-bottom: 4px; }
-
-        .dw-group-btn {
-            width: 100%; display: flex; align-items: center; gap: 11px;
-            padding: 11px 10px; border-radius: 12px; border: none;
-            background: none; cursor: pointer; font-family: inherit;
-            font-weight: 800; font-size: .88rem; color: #334155;
-            -webkit-tap-highlight-color: transparent;
-            transition: background .15s;
+        /* Section labels and dividers */
+        .dw-section-label {
+            font-size: .6rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 1.2px; color: #94a3b8;
+            padding: 12px 10px 4px;
         }
-        .dw-group-btn:active { background: #f1f5f9; }
-        .dw-group-icon {
-            width: 34px; height: 34px; border-radius: 10px; background: #f1f5f9;
-            display: flex; align-items: center; justify-content: center;
-            font-size: .9rem; color: #64748b; flex-shrink: 0; transition: .15s;
-        }
-        .dw-group-btn.open .dw-group-icon { background: var(--mat-lys-gronn); color: var(--mat-gronn); }
-        .dw-group-label { flex: 1; text-align: left; }
-        .dw-group-arrow {
-            font-size: .72rem; color: #cbd5e1;
-            transition: transform .22s ease;
-            flex-shrink: 0;
-        }
-        .dw-group-btn.open .dw-group-arrow { transform: rotate(90deg); }
-
-        /* Accordion items */
-        .dw-items {
-            display: none; padding: 2px 0 4px 14px;
-        }
-        .dw-items.open { display: block; }
+        .dw-divider { height: 1px; background: #f1f5f9; margin: 8px 4px; }
 
         .dw-item {
             display: flex; align-items: center; gap: 10px;
@@ -512,7 +488,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="/vennefeed">
-                                    <i class="fa-solid fa-user-group me-1"></i> Vennevegg
+                                    <i class="fa-solid fa-user-group me-1"></i> Venner
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -520,44 +496,15 @@
                                     <i class="fa-solid fa-compass me-1"></i> Utforsk
                                 </a>
                             </li>
-
-                            <!-- MER-DROPDOWN (desktop) -->
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                    <i class="fa-solid fa-grip me-1"></i> Mer
+                            <li class="nav-item">
+                                <a class="nav-link" href="/handleliste">
+                                    <i class="fa-solid fa-cart-shopping me-1"></i> Handleliste
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end" style="border-radius:16px;border:1px solid #f1f5f9;box-shadow:0 20px 48px rgba(0,0,0,.1);padding:8px;min-width:200px;">
-                                    <li><a class="dropdown-item" href="/samlinger" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
-                                        <i class="fa-solid fa-layer-group me-2" style="color:var(--mat-gronn);"></i>Samlinger
-                                    </a></li>
-                                    <li><a class="dropdown-item" href="/handleliste" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
-                                        <i class="fa-solid fa-cart-shopping me-2" style="color:var(--mat-gronn);"></i>Handleliste
-                                    </a></li>
-                                    <li><a class="dropdown-item" href="/ukesmeny" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
-                                        <i class="fa-solid fa-calendar-week me-2" style="color:var(--mat-gronn);"></i>Ukesmeny
-                                    </a></li>
-                                    <li><a class="dropdown-item" href="/naeringstrener" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
-                                        <i class="fa-solid fa-dna me-2" style="color:var(--mat-gronn);"></i>Næringstrener
-                                    </a></li>
-                                    <li><hr class="dropdown-divider" style="margin:6px 8px;"></li>
-                                    <li><a class="dropdown-item" href="/ai-forslag" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
-                                        <i class="fa-solid fa-wand-magic-sparkles me-2" style="color:var(--mat-gronn);"></i>AI Matforslag
-                                    </a></li>
-                                    <li>
-                                        <a class="dropdown-item" href="/abonnement" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
-                                            <i class="fa-solid fa-bolt me-2" style="color:var(--mat-gronn);"></i>
-                                            <span th:if="${harAbonnement}">AI-abonnement ✓</span>
-                                            <span th:unless="${harAbonnement}">Oppgrader til AI</span>
-                                        </a>
-                                    </li>
-                                    <li><a class="dropdown-item" href="/utfordringer" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
-                                        <i class="fa-solid fa-trophy me-2" style="color:var(--mat-gronn);"></i>Ukeutfordringer
-                                    </a></li>
-                                    <li><hr class="dropdown-divider" style="margin:6px 8px;"></li>
-                                    <li><a class="dropdown-item" href="/installer-app" style="border-radius:10px;font-weight:600;font-size:.88rem;padding:10px 14px;">
-                                        <i class="fa-solid fa-mobile-screen me-2" style="color:var(--mat-gronn);"></i>Installer som app
-                                    </a></li>
-                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/ai-forslag">
+                                    <i class="fa-solid fa-wand-magic-sparkles me-1"></i> AI Forslag
+                                </a>
                             </li>
 
                             <li class="nav-item"><div class="nav-sep d-none d-lg-block"></div></li>
@@ -613,67 +560,27 @@
 
                 <!-- Scrollable innhold -->
                 <div class="dw-body">
+                    <div class="dw-section-label">Kokebok</div>
+                    <a href="/kokebok"      class="dw-item"><i class="fa-solid fa-book-open"></i> Min Kokebok</a>
+                    <a href="/ny-oppskrift" class="dw-item"><i class="fa-solid fa-plus"></i> Ny oppskrift</a>
+                    <a href="/vennefeed"    class="dw-item"><i class="fa-solid fa-user-group"></i> Vennevegg</a>
+                    <a href="/oppdag"       class="dw-item"><i class="fa-solid fa-compass"></i> Utforsk</a>
 
-                    <!-- Navigasjon -->
-                    <div class="dw-group">
-                        <button class="dw-group-btn open" onclick="toggleGroup(this)">
-                            <div class="dw-group-icon"><i class="fa-solid fa-compass"></i></div>
-                            <span class="dw-group-label">Navigasjon</span>
-                            <i class="fa-solid fa-chevron-right dw-group-arrow"></i>
-                        </button>
-                        <div class="dw-items open">
-                            <a href="/kokebok"      class="dw-item"><i class="fa-solid fa-book-open"></i> Min Kokebok</a>
-                            <a href="/vennefeed"    class="dw-item"><i class="fa-solid fa-user-group"></i> Vennevegg</a>
-                            <a href="/oppdag"       class="dw-item"><i class="fa-solid fa-compass"></i> Utforsk</a>
-                            <a href="/ny-oppskrift" class="dw-item"><i class="fa-solid fa-plus"></i> Ny oppskrift</a>
-                        </div>
-                    </div>
+                    <div class="dw-divider"></div>
+                    <div class="dw-section-label">Verktøy</div>
+                    <a href="/handleliste" class="dw-item"><i class="fa-solid fa-cart-shopping"></i> Handleliste</a>
+                    <a href="/ai-forslag"  class="dw-item"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Matforslag</a>
 
-                    <!-- Planlegging -->
-                    <div class="dw-group">
-                        <button class="dw-group-btn" onclick="toggleGroup(this)">
-                            <div class="dw-group-icon"><i class="fa-solid fa-calendar-week"></i></div>
-                            <span class="dw-group-label">Planlegging</span>
-                            <i class="fa-solid fa-chevron-right dw-group-arrow"></i>
-                        </button>
-                        <div class="dw-items">
-                            <a href="/handleliste" class="dw-item"><i class="fa-solid fa-cart-shopping"></i> Handleliste</a>
-                            <a href="/ukesmeny"    class="dw-item"><i class="fa-solid fa-calendar-week"></i> Ukesmeny</a>
-                            <a href="/samlinger"   class="dw-item"><i class="fa-solid fa-layer-group"></i> Samlinger</a>
-                        </div>
-                    </div>
-
-                    <!-- AI-verktøy -->
-                    <div class="dw-group">
-                        <button class="dw-group-btn" onclick="toggleGroup(this)">
-                            <div class="dw-group-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-                            <span class="dw-group-label">AI-verktøy</span>
-                            <i class="fa-solid fa-chevron-right dw-group-arrow"></i>
-                        </button>
-                        <div class="dw-items">
-                            <a href="/naeringstrener" class="dw-item"><i class="fa-solid fa-dna"></i> Næringstrener</a>
-                            <a href="/ai-forslag"     class="dw-item"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Matforslag</a>
-                        </div>
-                    </div>
-
-                    <!-- Annet -->
-                    <div class="dw-group">
-                        <button class="dw-group-btn" onclick="toggleGroup(this)">
-                            <div class="dw-group-icon"><i class="fa-solid fa-ellipsis"></i></div>
-                            <span class="dw-group-label">Annet</span>
-                            <i class="fa-solid fa-chevron-right dw-group-arrow"></i>
-                        </button>
-                        <div class="dw-items">
-                            <a th:href="@{'/profil/' + ${brukerEpost}}" class="dw-item"><i class="fa-regular fa-circle-user"></i> Min Profil</a>
-                            <a href="/utfordringer" class="dw-item"><i class="fa-solid fa-trophy"></i> Ukeutfordringer</a>
-                            <a href="/varsler"      class="dw-item"><i class="fa-solid fa-bell"></i> Varsler
-                                <span th:if="${ulesVarsler != null and ulesVarsler > 0}" th:text="${ulesVarsler}"
-                                      style="margin-left:auto;background:var(--mat-gronn);color:white;border-radius:99px;font-size:.58rem;font-weight:900;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 4px;"></span>
-                            </a>
-                            <a href="/innstillinger" class="dw-item"><i class="fa-solid fa-gear"></i> Innstillinger</a>
-                            <a href="/installer-app" class="dw-item"><i class="fa-solid fa-mobile-screen"></i> Installer som app</a>
-                        </div>
-                    </div>
+                    <div class="dw-divider"></div>
+                    <div class="dw-section-label">Konto</div>
+                    <a th:href="@{'/profil/' + ${brukerEpost}}" class="dw-item"><i class="fa-regular fa-circle-user"></i> Min Profil</a>
+                    <a href="/varsler" class="dw-item">
+                        <i class="fa-solid fa-bell"></i> Varsler
+                        <span th:if="${ulesVarsler != null and ulesVarsler > 0}" th:text="${ulesVarsler}"
+                              style="margin-left:auto;background:var(--mat-gronn);color:white;border-radius:99px;font-size:.58rem;font-weight:900;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 4px;"></span>
+                    </a>
+                    <a href="/innstillinger" class="dw-item"><i class="fa-solid fa-gear"></i> Innstillinger</a>
+                    <a href="/installer-app" class="dw-item"><i class="fa-solid fa-mobile-screen"></i> Installer som app</a>
                 </div>
 
                 <!-- Footer -->
@@ -874,14 +781,6 @@
                 _backdrop.classList.remove('visible');
                 document.body.style.overflow = '';
                 setTimeout(function() { _backdrop.style.display = 'none'; }, 300);
-            }
-
-            // Accordion
-            function toggleGroup(btn) {
-                var items = btn.nextElementSibling;
-                var isOpen = btn.classList.contains('open');
-                btn.classList.toggle('open', !isOpen);
-                items.classList.toggle('open', !isOpen);
             }
 
             // Aktiv lenke i drawer

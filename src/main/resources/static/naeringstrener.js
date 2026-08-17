@@ -426,9 +426,32 @@ function renderTracker() {
     var dagens = logg[iDagKey] || [];
     var sum = dagsSum(dagens);
 
-    // Makro-tiles
+    // Kalori-ring
+    var kcalStatus = makroStatus(sum.kcal, maal.kcal);
+    var kcalPct = maal.kcal > 0 ? Math.min(1, sum.kcal / maal.kcal) : 0;
+    var CIRCUMFERENCE = 345;
+    var ringFill = document.getElementById('kcalRingFill');
+    if (ringFill) ringFill.style.strokeDashoffset = CIRCUMFERENCE - Math.round(kcalPct * CIRCUMFERENCE);
+    var hero = document.getElementById('kcalHero');
+    if (hero) {
+        hero.classList.remove('status-naer', 'status-over');
+        if (kcalStatus === 'naer' || kcalStatus === 'over') hero.classList.add('status-' + kcalStatus);
+    }
+    document.getElementById('vKcal').textContent = sum.kcal;
+    document.getElementById('mKcal').textContent = maal.kcal;
+    var rest = maal.kcal - sum.kcal;
+    var restEl = document.getElementById('kcalRest');
+    if (restEl) restEl.textContent = rest > 0 ? rest + ' igjen' : rest === 0 ? 'Nådd!' : Math.abs(rest) + ' over';
+    var meldEl = document.getElementById('kcalMelding');
+    if (meldEl) {
+        if (sum.kcal === 0) meldEl.textContent = 'Logg ditt første måltid!';
+        else if (kcalStatus === 'over') meldEl.textContent = 'Du har passert dagens mål';
+        else if (kcalStatus === 'naer') meldEl.textContent = 'Nesten på mål – bra jobbet!';
+        else meldEl.textContent = 'Godt i gang for i dag!';
+    }
+
+    // Makro-tiles (protein, karbo, fett)
     var makroer = [
-        { id: 'Kcal',    verdi: sum.kcal,    maal: maal.kcal    },
         { id: 'Protein', verdi: sum.protein, maal: maal.protein },
         { id: 'Karbo',   verdi: sum.karbo,   maal: maal.karbo   },
         { id: 'Fett',    verdi: sum.fett,    maal: maal.fett    }
