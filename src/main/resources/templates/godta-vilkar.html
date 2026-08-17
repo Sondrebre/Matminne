@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="nb">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Godta vilkår | MatMinne</title>
+    <style>
+        body {
+            background: var(--bakgrunn);
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            padding-top: calc(20px + env(safe-area-inset-top, 0px));
+            padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+        }
+
+        .godta-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 8px 40px rgba(0,0,0,.10);
+            max-width: 480px;
+            width: 100%;
+            padding: 40px 36px 32px;
+            text-align: center;
+        }
+        @media (max-width: 480px) { .godta-card { padding: 32px 22px 24px; border-radius: 20px; } }
+
+        .godta-logo {
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, #14532d, #22c55e);
+            border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            box-shadow: 0 4px 16px rgba(34,197,94,.35);
+        }
+        .godta-card h1 {
+            font-size: 1.5rem; font-weight: 900; color: #0f172a;
+            letter-spacing: -1px; margin: 0 0 6px;
+        }
+        .godta-card .subtitle {
+            font-size: .88rem; color: #64748b; margin: 0 0 28px; line-height: 1.5;
+        }
+
+        .vilkar-liste {
+            background: #f8fafc;
+            border: 1px solid #f1f5f9;
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+        .vilkar-liste-item {
+            display: flex; align-items: flex-start; gap: 10px;
+            margin-bottom: 12px;
+        }
+        .vilkar-liste-item:last-child { margin-bottom: 0; }
+        .vilkar-liste-item .ikon {
+            color: #22c55e; font-size: .9rem; margin-top: 2px; flex-shrink: 0;
+        }
+        .vilkar-liste-item span {
+            font-size: .84rem; color: #475569; line-height: 1.55;
+        }
+
+        .lenker {
+            display: flex; justify-content: center; gap: 16px;
+            margin-bottom: 24px; flex-wrap: wrap;
+        }
+        .lenker a {
+            font-size: .82rem; color: #16a34a; font-weight: 600; text-decoration: none;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .lenker a:hover { text-decoration: underline; }
+
+        .btn-godta {
+            width: 100%;
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 16px;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            letter-spacing: -.3px;
+            transition: opacity .15s, transform .1s;
+            box-shadow: 0 4px 16px rgba(34,197,94,.4);
+        }
+        .btn-godta:active { transform: scale(.98); opacity: .9; }
+
+        .avvis-lenke {
+            display: block; margin-top: 14px;
+            font-size: .8rem; color: #94a3b8; text-decoration: none;
+        }
+        .avvis-lenke:hover { color: #64748b; }
+    </style>
+</head>
+<body>
+
+<div class="godta-card">
+    <div class="godta-logo">🍽️</div>
+    <h1>Velkommen til MatMinne</h1>
+    <p class="subtitle">Før du fortsetter, ber vi deg lese og godta vilkårene for bruk og personvernerklæringen vår.</p>
+
+    <div class="vilkar-liste">
+        <div class="vilkar-liste-item">
+            <i class="fa-solid fa-check ikon"></i>
+            <span><strong>Kontodata:</strong> Vi lagrer e-post, navn og profilbilde fra Google for å gi deg tilgang til appen.</span>
+        </div>
+        <div class="vilkar-liste-item">
+            <i class="fa-solid fa-check ikon"></i>
+            <span><strong>Innholdet ditt:</strong> Oppskrifter og lister du lager tilhører deg. Du kan slette kontoen din når som helst.</span>
+        </div>
+        <div class="vilkar-liste-item">
+            <i class="fa-solid fa-check ikon"></i>
+            <span><strong>AI-funksjoner:</strong> Tekst du sender til AI-forslagsfunksjonen behandles av Anthropic Claude API.</span>
+        </div>
+        <div class="vilkar-liste-item">
+            <i class="fa-solid fa-check ikon"></i>
+            <span><strong>Ingen reklame eller salg:</strong> Vi selger aldri dine data og bruker ingen sporingscookies.</span>
+        </div>
+        <div class="vilkar-liste-item">
+            <i class="fa-solid fa-shield-halved ikon"></i>
+            <span><strong>GDPR:</strong> Tjenesten er norsk og behandler data i henhold til personvernforordningen.</span>
+        </div>
+    </div>
+
+    <div class="lenker">
+        <a th:href="@{/personvern}" target="_blank">
+            <i class="fa-solid fa-shield-halved"></i> Personvernerklæring
+        </a>
+        <a th:href="@{/vilkar}" target="_blank">
+            <i class="fa-solid fa-file-contract"></i> Vilkår for bruk
+        </a>
+    </div>
+
+    <form th:action="@{/godta-vilkar}" method="post">
+        <button type="submit" class="btn-godta">
+            <i class="fa-solid fa-circle-check"></i>&nbsp; Godta og fortsett
+        </button>
+    </form>
+
+    <a href="/logout" class="avvis-lenke">Avvis og logg ut</a>
+</div>
+
+<div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

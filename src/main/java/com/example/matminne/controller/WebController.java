@@ -1538,6 +1538,25 @@ public class WebController {
         return "vilkar";
     }
 
+    @GetMapping("/godta-vilkar")
+    public String visGodtaVilkar(@AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) return "redirect:/";
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg != null && meg.isHarGodtattVilkar()) return "redirect:/kokebok";
+        return "godta-vilkar";
+    }
+
+    @PostMapping("/godta-vilkar")
+    public String godtaVilkar(@AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) return "redirect:/";
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg != null) {
+            meg.setHarGodtattVilkar(true);
+            brukerService.lagreBruker(meg);
+        }
+        return "redirect:/kokebok";
+    }
+
     private void lagrVarsel(Long mottakerBrukerId, String tekst, String lenke) {
         Varsel v = new Varsel();
         v.setMottakerBrukerId(mottakerBrukerId);

@@ -24,6 +24,7 @@ public class Bruker {
     private String bildeUrl;
     private boolean harAbonnement = false;
     private String stripeCustomerId;
+    private boolean harGodtattVilkar = false;
 
     @Column(length = 300)
     private String bio;
@@ -58,4 +59,7 @@ public class Bruker {
 
     public String getBio() { return bio; }
     public void setBio(String bio) { this.bio = bio; }
+
+    public boolean isHarGodtattVilkar() { return harGodtattVilkar; }
+    public void setHarGodtattVilkar(boolean harGodtattVilkar) { this.harGodtattVilkar = harGodtattVilkar; }
 }

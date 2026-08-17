@@ -35,31 +35,40 @@ public class TilgangsSjekk implements AuthenticationSuccessHandler {
             navn = user.getAttribute("name");
         }
 
-        // Opprett bruker i DB hvis de ikke finnes (f.eks. etter Railway-redeploy)
-        if (epost != null) {
-            Bruker meg = brukerService.finnVedEpost(epost);
-            if (meg == null) {
-                meg = new Bruker();
-                meg.setEpost(epost);
-                meg.setFulltNavn(navn);
-                brukerService.lagreBruker(meg);
+        if (epost == null) {
+            response.sendRedirect("/ingen-tilgang");
+            return;
+        }
+
+        // Opprett bruker i DB hvis de ikke finnes
+        Bruker meg = brukerService.finnVedEpost(epost);
+        if (meg == null) {
+            meg = new Bruker();
+            meg.setEpost(epost);
+            meg.setFulltNavn(navn);
+            brukerService.lagreBruker(meg);
+        }
+
+        // Sjekk allowlist (hvis konfigurert)
+        if (tillatteListe != null && !tillatteListe.isBlank()) {
+            List<String> tillatte = Arrays.stream(tillatteListe.split(","))
+                    .map(String::trim)
+                    .map(String::toLowerCase)
+                    .filter(s -> !s.isBlank())
+                    .collect(Collectors.toList());
+            if (!tillatte.contains(epost.toLowerCase())) {
+                request.getSession().invalidate();
+                response.sendRedirect("/ingen-tilgang");
+                return;
             }
         }
 
-        if (tillatteListe == null || tillatteListe.isBlank()) {
-            response.sendRedirect("/kokebok");
+        // Krev vilkårsgodkjenning ved første innlogging
+        if (!meg.isHarGodtattVilkar()) {
+            response.sendRedirect("/godta-vilkar");
             return;
         }
-        List<String> tillatte = Arrays.stream(tillatteListe.split(","))
-                .map(String::trim)
-                .map(String::toLowerCase)
-                .filter(s -> !s.isBlank())
-                .collect(Collectors.toList());
-        if (epost != null && tillatte.contains(epost.toLowerCase())) {
-            response.sendRedirect("/kokebok");
-        } else {
-            request.getSession().invalidate();
-            response.sendRedirect("/ingen-tilgang");
-        }
+
+        response.sendRedirect("/kokebok");
     }
 }
