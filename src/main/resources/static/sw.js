@@ -1,63 +1,96 @@
-// MatMinne Service Worker
-const CACHE = 'matminne-v1';
+// MatMinne Service Worker v3
+const CACHE = 'matminne-v3';
 
 const PRECACHE = [
   '/manifest.json',
   '/icons/icon.svg',
+  '/icons/icon-maskable.svg',
+  '/offline.html',
 ];
 
-// Installer — forhåndslast kritiske ressurser
+// ── INSTALL: pre-cache critical assets ──────────────────────
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(PRECACHE)).then(() => self.skipWaiting())
+    caches.open(CACHE)
+      .then(c => c.addAll(PRECACHE))
+      .then(() => self.skipWaiting())
   );
 });
 
-// Aktiver — rydd gamle cacher
+// ── ACTIVATE: clear old caches ───────────────────────────────
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(keys => Promise.all(
+        keys.filter(k => k !== CACHE).map(k => caches.delete(k))
+      ))
       .then(() => self.clients.claim())
   );
 });
 
-// Fetch — cache-first for statiske filer, network-first for sider
+// ── FETCH ────────────────────────────────────────────────────
 self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
+  const req = e.request;
+  const url = new URL(req.url);
 
-  // Hopp over: ikke-GET, cross-origin, OAuth, API-kall
-  if (e.request.method !== 'GET') return;
-  if (!url.origin.includes(self.location.origin.replace('https://','').replace('http://',''))) return;
-  if (url.pathname.startsWith('/oauth2')) return;
-  if (url.pathname.startsWith('/api/')) return;
-  if (url.pathname.startsWith('/login')) return;
+  // Only handle GET requests from our own origin
+  if (req.method !== 'GET') return;
+  if (url.origin !== self.location.origin) return;
 
-  // Statiske ressurser: cache-first
-  if (url.pathname.match(/\.(css|js|svg|png|jpg|jpeg|webp|woff2?|ico)$/)) {
-    e.respondWith(
-      caches.match(e.request).then(cached => {
-        if (cached) return cached;
-        return fetch(e.request).then(res => {
-          const clone = res.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
-          return res;
-        });
-      })
-    );
+  // Skip auth, CSRF, API endpoints (always network)
+  const skip = ['/oauth2', '/login', '/api/', '/logout', '/actuator'];
+  if (skip.some(p => url.pathname.startsWith(p))) return;
+
+  // Static assets: cache-first, background update
+  if (url.pathname.match(/\.(css|js|svg|png|jpg|jpeg|webp|woff2?|ico|json)$/)) {
+    e.respondWith(cacheFirst(req));
     return;
   }
 
-  // Sider: network-first, fall back til cache
-  e.respondWith(
-    fetch(e.request)
-      .then(res => {
-        if (res.ok) {
-          const clone = res.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
-        }
-        return res;
-      })
-      .catch(() => caches.match(e.request))
-  );
+  // HTML pages: network-first with cache fallback
+  e.respondWith(networkFirst(req));
 });
+
+// Cache-first: serve from cache, update in background
+async function cacheFirst(req) {
+  const cached = await caches.match(req);
+  if (cached) {
+    // Background revalidation
+    fetch(req).then(res => {
+      if (res && res.ok) {
+        caches.open(CACHE).then(c => c.put(req, res));
+      }
+    }).catch(() => {});
+    return cached;
+  }
+  try {
+    const res = await fetch(req);
+    if (res && res.ok) {
+      const clone = res.clone();
+      caches.open(CACHE).then(c => c.put(req, clone));
+    }
+    return res;
+  } catch {
+    return new Response('', { status: 503 });
+  }
+}
+
+// Network-first: try network, fall back to cache, then offline page
+async function networkFirst(req) {
+  try {
+    const res = await fetch(req);
+    if (res && res.ok) {
+      const clone = res.clone();
+      caches.open(CACHE).then(c => c.put(req, clone));
+    }
+    return res;
+  } catch {
+    const cached = await caches.match(req);
+    if (cached) return cached;
+    // Return offline page
+    const offline = await caches.match('/offline.html');
+    return offline || new Response('<h1>Offline</h1>', {
+      headers: { 'Content-Type': 'text/html' }
+    });
+  }
+}

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ingen internett – MatMinne</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { height: 100%; touch-action: manipulation; }
+  body {
+    min-height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f0fdf4; color: #0f172a;
+    padding: max(24px, env(safe-area-inset-top, 24px)) 24px
+             max(24px, env(safe-area-inset-bottom, 24px));
+    text-align: center;
+  }
+
+  .icon {
+    width: 88px; height: 88px;
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    border-radius: 26px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.6rem;
+    box-shadow: 0 12px 36px rgba(34,197,94,.3);
+    margin: 0 auto 28px;
+    animation: pop .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes pop { from { opacity:0; transform:scale(.6); } to { opacity:1; transform:scale(1); } }
+
+  h1 {
+    font-size: 1.7rem; font-weight: 900; letter-spacing: -1px;
+    margin-bottom: 10px;
+  }
+  p {
+    font-size: .95rem; color: #64748b; max-width: 280px;
+    line-height: 1.6; margin: 0 auto 32px;
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+    color: white; border: none; border-radius: 14px;
+    padding: 14px 28px; font-size: 1rem; font-weight: 800;
+    cursor: pointer; font-family: inherit;
+    box-shadow: 0 6px 20px rgba(34,197,94,.35);
+    transition: transform .15s, box-shadow .15s;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active { transform: scale(.95); box-shadow: 0 2px 8px rgba(34,197,94,.2); }
+
+  .hint {
+    margin-top: 20px; font-size: .78rem;
+    color: #94a3b8; font-weight: 600;
+  }
+</style>
+</head>
+<body>
+  <div class="icon">🌿</div>
+  <h1>Ingen internett</h1>
+  <p>Koble til nettet igjen for å se kokeboken din, utforske oppskrifter og bruke AI-funksjoner.</p>
+  <button class="btn" onclick="location.reload()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="23 4 23 10 17 10"></polyline>
+      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+    </svg>
+    Prøv igjen
+  </button>
+  <p class="hint">Tidligere besøkte sider kan være tilgjengelige fra hurtigbufferet</p>
+</body>
+</html>

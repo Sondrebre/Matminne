@@ -1,12 +1,14 @@
 {
+  "id": "/kokebok",
   "name": "MatMinne",
   "short_name": "MatMinne",
   "description": "Din digitale kokebok — lagre, planlegg og del oppskrifter",
   "start_url": "/kokebok",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#2ecc71",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#f0fdf4",
+  "theme_color": "#22c55e",
   "orientation": "portrait-primary",
   "lang": "nb",
   "categories": ["food", "lifestyle", "utilities"],
@@ -32,16 +34,16 @@
       "description": "Legg til en ny oppskrift"
     },
     {
-      "name": "Ukesmeny",
-      "short_name": "Uke",
-      "url": "/ukesmeny",
-      "description": "Planlegg ukens måltider"
-    },
-    {
       "name": "Handleliste",
       "short_name": "Handle",
       "url": "/handleliste",
       "description": "Se og oppdater handlelisten"
+    },
+    {
+      "name": "AI Matforslag",
+      "short_name": "AI",
+      "url": "/ai-forslag",
+      "description": "Få AI-genererte matforslag"
     }
   ]
 }

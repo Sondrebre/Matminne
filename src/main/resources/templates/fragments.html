@@ -2,17 +2,20 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:fragment="header_links">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#2ecc71">
+    <meta name="theme-color" content="#f0fdf4" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f172a"  media="(prefers-color-scheme: dark)">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="MatMinne">
     <link rel="apple-touch-icon" href="/icons/icon.svg">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -43,6 +46,35 @@
         }
 
         *, *::before, *::after { box-sizing: border-box; }
+
+        /* ── APP-FEEL GLOBALS ── */
+        html {
+            /* Removes 300ms tap delay on all browsers */
+            touch-action: manipulation;
+            /* Smooth scroll sitewide */
+            scroll-behavior: smooth;
+            /* Suppress callouts on long-press */
+            -webkit-touch-callout: none;
+        }
+
+        /* Remove blue tap-flash on all interactive elements */
+        a, button, input, select, textarea, label, summary {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Prevent iOS from zooming on input focus (font-size must be ≥16px) */
+        @media (max-width: 768px) {
+            input:not([type=range]),
+            select,
+            textarea {
+                font-size: max(16px, 1em) !important;
+            }
+        }
+
+        /* Standalone-mode (installed as app): kill pull-to-refresh */
+        @media (display-mode: standalone) {
+            html, body { overscroll-behavior-y: none; }
+        }
 
         body {
             background-color: var(--bakgrunn);
@@ -111,7 +143,8 @@
             position: fixed !important;
             top: 0; left: 0; right: 0;
             z-index: 1030;
-            padding: 3px 0 0;
+            /* env() safe-area pushes navbar below notch/Dynamic Island */
+            padding: calc(3px + env(safe-area-inset-top, 0px)) 0 0;
             background: rgba(240,253,244,0.97) !important;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -121,7 +154,8 @@
         }
 
         body {
-            padding-top: 68px;
+            /* Extra room for notch */
+            padding-top: calc(68px + env(safe-area-inset-top, 0px));
         }
 
         .navbar.scrolled {
@@ -657,6 +691,16 @@
                 navigator.serviceWorker.register('/sw.js').catch(() => {});
             }
 
+            // ── SCROLL RESTORATION: remember scroll position per page ──
+            (function() {
+                var key = 'mm-scroll-' + location.pathname;
+                var saved = sessionStorage.getItem(key);
+                if (saved) window.scrollTo(0, parseInt(saved, 10));
+                window.addEventListener('beforeunload', function() {
+                    sessionStorage.setItem(key, window.scrollY);
+                });
+            })();
+
             // Install prompt (Android/Desktop)
             let deferredPrompt = null;
             window.addEventListener('beforeinstallprompt', e => {
@@ -983,6 +1027,25 @@
             .btn-follow:active,
             .btn-start:active { transform: scale(.95) !important; transition: transform .08s !important; }
 
+            /* ── IMG ── */
+            img { display: block; max-width: 100%; }
+
+            /* ── SCROLLABLE CONTAINERS ── */
+            .dw-body,
+            .bottom-nav-inner,
+            .dag-tabs {
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior: contain;
+            }
+
+            /* ── FAST TAP: no delay for buttons/links ── */
+            button, a, [role="button"] { touch-action: manipulation; }
+
+            /* ── SELECTION: disable on UI chrome ── */
+            .navbar, .bottom-nav, #mobDrawer {
+                user-select: none; -webkit-user-select: none;
+            }
+
             /* Entrance animation for cards */
             .fade-up {
                 animation: fadeUp .4s ease both;
@@ -990,7 +1053,8 @@
 
             @media (max-width: 768px) {
                 .bottom-nav { display: block; }
-                body { padding-bottom: 82px; }
+                /* Safe area for home indicator */
+                body { padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px)); }
             }
         </style>
     </div>
