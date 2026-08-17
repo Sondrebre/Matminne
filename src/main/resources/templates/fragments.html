@@ -1026,59 +1026,7 @@
             #scrollTopBtn { bottom: 28px; right: 28px; }
         }
 
-        /* ── DARK MODE ── */
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) {
-                --bakgrunn: #080f1a;
-                --mat-mork: #f1f5f9;
-                --hvit: #1e293b;
-                --text-muted: #94a3b8;
-                color-scheme: dark;
-            }
-            body { background: #080f1a !important; color: #e2e8f0 !important; }
-            /* Navbar */
-            .navbar { background: rgba(8,15,26,.97) !important; border-bottom-color: rgba(34,197,94,.18) !important; }
-            .nav-logo-text { color: #f1f5f9 !important; }
-            .nav-link { color: #94a3b8 !important; }
-            .nav-link:hover, .nav-link.active-page { color: #f1f5f9 !important; }
-            .nav-icon-btn { background: #1e293b !important; color: #94a3b8 !important; }
-            .nav-icon-btn:hover { background: rgba(34,197,94,.15) !important; color: var(--mat-gronn) !important; }
-            /* Bottom nav */
-            .bottom-nav { background: rgba(8,15,26,.98) !important; border-top-color: rgba(34,197,94,.18) !important; }
-            .bn-item { color: #475569 !important; }
-            .bn-item.active { color: var(--mat-gronn) !important; }
-            .bn-item.active i { background: rgba(34,197,94,.12) !important; }
-            /* Mobile drawer */
-            #mobDrawer { background: #0f172a !important; }
-            .dw-head { border-bottom-color: #1e293b !important; background: #0f172a !important; }
-            .dw-logo-txt { color: #f1f5f9 !important; }
-            .dw-close { background: #1e293b !important; color: #94a3b8 !important; }
-            .dw-body { background: #0f172a !important; }
-            .dw-section-label { color: #334155 !important; }
-            .dw-divider { background: #1e293b !important; }
-            .dw-item { color: #94a3b8 !important; }
-            .dw-item:hover, .dw-item:active { background: #1e293b !important; color: #e2e8f0 !important; }
-            .dw-item.active { background: rgba(34,197,94,.12) !important; color: var(--mat-gronn) !important; }
-            .dw-item.active i { color: var(--mat-gronn) !important; }
-            .dw-footer { border-top-color: #1e293b !important; background: #0f172a !important; }
-            /* Backdrop */
-            #drawerBackdrop { background: rgba(0,0,0,.7) !important; }
-            /* Toast */
-            #toastContainer > div { background: #1e293b !important; color: #e2e8f0 !important; box-shadow: 0 8px 32px rgba(0,0,0,.5) !important; }
-            /* Page progress bar keeps green — no override needed */
-            /* Skeleton */
-            .skel { background: linear-gradient(90deg, #1e293b 25%, #0f172a 50%, #1e293b 75%) !important; background-size: 1200px 100% !important; }
-            .skel-card { background: #1e293b !important; border-color: #334155 !important; }
-            /* Global white cards/surfaces */
-            .s-card, .danger-card { background: #1e293b !important; border-color: #334155 !important; }
-            .s-card-header, .danger-header { border-bottom-color: #334155 !important; }
-            .s-row { border-bottom-color: #334155 !important; }
-            .s-row-label { color: #e2e8f0 !important; }
-            .s-row-sub { color: #64748b !important; }
-            .info-chip { background: #0f172a !important; border-color: #334155 !important; color: #94a3b8 !important; }
-        }
-
-        @keyframes slideIn  { from { transform:translateX(110px);opacity:0; } to { transform:translateX(0);opacity:1; } }
+@keyframes slideIn  { from { transform:translateX(110px);opacity:0; } to { transform:translateX(0);opacity:1; } }
             @keyframes slideOut { from { transform:translateX(0);opacity:1; } to { transform:translateX(110px);opacity:0; } }
             @keyframes fadeUp   { from { transform:translateY(12px);opacity:0; } to { transform:translateY(0);opacity:1; } }
             @keyframes shimmer  { 0% { background-position:-600px 0; } 100% { background-position:600px 0; } }
