@@ -9,6 +9,8 @@ import java.util.List;
 public interface LikeRepository extends JpaRepository<Like, Long> {
     Like findByBrukerIdAndOppskriftId(Long brukerId, Long oppskriftId);
     boolean existsByBrukerIdAndOppskriftId(Long brukerId, Long oppskriftId);
+    @org.springframework.transaction.annotation.Transactional
+    void deleteByBrukerId(Long brukerId);
     long countByOppskriftId(Long oppskriftId);
 
     @Query("SELECT l.oppskriftId FROM Like l GROUP BY l.oppskriftId ORDER BY COUNT(l) DESC")

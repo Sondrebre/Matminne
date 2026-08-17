@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.PageRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -1536,6 +1537,17 @@ public class WebController {
     @GetMapping("/vilkar")
     public String visVilkar() {
         return "vilkar";
+    }
+
+    @PostMapping("/konto/slett")
+    public String slettKonto(@AuthenticationPrincipal OAuth2User principal, HttpSession session) {
+        if (principal == null) return "redirect:/";
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg != null) {
+            brukerService.slettBruker(meg.getId());
+        }
+        session.invalidate();
+        return "redirect:/?konto=slettet";
     }
 
     @GetMapping("/godta-vilkar")

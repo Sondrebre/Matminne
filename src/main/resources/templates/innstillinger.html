@@ -281,14 +281,40 @@
             <!-- DANGER ZONE -->
             <div class="danger-card">
                 <div class="danger-header">
-                    <p class="danger-title">Faresone</p>
+                    <p class="danger-title"><i class="fa-solid fa-triangle-exclamation"></i> Faresone</p>
                 </div>
                 <div class="danger-body">
-                    <p>Sletting av kontoen er permanent og kan ikke angres. Alle oppskrifter og data fjernes.</p>
-                    <button class="btn-delete-account"
-                            onclick="if(confirm('Er du sikker? Dette kan ikke angres.')) alert('Kontaktfunksjon ikke aktivert ennå.')">
+                    <p>Sletting av kontoen er permanent og kan ikke angres. Alle oppskrifter, handlelister og brukerdata fjernes.</p>
+                    <button class="btn-delete-account" onclick="document.getElementById('slettModal').style.display='flex'">
                         <i class="fa-solid fa-trash"></i> Slett min konto
                     </button>
+                </div>
+            </div>
+
+            <!-- Slett-konto modal -->
+            <div id="slettModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);
+                 align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);">
+                <div style="background:white;border-radius:24px;padding:32px 28px;max-width:420px;width:100%;
+                     box-shadow:0 32px 80px rgba(0,0,0,.25);">
+                    <div style="width:56px;height:56px;border-radius:16px;background:#fff1f2;
+                         display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 16px;">⚠️</div>
+                    <h2 style="font-size:1.2rem;font-weight:900;color:#0f172a;text-align:center;margin:0 0 8px;letter-spacing:-.5px;">Slett konto permanent?</h2>
+                    <p style="font-size:.85rem;color:#64748b;text-align:center;line-height:1.6;margin:0 0 24px;">
+                        Dette kan <strong style="color:#dc2626;">ikke angres</strong>. Alle oppskrifter,
+                        handlelister og profilen din slettes umiddelbart.
+                    </p>
+                    <form th:action="@{/konto/slett}" method="post" style="display:flex;flex-direction:column;gap:10px;">
+                        <button type="submit" style="background:#dc2626;color:white;border:none;
+                                padding:14px;border-radius:14px;font-weight:800;font-size:.95rem;cursor:pointer;
+                                font-family:inherit;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;">
+                            <i class="fa-solid fa-trash"></i> Ja, slett kontoen min for alltid
+                        </button>
+                        <button type="button" onclick="document.getElementById('slettModal').style.display='none'"
+                                style="background:#f1f5f9;color:#64748b;border:none;padding:14px;border-radius:14px;
+                                font-weight:700;font-size:.95rem;cursor:pointer;font-family:inherit;">
+                            Avbryt
+                        </button>
+                    </form>
                 </div>
             </div>
 

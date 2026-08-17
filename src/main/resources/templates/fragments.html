@@ -666,7 +666,7 @@
                 <span style="color:#e2e8f0;">|</span>
                 <a th:href="@{/vilkar}" style="color:#64748b;text-decoration:none;font-weight:500;">Vilkår for bruk</a>
                 <span style="color:#e2e8f0;">|</span>
-                <a href="mailto:sondre.bretten@gmail.com" style="color:#64748b;text-decoration:none;font-weight:500;">Kontakt</a>
+                <a href="mailto:matminnehelp@gmail.com" style="color:#64748b;text-decoration:none;font-weight:500;">Kontakt</a>
             </div>
             <p style="margin:10px 0 0;font-size:.72rem;">&copy; 2025 MatMinne &nbsp;&middot;&nbsp; Sondre Bretten</p>
         </footer>
@@ -697,6 +697,11 @@
 
         <!-- Toast container -->
         <div id="toastContainer" style="position:fixed;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;"></div>
+
+        <!-- Scroll to top -->
+        <button id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Til toppen">
+            <i class="fa-solid fa-arrow-up"></i>
+        </button>
 
         <!-- PWA: Register service worker + install banner -->
         <script>
@@ -860,20 +865,14 @@
                     _startProg();
                     document.body.style.transition = 'opacity .16s ease';
                     document.body.style.opacity = '.6';
+                    document.body.style.pointerEvents = 'none';
                 }
             });
 
             // Also start progress on form submits
             document.addEventListener('submit', () => { _startProg(); });
 
-            // Highlight active link i drawer
-            (function() {
-                var p = window.location.pathname;
-                document.querySelectorAll('#mobDrawer .mob-nav-link').forEach(function(l) {
-                    var h = l.getAttribute('href');
-                    if (h && h !== '/' && p.startsWith(h)) l.classList.add('active');
-                });
-            })();
+            // Aktiv lenke i navbar
 
             // ── CUSTOM DRAWER ──────────────────────────────────────────
             var _drawer   = document.getElementById('mobDrawer');
@@ -943,9 +942,11 @@
                 if (e.key === 'Escape') closeDrawer();
             });
 
-            // Scroll shadow on navbar
+            // Scroll shadow on navbar + scroll-to-top visibility
             window.addEventListener('scroll', () => {
                 document.getElementById('mainNav')?.classList.toggle('scrolled', window.scrollY > 20);
+                const scrollBtn = document.getElementById('scrollTopBtn');
+                if (scrollBtn) scrollBtn.style.display = window.scrollY > 400 ? 'flex' : 'none';
             });
 
             // Active nav link + bottom nav
@@ -1010,7 +1011,74 @@
                 .bottom-nav-inner { height: 60px; }
             }
 
-            @keyframes slideIn  { from { transform:translateX(110px);opacity:0; } to { transform:translateX(0);opacity:1; } }
+            /* ── SCROLL TO TOP ── */
+        #scrollTopBtn {
+            display: none; position: fixed; z-index: 1000; cursor: pointer;
+            bottom: calc(90px + env(safe-area-inset-bottom, 0px)); right: 16px;
+            width: 44px; height: 44px; border-radius: 14px;
+            background: var(--mat-gronn); color: white; border: none;
+            box-shadow: 0 8px 24px rgba(46,204,113,.4);
+            align-items: center; justify-content: center; font-size: 1rem;
+            transition: transform .2s, box-shadow .2s;
+        }
+        #scrollTopBtn:active { transform: scale(.9); }
+        @media (min-width: 769px) {
+            #scrollTopBtn { bottom: 28px; right: 28px; }
+        }
+
+        /* ── DARK MODE ── */
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) {
+                --bakgrunn: #080f1a;
+                --mat-mork: #f1f5f9;
+                --hvit: #1e293b;
+                --text-muted: #94a3b8;
+                color-scheme: dark;
+            }
+            body { background: #080f1a !important; color: #e2e8f0 !important; }
+            /* Navbar */
+            .navbar { background: rgba(8,15,26,.97) !important; border-bottom-color: rgba(34,197,94,.18) !important; }
+            .nav-logo-text { color: #f1f5f9 !important; }
+            .nav-link { color: #94a3b8 !important; }
+            .nav-link:hover, .nav-link.active-page { color: #f1f5f9 !important; }
+            .nav-icon-btn { background: #1e293b !important; color: #94a3b8 !important; }
+            .nav-icon-btn:hover { background: rgba(34,197,94,.15) !important; color: var(--mat-gronn) !important; }
+            /* Bottom nav */
+            .bottom-nav { background: rgba(8,15,26,.98) !important; border-top-color: rgba(34,197,94,.18) !important; }
+            .bn-item { color: #475569 !important; }
+            .bn-item.active { color: var(--mat-gronn) !important; }
+            .bn-item.active i { background: rgba(34,197,94,.12) !important; }
+            /* Mobile drawer */
+            #mobDrawer { background: #0f172a !important; }
+            .dw-head { border-bottom-color: #1e293b !important; background: #0f172a !important; }
+            .dw-logo-txt { color: #f1f5f9 !important; }
+            .dw-close { background: #1e293b !important; color: #94a3b8 !important; }
+            .dw-body { background: #0f172a !important; }
+            .dw-section-label { color: #334155 !important; }
+            .dw-divider { background: #1e293b !important; }
+            .dw-item { color: #94a3b8 !important; }
+            .dw-item:hover, .dw-item:active { background: #1e293b !important; color: #e2e8f0 !important; }
+            .dw-item.active { background: rgba(34,197,94,.12) !important; color: var(--mat-gronn) !important; }
+            .dw-item.active i { color: var(--mat-gronn) !important; }
+            .dw-footer { border-top-color: #1e293b !important; background: #0f172a !important; }
+            /* Backdrop */
+            #drawerBackdrop { background: rgba(0,0,0,.7) !important; }
+            /* Toast */
+            #toastContainer > div { background: #1e293b !important; color: #e2e8f0 !important; box-shadow: 0 8px 32px rgba(0,0,0,.5) !important; }
+            /* Page progress bar keeps green — no override needed */
+            /* Skeleton */
+            .skel { background: linear-gradient(90deg, #1e293b 25%, #0f172a 50%, #1e293b 75%) !important; background-size: 1200px 100% !important; }
+            .skel-card { background: #1e293b !important; border-color: #334155 !important; }
+            /* Global white cards/surfaces */
+            .s-card, .danger-card { background: #1e293b !important; border-color: #334155 !important; }
+            .s-card-header, .danger-header { border-bottom-color: #334155 !important; }
+            .s-row { border-bottom-color: #334155 !important; }
+            .s-row-label { color: #e2e8f0 !important; }
+            .s-row-sub { color: #64748b !important; }
+            .info-chip { background: #0f172a !important; border-color: #334155 !important; color: #94a3b8 !important; }
+        }
+
+        @keyframes slideIn  { from { transform:translateX(110px);opacity:0; } to { transform:translateX(0);opacity:1; } }
             @keyframes slideOut { from { transform:translateX(0);opacity:1; } to { transform:translateX(110px);opacity:0; } }
             @keyframes fadeUp   { from { transform:translateY(12px);opacity:0; } to { transform:translateY(0);opacity:1; } }
             @keyframes shimmer  { 0% { background-position:-600px 0; } 100% { background-position:600px 0; } }

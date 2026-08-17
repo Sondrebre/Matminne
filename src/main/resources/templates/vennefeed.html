@@ -428,7 +428,9 @@
                          class="post-avatar" th:text="${#strings.substring(o.brukerNavn, 0, 1)}">U</div>
                     <div>
                         <div class="post-username" th:text="${o.brukerNavn}">Navn</div>
-                        <div class="post-time"><i class="fa-regular fa-clock me-1"></i>nylig</div>
+                        <div class="post-time"><i class="fa-regular fa-clock me-1"></i>
+                            <span th:text="${o.datoOpprettet != null ? #temporals.format(o.datoOpprettet, 'dd.MM.yy') : 'nylig'}">nylig</span>
+                        </div>
                     </div>
                 </a>
             </div>

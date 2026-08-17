@@ -449,7 +449,7 @@
                         </button>
                     </div>
 
-                    <button type="submit" class="btn-submit" style="margin-top:12px;">
+                    <button type="submit" id="submitBtn" class="btn-submit" style="margin-top:12px;">
                         <i class="fa-solid fa-bookmark"></i> Lagre i min kokebok
                     </button>
                 </div>
@@ -464,6 +464,25 @@
 
     <div th:replace="~{fragments :: bottom_nav}"></div>
     <div th:replace="~{fragments :: scripts}"></div>
+    <script>
+        // Read AI prefill title from ai-forslag page
+        document.addEventListener('DOMContentLoaded', function() {
+            var pre = sessionStorage.getItem('prefillTittel');
+            if (pre) {
+                var el = document.getElementById('tittel');
+                if (el) el.value = pre;
+                sessionStorage.removeItem('prefillTittel');
+            }
+        });
+        // Disable submit button on form send to prevent double-submit
+        document.getElementById('mainForm').addEventListener('submit', function() {
+            var btn = document.getElementById('submitBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Lagrer...';
+            }
+        });
+    </script>
 
     <script>
         let aktivSteg = 1;
@@ -471,7 +490,11 @@
         function gåTilSteg(n) {
             document.getElementById('step-' + aktivSteg).classList.remove('active');
             document.getElementById('si-' + aktivSteg).classList.remove('active');
-            document.getElementById('si-' + aktivSteg).classList.add('done');
+            if (n > aktivSteg) {
+                document.getElementById('si-' + aktivSteg).classList.add('done');
+            } else {
+                document.getElementById('si-' + aktivSteg).classList.remove('done');
+            }
 
             aktivSteg = n;
             document.getElementById('step-' + n).classList.add('active');

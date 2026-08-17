@@ -3,9 +3,6 @@
 <head>
     <div th:replace="~{fragments :: header_links}"></div>
     <title>MatMinne | Din digitale kokebok</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
@@ -810,6 +807,7 @@
     </div>
 </div>
 
+<div th:replace="~{fragments :: bottom_nav}"></div>
 <div th:replace="~{fragments :: scripts}"></div>
 </body>
 </html>

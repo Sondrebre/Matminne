@@ -588,7 +588,7 @@
             <img th:with="imgUrl=${o.bildeUrl != null && o.bildeUrl != '' ? o.bildeUrl : 'https://images.unsplash.com/photo-1495521821757-a1efb6729352'}"
                  th:src="${#strings.contains(imgUrl, 'unsplash.com') and !#strings.contains(imgUrl, 'w=') ? imgUrl + '?auto=format&fit=crop&w=1600&q=90' : imgUrl}"
                  alt="" fetchpriority="high">
-            <a href="javascript:history.back()" class="back-btn">
+            <a href="/kokebok" onclick="if(history.length>1&&document.referrer.includes(location.hostname)){history.back();event.preventDefault();}" class="back-btn">
                 <i class="fas fa-chevron-left"></i> Tilbake
             </a>
             <div class="hero-overlay">
@@ -698,6 +698,9 @@
                             <h3>Del og lagre</h3>
                         </div>
                         <div class="side-card-body" style="display:flex;flex-direction:column;gap:8px;">
+                            <button id="nativeShareBtn" class="act-btn" onclick="nativeDel()" style="width:100%;justify-content:center;display:none;">
+                                <i class="fa-solid fa-share-nodes"></i> Del oppskrift
+                            </button>
                             <button class="act-btn" onclick="kopierLenke()" style="width:100%;justify-content:center;">
                                 <i class="fa-solid fa-link"></i> Kopier lenke
                             </button>
@@ -1180,7 +1183,7 @@
                     if (Notification && Notification.permission === 'granted') {
                         new Notification('Timer ferdig! 🍳', { body: 'Timeren din er ferdig.' });
                     } else {
-                        alert('⏰ Timeren er ferdig!');
+                        showToast('⏰ Timeren er ferdig!', 'info');
                     }
                     return;
                 }
@@ -1215,7 +1218,10 @@
             if (!document.getElementById('kokeOverlay').classList.contains('open')) return;
             if (e.key === 'ArrowRight' || e.key === 'ArrowDown') kokeNav(1);
             if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') kokeNav(-1);
-            if (e.key === 'Escape') avsluttKoke();
+            if (e.key === 'Escape') {
+                avsluttKoke();
+                document.getElementById('qrModal')?.classList.remove('open');
+            }
         });
 
         function setRating(btn) {
@@ -1235,6 +1241,20 @@
                 const cur = parseInt(document.getElementById('ratingVerdi').value) || 0;
                 document.querySelectorAll('.star-btn').forEach((s, i) => s.classList.toggle('active', i < cur));
             });
+        }
+
+        // Show native share button if Web Share API is available
+        if (navigator.share) {
+            const nb = document.getElementById('nativeShareBtn');
+            if (nb) nb.style.display = 'flex';
+        }
+
+        function nativeDel() {
+            if (!navigator.share) return;
+            navigator.share({
+                title: document.title.replace(' | MatMinne', ''),
+                url: window.location.href
+            }).catch(() => {});
         }
 
         function kopierLenke() {
