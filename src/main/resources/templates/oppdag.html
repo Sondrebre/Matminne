@@ -199,8 +199,19 @@
         }
         .btn-share:hover { background: var(--mat-gronn-m); transform: translateY(-2px); color: white; }
 
+        @media (max-width: 768px) {
+            /* 2-column layout on mobile */
+            .recipe-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .kort-img { height: 130px; }
+            .kort-body { padding: 10px 12px; }
+            .kort-title { font-size: .88rem; margin-bottom: 8px;
+                display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+            .kort-meta { gap: 5px; margin-bottom: 5px; }
+            .kort-meta span { font-size: .63rem; }
+            .chef-badge { display: none; }
+            .btn-see, .btn-save { padding: 9px 8px; font-size: .78rem; border-radius: 10px; }
+        }
         @media (max-width: 600px) {
-            .recipe-grid { grid-template-columns: 1fr; }
             .filter-sort { margin-left: 0; }
             .explore-hero { padding: 28px 0 56px; }
             .explore-hero h1 { font-size: 2rem; letter-spacing: -1.5px; }
@@ -209,6 +220,10 @@
             .filter-wrap { padding: 12px 12px 0; gap: 6px; }
             .filter-chip { padding: 6px 12px; font-size: .75rem; }
             .trending-scroll { gap: 10px; }
+        }
+        @media (max-width: 360px) {
+            .recipe-grid { grid-template-columns: 1fr; gap: 12px; }
+            .kort-img { height: 160px; }
         }
     </style>
 </head>
