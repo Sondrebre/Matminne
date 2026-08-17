@@ -40,7 +40,7 @@ public class SecurityConfig {
             )
             // ── Tilgangskontroll ──────────────────────────────────
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/ingen-tilgang", "/css/**", "/js/**", "/images/**", "/webjars/**", "/manifest.json", "/sw.js", "/icons/**", "/installer-app").permitAll()
+                .requestMatchers("/", "/ingen-tilgang", "/css/**", "/js/**", "/images/**", "/webjars/**", "/manifest.json", "/sw.js", "/icons/**", "/installer-app", "/personvern", "/vilkar", "/offline.html").permitAll()
                 .requestMatchers("/h2-console/**").denyAll()  // Aldri eksponér H2-console
                 .anyRequest().authenticated()
             )

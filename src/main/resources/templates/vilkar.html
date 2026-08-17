@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="nb">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Vilkår for bruk | MatMinne</title>
+    <style>
+        body { background: var(--bakgrunn); }
+        .legal-hero {
+            background: linear-gradient(135deg, #14532d 0%, #166534 50%, #16a34a 100%);
+            padding: 52px 6% 48px; text-align: center; position: relative; overflow: hidden;
+        }
+        .legal-hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba(34,197,94,.25) 0%, transparent 65%);
+        }
+        .legal-hero-inner { position: relative; z-index: 1; }
+        .legal-hero h1 { color: white; font-size: clamp(1.8rem,4vw,2.8rem); font-weight: 900; letter-spacing: -1.5px; margin: 0 0 8px; }
+        .legal-hero p { color: rgba(255,255,255,.65); font-size: .9rem; margin: 0; }
+
+        .legal-wrap { max-width: 780px; margin: 0 auto; padding: 36px 20px 100px; }
+
+        .legal-card {
+            background: white; border-radius: 20px; border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 20px rgba(0,0,0,.05); padding: 32px 36px; margin-bottom: 20px;
+        }
+        @media (max-width: 600px) { .legal-card { padding: 22px 20px; } }
+
+        .legal-card h2 {
+            font-size: 1.05rem; font-weight: 900; color: #0f172a;
+            letter-spacing: -.3px; margin: 0 0 14px; display: flex; align-items: center; gap: 9px;
+        }
+        .legal-card h2 i { color: #22c55e; }
+        .legal-card p, .legal-card li {
+            font-size: .88rem; color: #475569; line-height: 1.75; margin: 0 0 10px;
+        }
+        .legal-card ul, .legal-card ol { padding-left: 20px; margin: 8px 0 14px; }
+        .legal-card li { margin-bottom: 6px; }
+        .legal-card strong { color: #1e293b; }
+        .legal-card a { color: #16a34a; }
+
+        .updated-note {
+            background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px;
+            padding: 12px 18px; font-size: .8rem; color: #15803d; font-weight: 600;
+            margin-bottom: 24px; display: flex; align-items: center; gap: 8px;
+        }
+        .contact-box {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1.5px solid #bbf7d0; border-radius: 16px; padding: 20px 24px;
+        }
+        .contact-box strong { display: block; font-size: 1rem; color: #14532d; margin-bottom: 4px; }
+        .contact-box a { color: #16a34a; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="legal-hero">
+    <div class="legal-hero-inner">
+        <h1>Vilkår for bruk</h1>
+        <p>Sist oppdatert: august 2025 &nbsp;·&nbsp; MatMinne</p>
+    </div>
+</div>
+
+<div class="legal-wrap">
+
+    <div class="updated-note">
+        <i class="fa-solid fa-file-contract"></i>
+        Disse vilkårene gjelder ved bruk av MatMinne-appen og nettjenesten.
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-handshake"></i> 1. Aksept av vilkår</h2>
+        <p>Ved å opprette konto og bruke MatMinne godtar du disse vilkårene for bruk. Hvis du ikke godtar vilkårene, kan du ikke bruke tjenesten.</p>
+        <p>MatMinne er drevet av <strong>Sondre Bretten</strong>, privatperson bosatt i Norge, og er tilgjengelig via app og nettleser.</p>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-clipboard-list"></i> 2. Tjenestebeskrivelse</h2>
+        <p>MatMinne er en digital kokebok og matplanlegger som lar deg:</p>
+        <ul>
+            <li>Lagre, organisere og dele oppskrifter</li>
+            <li>Følge andre brukeres oppskrifter og matlagingsaktivitet</li>
+            <li>Generere handlelister fra oppskrifter</li>
+            <li>Få AI-baserte mattips og oppskriftsforslag</li>
+        </ul>
+        <p>Vi forbeholder oss retten til å endre, legge til eller fjerne funksjoner uten forvarsel.</p>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-user-check"></i> 3. Konto og aldersgrense</h2>
+        <ul>
+            <li>Du må være <strong>minst 16 år</strong> for å opprette konto og bruke MatMinne.</li>
+            <li>Innlogging skjer via din Google-konto. Du er ansvarlig for å holde kontoinformasjonen sikker.</li>
+            <li>Du kan kun opprette én konto per person.</li>
+            <li>Du er ansvarlig for all aktivitet som skjer fra kontoen din.</li>
+        </ul>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-pen-to-square"></i> 4. Brukerinnhold</h2>
+        <p><strong>Eierskap:</strong> Du beholder opphavsretten til innholdet du legger inn i MatMinne (oppskrifter, bilder, tekster).</p>
+        <p><strong>Lisens til MatMinne:</strong> Ved å laste opp innhold gir du MatMinne en ikke-eksklusiv, vederlagsfri lisens til å lagre, vise og distribuere innholdet ditt som del av tjenesten — inkludert å vise det til andre brukere dersom du har gjort det offentlig.</p>
+        <p><strong>Ansvar for innhold:</strong> Du er selv ansvarlig for innholdet du legger inn. Du forsikrer at du har nødvendige rettigheter til alt innhold du laster opp.</p>
+        <p><strong>Forbudt innhold:</strong> Det er ikke tillatt å laste opp innhold som:</p>
+        <ul>
+            <li>er ulovlig eller oppfordrer til ulovlig aktivitet</li>
+            <li>krenker andres opphavsrett, varemerker eller personvern</li>
+            <li>inneholder trakassering, hets eller diskriminerende innhold</li>
+            <li>er spam, reklame eller villedende informasjon</li>
+        </ul>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-robot"></i> 5. AI-funksjoner</h2>
+        <p>MatMinne tilbyr AI-genererte oppskriftsforslag og mattips via Anthropic Claude API.</p>
+        <ul>
+            <li>AI-generert innhold er ikke kvalitetssikret av fagpersoner og skal ikke erstatte medisinsk eller ernæringsfaglig rådgivning.</li>
+            <li>Tekst du sender til AI-funksjonene kan behandles av Anthropics servere. Se <a href="https://www.anthropic.com/privacy" target="_blank" rel="noopener">Anthropics personvernpolicy</a>.</li>
+            <li>Du bør ikke sende personlig sensitiv informasjon (helse, medisinsk status) til AI-funksjonene.</li>
+        </ul>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-shield-halved"></i> 6. Akseptabel bruk</h2>
+        <p>Du forplikter deg til å <strong>ikke</strong>:</p>
+        <ul>
+            <li>bruke tjenesten til ulovlige formål</li>
+            <li>forsøke å hacke, krasje eller overbelaste tjenesten</li>
+            <li>automatisk skrape eller masse-hente data fra tjenesten</li>
+            <li>dele andre brukeres private informasjon uten samtykke</li>
+            <li>opprette falske kontoer eller utgi deg for å være en annen person</li>
+            <li>omgå sikkerhetsmekanismer i tjenesten</li>
+        </ul>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-ban"></i> 7. Kontooppsigelse</h2>
+        <p><strong>Sletting av konto:</strong> Du kan når som helst be om sletting av kontoen din ved å sende e-post til <a href="mailto:sondre.bretten@gmail.com">sondre.bretten@gmail.com</a>. Kontoen og alt brukerinnhold slettes innen 30 dager.</p>
+        <p><strong>Brudd på vilkår:</strong> Vi forbeholder oss retten til å suspendere eller slette kontoer som bryter disse vilkårene, uten forvarsel dersom bruddet er alvorlig.</p>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-triangle-exclamation"></i> 8. Ansvarsfraskrivelse</h2>
+        <p>MatMinne leveres <strong>"som det er"</strong> uten garantier av noe slag. Vi garanterer ikke at tjenesten alltid er tilgjengelig, feilfri eller at data ikke kan gå tapt.</p>
+        <p>MatMinne er ikke ansvarlig for:</p>
+        <ul>
+            <li>tap av brukerinnhold som følge av tekniske feil</li>
+            <li>indirekte tap eller skader som følge av bruk av tjenesten</li>
+            <li>innhold lagt inn av andre brukere</li>
+            <li>helse- eller ernæringskonsekvenser av å følge oppskrifter i appen</li>
+        </ul>
+        <p>Ernæringsinformasjon og kaloriverdi er estimater og er kun veiledende.</p>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-gavel"></i> 9. Gjeldende lov og tvister</h2>
+        <p>Disse vilkårene er underlagt <strong>norsk lov</strong>. Eventuelle tvister skal søkes løst i minnelighet. Dersom enighet ikke oppnås, skal saken avgjøres ved norske domstoler med <strong>Oslo tingrett</strong> som verneting.</p>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-arrows-rotate"></i> 10. Endringer i vilkårene</h2>
+        <p>Vi kan oppdatere disse vilkårene. Vesentlige endringer varsles via e-post eller melding i appen. Fortsatt bruk av tjenesten etter varsel om endring anses som aksept av de nye vilkårene.</p>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-envelope"></i> Kontakt</h2>
+        <div class="contact-box">
+            <strong>MatMinne — Sondre Bretten</strong>
+            E-post: <a href="mailto:sondre.bretten@gmail.com">sondre.bretten@gmail.com</a>
+        </div>
+        <p style="margin-top: 14px;">Se også vår <a th:href="@{/personvern}">Personvernerklæring</a>.</p>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: bottom_nav}"></div>
+<div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

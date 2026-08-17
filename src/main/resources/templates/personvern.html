@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="nb">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Personvernerklæring | MatMinne</title>
+    <style>
+        body { background: var(--bakgrunn); }
+        .legal-hero {
+            background: linear-gradient(135deg, #14532d 0%, #166534 50%, #16a34a 100%);
+            padding: 52px 6% 48px; text-align: center; position: relative; overflow: hidden;
+        }
+        .legal-hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba(34,197,94,.25) 0%, transparent 65%);
+        }
+        .legal-hero-inner { position: relative; z-index: 1; }
+        .legal-hero h1 { color: white; font-size: clamp(1.8rem,4vw,2.8rem); font-weight: 900; letter-spacing: -1.5px; margin: 0 0 8px; }
+        .legal-hero p { color: rgba(255,255,255,.65); font-size: .9rem; margin: 0; }
+
+        .legal-wrap { max-width: 780px; margin: 0 auto; padding: 36px 20px 100px; }
+
+        .legal-card {
+            background: white; border-radius: 20px; border: 1px solid #f1f5f9;
+            box-shadow: 0 4px 20px rgba(0,0,0,.05); padding: 32px 36px; margin-bottom: 20px;
+        }
+        @media (max-width: 600px) { .legal-card { padding: 22px 20px; } }
+
+        .legal-card h2 {
+            font-size: 1.05rem; font-weight: 900; color: #0f172a;
+            letter-spacing: -.3px; margin: 0 0 14px; display: flex; align-items: center; gap: 9px;
+        }
+        .legal-card h2 i { color: #22c55e; }
+        .legal-card p, .legal-card li {
+            font-size: .88rem; color: #475569; line-height: 1.75; margin: 0 0 10px;
+        }
+        .legal-card ul, .legal-card ol { padding-left: 20px; margin: 8px 0 14px; }
+        .legal-card li { margin-bottom: 6px; }
+        .legal-card strong { color: #1e293b; }
+        .legal-card a { color: #16a34a; }
+
+        .updated-note {
+            background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px;
+            padding: 12px 18px; font-size: .8rem; color: #15803d; font-weight: 600;
+            margin-bottom: 24px; display: flex; align-items: center; gap: 8px;
+        }
+        .contact-box {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border: 1.5px solid #bbf7d0; border-radius: 16px; padding: 20px 24px;
+        }
+        .contact-box strong { display: block; font-size: 1rem; color: #14532d; margin-bottom: 4px; }
+        .contact-box a { color: #16a34a; font-weight: 700; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="legal-hero">
+    <div class="legal-hero-inner">
+        <h1>Personvernerklæring</h1>
+        <p>Sist oppdatert: august 2025 &nbsp;·&nbsp; MatMinne</p>
+    </div>
+</div>
+
+<div class="legal-wrap">
+
+    <div class="updated-note">
+        <i class="fa-solid fa-shield-halved"></i>
+        Denne erklæringen oppfyller kravene i EUs personvernforordning (GDPR) og norsk personopplysningslov.
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-circle-info"></i> 1. Behandlingsansvarlig</h2>
+        <p>MatMinne er en tjeneste drevet av <strong>Sondre Bretten</strong>, privatperson bosatt i Norge.</p>
+        <div class="contact-box">
+            <strong>Kontaktinformasjon</strong>
+            E-post: <a href="mailto:sondre.bretten@gmail.com">sondre.bretten@gmail.com</a>
+        </div>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-database"></i> 2. Hvilke personopplysninger samler vi inn?</h2>
+        <p>Vi samler inn følgende opplysninger når du bruker MatMinne:</p>
+        <ul>
+            <li><strong>Kontoopplysninger (via Google innlogging):</strong> e-postadresse, fornavn, etternavn og profilbilde fra Google-kontoen din.</li>
+            <li><strong>Brukerinnhold:</strong> oppskrifter, ingredienslister, handlelister og annet innhold du selv legger inn.</li>
+            <li><strong>Bruksdata:</strong> tidspunkt for innlogging, IP-adresse og teknisk informasjon om enheten din (nettleser, operativsystem). Disse lagres i serverlogger.</li>
+            <li><strong>Sesjonsinformasjon:</strong> informasjonskapsler (cookies) som holder deg innlogget og beskytter mot CSRF-angrep.</li>
+        </ul>
+        <p>Vi samler <strong>ikke</strong> inn betalingsopplysninger, lokasjonsdata, helsedata eller annen sensitiv informasjon.</p>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-scale-balanced"></i> 3. Rettslig grunnlag og formål</h2>
+        <ul>
+            <li><strong>Kontraktsoppfyllelse (GDPR art. 6(1)(b)):</strong> Kontoopplysninger og brukerinnhold behandles for å levere tjenesten du har registrert deg for.</li>
+            <li><strong>Berettiget interesse (GDPR art. 6(1)(f)):</strong> Serverlogger og sikkerhetsinformasjon behandles for å beskytte tjenesten mot misbruk og feil.</li>
+            <li><strong>Samtykke (GDPR art. 6(1)(a)):</strong> Dersom du velger å dele oppskrifter offentlig, behandler vi innholdet ditt for deling. Du kan når som helst gjøre oppskrifter private.</li>
+        </ul>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-clock"></i> 4. Lagringstid</h2>
+        <ul>
+            <li><strong>Kontoopplysninger og brukerinnhold:</strong> Lagres så lenge kontoen din er aktiv. Slettes innen 30 dager etter at kontoen er slettet.</li>
+            <li><strong>Serverlogger:</strong> Slettes automatisk etter 90 dager.</li>
+            <li><strong>Informasjonskapsler:</strong> Sesjons-cookies slettes når du lukker nettleseren eller logger ut.</li>
+        </ul>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-share-nodes"></i> 5. Deling med tredjeparter</h2>
+        <p>Vi deler personopplysninger med følgende tredjeparter:</p>
+        <ul>
+            <li>
+                <strong>Google LLC (USA)</strong> — brukes til innlogging via Google OAuth.
+                Google er underlagt EUs standard kontraktsbestemmelser (SCCs) og er EU–US Data Privacy Framework-sertifisert.
+                <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Googles personvernpolicy</a>
+            </li>
+            <li>
+                <strong>Railway Inc. (USA)</strong> — vår skyhosting-leverandør der appen og databasen kjører.
+                Railway er underlagt standard kontraktsbestemmelser og behandler data i henhold til GDPR.
+                <a href="https://railway.app/legal/privacy" target="_blank" rel="noopener">Railways personvernpolicy</a>
+            </li>
+            <li>
+                <strong>Anthropic PBC (USA)</strong> — AI-funksjoner (oppskriftsgenerering, matforslag) bruker Anthropics API (Claude).
+                Tekst du sender til AI-funksjonene kan behandles av Anthropic.
+                <a href="https://www.anthropic.com/privacy" target="_blank" rel="noopener">Anthropics personvernpolicy</a>
+            </li>
+        </ul>
+        <p>Vi selger <strong>aldri</strong> personopplysninger til tredjeparter.</p>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-cookie-bite"></i> 6. Informasjonskapsler (cookies)</h2>
+        <p>Vi bruker kun teknisk nødvendige cookies:</p>
+        <ul>
+            <li><strong>JSESSIONID</strong> — holder deg innlogget under en økt. Slettes når du logger ut eller lukker nettleseren.</li>
+            <li><strong>XSRF-TOKEN</strong> — beskytter mot CSRF-angrep (sikkerhetsmekanisme). Slettes etter sesjonen.</li>
+        </ul>
+        <p>Vi bruker <strong>ikke</strong> sporings- eller markedsføringscookies, og vi bruker ikke Google Analytics.</p>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-user-shield"></i> 7. Dine rettigheter</h2>
+        <p>Under GDPR har du følgende rettigheter:</p>
+        <ul>
+            <li><strong>Innsyn:</strong> Du kan kreve å få vite hvilke opplysninger vi har om deg.</li>
+            <li><strong>Retting:</strong> Du kan kreve at feil opplysninger rettes.</li>
+            <li><strong>Sletting:</strong> Du kan kreve at opplysningene dine slettes ("retten til å bli glemt"). Send e-post for kontosletting.</li>
+            <li><strong>Dataportabilitet:</strong> Du kan be om å få dine data utlevert i et maskinlesbart format.</li>
+            <li><strong>Begrensning:</strong> Du kan kreve at behandlingen begrenses i visse situasjoner.</li>
+            <li><strong>Innsigelse:</strong> Du kan protestere mot behandling basert på berettiget interesse.</li>
+        </ul>
+        <p>For å utøve dine rettigheter, send e-post til <a href="mailto:sondre.bretten@gmail.com">sondre.bretten@gmail.com</a>. Vi svarer innen 30 dager.</p>
+        <p>Du har også rett til å klage til <strong>Datatilsynet</strong>: <a href="https://www.datatilsynet.no" target="_blank" rel="noopener">datatilsynet.no</a></p>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-lock"></i> 8. Sikkerhet</h2>
+        <p>Vi benytter følgende sikkerhetstiltak:</p>
+        <ul>
+            <li>All trafikk krypteres med HTTPS/TLS.</li>
+            <li>CSRF-beskyttelse på alle skjema og API-kall.</li>
+            <li>Sesjonsfiksering forhindres ved innlogging.</li>
+            <li>Databasen er kun tilgjengelig fra applikasjonsserveren, ikke fra internett.</li>
+        </ul>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-children"></i> 9. Barn</h2>
+        <p>MatMinne er ikke ment for personer under <strong>16 år</strong>. Vi samler ikke bevisst inn opplysninger fra barn under 16 år. Dersom du oppdager at et barn under 16 år har opprettet konto, ber vi deg kontakte oss slik at vi kan slette opplysningene.</p>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-arrows-rotate"></i> 10. Endringer i erklæringen</h2>
+        <p>Vi kan oppdatere denne erklæringen ved behov. Vesentlige endringer vil varsles via e-post eller en tydelig melding i appen. Dato for siste oppdatering vises øverst på denne siden.</p>
+    </div>
+
+    <div class="legal-card">
+        <h2><i class="fa-solid fa-envelope"></i> Kontakt oss</h2>
+        <div class="contact-box">
+            <strong>MatMinne — Sondre Bretten</strong>
+            Spørsmål om personvern: <a href="mailto:sondre.bretten@gmail.com">sondre.bretten@gmail.com</a>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments :: footer}"></div>
+<div th:replace="~{fragments :: bottom_nav}"></div>
+<div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

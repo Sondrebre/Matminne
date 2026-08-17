@@ -1528,6 +1528,16 @@ public class WebController {
             "Svar kun på norsk. Hold det kortfattet og praktisk.";
     }
 
+    @GetMapping("/personvern")
+    public String visPersonvern() {
+        return "personvern";
+    }
+
+    @GetMapping("/vilkar")
+    public String visVilkar() {
+        return "vilkar";
+    }
+
     private void lagrVarsel(Long mottakerBrukerId, String tekst, String lenke) {
         Varsel v = new Varsel();
         v.setMottakerBrukerId(mottakerBrukerId);
