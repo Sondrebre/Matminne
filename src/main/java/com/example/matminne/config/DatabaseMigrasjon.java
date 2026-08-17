@@ -28,6 +28,9 @@ public class DatabaseMigrasjon {
             jdbcTemplate.execute(
                 "ALTER TABLE brukere ADD COLUMN IF NOT EXISTS stripe_customer_id VARCHAR(255)"
             );
+            jdbcTemplate.execute(
+                "ALTER TABLE brukere ADD COLUMN IF NOT EXISTS har_godtatt_vilkar BOOLEAN DEFAULT FALSE"
+            );
             log.info("Database-migrasjoner fullført");
         } catch (Exception e) {
             log.warn("Migrasjonsadvarsel (kan ignoreres hvis kolonner allerede finnes): {}", e.getMessage());
