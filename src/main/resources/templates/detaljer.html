@@ -261,6 +261,30 @@
             font-weight: 700; color: #111827; line-height: 1.55;
         }
         @keyframes koFadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ── TIMER ── */
+        .ko-timer-row {
+            display: flex; align-items: center; gap: 8px;
+            padding: 14px 0 0; flex-wrap: wrap;
+        }
+        .ko-timer-sel {
+            border: 1.5px solid #d1fae5; border-radius: 10px;
+            padding: 7px 10px; font-family: inherit; font-size: .82rem;
+            font-weight: 700; color: #374151; background: #f0fdf4;
+            outline: none; cursor: pointer;
+        }
+        .ko-timer-btn {
+            background: #16a34a; color: white; border: none;
+            border-radius: 10px; padding: 8px 14px;
+            font-weight: 800; font-size: .82rem; cursor: pointer;
+            font-family: inherit; display: flex; align-items: center; gap: 6px;
+            transition: background .15s;
+        }
+        .ko-timer-btn:active { background: #15803d; }
+        .ko-timer-disp {
+            font-weight: 900; font-size: 1.1rem; color: #16a34a;
+            display: none; min-width: 56px; text-align: center; letter-spacing: .5px;
+        }
         .ko-swipe-hint {
             margin-top: 28px; font-size: .7rem;
             color: #9ca3af; letter-spacing: .5px;
@@ -329,117 +353,133 @@
 
         @media (max-width: 768px) {
             #kokeOverlay { flex-direction: column; }
-
-            /* Hide desktop left panel — replaced by photo header + bottom sheet */
             .ko-left { display: none; }
 
-            /* ── Photo header ── */
+            /* ── Compact dark header (no photo) ── */
             .ko-mobile-header {
-                display: block; position: relative;
-                height: 210px; flex-shrink: 0; overflow: hidden;
+                display: flex; flex-direction: column; flex-shrink: 0;
+                background: #0f172a; overflow: hidden; height: auto;
+                padding-top: env(safe-area-inset-top, 0px);
             }
-            .ko-mobile-header-img {
-                width: 100%; height: 100%; object-fit: cover; opacity: .65;
+            .ko-mobile-header-row {
+                display: flex; align-items: center; gap: 10px;
+                padding: 14px 16px 12px;
             }
+            .ko-mobile-header-img { display: none; }
             .ko-mobile-header-overlay {
-                position: absolute; inset: 0;
-                background: linear-gradient(to bottom, rgba(0,0,0,.25) 0%, rgba(15,13,10,.97) 100%);
-                display: flex; flex-direction: column; justify-content: flex-end;
-                padding: 20px;
+                position: static; background: none; padding: 0;
+                flex: 1; min-width: 0; flex-direction: row;
+                align-items: center; justify-content: flex-start;
             }
             .ko-mobile-step-pill {
-                display: inline-flex; align-items: center; gap: 6px;
+                display: inline-flex; align-items: center;
                 background: rgba(34,197,94,.18); border: 1px solid rgba(34,197,94,.35);
-                color: #4ade80; font-size: .62rem; font-weight: 800;
+                color: #4ade80; font-size: .55rem; font-weight: 800;
                 letter-spacing: 2px; text-transform: uppercase;
-                padding: 4px 12px; border-radius: 99px; margin-bottom: 8px;
+                padding: 3px 10px; border-radius: 99px;
+                white-space: nowrap; flex-shrink: 0; margin: 0 10px 0 0;
             }
             .ko-mobile-recipe-title {
-                font-size: 1.15rem; font-weight: 800; color: white;
-                letter-spacing: -.3px; line-height: 1.2;
+                font-size: .82rem; font-weight: 600; color: rgba(255,255,255,.5);
                 white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
             }
             .ko-mobile-close {
-                position: absolute; top: 14px; right: 14px;
-                background: rgba(0,0,0,.45); backdrop-filter: blur(8px);
-                border: 1px solid rgba(255,255,255,.14);
-                color: rgba(255,255,255,.8); width: 38px; height: 38px;
-                border-radius: 50%; display: flex; align-items: center;
-                justify-content: center; cursor: pointer; font-size: .88rem;
+                position: static; flex-shrink: 0; margin-left: auto;
+                background: rgba(255,255,255,.08); backdrop-filter: none;
+                border: 1px solid rgba(255,255,255,.12);
+                color: rgba(255,255,255,.65); width: 34px; height: 34px;
+                border-radius: 10px; display: flex; align-items: center;
+                justify-content: center; cursor: pointer; font-size: .85rem;
                 transition: .15s;
             }
-            .ko-mobile-close:hover { background: rgba(0,0,0,.7); color: white; }
+            .ko-mobile-close:active { background: rgba(255,255,255,.2); color: white; }
+
+            /* Thin progress bar at the bottom of the header */
+            .ko-mob-prog {
+                display: block; height: 3px; background: rgba(255,255,255,.1);
+            }
+            .ko-mob-prog-fill {
+                height: 100%; background: var(--mat-gronn);
+                border-radius: 0 99px 99px 0; transition: width .4s ease;
+            }
 
             /* ── Step area ── */
             .ko-step-bg-num { display: none; }
-            .ko-right { background: #f0fdf4; }
+            .ko-right { background: #f8fafc; display: flex; flex-direction: column; }
             .ko-right-body {
-                padding: 20px 18px 12px;
-                justify-content: flex-start;
+                flex: 1; padding: 22px 16px 16px;
+                justify-content: flex-start; overflow-y: auto;
             }
-            .ko-step-label { margin-bottom: 12px; font-size: .58rem; }
-            .ko-step-card { padding: 24px 22px; border-radius: 18px; }
-            .ko-step-text { font-size: clamp(1.15rem, 5vw, 1.6rem); line-height: 1.6; }
-            .ko-swipe-hint { margin-top: 16px; font-size: .64rem; }
+            .ko-step-label { font-size: .58rem; letter-spacing: 2.5px; margin-bottom: 14px; }
+            .ko-step-card {
+                padding: 28px 22px; border-radius: 20px;
+                box-shadow: 0 4px 28px rgba(0,0,0,.08);
+            }
+            .ko-step-text { font-size: clamp(1.1rem, 4.8vw, 1.5rem); line-height: 1.65; }
+            .ko-swipe-hint { display: none; }
 
-            /* ── Nav ── */
-            .ko-right-nav { padding: 14px 18px; gap: 10px; background: #fff; }
-            .ko-nav-btn { padding: 15px; font-size: .88rem; border-radius: 14px; }
-            .ko-nav-prev { flex-shrink: 0; }
+            /* ── Bottom nav bar ── */
+            .ko-right-nav {
+                display: flex; gap: 8px; flex-shrink: 0;
+                padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px));
+                background: white; border-top: 1px solid #f1f5f9;
+            }
+            .ko-nav-btn { padding: 15px 18px; border-radius: 14px; font-size: .88rem; }
+            .ko-nav-prev { flex-shrink: 0; min-width: 56px; justify-content: center; }
+            .ko-nav-next { flex: 1; }
 
-            /* ── Ingredient toggle button (floating) ── */
+            /* Ingredient button lives in the nav bar on mobile */
             .ko-ing-toggle {
-                display: flex; align-items: center; gap: 7px;
-                position: fixed; bottom: 96px; left: 50%; transform: translateX(-50%);
-                background: #fff; backdrop-filter: blur(12px);
-                border: 1.5px solid #d1fae5;
-                color: #16a34a; padding: 11px 22px;
-                border-radius: 99px; font-size: .82rem; font-weight: 800;
-                cursor: pointer; font-family: inherit; transition: .15s;
-                z-index: 10002; white-space: nowrap;
-                box-shadow: 0 4px 20px rgba(34,197,94,.18);
+                display: flex; align-items: center; gap: 6px;
+                position: static; transform: none; flex-shrink: 0;
+                background: #f0fdf4; border: 1.5px solid #d1fae5;
+                color: #16a34a; padding: 15px 14px;
+                border-radius: 14px; font-size: .78rem; font-weight: 800;
+                cursor: pointer; font-family: inherit; white-space: nowrap;
+                box-shadow: none; z-index: auto;
+                transition: background .12s;
             }
-            .ko-ing-toggle:hover { background: #f0fdf4; border-color: #22c55e; }
+            .ko-ing-toggle:active { background: #dcfce7; }
 
             /* ── Bottom sheet ── */
             .ko-ing-sheet-backdrop {
                 display: block; position: fixed; inset: 0;
-                background: rgba(0,0,0,.35); z-index: 10000;
+                background: rgba(0,0,0,.4); z-index: 10000;
                 opacity: 0; pointer-events: none; transition: opacity .25s;
             }
             .ko-ing-sheet-backdrop.open { opacity: 1; pointer-events: auto; }
             .ko-ing-sheet {
-                display: block; position: fixed;
-                bottom: 0; left: 0; right: 0; z-index: 10001;
-                background: #fff;
-                border-top: 2px solid #d1fae5;
-                border-radius: 22px 22px 0 0;
-                max-height: 62vh; overflow-y: auto;
+                display: block; position: fixed; bottom: 0; left: 0; right: 0;
+                z-index: 10001; background: #fff;
+                border-radius: 24px 24px 0 0; border-top: 2px solid #d1fae5;
+                max-height: 65vh; overflow-y: auto;
                 transform: translateY(100%);
-                transition: transform .32s cubic-bezier(.34,1.1,.64,1);
+                transition: transform .3s cubic-bezier(.34,1.1,.64,1);
                 box-shadow: 0 -8px 40px rgba(34,197,94,.12);
             }
             .ko-ing-sheet.open { transform: translateY(0); }
             .ko-ing-sheet-handle {
-                width: 36px; height: 4px; background: #d1fae5;
+                width: 36px; height: 4px; background: #e2e8f0;
                 border-radius: 99px; margin: 14px auto 0;
             }
             .ko-ing-sheet-head {
-                padding: 16px 22px 12px;
+                position: sticky; top: 0; background: white;
+                padding: 14px 20px 12px;
                 display: flex; justify-content: space-between; align-items: center;
                 border-bottom: 1px solid #f0fdf4;
             }
             .ko-ing-sheet-head span {
-                font-size: .62rem; font-weight: 800; letter-spacing: 2px;
+                font-size: .6rem; font-weight: 800; letter-spacing: 2px;
                 text-transform: uppercase; color: #16a34a;
             }
             .ko-ing-sheet-close {
-                background: none; border: none; color: #9ca3af;
-                cursor: pointer; font-size: 1rem; padding: 4px; font-family: inherit;
-                transition: .12s;
+                background: #f1f5f9; border: none; color: #64748b;
+                width: 28px; height: 28px; border-radius: 8px;
+                cursor: pointer; font-size: .85rem; padding: 0; font-family: inherit;
+                display: flex; align-items: center; justify-content: center; transition: .12s;
             }
-            .ko-ing-sheet-close:hover { color: #374151; }
-            .ko-ing-sheet-list { padding: 8px 14px 32px; }
+            .ko-ing-sheet-close:active { background: #e2e8f0; }
+            .ko-ing-sheet-list { padding: 10px 14px 40px; }
         }
 
         /* ── ACTIONS STRIP ── */
@@ -914,16 +954,19 @@
             <!-- Høyre: Gjeldende steg -->
             <div class="ko-right">
 
-                <!-- Mobil: foto-header (skjult på desktop) -->
+                <!-- Mobil: kompakt header (skjult på desktop) -->
                 <div class="ko-mobile-header">
                     <img class="ko-mobile-header-img" id="koMobileImg" src="" alt="">
-                    <div class="ko-mobile-header-overlay">
-                        <div class="ko-mobile-step-pill" id="koMobilePill">STEG 1 AV 1</div>
-                        <div class="ko-mobile-recipe-title" th:text="${o.tittel}"></div>
+                    <div class="ko-mobile-header-row">
+                        <div class="ko-mobile-header-overlay">
+                            <div class="ko-mobile-step-pill" id="koMobilePill">STEG 1 AV 1</div>
+                            <div class="ko-mobile-recipe-title" th:text="${o.tittel}"></div>
+                        </div>
+                        <button class="ko-mobile-close" onclick="avsluttKoke()">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
-                    <button class="ko-mobile-close" onclick="avsluttKoke()">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <div class="ko-mob-prog"><div class="ko-mob-prog-fill" id="koMobProgFill"></div></div>
                 </div>
 
                 <div class="ko-step-bg-num" id="koStepBgNum">01</div>
@@ -935,8 +978,8 @@
                     </div>
                     <div class="ko-swipe-hint">Sveip eller bruk piltastene for å navigere</div>
                 <!-- Mini timer -->
-                <div id="koTimer" style="display:flex;align-items:center;gap:8px;padding:10px 28px 0;flex-wrap:wrap;">
-                    <select id="koTimerMin" style="border:1.5px solid #d1fae5;border-radius:10px;padding:6px 10px;font-family:inherit;font-size:.82rem;font-weight:700;color:#374151;background:#f0fdf4;outline:none;cursor:pointer;">
+                <div id="koTimer" class="ko-timer-row">
+                    <select id="koTimerMin" class="ko-timer-sel">
                         <option value="1">1 min</option>
                         <option value="2">2 min</option>
                         <option value="3">3 min</option>
@@ -948,11 +991,10 @@
                         <option value="45">45 min</option>
                         <option value="60">60 min</option>
                     </select>
-                    <button onclick="startKoTimer()" id="koTimerBtn"
-                            style="background:#16a34a;color:white;border:none;border-radius:10px;padding:7px 14px;font-weight:800;font-size:.82rem;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;">
+                    <button onclick="startKoTimer()" id="koTimerBtn" class="ko-timer-btn">
                         <i class="fas fa-clock"></i> Start timer
                     </button>
-                    <span id="koTimerDisplay" style="font-weight:900;font-size:1.1rem;color:#16a34a;display:none;min-width:56px;text-align:center;letter-spacing:.5px;"></span>
+                    <span id="koTimerDisplay" class="ko-timer-disp"></span>
                 </div>
                 </div>
 
@@ -966,19 +1008,17 @@
                 </div>
 
                 <div class="ko-right-nav" id="koNav">
+                    <button class="ko-ing-toggle" onclick="toggleIngSheet()">
+                        <i class="fas fa-list-ul"></i> Ingredienser
+                    </button>
                     <button class="ko-nav-btn ko-nav-prev" id="kokePrev" onclick="kokeNav(-1)">
-                        <i class="fas fa-chevron-left"></i> Forrige
+                        <i class="fas fa-chevron-left"></i>
                     </button>
                     <button class="ko-nav-btn ko-nav-next" id="kokeNext" onclick="kokeNav(1)">
-                        Neste steg <i class="fas fa-chevron-right"></i>
+                        Neste <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
             </div>
-
-            <!-- Mobil: ingrediens-knapp (skjult på desktop) -->
-            <button class="ko-ing-toggle" onclick="toggleIngSheet()">
-                <i class="fas fa-list-ul"></i> Ingredienser
-            </button>
 
             <!-- Mobil: ingrediens-bunnark -->
             <div class="ko-ing-sheet-backdrop" id="koIngBackdrop" onclick="toggleIngSheet()"></div>
@@ -1136,11 +1176,13 @@
                 const nextBtn = document.getElementById('kokeNext');
                 nextBtn.innerHTML = kokeIdx === total - 1
                     ? 'Fullfør <i class="fas fa-check"></i>'
-                    : 'Neste steg <i class="fas fa-chevron-right"></i>';
+                    : 'Neste <i class="fas fa-chevron-right"></i>';
             }
 
             const pct = Math.round((kokeIdx / total) * 100);
             document.getElementById('koProgFill').style.width = pct + '%';
+            const mobProg = document.getElementById('koMobProgFill');
+            if (mobProg) mobProg.style.width = pct + '%';
             document.getElementById('koProgLabel').textContent = `${kokeIdx} av ${total} steg fullført`;
             document.getElementById('kokePrev').disabled = kokeIdx <= 0;
         }
