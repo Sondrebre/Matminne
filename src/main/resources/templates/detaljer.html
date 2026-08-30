@@ -708,6 +708,23 @@
                             <h3>Ingredienssubstitutt</h3>
                         </div>
                         <div class="side-card-body">
+                            <!-- Låst for gratis-brukere -->
+                            <div th:if="${!harAbonnement}"
+                                 style="text-align:center;padding:12px 0 4px;">
+                                <div style="font-size:1.8rem;margin-bottom:8px;">🔒</div>
+                                <div style="font-weight:800;font-size:.9rem;color:var(--mat-mork);margin-bottom:6px;">Krever Premium</div>
+                                <p style="font-size:.8rem;color:#64748b;margin-bottom:14px;line-height:1.5;">
+                                    Finn alternativer til ingredienser du mangler — inkludert i Premium for 29,90 kr/mnd.
+                                </p>
+                                <a href="/abonnement"
+                                   style="background:var(--mat-gronn);color:white;text-decoration:none;
+                                          padding:10px 20px;border-radius:12px;font-weight:800;font-size:.85rem;
+                                          display:inline-block;box-shadow:0 4px 14px rgba(34,197,94,.3);">
+                                    Oppgrader til Premium
+                                </a>
+                            </div>
+                            <!-- Tilgjengelig for Premium-brukere -->
+                            <th:block th:if="${harAbonnement}">
                             <p style="font-size:.82rem;color:#64748b;margin-bottom:12px;line-height:1.5;">
                                 Mangler du en ingrediens? Skriv inn hva du leter etter, så finner AI deg alternativer.
                             </p>
@@ -735,6 +752,7 @@
                                 </div>
                                 <div id="substituttTekst" style="display:none;"></div>
                             </div>
+                            </th:block>
                         </div>
                     </div>
 
@@ -1351,7 +1369,7 @@
                     tekst.innerHTML = `<div style="text-align:center;padding:8px 0;">
                         <div style="font-size:1.4rem;margin-bottom:8px;">✨</div>
                         <div style="font-weight:800;font-size:.9rem;color:var(--mat-mork);margin-bottom:6px;">Krever AI-abonnement</div>
-                        <p style="font-size:.8rem;color:#64748b;margin-bottom:12px;">Få tilgang til ingredienssubstitutt og alle andre AI-funksjoner for 69,90 kr/mnd.</p>
+                        <p style="font-size:.8rem;color:#64748b;margin-bottom:12px;">Få tilgang til ingredienssubstitutt og alle andre AI-funksjoner for 29,90 kr/mnd.</p>
                         <a href="/abonnement" style="background:var(--mat-gronn);color:white;text-decoration:none;
                             padding:10px 20px;border-radius:12px;font-weight:800;font-size:.85rem;display:inline-block;">
                             Se abonnement

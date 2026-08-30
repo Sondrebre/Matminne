@@ -625,8 +625,8 @@
                     </a>
                     <a href="/abonnement" class="dw-ai-btn">
                         <i class="fa-solid fa-bolt" style="font-size:.95rem;"></i>
-                        <span th:if="${harAbonnement}">AI-abonnement aktivt ✓</span>
-                        <span th:unless="${harAbonnement}">Oppgrader til AI</span>
+                        <span th:if="${harAbonnement}">Premium aktivt ✓</span>
+                        <span th:unless="${harAbonnement}">Oppgrader til Premium</span>
                     </a>
                 </div>
             </div>
@@ -649,10 +649,10 @@
                 <a href="/oppdag" class="bn-item">
                     <i class="fa-solid fa-compass"></i>Utforsk
                 </a>
-                <a href="/varsler" class="bn-item" style="position:relative;">
-                    <i class="fa-solid fa-bell"></i>
+                <a href="/innstillinger" class="bn-item" style="position:relative;">
+                    <i class="fa-solid fa-user-circle"></i>
                     <span class="bn-badge" th:if="${ulesVarsler != null and ulesVarsler > 0}" th:text="${ulesVarsler}"></span>
-                    Varsler
+                    Konto
                 </a>
             </div>
         </nav>

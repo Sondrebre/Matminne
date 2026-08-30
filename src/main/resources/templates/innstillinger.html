@@ -278,6 +278,52 @@
                 </div>
             </div>
 
+            <!-- ABONNEMENT -->
+            <div class="s-card" th:if="${!harAbonnement}"
+                 style="border:2px solid var(--mat-gronn);background:linear-gradient(160deg,#f0fdf4,#dcfce7);">
+                <div class="s-card-header" style="border-bottom-color:#bbf7d0;">
+                    <p class="s-card-title" style="color:var(--mat-gronn-m);">✨ MatMinne Premium</p>
+                </div>
+                <div class="s-row">
+                    <div class="s-row-left">
+                        <div class="s-row-label">Gratisplan — maks 10 oppskrifter</div>
+                        <div class="s-row-sub">Oppgrader for ubegrenset lagring og AI-funksjoner</div>
+                    </div>
+                    <a href="/abonnement"
+                       style="background:var(--mat-gronn);color:white;border:none;padding:10px 18px;
+                              border-radius:12px;font-weight:800;font-size:.83rem;cursor:pointer;
+                              font-family:inherit;text-decoration:none;white-space:nowrap;
+                              box-shadow:0 4px 16px rgba(34,197,94,.3);">
+                        29,90 kr/mnd →
+                    </a>
+                </div>
+                <div class="s-row" style="background:rgba(34,197,94,.06);border-radius:12px;padding:12px 16px;margin:4px 0 0;">
+                    <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:.8rem;color:var(--mat-gronn-m);font-weight:700;">
+                        <span>✓ Ubegrensede oppskrifter</span>
+                        <span>✓ AI-forslag</span>
+                        <span>✓ AI ingrediensbytte</span>
+                        <span>✓ Import fra URL</span>
+                    </div>
+                </div>
+            </div>
+            <div class="s-card" th:if="${harAbonnement}"
+                 style="border:2px solid var(--mat-gronn);background:linear-gradient(160deg,#f0fdf4,#dcfce7);">
+                <div class="s-card-header" style="border-bottom-color:#bbf7d0;">
+                    <p class="s-card-title" style="color:var(--mat-gronn-m);">✨ MatMinne Premium</p>
+                </div>
+                <div class="s-row">
+                    <div class="s-row-left">
+                        <div class="s-row-label">Premium-abonnement aktivt</div>
+                        <div class="s-row-sub">Du har tilgang til alle funksjoner</div>
+                    </div>
+                    <a href="/abonnement"
+                       style="background:white;color:var(--mat-gronn-m);border:1.5px solid #a7f3d0;padding:9px 16px;
+                              border-radius:12px;font-weight:700;font-size:.83rem;text-decoration:none;white-space:nowrap;">
+                        Administrer
+                    </a>
+                </div>
+            </div>
+
             <!-- DANGER ZONE -->
             <div class="danger-card">
                 <div class="danger-header">
