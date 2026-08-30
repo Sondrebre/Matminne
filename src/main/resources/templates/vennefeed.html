@@ -169,40 +169,51 @@
         /* Kommentarseksjon */
         .kommentar-seksjon {
             border-top: 1px solid #f1f5f9;
-            padding: 12px 18px 14px;
-            background: #fafafa;
+            padding: 14px 18px 16px;
+            background: #f8fafc;
         }
         .kommentar-item {
-            display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start;
+            display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start;
+            background: white; border-radius: 10px; padding: 9px 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.05);
         }
+        .kommentar-avatar {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--mat-gronn); color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .7rem; font-weight: 800; flex-shrink: 0;
+        }
+        .kommentar-body { flex: 1; min-width: 0; }
         .kommentar-navn {
-            font-weight: 800; font-size: .78rem; color: var(--mat-mork);
-            flex-shrink: 0;
+            font-weight: 700; font-size: .78rem; color: var(--mat-mork);
+            display: block; margin-bottom: 2px;
         }
         .kommentar-tekst {
-            font-size: .82rem; color: #334155; line-height: 1.4;
+            font-size: .83rem; color: #475569; line-height: 1.4;
         }
         .kommentar-input-wrap {
-            display: flex; gap: 8px; margin-top: 10px;
+            display: flex; gap: 8px; margin-top: 12px; align-items: center;
         }
         .kommentar-input {
-            flex: 1; border: 1.5px solid #e2e8f0; border-radius: 10px;
-            padding: 8px 12px; font-family: inherit; font-size: .85rem;
+            flex: 1; border: 1.5px solid #e2e8f0; border-radius: 20px;
+            padding: 9px 15px; font-family: inherit; font-size: .85rem;
             outline: none; transition: border-color .2s; background: white;
             color: var(--mat-mork);
         }
-        .kommentar-input:focus { border-color: var(--mat-gronn); }
+        .kommentar-input:focus { border-color: var(--mat-gronn); box-shadow: 0 0 0 3px rgba(34,197,94,.08); }
         .kommentar-send {
             background: var(--mat-gronn); color: white; border: none;
-            padding: 8px 13px; border-radius: 10px; cursor: pointer;
-            font-size: .85rem; transition: .2s;
+            width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
+            font-size: .9rem; transition: .2s; display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
         }
-        .kommentar-send:hover { background: var(--mat-gronn-m); }
+        .kommentar-send:hover { background: var(--mat-gronn-m); transform: scale(1.05); }
         .kommentar-se-alle {
-            display: block; font-size: .75rem; color: var(--mat-gronn);
-            font-weight: 700; text-decoration: none; margin-top: 8px;
+            display: inline-block; font-size: .75rem; color: var(--mat-gronn);
+            font-weight: 700; text-decoration: none; margin-top: 10px;
+            opacity: .8;
         }
-        .kommentar-se-alle:hover { text-decoration: underline; }
+        .kommentar-se-alle:hover { opacity: 1; text-decoration: underline; }
 
         /* ── EMPTY STATE ── */
         .empty-feed {
@@ -574,9 +585,7 @@ function toggleKommentarer(btn) {
             .then(kommentarer => {
                 liste.dataset.lastet = '1';
                 if (!kommentarer.length) { liste.innerHTML = '<p style="color:#94a3b8;font-size:.85rem;margin:0 0 8px;">Ingen kommentarer ennå.</p>'; return; }
-                liste.innerHTML = kommentarer.map(k =>
-                    `<div class="kommentar-item"><span class="kommentar-navn">${escHtml(k.brukerNavn)}</span> ${escHtml(k.tekst)}</div>`
-                ).join('');
+                liste.innerHTML = kommentarer.map(k => kommentarHtml(k)).join('');
             }).catch(() => {});
     }
 }
@@ -593,7 +602,7 @@ function sendKommentar(input) {
             const liste = document.getElementById('kl-' + id);
             if (liste) {
                 liste.dataset.lastet = '1';
-                liste.innerHTML += `<div class="kommentar-item"><span class="kommentar-navn">${escHtml(k.brukerNavn)}</span> ${escHtml(k.tekst)}</div>`;
+                liste.innerHTML += kommentarHtml(k);
             }
             input.value = '';
             // oppdater teller
@@ -619,6 +628,17 @@ function lagrePost(btn) {
 
 function escHtml(s) {
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function kommentarHtml(k) {
+    const initial = escHtml((k.brukerNavn || '?')[0].toUpperCase());
+    return `<div class="kommentar-item">
+        <div class="kommentar-avatar">${initial}</div>
+        <div class="kommentar-body">
+            <span class="kommentar-navn">${escHtml(k.brukerNavn)}</span>
+            <span class="kommentar-tekst">${escHtml(k.tekst)}</span>
+        </div>
+    </div>`;
 }
 </script>
 </body>
