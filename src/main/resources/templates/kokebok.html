@@ -296,6 +296,30 @@
         </div>
     </div>
 
+    <!-- GRENSE-BANNER for gratis brukere -->
+    <div th:if="${!harAbonnement and antall >= oppskriftGrense}"
+         style="background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid #f59e0b;
+                border-radius:20px;padding:18px 22px;max-width:860px;margin:16px auto 0;
+                display:flex;align-items:center;gap:14px;box-shadow:0 6px 24px rgba(245,158,11,.18);">
+        <span style="font-size:1.8rem;flex-shrink:0;">📦</span>
+        <div style="flex:1;">
+            <div style="font-weight:900;font-size:.92rem;color:#92400e;margin-bottom:3px;">Du har nådd grensen på 10 oppskrifter</div>
+            <div style="font-size:.8rem;color:#b45309;">Oppgrader til Premium for å lagre ubegrenset.</div>
+        </div>
+        <a href="/abonnement" style="background:#f59e0b;color:white;border:none;padding:10px 18px;
+           border-radius:12px;font-weight:800;font-size:.83rem;text-decoration:none;white-space:nowrap;
+           box-shadow:0 4px 14px rgba(245,158,11,.3);">Oppgrader</a>
+    </div>
+    <div th:if="${!harAbonnement and antall >= (oppskriftGrense - 2) and antall < oppskriftGrense}"
+         style="background:white;border:1.5px solid #fed7aa;border-radius:16px;padding:14px 20px;
+                max-width:860px;margin:14px auto 0;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:1.4rem;">⚠️</span>
+        <div style="flex:1;font-size:.83rem;color:#9a3412;">
+            Du har <strong th:text="${antall}"></strong> av 10 gratis oppskrifter lagret.
+            <a href="/abonnement" style="color:var(--mat-gronn);font-weight:800;text-decoration:none;">Oppgrader til Premium</a> for ubegrenset lagring.
+        </div>
+    </div>
+
     <!-- FILTER CHIPS -->
     <div class="filter-bar" th:unless="${oppskrifter.isEmpty()}">
         <div class="chip active" onclick="filterKat(this, '')">Alle</div>

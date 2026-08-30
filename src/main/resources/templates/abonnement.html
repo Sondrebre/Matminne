@@ -193,9 +193,11 @@
         .faq-a { display: none; padding: 0 20px 16px; font-size: .86rem; color: #64748b; line-height: 1.7; }
         .faq-item.open .faq-a { display: block; }
 
+        @media (max-width: 860px) {
+            .features-grid { grid-template-columns: 1fr 1fr; }
+        }
         @media (max-width: 700px) {
             .pricing-wrap { grid-template-columns: 1fr; }
-            .features-grid { grid-template-columns: 1fr 1fr; }
         }
         @media (max-width: 480px) {
             .features-grid { grid-template-columns: 1fr; }
@@ -213,7 +215,19 @@
                 <i class="fas fa-wand-magic-sparkles"></i> MatMinne AI
             </div>
             <h1>Gi matlagingen<br>din <span>superkrefter</span></h1>
-            <p>Bruk AI til å finne ingredienssubstitutter, generere oppskrifter fra URL og mye mer — alt for 69,90 kr/mnd.</p>
+            <p>Lagre ubegrenset med oppskrifter, bruk AI-forslag og mye mer — alt for kun 29,90 kr/mnd.</p>
+        </div>
+    </div>
+
+    <!-- GRENSE-BANNER: vises når bruker prøver å lagre over grensen -->
+    <div th:if="${param.grense != null}"
+         style="background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid #f59e0b;
+                border-radius:20px;padding:20px 24px;max-width:600px;margin:24px auto 0;
+                display:flex;align-items:center;gap:16px;box-shadow:0 8px 32px rgba(245,158,11,.2);">
+        <span style="font-size:2rem;flex-shrink:0;">📦</span>
+        <div>
+            <div style="font-weight:900;font-size:.95rem;color:#92400e;margin-bottom:4px;">Du har nådd grensen på 10 oppskrifter</div>
+            <div style="font-size:.83rem;color:#b45309;line-height:1.5;">Oppgrader til MatMinne Premium for å lagre ubegrensede oppskrifter og få tilgang til AI-funksjoner.</div>
         </div>
     </div>
 
@@ -233,8 +247,8 @@
         <div class="subscribed-banner">
             <div class="subscribed-icon">✅</div>
             <div>
-                <h3>Du har MatMinne AI!</h3>
-                <p>Alle AI-funksjoner er aktivert på kontoen din. Nyt tilgangen!</p>
+                <h3>Du har MatMinne Premium!</h3>
+                <p>Ubegrensede oppskrifter og alle AI-funksjoner er aktivert. Nyt tilgangen!</p>
             </div>
             <form id="avbrytAbonnementForm" th:action="@{/abonnement/avbryt}" method="POST" style="margin-left:auto;">
                 <button type="button" id="avbrytBtn" style="background:none;border:1px solid #e2e8f0;color:#94a3b8;
@@ -258,41 +272,42 @@
                 <span class="price-amount">0</span>
             </div>
             <div class="price-period">/mnd</div>
-            <div class="plan-desc">For deg som vil komme i gang</div>
+            <div class="plan-desc">Kom i gang gratis — ingen bindingstid</div>
             <ul class="plan-features">
-                <li><span class="check">✓</span> Ubegrenset kokebok</li>
+                <li><span class="check">✓</span> Maks 10 oppskrifter</li>
                 <li><span class="check">✓</span> Dele og følge venner</li>
                 <li><span class="check">✓</span> Handleliste og ukesmeny</li>
                 <li><span class="check">✓</span> Samlinger og eksport til PDF</li>
-                <li class="muted"><span class="cross">✕</span> AI ingredienssubstitutt</li>
+                <li class="muted"><span class="cross">✕</span> Ubegrensede oppskrifter</li>
+                <li class="muted"><span class="cross">✕</span> AI-forslag og ingrediensbytte</li>
                 <li class="muted"><span class="cross">✕</span> AI import fra URL</li>
-                <li class="muted"><span class="cross">✕</span> AI matforslag og ukesmeny</li>
             </ul>
             <a href="/kokebok" class="btn-plan-free">Fortsett gratis</a>
         </div>
 
-        <!-- Pro -->
+        <!-- Premium -->
         <div class="price-card featured">
             <span class="featured-pill">✨ Anbefalt</span>
-            <div class="plan-name">MatMinne AI</div>
+            <div class="plan-name">MatMinne Premium</div>
             <div class="price-block">
                 <span class="price-currency">kr</span>
-                <span class="price-amount">69</span>
+                <span class="price-amount">29</span>
                 <span class="price-decimal">,90</span>
             </div>
             <div class="price-period">/mnd</div>
-            <div class="plan-desc">Full AI-kraft for matentusiaster</div>
+            <div class="plan-desc">Alt du trenger for en komplett matopplevelse</div>
             <ul class="plan-features">
-                <li><span class="check">✓</span> Alt i gratisplanen</li>
-                <li><span class="check">✓</span> <strong>AI ingredienssubstitutt</strong></li>
+                <li><span class="check">✓</span> <strong>Ubegrensede oppskrifter</strong></li>
+                <li><span class="check">✓</span> Dele og følge venner</li>
+                <li><span class="check">✓</span> Handleliste og ukesmeny</li>
+                <li><span class="check">✓</span> <strong>AI-forslag og ingrediensbytte</strong></li>
                 <li><span class="check">✓</span> <strong>AI import fra hvilken som helst URL</strong></li>
-                <li><span class="check">✓</span> <strong>AI matforslag og ukesmeny</strong></li>
+                <li><span class="check">✓</span> <strong>AI-generert ukesmeny</strong></li>
                 <li><span class="check">✓</span> Prioritert support</li>
-                <li><span class="check">✓</span> Tidlig tilgang til nye funksjoner</li>
             </ul>
             <form th:action="@{/abonnement/checkout}" method="POST">
                 <button type="submit" class="btn-plan-pro">
-                    <i class="fas fa-bolt me-2"></i> Start AI-abonnement — 69,90 kr/mnd
+                    <i class="fas fa-bolt"></i> Start Premium — 29,90 kr/mnd
                 </button>
             </form>
             <p style="font-size:.72rem;color:#94a3b8;text-align:center;margin-top:10px;">
@@ -303,11 +318,16 @@
 
     <!-- FEATURES -->
     <div class="features-section">
-        <div class="features-label">Hva du får med AI-abonnementet</div>
+        <div class="features-label">Hva du får med Premium</div>
         <div class="features-grid">
             <div class="feat-card">
+                <div class="feat-icon">📚</div>
+                <h4>Ubegrensede oppskrifter</h4>
+                <p>Gratisvursjonen er begrenset til 10 oppskrifter. Premium gir deg ubegrenset kokebok.</p>
+            </div>
+            <div class="feat-card">
                 <div class="feat-icon">🔄</div>
-                <h4>Ingredienssubstitutt</h4>
+                <h4>AI-ingrediensbytte</h4>
                 <p>Mangler du smør, fløte eller et krydder? AI gir deg 3 perfekte alternativer på sekunder.</p>
             </div>
             <div class="feat-card">
@@ -319,6 +339,16 @@
                 <div class="feat-icon">🗓️</div>
                 <h4>AI-ukesmeny</h4>
                 <p>Fortell hva du har lyst på og AI lager en balansert ukesmeny tilpasset deg og familien.</p>
+            </div>
+            <div class="feat-card">
+                <div class="feat-icon">⚡</div>
+                <h4>AI-forslag</h4>
+                <p>Skriv inn ingredienser du har hjemme og få komplette oppskrifter generert automatisk.</p>
+            </div>
+            <div class="feat-card">
+                <div class="feat-icon">🎯</div>
+                <h4>Prioritert support</h4>
+                <p>Spørsmål eller problemer? Premium-brukere kommer alltid foran i køen.</p>
             </div>
         </div>
     </div>
@@ -340,8 +370,8 @@
             <div class="faq-a">AI-funksjonene deaktiveres ved slutten av betalingsperioden. Alle oppskriftene dine, venner og annet innhold forblir tilgjengelig — ingenting slettes.</div>
         </div>
         <div class="faq-item" onclick="toggleFaq(this)">
-            <div class="faq-q">Er det en gratis prøveperiode? <span class="faq-icon">+</span></div>
-            <div class="faq-a">Vi jobber med å innføre en 7-dagers gratis prøveperiode. I mellomtiden er prisen 69,90 kr/mnd uten bindingstid.</div>
+            <div class="faq-q">Hva er grensen på gratisplanen? <span class="faq-icon">+</span></div>
+            <div class="faq-a">Gratisplanen lar deg lagre opptil 10 oppskrifter. Alle andre funksjoner som handleliste, ukesmeny, samlinger og sosialt deling er inkludert. Trenger du mer, kan du oppgradere til Premium for 29,90 kr/mnd.</div>
         </div>
     </div>
 

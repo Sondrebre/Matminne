@@ -7,6 +7,7 @@ import java.util.List;
 public interface OppskriftRepository extends JpaRepository<Oppskrift, Long> {
     List<Oppskrift> findByBrukerIdInAndErOffentligTrueOrderByIdDesc(List<Long> brukerIds);
     List<Oppskrift> findByBrukerId(Long brukerId);
+    long countByBrukerId(Long brukerId);
     List<Oppskrift> findByErOffentligTrueOrderByIdDesc();
     List<Oppskrift> findByErOffentligTrueAndKategoriOrderByIdDesc(String kategori);
     List<Oppskrift> findByErOffentligTrueAndTittelContainingIgnoreCaseOrderByIdDesc(String tittel);
