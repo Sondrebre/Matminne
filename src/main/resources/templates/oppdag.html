@@ -151,6 +151,15 @@
             cursor: pointer; transition: .2s; font-family: inherit; text-align: center;
         }
         .btn-save:hover { background: var(--mat-gronn-m); }
+        .btn-post-icon {
+            display: flex; align-items: center; gap: 5px;
+            background: none; border: none; cursor: pointer;
+            color: #94a3b8; font-size: .85rem; font-weight: 600;
+            padding: 8px 10px; border-radius: 10px; transition: .15s;
+            font-family: inherit;
+        }
+        .btn-post-icon:hover { background: #f1f5f9; color: #ef4444; }
+        .btn-post-icon.liked { color: #ef4444; }
 
         /* ── TRENDING ── */
         .trending-section { padding: 36px 0 0; }
@@ -338,6 +347,13 @@
                     </div>
                     <a th:href="@{'/detaljer/' + ${o.id}}" class="kort-title" th:text="${o.tittel}">Tittel</a>
                     <div class="kort-actions">
+                        <!-- Like -->
+                        <button th:if="${brukerEpost != null}" class="btn-post-icon"
+                                th:attr="data-id=${o.id}"
+                                onclick="toggleLikOppdag(this)">
+                            <i class="fa-regular fa-heart"></i>
+                            <span th:text="${likeAntallMap != null and likeAntallMap[o.id] != null ? likeAntallMap[o.id] : 0}">0</span>
+                        </button>
                         <a th:href="@{'/detaljer/' + ${o.id}}" class="btn-see">
                             <i class="fa-solid fa-eye me-1"></i> Se
                         </a>
@@ -354,6 +370,18 @@
     <div th:replace="~{fragments :: scripts}"></div>
 
     <script>
+        function toggleLikOppdag(btn) {
+            const id = btn.dataset.id;
+            csrfFetch('/api/lik/' + id, { method: 'POST' })
+                .then(r => r.json())
+                .then(d => {
+                    btn.classList.toggle('liked', d.erLikt);
+                    const ico = btn.querySelector('i');
+                    ico.className = d.erLikt ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+                    btn.querySelector('span').textContent = d.likeAntall;
+                }).catch(() => {});
+        }
+
         function lagreOppskrift(btn) {
             if (btn.disabled) return;
             const id = btn.dataset.id;

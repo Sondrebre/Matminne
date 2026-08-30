@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface KommentarRepository extends JpaRepository<Kommentar, Long> {
     List<Kommentar> findByOppskriftIdOrderByOpprettetAsc(Long oppskriftId);
+    long countByOppskriftId(Long oppskriftId);
 }

@@ -138,41 +138,71 @@
 
         .post-actions {
             display: flex;
-            gap: 8px;
-            padding-top: 14px;
+            align-items: center;
+            gap: 4px;
+            padding-top: 12px;
             border-top: 1px solid #f8fafc;
         }
 
-        .btn-post-see {
-            flex: 1;
-            background: #f1f5f9;
-            color: var(--mat-mork);
-            text-decoration: none;
-            text-align: center;
-            padding: 10px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: .85rem;
-            transition: .2s;
-        }
-
-        .btn-post-see:hover { background: var(--mat-mork); color: white; }
-
-        .btn-post-save {
-            flex: 1;
-            background: var(--mat-gronn);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: .85rem;
-            cursor: pointer;
-            transition: .2s;
+        .btn-post-icon {
+            display: flex; align-items: center; gap: 5px;
+            background: none; border: none; cursor: pointer;
+            color: #94a3b8; font-size: .85rem; font-weight: 700;
+            padding: 7px 10px; border-radius: 10px; transition: .15s;
             font-family: inherit;
         }
+        .btn-post-icon:hover { background: #f1f5f9; color: var(--mat-mork); }
+        .btn-post-icon.liked { color: #ef4444; }
+        .btn-post-icon.liked:hover { background: #fff1f2; }
+        .btn-post-icon.saved { color: var(--mat-gronn); }
 
-        .btn-post-save:hover { background: var(--mat-gronn-m); }
+        .btn-post-see {
+            margin-left: auto;
+            background: #f1f5f9; color: var(--mat-mork);
+            text-decoration: none; text-align: center;
+            padding: 8px 14px; border-radius: 11px;
+            font-weight: 700; font-size: .82rem; transition: .2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-post-see:hover { background: var(--mat-mork); color: white; }
+
+        /* Kommentarseksjon */
+        .kommentar-seksjon {
+            border-top: 1px solid #f1f5f9;
+            padding: 12px 18px 14px;
+            background: #fafafa;
+        }
+        .kommentar-item {
+            display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start;
+        }
+        .kommentar-navn {
+            font-weight: 800; font-size: .78rem; color: var(--mat-mork);
+            flex-shrink: 0;
+        }
+        .kommentar-tekst {
+            font-size: .82rem; color: #334155; line-height: 1.4;
+        }
+        .kommentar-input-wrap {
+            display: flex; gap: 8px; margin-top: 10px;
+        }
+        .kommentar-input {
+            flex: 1; border: 1.5px solid #e2e8f0; border-radius: 10px;
+            padding: 8px 12px; font-family: inherit; font-size: .85rem;
+            outline: none; transition: border-color .2s; background: white;
+            color: var(--mat-mork);
+        }
+        .kommentar-input:focus { border-color: var(--mat-gronn); }
+        .kommentar-send {
+            background: var(--mat-gronn); color: white; border: none;
+            padding: 8px 13px; border-radius: 10px; cursor: pointer;
+            font-size: .85rem; transition: .2s;
+        }
+        .kommentar-send:hover { background: var(--mat-gronn-m); }
+        .kommentar-se-alle {
+            display: block; font-size: .75rem; color: var(--mat-gronn);
+            font-weight: 700; text-decoration: none; margin-top: 8px;
+        }
+        .kommentar-se-alle:hover { text-decoration: underline; }
 
         /* ── EMPTY STATE ── */
         .empty-feed {
@@ -461,14 +491,50 @@
                 </div>
 
                 <div class="post-actions">
+                    <!-- Like -->
+                    <button class="btn-post-icon"
+                            th:classappend="${erLiktMap != null and erLiktMap[o.id] ? ' liked' : ''}"
+                            th:attr="data-id=${o.id}, data-likt=${erLiktMap != null and erLiktMap[o.id]}"
+                            onclick="toggleLik(this)">
+                        <i th:class="${erLiktMap != null and erLiktMap[o.id] ? 'fa-solid fa-heart' : 'fa-regular fa-heart'}"></i>
+                        <span th:text="${likeAntallMap != null and likeAntallMap[o.id] != null ? likeAntallMap[o.id] : 0}">0</span>
+                    </button>
+                    <!-- Kommentar -->
+                    <button class="btn-post-icon"
+                            th:attr="data-id=${o.id}"
+                            onclick="toggleKommentarer(this)">
+                        <i class="fa-regular fa-comment"></i>
+                        <span th:text="${kommentarAntallMap != null and kommentarAntallMap[o.id] != null ? kommentarAntallMap[o.id] : 0}">0</span>
+                    </button>
+                    <!-- Lagre -->
+                    <button th:if="${brukerEpost != null}" class="btn-post-icon"
+                            th:attr="data-id=${o.id}" onclick="lagrePost(this)" title="Lagre til kokeboken">
+                        <i class="fa-regular fa-bookmark"></i>
+                    </button>
+                    <!-- Se oppskrift -->
                     <a th:href="@{'/detaljer/' + ${o.id}}" class="btn-post-see">
-                        <i class="fa-solid fa-eye me-1"></i> Se
+                        Se oppskrift <i class="fa-solid fa-arrow-right"></i>
                     </a>
-                    <form th:action="@{'/kopier/' + ${o.id}}" method="POST" style="flex:1;display:flex;">
-                        <button type="submit" class="btn-post-save w-100">
-                            <i class="fa-solid fa-bookmark me-1"></i> Lagre
+                </div>
+
+                <!-- Kommentar-seksjon (skjult som standard) -->
+                <div class="kommentar-seksjon" th:id="'ks-' + ${o.id}" style="display:none;"
+                     th:attr="data-id=${o.id}">
+                    <div th:id="'kl-' + ${o.id}"></div>
+                    <div class="kommentar-input-wrap" th:if="${brukerEpost != null}">
+                        <input type="text" class="kommentar-input"
+                               th:id="'ki-' + ${o.id}" placeholder="Skriv en kommentar…"
+                               th:attr="data-id=${o.id}"
+                               onkeydown="if(event.key==='Enter') sendKommentar(this)">
+                        <button class="kommentar-send" th:attr="data-id=${o.id}"
+                                onclick="sendKommentar(document.getElementById('ki-'+this.dataset.id))">
+                            <i class="fa-solid fa-paper-plane"></i>
                         </button>
-                    </form>
+                    </div>
+                    <a th:href="@{'/detaljer/' + ${o.id}}" class="kommentar-se-alle"
+                       th:if="${kommentarAntallMap != null and kommentarAntallMap[o.id] != null and kommentarAntallMap[o.id] > 0}">
+                        Se alle <span th:text="${kommentarAntallMap[o.id]}"></span> kommentarer →
+                    </a>
                 </div>
             </div>
         </div>
@@ -478,5 +544,82 @@
 
     <div th:replace="~{fragments :: bottom_nav}"></div>
     <div th:replace="~{fragments :: scripts}"></div>
+
+<script>
+function toggleLik(btn) {
+    const id = btn.dataset.id;
+    csrfFetch('/api/lik/' + id, { method: 'POST' })
+        .then(r => r.json())
+        .then(d => {
+            const erLikt = d.erLikt;
+            btn.dataset.likt = erLikt;
+            btn.classList.toggle('liked', erLikt);
+            const ico = btn.querySelector('i');
+            ico.className = erLikt ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+            btn.querySelector('span').textContent = d.likeAntall;
+        }).catch(() => {});
+}
+
+function toggleKommentarer(btn) {
+    const id = btn.dataset.id;
+    const seksjon = document.getElementById('ks-' + id);
+    if (!seksjon) return;
+    const open = seksjon.style.display !== 'none';
+    if (open) { seksjon.style.display = 'none'; return; }
+    seksjon.style.display = 'block';
+    const liste = document.getElementById('kl-' + id);
+    if (liste && !liste.dataset.lastet) {
+        fetch('/api/kommentarer/' + id)
+            .then(r => r.json())
+            .then(kommentarer => {
+                liste.dataset.lastet = '1';
+                if (!kommentarer.length) { liste.innerHTML = '<p style="color:#94a3b8;font-size:.85rem;margin:0 0 8px;">Ingen kommentarer ennå.</p>'; return; }
+                liste.innerHTML = kommentarer.map(k =>
+                    `<div class="kommentar-item"><span class="kommentar-navn">${escHtml(k.brukerNavn)}</span> ${escHtml(k.tekst)}</div>`
+                ).join('');
+            }).catch(() => {});
+    }
+}
+
+function sendKommentar(input) {
+    const id = input.dataset.id;
+    const tekst = input.value.trim();
+    if (!tekst) return;
+    const fd = new FormData();
+    fd.append('tekst', tekst);
+    csrfFetch('/api/kommentar/' + id, { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(k => {
+            const liste = document.getElementById('kl-' + id);
+            if (liste) {
+                liste.dataset.lastet = '1';
+                liste.innerHTML += `<div class="kommentar-item"><span class="kommentar-navn">${escHtml(k.brukerNavn)}</span> ${escHtml(k.tekst)}</div>`;
+            }
+            input.value = '';
+            // oppdater teller
+            const komBtn = document.querySelector(`.btn-post-icon[data-id="${id}"]:nth-child(2)`);
+            // finn kommentarknappen etter likeknappen
+            const allBtns = document.querySelectorAll(`.btn-post-icon[data-id="${id}"]`);
+            allBtns.forEach(b => { if (b.querySelector('.fa-comment, .fa-regular.fa-comment')) { const s = b.querySelector('span'); if(s) s.textContent = parseInt(s.textContent||0)+1; } });
+        }).catch(() => {});
+}
+
+function lagrePost(btn) {
+    const id = btn.dataset.id;
+    const fd = new FormData();
+    csrfFetch('/kopier/' + id, { method: 'POST', body: fd })
+        .then(r => {
+            if (r.redirected || r.ok) {
+                btn.querySelector('i').className = 'fa-solid fa-bookmark';
+                btn.title = 'Lagret!';
+                btn.disabled = true;
+            }
+        }).catch(() => {});
+}
+
+function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
 </body>
 </html>

@@ -170,6 +170,70 @@ public class WebController {
         return ResponseEntity.ok(result);
     }
 
+    @Transactional
+    @PostMapping("/api/lik/{id}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> toggleLikAjax(@PathVariable Long id,
+            @AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        Like eks = likeRepository.findByBrukerIdAndOppskriftId(meg.getId(), id);
+        if (eks != null) {
+            likeRepository.delete(eks);
+        } else {
+            likeRepository.save(new Like(meg.getId(), id));
+            Oppskrift o = repository.findById(id).orElse(null);
+            if (o != null && !o.getBrukerId().equals(meg.getId()))
+                lagrVarsel(o.getBrukerId(), meg.getFulltNavn() + " likte «" + o.getTittel() + "»", "/detaljer/" + id);
+        }
+        Map<String, Object> res = new HashMap<>();
+        res.put("likeAntall", likeRepository.countByOppskriftId(id));
+        res.put("erLikt", likeRepository.existsByBrukerIdAndOppskriftId(meg.getId(), id));
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/api/kommentarer/{id}")
+    @ResponseBody
+    public ResponseEntity<List<Map<String, Object>>> hentKommentarerAjax(@PathVariable Long id) {
+        List<Kommentar> alle = kommentarRepository.findByOppskriftIdOrderByOpprettetAsc(id);
+        int start = Math.max(0, alle.size() - 5);
+        List<Map<String, Object>> res = new ArrayList<>();
+        for (int i = start; i < alle.size(); i++) {
+            Kommentar k = alle.get(i);
+            if (k.getForeldreId() != null) continue;
+            Map<String, Object> m = new HashMap<>();
+            m.put("brukerNavn", k.getBrukerNavn());
+            m.put("tekst", k.getTekst());
+            res.add(m);
+        }
+        return ResponseEntity.ok(res);
+    }
+
+    @Transactional
+    @PostMapping("/api/kommentar/{id}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> leggTilKommentarAjax(@PathVariable Long id,
+            @RequestParam String tekst,
+            @AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg == null || tekst == null || tekst.isBlank()) return ResponseEntity.badRequest().build();
+        Kommentar k = new Kommentar();
+        k.setOppskriftId(id);
+        k.setBrukerId(meg.getId());
+        k.setBrukerNavn(meg.getFulltNavn());
+        k.setTekst(tekst.trim());
+        kommentarRepository.save(k);
+        Oppskrift o = repository.findById(id).orElse(null);
+        if (o != null && !o.getBrukerId().equals(meg.getId()))
+            lagrVarsel(o.getBrukerId(), meg.getFulltNavn() + " kommenterte på «" + o.getTittel() + "»", "/detaljer/" + id);
+        Map<String, Object> res = new HashMap<>();
+        res.put("brukerNavn", k.getBrukerNavn());
+        res.put("tekst", k.getTekst());
+        return ResponseEntity.ok(res);
+    }
+
     @GetMapping("/api/pris/{id}")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> hentPrisEstimat(@PathVariable Long id,
@@ -212,6 +276,10 @@ public class WebController {
         model.addAttribute("aktivKategori", kategori);
         model.addAttribute("sokeTekst", q);
         model.addAttribute("sortering", sorter);
+        // Like-data for inline like-knapp
+        Map<Long, Long> oppdagLikeMap = new HashMap<>();
+        oppskrifter.forEach(o -> oppdagLikeMap.put(o.getId(), likeRepository.countByOppskriftId(o.getId())));
+        model.addAttribute("likeAntallMap", oppdagLikeMap);
         return "oppdag";
     }
 
@@ -229,14 +297,22 @@ public class WebController {
                 List<com.example.matminne.model.Oppskrift> oppskrifter =
                     repository.findByBrukerIdInAndErOffentligTrueOrderByIdDesc(vennerIds);
                 model.addAttribute("oppskrifter", oppskrifter);
+                Map<Long, Long> likeAntallMap = new HashMap<>();
+                Map<Long, Boolean> erLiktMap = new HashMap<>();
+                Map<Long, Long> kommentarAntallMap = new HashMap<>();
                 oppskrifter.forEach(o -> {
                     if (o.getBrukerEpost() != null && !brukerBildeMap.containsKey(o.getBrukerEpost())) {
                         Bruker b = brukerService.finnVedEpost(o.getBrukerEpost());
-                        if (b != null && b.getBildeUrl() != null) {
+                        if (b != null && b.getBildeUrl() != null)
                             brukerBildeMap.put(o.getBrukerEpost(), b.getBildeUrl());
-                        }
                     }
+                    likeAntallMap.put(o.getId(), likeRepository.countByOppskriftId(o.getId()));
+                    erLiktMap.put(o.getId(), likeRepository.existsByBrukerIdAndOppskriftId(meg.getId(), o.getId()));
+                    kommentarAntallMap.put(o.getId(), kommentarRepository.countByOppskriftId(o.getId()));
                 });
+                model.addAttribute("likeAntallMap", likeAntallMap);
+                model.addAttribute("erLiktMap", erLiktMap);
+                model.addAttribute("kommentarAntallMap", kommentarAntallMap);
             }
             if (sok != null && !sok.isBlank()) {
                 List<Bruker> sokResultater = brukerService.sokEtterNavn(sok);
