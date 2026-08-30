@@ -5,7 +5,7 @@
     <title>Venneveggen | MatMinne</title>
 
     <style>
-        body { background: #f0f2f5; }
+        body { background: var(--bakgrunn); }
 
         /* ── 3-KOLONNE LAYOUT ── */
         .feed-page {
@@ -22,12 +22,12 @@
         .sidebar-card {
             background: white;
             border-radius: 16px;
-            border: 1px solid #e4e6ea;
+            border: 1px solid #d1fae5;
             padding: 18px;
             margin-bottom: 16px;
         }
         .sidebar-title {
-            font-weight: 800; font-size: .8rem; color: #65676b;
+            font-weight: 800; font-size: .8rem; color: #64748b;
             text-transform: uppercase; letter-spacing: 1.5px;
             margin-bottom: 14px; display: flex; align-items: center;
             justify-content: space-between;
@@ -55,8 +55,8 @@
             text-align: center; padding: 10px 0 4px;
         }
         .sidebar-branding img { height: 28px; margin-bottom: 6px; }
-        .sidebar-branding p { font-size: .72rem; color: #90959f; margin: 0; line-height: 1.5; }
-        .sidebar-branding .copy { font-size: .68rem; color: #b0b3bb; margin-top: 8px; }
+        .sidebar-branding p { font-size: .72rem; color: #64748b; margin: 0; line-height: 1.5; }
+        .sidebar-branding .copy { font-size: .68rem; color: #94a3b8; margin-top: 8px; }
 
         /* ── HØYRE SIDEBAR ── */
         .inspo-img {
@@ -64,7 +64,7 @@
             border-radius: 12px; margin-bottom: 10px; display: block;
         }
         .inspo-title { font-weight: 800; font-size: .92rem; color: var(--mat-mork); margin: 0 0 2px; }
-        .inspo-sub { font-size: .77rem; color: #90959f; margin: 0 0 12px; }
+        .inspo-sub { font-size: .77rem; color: #64748b; margin: 0 0 12px; }
         .btn-inspo {
             display: block; background: var(--mat-gronn); color: white;
             text-align: center; padding: 9px; border-radius: 10px;
@@ -75,13 +75,13 @@
 
         .activity-item {
             display: flex; align-items: center; gap: 10px;
-            padding: 8px 0; border-bottom: 1px solid #f0f2f5;
+            padding: 8px 0; border-bottom: 1px solid #d1fae5;
         }
         .activity-item:last-child { border-bottom: none; }
         .activity-av { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
         .activity-txt { flex: 1; font-size: .8rem; color: var(--mat-mork); line-height: 1.35; }
         .activity-txt strong { font-weight: 800; }
-        .activity-time { font-size: .7rem; color: #90959f; }
+        .activity-time { font-size: .7rem; color: #64748b; }
         .activity-thumb { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
 
         /* ── SENTER: TOPBAR ── */
@@ -100,10 +100,10 @@
             flex: 1; border: none; outline: none; padding: 9px 14px;
             font-size: .87rem; font-family: inherit; background: transparent; color: var(--mat-mork);
         }
-        .feed-search-form input::placeholder { color: #b0b3bb; }
+        .feed-search-form input::placeholder { color: #94a3b8; }
         .feed-search-form button {
             background: none; border: none; padding: 9px 12px;
-            color: #b0b3bb; cursor: pointer; transition: color .15s;
+            color: #94a3b8; cursor: pointer; transition: color .15s;
         }
         .feed-search-form:focus-within button { color: var(--mat-gronn); }
 
@@ -111,7 +111,7 @@
         .post-card {
             background: white;
             border-radius: 16px;
-            border: 1px solid #e4e6ea;
+            border: 1px solid #d1fae5;
             margin-bottom: 16px;
             overflow: hidden;
             box-shadow: 0 1px 4px rgba(0,0,0,.06);
@@ -133,13 +133,13 @@
             flex-shrink: 0; object-fit: cover;
         }
         .post-username { font-weight: 800; font-size: .92rem; color: var(--mat-mork); }
-        .post-time { font-size: .72rem; color: #90959f; margin-top: 1px; }
+        .post-time { font-size: .72rem; color: #64748b; margin-top: 1px; }
         .post-menu-btn {
             background: none; border: none; cursor: pointer;
-            color: #65676b; font-size: 1rem; padding: 6px 8px;
+            color: #64748b; font-size: 1rem; padding: 6px 8px;
             border-radius: 50%; transition: background .15s;
         }
-        .post-menu-btn:hover { background: #f0f2f5; }
+        .post-menu-btn:hover { background: #ecfdf5; }
 
         .post-img {
             width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block;
@@ -155,23 +155,23 @@
         .post-actions {
             display: flex; align-items: center; gap: 0;
             padding: 8px 12px 4px;
-            border-bottom: 1px solid #f0f2f5;
+            border-bottom: 1px solid #d1fae5;
         }
         .btn-post-icon {
             display: flex; align-items: center; gap: 6px;
             background: none; border: none; cursor: pointer;
-            color: #65676b; font-size: .9rem; font-weight: 700;
+            color: #64748b; font-size: .9rem; font-weight: 700;
             padding: 7px 10px; border-radius: 10px; transition: .15s;
             font-family: inherit;
         }
         .btn-post-icon i { font-size: 1.15rem; }
-        .btn-post-icon:hover { background: #f0f2f5; }
+        .btn-post-icon:hover { background: #ecfdf5; }
         .btn-post-icon.liked { color: #ef4444; }
         .btn-post-icon.liked:hover { background: #fff1f2; }
         .btn-post-icon.saved { color: var(--mat-gronn); }
         .post-actions-spacer { flex: 1; }
         .btn-post-see {
-            background: #f0f2f5; color: var(--mat-mork);
+            background: #ecfdf5; color: var(--mat-mork);
             text-decoration: none; padding: 7px 14px;
             border-radius: 10px; font-weight: 700; font-size: .82rem;
             transition: .2s; display: flex; align-items: center; gap: 6px;
@@ -187,14 +187,14 @@
         }
         .post-title:hover { color: var(--mat-gronn); }
         .post-meta { display: flex; gap: 12px; margin-bottom: 0; flex-wrap: wrap; }
-        .post-meta span { font-size: .72rem; font-weight: 600; color: #90959f; display: flex; align-items: center; gap: 4px; }
+        .post-meta span { font-size: .72rem; font-weight: 600; color: #64748b; display: flex; align-items: center; gap: 4px; }
         .post-meta i { color: var(--mat-gronn); font-size: .65rem; }
 
         /* KOMMENTAR-SEKSJON */
         .kommentar-seksjon {
-            border-top: 1px solid #f0f2f5;
+            border-top: 1px solid #d1fae5;
             padding: 10px 16px 14px;
-            background: #fafafa;
+            background: #f0fdf4;
         }
         .kommentar-item {
             display: flex; gap: 9px; margin-bottom: 8px; align-items: flex-start;
@@ -209,7 +209,7 @@
         .kommentar-navn { font-weight: 700; font-size: .78rem; color: var(--mat-mork); display: inline; margin-right: 4px; }
         .kommentar-tekst { font-size: .82rem; color: #333; line-height: 1.4; display: inline; }
         .kommentar-se-alle {
-            display: block; font-size: .75rem; color: #90959f;
+            display: block; font-size: .75rem; color: #64748b;
             font-weight: 600; text-decoration: none; margin-bottom: 10px;
         }
         .kommentar-se-alle:hover { color: var(--mat-gronn); }
@@ -217,7 +217,7 @@
         /* KOMMENTAR INPUT (alltid synlig) */
         .kommentar-input-row {
             display: flex; align-items: center; gap: 10px;
-            border-top: 1px solid #f0f2f5; padding-top: 12px; margin-top: 8px;
+            border-top: 1px solid #ecfdf5; padding-top: 12px; margin-top: 8px;
         }
         .meg-avatar {
             width: 30px; height: 30px; border-radius: 50%;
@@ -226,7 +226,7 @@
             display: flex; align-items: center; justify-content: center;
             flex-shrink: 0; object-fit: cover;
         }
-        .kommentar-input-wrap { flex: 1; display: flex; align-items: center; gap: 0; background: #f0f2f5; border-radius: 20px; overflow: hidden; }
+        .kommentar-input-wrap { flex: 1; display: flex; align-items: center; gap: 0; background: #d1fae5; border-radius: 20px; overflow: hidden; }
         .kommentar-input {
             flex: 1; border: none; outline: none; padding: 8px 14px;
             font-family: inherit; font-size: .84rem; background: transparent;
@@ -241,16 +241,16 @@
 
         /* ── SØKERESULTATER ── */
         .search-results-wrap {
-            background: white; border-radius: 16px; border: 1px solid #e4e6ea;
+            background: white; border-radius: 16px; border: 1px solid #d1fae5;
             padding: 16px; margin-bottom: 16px;
         }
         .search-results-label {
             font-size: .68rem; font-weight: 800; text-transform: uppercase;
-            letter-spacing: 2px; color: #90959f; margin-bottom: 12px;
+            letter-spacing: 2px; color: #64748b; margin-bottom: 12px;
         }
         .person-card {
             display: flex; align-items: center; gap: 12px;
-            padding: 8px 0; border-bottom: 1px solid #f0f2f5;
+            padding: 8px 0; border-bottom: 1px solid #d1fae5;
         }
         .person-card:last-child { border-bottom: none; }
         .person-avatar {
@@ -260,7 +260,7 @@
             display: flex; align-items: center; justify-content: center; flex-shrink: 0; object-fit: cover;
         }
         .person-name { font-weight: 800; font-size: .9rem; color: var(--mat-mork); margin: 0; }
-        .person-sub { font-size: .74rem; color: #90959f; font-weight: 600; }
+        .person-sub { font-size: .74rem; color: #64748b; font-weight: 600; }
         .btn-person-follow {
             background: var(--mat-gronn); color: white; border: none;
             padding: 7px 16px; border-radius: 10px; font-weight: 800;
@@ -268,7 +268,7 @@
         }
         .btn-person-follow:hover { background: var(--mat-gronn-m); }
         .btn-person-unfollow {
-            background: #f0f2f5; color: #65676b; border: none;
+            background: #ecfdf5; color: #64748b; border: none;
             padding: 7px 16px; border-radius: 10px; font-weight: 800;
             font-size: .8rem; cursor: pointer; transition: .2s; font-family: inherit; white-space: nowrap;
         }
@@ -281,7 +281,7 @@
         }
         .empty-feed .empty-icon { font-size: 3rem; margin-bottom: 14px; }
         .empty-feed h4 { font-weight: 900; color: var(--mat-mork); font-size: 1.1rem; margin-bottom: 6px; }
-        .empty-feed p { color: #90959f; margin-bottom: 20px; font-size: .9rem; }
+        .empty-feed p { color: #64748b; margin-bottom: 20px; font-size: .9rem; }
         .btn-find {
             background: var(--mat-gronn); color: white; text-decoration: none;
             padding: 11px 24px; border-radius: 12px; font-weight: 800;
@@ -323,7 +323,7 @@
                     </a>
                 </div>
                 <div th:if="${venneListe == null or venneListe.isEmpty()}"
-                     style="color:#90959f;font-size:.82rem;text-align:center;padding:10px 0;">
+                     style="color:#64748b;font-size:.82rem;text-align:center;padding:10px 0;">
                     Følg noen for å se dem her
                 </div>
             </div>
