@@ -649,10 +649,9 @@
                 <a href="/oppdag" class="bn-item">
                     <i class="fa-solid fa-compass"></i>Utforsk
                 </a>
-                <a href="/innstillinger" class="bn-item" style="position:relative;">
-                    <i class="fa-solid fa-user-circle"></i>
-                    <span class="bn-badge" th:if="${ulesVarsler != null and ulesVarsler > 0}" th:text="${ulesVarsler}"></span>
-                    Konto
+                <a th:href="${harAbonnement} ? '/innstillinger' : '/abonnement'" class="bn-item" style="position:relative;">
+                    <i th:class="${harAbonnement} ? 'fa-solid fa-user-circle' : 'fa-solid fa-bolt'"></i>
+                    Premium
                 </a>
             </div>
         </nav>
