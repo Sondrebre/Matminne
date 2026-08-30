@@ -5,551 +5,500 @@
     <title>Venneveggen | MatMinne</title>
 
     <style>
-        body { background: var(--bakgrunn); }
+        body { background: #f0f2f5; }
 
-        /* ── PAGE HERO ── */
-        .feed-hero {
-            background: linear-gradient(160deg, #ecfdf5 0%, #d1fae5 60%, #bbf7d0 100%);
-            border-bottom: 1px solid #a7f3d0;
-            padding: 48px 0 64px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feed-hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: radial-gradient(rgba(34,197,94,.15) 1px, transparent 1px);
-            background-size: 24px 24px;
-        }
-
-        .feed-hero-glow {
-            position: absolute;
-            width: 360px; height: 360px;
-            background: radial-gradient(circle, rgba(34,197,94,.18), transparent 65%);
-            right: -60px; top: -60px;
-            pointer-events: none;
-        }
-
-        .feed-hero-inner { position: relative; z-index: 1; }
-
-        .feed-tag {
-            font-size: .68rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-            color: var(--mat-gronn-m);
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .feed-hero h1 {
-            font-size: 2.6rem;
-            font-weight: 900;
-            letter-spacing: -2px;
-            color: var(--mat-mork);
-            margin: 0 0 6px;
-        }
-
-        .feed-hero p { color: #64748b; font-size: .9rem; margin: 0; }
-
-        /* ── FEED LAYOUT ── */
-        .feed-wrap {
-            max-width: 560px;
-            margin: 40px auto 100px;
+        /* ── 3-KOLONNE LAYOUT ── */
+        .feed-page {
+            display: grid;
+            grid-template-columns: 260px 1fr 280px;
+            gap: 24px;
+            max-width: 1080px;
+            margin: 28px auto 100px;
             padding: 0 20px;
+            align-items: start;
         }
+
+        /* ── SIDEBAR FELLES ── */
+        .sidebar-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e4e6ea;
+            padding: 18px;
+            margin-bottom: 16px;
+        }
+        .sidebar-title {
+            font-weight: 800; font-size: .8rem; color: #65676b;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            margin-bottom: 14px; display: flex; align-items: center;
+            justify-content: space-between;
+        }
+        .sidebar-title a { font-size: .75rem; color: var(--mat-gronn); font-weight: 700; text-decoration: none; text-transform: none; letter-spacing: 0; }
+        .sidebar-title a:hover { text-decoration: underline; }
+
+        /* ── VENSTRE SIDEBAR ── */
+        .venn-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 7px 0; text-decoration: none; color: inherit;
+            border-radius: 10px; transition: background .15s;
+        }
+        .venn-item:hover { background: #f0fdf4; }
+        .venn-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--mat-gronn), var(--mat-mork));
+            color: white; font-weight: 800; font-size: .82rem;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; object-fit: cover;
+        }
+        .venn-navn { font-weight: 700; font-size: .87rem; color: var(--mat-mork); }
+
+        .sidebar-branding {
+            text-align: center; padding: 10px 0 4px;
+        }
+        .sidebar-branding img { height: 28px; margin-bottom: 6px; }
+        .sidebar-branding p { font-size: .72rem; color: #90959f; margin: 0; line-height: 1.5; }
+        .sidebar-branding .copy { font-size: .68rem; color: #b0b3bb; margin-top: 8px; }
+
+        /* ── HØYRE SIDEBAR ── */
+        .inspo-img {
+            width: 100%; aspect-ratio: 16/9; object-fit: cover;
+            border-radius: 12px; margin-bottom: 10px; display: block;
+        }
+        .inspo-title { font-weight: 800; font-size: .92rem; color: var(--mat-mork); margin: 0 0 2px; }
+        .inspo-sub { font-size: .77rem; color: #90959f; margin: 0 0 12px; }
+        .btn-inspo {
+            display: block; background: var(--mat-gronn); color: white;
+            text-align: center; padding: 9px; border-radius: 10px;
+            font-weight: 800; font-size: .85rem; text-decoration: none;
+            transition: background .2s;
+        }
+        .btn-inspo:hover { background: var(--mat-gronn-m); color: white; }
+
+        .activity-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 0; border-bottom: 1px solid #f0f2f5;
+        }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-av { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .activity-txt { flex: 1; font-size: .8rem; color: var(--mat-mork); line-height: 1.35; }
+        .activity-txt strong { font-weight: 800; }
+        .activity-time { font-size: .7rem; color: #90959f; }
+        .activity-thumb { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; }
+
+        /* ── SENTER: TOPBAR ── */
+        .feed-center-top {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 18px;
+        }
+        .feed-center-title { font-weight: 900; font-size: 1.15rem; color: var(--mat-mork); flex-shrink: 0; }
+        .feed-search-form {
+            flex: 1; display: flex; align-items: center;
+            background: white; border: 1.5px solid #e4e6ea; border-radius: 12px;
+            overflow: hidden; transition: border-color .2s;
+        }
+        .feed-search-form:focus-within { border-color: var(--mat-gronn); }
+        .feed-search-form input {
+            flex: 1; border: none; outline: none; padding: 9px 14px;
+            font-size: .87rem; font-family: inherit; background: transparent; color: var(--mat-mork);
+        }
+        .feed-search-form input::placeholder { color: #b0b3bb; }
+        .feed-search-form button {
+            background: none; border: none; padding: 9px 12px;
+            color: #b0b3bb; cursor: pointer; transition: color .15s;
+        }
+        .feed-search-form:focus-within button { color: var(--mat-gronn); }
 
         /* ── POST CARD ── */
         .post-card {
             background: white;
-            border-radius: 24px;
-            border: 1px solid #f1f5f9;
-            margin-bottom: 28px;
+            border-radius: 16px;
+            border: 1px solid #e4e6ea;
+            margin-bottom: 16px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,.04);
-            transition: box-shadow .25s;
+            box-shadow: 0 1px 4px rgba(0,0,0,.06);
         }
-
-        .post-card:hover { box-shadow: 0 12px 36px rgba(0,0,0,.08); }
 
         .post-header {
-            padding: 14px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            padding: 14px 16px 10px;
+            display: flex; align-items: center; justify-content: space-between;
         }
-
         .post-user {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: inherit;
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; color: inherit;
         }
-
         .post-avatar {
-            width: 38px; height: 38px;
-            border-radius: 12px;
+            width: 40px; height: 40px; border-radius: 50%;
             background: linear-gradient(135deg, var(--mat-gronn), var(--mat-mork));
-            color: white;
-            font-weight: 800;
-            font-size: .88rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+            color: white; font-weight: 800; font-size: .9rem;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; object-fit: cover;
         }
-
         .post-username { font-weight: 800; font-size: .92rem; color: var(--mat-mork); }
-        .post-time { font-size: .72rem; color: #94a3b8; margin-top: 1px; }
-        .post-kat {
-            background: rgba(15,30,20,.75); backdrop-filter: blur(8px);
-            color: var(--mat-gronn); font-size: .65rem; font-weight: 800;
-            padding: 4px 10px; border-radius: 99px; letter-spacing: .5px;
+        .post-time { font-size: .72rem; color: #90959f; margin-top: 1px; }
+        .post-menu-btn {
+            background: none; border: none; cursor: pointer;
+            color: #65676b; font-size: 1rem; padding: 6px 8px;
+            border-radius: 50%; transition: background .15s;
         }
-        .post-meta { display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
-        .post-meta span { font-size: .72rem; font-weight: 700; color: #94a3b8; display: flex; align-items: center; gap: 4px; }
-        .post-meta i { color: var(--mat-gronn); font-size: .65rem; }
-        .post-meta i.fa-heart { color: #ef4444; }
+        .post-menu-btn:hover { background: #f0f2f5; }
 
         .post-img {
-            width: 100%;
-            aspect-ratio: 4 / 3;
-            object-fit: cover;
-            display: block;
+            width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block;
+        }
+        .post-kat {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(15,30,20,.78); backdrop-filter: blur(8px);
+            color: #86efac; font-size: .63rem; font-weight: 800;
+            padding: 4px 10px; border-radius: 99px;
         }
 
-        .post-body { padding: 16px 18px 18px; }
-
-        .post-title {
-            font-weight: 800;
-            font-size: 1.1rem;
-            color: var(--mat-mork);
-            text-decoration: none;
-            display: block;
-            letter-spacing: -.3px;
-            margin-bottom: 14px;
-            transition: color .2s;
-        }
-
-        .post-title:hover { color: var(--mat-gronn); }
-
+        /* ACTIONS BAR */
         .post-actions {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            padding-top: 12px;
-            border-top: 1px solid #f8fafc;
+            display: flex; align-items: center; gap: 0;
+            padding: 8px 12px 4px;
+            border-bottom: 1px solid #f0f2f5;
         }
-
         .btn-post-icon {
-            display: flex; align-items: center; gap: 5px;
+            display: flex; align-items: center; gap: 6px;
             background: none; border: none; cursor: pointer;
-            color: #94a3b8; font-size: .85rem; font-weight: 700;
+            color: #65676b; font-size: .9rem; font-weight: 700;
             padding: 7px 10px; border-radius: 10px; transition: .15s;
             font-family: inherit;
         }
-        .btn-post-icon:hover { background: #f1f5f9; color: var(--mat-mork); }
+        .btn-post-icon i { font-size: 1.15rem; }
+        .btn-post-icon:hover { background: #f0f2f5; }
         .btn-post-icon.liked { color: #ef4444; }
         .btn-post-icon.liked:hover { background: #fff1f2; }
         .btn-post-icon.saved { color: var(--mat-gronn); }
-
+        .post-actions-spacer { flex: 1; }
         .btn-post-see {
-            margin-left: auto;
-            background: #f1f5f9; color: var(--mat-mork);
-            text-decoration: none; text-align: center;
-            padding: 8px 14px; border-radius: 11px;
-            font-weight: 700; font-size: .82rem; transition: .2s;
-            display: flex; align-items: center; gap: 6px;
+            background: #f0f2f5; color: var(--mat-mork);
+            text-decoration: none; padding: 7px 14px;
+            border-radius: 10px; font-weight: 700; font-size: .82rem;
+            transition: .2s; display: flex; align-items: center; gap: 6px;
         }
-        .btn-post-see:hover { background: var(--mat-mork); color: white; }
+        .btn-post-see:hover { background: var(--mat-gronn); color: white; }
 
-        /* Kommentarseksjon */
+        /* POST BODY */
+        .post-body { padding: 12px 16px 14px; }
+        .post-title {
+            font-weight: 800; font-size: 1rem; color: var(--mat-mork);
+            text-decoration: none; display: block; margin-bottom: 6px;
+            transition: color .2s; letter-spacing: -.2px;
+        }
+        .post-title:hover { color: var(--mat-gronn); }
+        .post-meta { display: flex; gap: 12px; margin-bottom: 0; flex-wrap: wrap; }
+        .post-meta span { font-size: .72rem; font-weight: 600; color: #90959f; display: flex; align-items: center; gap: 4px; }
+        .post-meta i { color: var(--mat-gronn); font-size: .65rem; }
+
+        /* KOMMENTAR-SEKSJON */
         .kommentar-seksjon {
-            border-top: 1px solid #f1f5f9;
-            padding: 14px 18px 16px;
-            background: #f8fafc;
+            border-top: 1px solid #f0f2f5;
+            padding: 10px 16px 14px;
+            background: #fafafa;
         }
         .kommentar-item {
-            display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start;
-            background: white; border-radius: 10px; padding: 9px 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,.05);
+            display: flex; gap: 9px; margin-bottom: 8px; align-items: flex-start;
         }
         .kommentar-avatar {
-            width: 28px; height: 28px; border-radius: 50%;
+            width: 26px; height: 26px; border-radius: 50%;
             background: var(--mat-gronn); color: white;
             display: flex; align-items: center; justify-content: center;
-            font-size: .7rem; font-weight: 800; flex-shrink: 0;
+            font-size: .65rem; font-weight: 800; flex-shrink: 0;
         }
         .kommentar-body { flex: 1; min-width: 0; }
-        .kommentar-navn {
-            font-weight: 700; font-size: .78rem; color: var(--mat-mork);
-            display: block; margin-bottom: 2px;
+        .kommentar-navn { font-weight: 700; font-size: .78rem; color: var(--mat-mork); display: inline; margin-right: 4px; }
+        .kommentar-tekst { font-size: .82rem; color: #333; line-height: 1.4; display: inline; }
+        .kommentar-se-alle {
+            display: block; font-size: .75rem; color: #90959f;
+            font-weight: 600; text-decoration: none; margin-bottom: 10px;
         }
-        .kommentar-tekst {
-            font-size: .83rem; color: #475569; line-height: 1.4;
+        .kommentar-se-alle:hover { color: var(--mat-gronn); }
+
+        /* KOMMENTAR INPUT (alltid synlig) */
+        .kommentar-input-row {
+            display: flex; align-items: center; gap: 10px;
+            border-top: 1px solid #f0f2f5; padding-top: 12px; margin-top: 8px;
         }
-        .kommentar-input-wrap {
-            display: flex; gap: 8px; margin-top: 12px; align-items: center;
+        .meg-avatar {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--mat-gronn), var(--mat-mork));
+            color: white; font-size: .7rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; object-fit: cover;
         }
+        .kommentar-input-wrap { flex: 1; display: flex; align-items: center; gap: 0; background: #f0f2f5; border-radius: 20px; overflow: hidden; }
         .kommentar-input {
-            flex: 1; border: 1.5px solid #e2e8f0; border-radius: 20px;
-            padding: 9px 15px; font-family: inherit; font-size: .85rem;
-            outline: none; transition: border-color .2s; background: white;
+            flex: 1; border: none; outline: none; padding: 8px 14px;
+            font-family: inherit; font-size: .84rem; background: transparent;
             color: var(--mat-mork);
         }
-        .kommentar-input:focus { border-color: var(--mat-gronn); box-shadow: 0 0 0 3px rgba(34,197,94,.08); }
         .kommentar-send {
+            background: none; border: none; color: var(--mat-gronn);
+            font-size: .85rem; cursor: pointer; padding: 8px 12px;
+            transition: opacity .15s; font-family: inherit; font-weight: 800;
+        }
+        .kommentar-send:hover { opacity: .7; }
+
+        /* ── SØKERESULTATER ── */
+        .search-results-wrap {
+            background: white; border-radius: 16px; border: 1px solid #e4e6ea;
+            padding: 16px; margin-bottom: 16px;
+        }
+        .search-results-label {
+            font-size: .68rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 2px; color: #90959f; margin-bottom: 12px;
+        }
+        .person-card {
+            display: flex; align-items: center; gap: 12px;
+            padding: 8px 0; border-bottom: 1px solid #f0f2f5;
+        }
+        .person-card:last-child { border-bottom: none; }
+        .person-avatar {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--mat-gronn), var(--mat-mork));
+            color: white; font-weight: 900; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0; object-fit: cover;
+        }
+        .person-name { font-weight: 800; font-size: .9rem; color: var(--mat-mork); margin: 0; }
+        .person-sub { font-size: .74rem; color: #90959f; font-weight: 600; }
+        .btn-person-follow {
             background: var(--mat-gronn); color: white; border: none;
-            width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
-            font-size: .9rem; transition: .2s; display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
+            padding: 7px 16px; border-radius: 10px; font-weight: 800;
+            font-size: .8rem; cursor: pointer; transition: .2s; font-family: inherit; white-space: nowrap;
         }
-        .kommentar-send:hover { background: var(--mat-gronn-m); transform: scale(1.05); }
-        .kommentar-se-alle {
-            display: inline-block; font-size: .75rem; color: var(--mat-gronn);
-            font-weight: 700; text-decoration: none; margin-top: 10px;
-            opacity: .8;
+        .btn-person-follow:hover { background: var(--mat-gronn-m); }
+        .btn-person-unfollow {
+            background: #f0f2f5; color: #65676b; border: none;
+            padding: 7px 16px; border-radius: 10px; font-weight: 800;
+            font-size: .8rem; cursor: pointer; transition: .2s; font-family: inherit; white-space: nowrap;
         }
-        .kommentar-se-alle:hover { opacity: 1; text-decoration: underline; }
+        .btn-person-unfollow:hover { background: #fee2e2; color: #dc2626; }
 
         /* ── EMPTY STATE ── */
         .empty-feed {
-            text-align: center;
-            padding: 60px 24px;
-            background: white;
-            border-radius: 28px;
-            border: 2px dashed #e2e8f0;
+            text-align: center; padding: 50px 24px;
+            background: white; border-radius: 16px; border: 1.5px dashed #e4e6ea;
         }
-
-        .empty-feed .empty-icon {
-            width: 80px; height: 80px;
-            background: var(--mat-lys-gronn);
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.4rem;
-            margin: 0 auto 20px;
-        }
-
-        .empty-feed h4 { font-weight: 900; color: var(--mat-mork); font-size: 1.2rem; margin-bottom: 8px; }
-        .empty-feed p { color: #94a3b8; margin-bottom: 24px; font-size: .9rem; }
-
+        .empty-feed .empty-icon { font-size: 3rem; margin-bottom: 14px; }
+        .empty-feed h4 { font-weight: 900; color: var(--mat-mork); font-size: 1.1rem; margin-bottom: 6px; }
+        .empty-feed p { color: #90959f; margin-bottom: 20px; font-size: .9rem; }
         .btn-find {
-            background: var(--mat-gronn);
-            color: white;
-            text-decoration: none;
-            padding: 12px 26px;
-            border-radius: 14px;
-            font-weight: 800;
-            font-size: .9rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: .2s;
-            box-shadow: 0 8px 22px rgba(46,204,113,.25);
+            background: var(--mat-gronn); color: white; text-decoration: none;
+            padding: 11px 24px; border-radius: 12px; font-weight: 800;
+            font-size: .88rem; display: inline-flex; align-items: center;
+            gap: 8px; transition: .2s;
         }
+        .btn-find:hover { background: var(--mat-gronn-m); color: white; }
 
-        .btn-find:hover { background: var(--mat-gronn-m); transform: translateY(-2px); color: white; }
-
-        /* ── PERSON SEARCH ── */
-        .search-bar-wrap {
-            max-width: 560px;
-            margin: -28px auto 32px;
-            padding: 0 20px;
-            position: relative;
-            z-index: 10;
+        /* ── RESPONSIV ── */
+        @media (max-width: 900px) {
+            .feed-page { grid-template-columns: 220px 1fr; }
+            .feed-sidebar-right { display: none; }
         }
-
-        .search-bar-inner {
-            background: white;
-            border-radius: 18px;
-            box-shadow: 0 16px 48px rgba(0,0,0,.10);
-            border: 1px solid #f1f5f9;
-            display: flex;
-            overflow: hidden;
-        }
-
-        .search-bar-inner input {
-            flex: 1;
-            border: none;
-            outline: none;
-            padding: 14px 18px;
-            font-size: .95rem;
-            font-family: inherit;
-            font-weight: 500;
-            color: var(--mat-mork);
-            background: transparent;
-        }
-
-        .search-bar-inner input::placeholder { color: #94a3b8; }
-
-        .search-bar-inner button {
-            background: var(--mat-gronn);
-            color: white;
-            border: none;
-            padding: 14px 20px;
-            font-weight: 800;
-            font-size: .85rem;
-            cursor: pointer;
-            font-family: inherit;
-            transition: background .2s;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .search-bar-inner button:hover { background: var(--mat-gronn-m); }
-
-        /* ── SEARCH RESULTS ── */
-        .search-results-wrap {
-            max-width: 560px;
-            margin: 0 auto 28px;
-            padding: 0 20px;
-        }
-
-        .search-results-label {
-            font-size: .68rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #94a3b8;
-            margin-bottom: 10px;
-        }
-
-        .person-card {
-            background: white;
-            border-radius: 18px;
-            padding: 14px 18px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 8px;
-            border: 1px solid #f1f5f9;
-        }
-
-        .person-avatar {
-            width: 42px; height: 42px;
-            border-radius: 13px;
-            background: linear-gradient(135deg, var(--mat-gronn), var(--mat-mork));
-            color: white;
-            font-weight: 900;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .person-name { font-weight: 800; font-size: .95rem; color: var(--mat-mork); margin: 0; }
-        .person-sub  { font-size: .76rem; color: #94a3b8; font-weight: 600; }
-
-        .btn-person-follow {
-            background: var(--mat-gronn);
-            color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 11px;
-            font-weight: 800;
-            font-size: .82rem;
-            cursor: pointer;
-            transition: .2s;
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(46,204,113,.2);
-        }
-
-        .btn-person-follow:hover { background: var(--mat-gronn-m); }
-
-        .btn-person-unfollow {
-            background: #f1f5f9;
-            color: #64748b;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 11px;
-            font-weight: 800;
-            font-size: .82rem;
-            cursor: pointer;
-            transition: .2s;
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-
-        .btn-person-unfollow:hover { background: #fee2e2; color: #dc2626; }
-
-        @media (max-width: 600px) {
-            .feed-hero { padding: 32px 0 48px; }
-            .feed-hero h1 { font-size: 2rem; letter-spacing: -1.5px; }
-            .feed-wrap { padding: 0 12px; margin-top: 28px; }
+        @media (max-width: 640px) {
+            .feed-page { grid-template-columns: 1fr; padding: 0; margin-top: 12px; }
+            .feed-sidebar-left { display: none; }
+            .feed-center { padding: 0 12px; }
         }
     </style>
 </head>
 <body>
     <div th:replace="~{fragments :: navbar}"></div>
 
-    <!-- HERO -->
-    <div class="feed-hero">
-        <div class="feed-hero-glow"></div>
-        <div class="container feed-hero-inner">
-            <span class="feed-tag">Sosialt</span>
-            <h1>Venneveggen</h1>
-            <p>Det siste fra kokkene du følger</p>
-        </div>
-    </div>
+    <div class="feed-page">
 
-    <!-- SEARCH BAR -->
-    <div class="search-bar-wrap">
-        <form th:action="@{/vennefeed}" method="get" class="search-bar-inner">
-            <input type="text" name="sok" placeholder="Søk etter kokker å følge..."
-                   th:value="${sokeTekst}" autocomplete="off">
-            <button type="submit">
-                <i class="fas fa-search"></i> Søk
-            </button>
-        </form>
-    </div>
-
-    <!-- SEARCH RESULTS -->
-    <div class="search-results-wrap" th:if="${sokResultater != null}">
-        <div class="search-results-label"
-             th:text="${sokResultater.isEmpty() ? 'Ingen treff' : sokResultater.size() + ' person(er) funnet'}"></div>
-
-        <div th:each="bruker : ${sokResultater}" class="person-card">
-            <img th:if="${bruker.bildeUrl != null}" class="person-avatar"
-                 th:src="${bruker.bildeUrl}" alt="" style="object-fit:cover;">
-            <div th:unless="${bruker.bildeUrl != null}" class="person-avatar"
-                 th:text="${#strings.substring(bruker.fulltNavn, 0, 1)}">N</div>
-            <div style="flex:1;min-width:0;">
-                <p class="person-name" th:text="${bruker.fulltNavn}">Navn</p>
-                <p class="person-sub"><i class="fa-solid fa-utensils me-1"></i>MatMinne-kokk</p>
+        <!-- ── VENSTRE SIDEBAR ── -->
+        <aside class="feed-sidebar-left">
+            <div class="sidebar-card">
+                <div class="sidebar-title">
+                    <span><i class="fa-solid fa-users me-1"></i> Venner</span>
+                    <a href="/vennefeed?sok=">Se alle</a>
+                </div>
+                <div th:if="${venneListe != null}" th:each="v : ${venneListe}">
+                    <a th:href="@{'/profil/' + ${v.epost}}" class="venn-item">
+                        <img th:if="${v.bilde != null}" class="venn-avatar" th:src="${v.bilde}" alt="">
+                        <div th:unless="${v.bilde != null}" class="venn-avatar"
+                             th:text="${#strings.substring(v.navn, 0, 1)}">?</div>
+                        <span class="venn-navn" th:text="${v.navn}">Navn</span>
+                    </a>
+                </div>
+                <div th:if="${venneListe == null or venneListe.isEmpty()}"
+                     style="color:#90959f;font-size:.82rem;text-align:center;padding:10px 0;">
+                    Følg noen for å se dem her
+                </div>
             </div>
-            <form th:if="${fulgteBrukerIds != null and fulgteBrukerIds.contains(bruker.id)}"
-                  th:action="@{'/slutt-å-følge/' + ${bruker.epost}}" method="post">
-                <button type="submit" class="btn-person-unfollow">
-                    <i class="fa-solid fa-user-check"></i> Følger
-                </button>
-            </form>
-            <form th:unless="${fulgteBrukerIds != null and fulgteBrukerIds.contains(bruker.id)}"
-                  th:action="@{'/følg/' + ${bruker.epost}}" method="post">
-                <button type="submit" class="btn-person-follow">
-                    <i class="fa-solid fa-user-plus"></i> Følg
-                </button>
-            </form>
-        </div>
-    </div>
 
-    <div class="feed-wrap">
+            <!-- Branding -->
+            <div class="sidebar-card sidebar-branding">
+                <p>Del maten du elsker.<br>Skap matminner sammen.</p>
+                <p class="copy">© 2025 MatMinne</p>
+            </div>
+        </aside>
 
-        <!-- EMPTY STATE -->
-        <div th:if="${oppskrifter.isEmpty()}" class="empty-feed">
-            <div class="empty-icon">🥗</div>
-            <h4>Ganske tomt her ennå</h4>
-            <p>Følg andre kokker for å se hva de lager! Finn folk under "Utforsk".</p>
-            <a href="/oppdag" class="btn-find">
-                <i class="fa-solid fa-compass"></i> Finn folk å følge
-            </a>
-        </div>
+        <!-- ── SENTER FEED ── -->
+        <main class="feed-center">
+            <div class="feed-center-top">
+                <span class="feed-center-title">Venner</span>
+                <form th:action="@{/vennefeed}" method="get" class="feed-search-form">
+                    <input type="text" name="sok" placeholder="Søk etter kokker å følge…"
+                           th:value="${sokeTekst}" autocomplete="off">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
 
-        <!-- FEED POSTS -->
-        <div th:each="o : ${oppskrifter}" class="post-card">
-            <div class="post-header">
-                <a th:href="@{'/profil/' + ${o.brukerEpost}}" class="post-user">
-                    <img th:if="${brukerBildeMap != null and brukerBildeMap.containsKey(o.brukerEpost)}"
-                         class="post-avatar" th:src="${brukerBildeMap.get(o.brukerEpost)}" alt="" style="object-fit:cover;">
-                    <div th:unless="${brukerBildeMap != null and brukerBildeMap.containsKey(o.brukerEpost)}"
-                         class="post-avatar" th:text="${#strings.substring(o.brukerNavn, 0, 1)}">U</div>
-                    <div>
-                        <div class="post-username" th:text="${o.brukerNavn}">Navn</div>
-                        <div class="post-time"><i class="fa-regular fa-clock me-1"></i>
-                            <span th:text="${o.datoOpprettet != null ? #temporals.format(o.datoOpprettet, 'dd.MM.yy') : 'nylig'}">nylig</span>
-                        </div>
+            <!-- SØKERESULTATER -->
+            <div class="search-results-wrap" th:if="${sokResultater != null}">
+                <div class="search-results-label"
+                     th:text="${sokResultater.isEmpty() ? 'Ingen treff' : sokResultater.size() + ' person(er) funnet'}"></div>
+                <div th:each="bruker : ${sokResultater}" class="person-card">
+                    <img th:if="${bruker.bildeUrl != null}" class="person-avatar"
+                         th:src="${bruker.bildeUrl}" alt="" style="object-fit:cover;">
+                    <div th:unless="${bruker.bildeUrl != null}" class="person-avatar"
+                         th:text="${#strings.substring(bruker.fulltNavn, 0, 1)}">N</div>
+                    <div style="flex:1;min-width:0;">
+                        <p class="person-name" th:text="${bruker.fulltNavn}">Navn</p>
+                        <p class="person-sub">MatMinne-kokk</p>
                     </div>
+                    <form th:if="${fulgteBrukerIds != null and fulgteBrukerIds.contains(bruker.id)}"
+                          th:action="@{'/slutt-å-følge/' + ${bruker.epost}}" method="post">
+                        <button type="submit" class="btn-person-unfollow">Følger</button>
+                    </form>
+                    <form th:unless="${fulgteBrukerIds != null and fulgteBrukerIds.contains(bruker.id)}"
+                          th:action="@{'/følg/' + ${bruker.epost}}" method="post">
+                        <button type="submit" class="btn-person-follow">Følg</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- EMPTY STATE -->
+            <div th:if="${oppskrifter.isEmpty()}" class="empty-feed">
+                <div class="empty-icon">🥗</div>
+                <h4>Ganske tomt her ennå</h4>
+                <p>Følg andre kokker for å se hva de lager!</p>
+                <a href="/oppdag" class="btn-find">
+                    <i class="fa-solid fa-compass"></i> Finn folk å følge
                 </a>
             </div>
 
-            <div style="position:relative;">
-                <img class="post-img"
-                     th:src="${o.bildeUrl != null && o.bildeUrl != '' ? o.bildeUrl : 'https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&w=600&q=70'}"
-                     alt="" loading="lazy" decoding="async">
-                <span th:if="${o.kategori != null}" class="post-kat"
-                      style="position:absolute;top:10px;right:10px;"
-                      th:text="${o.kategori}"></span>
-            </div>
-
-            <div class="post-body">
-                <a th:href="@{'/detaljer/' + ${o.id}}" class="post-title"
-                   th:text="${o.tittel}">Rettens navn</a>
-                <div class="post-meta">
-                    <span th:if="${o.tilberedningstid != null}">
-                        <i class="fas fa-clock"></i> <span th:text="${o.tilberedningstid} + ' min'"></span>
-                    </span>
-                    <span th:if="${o.porsjoner != null}">
-                        <i class="fas fa-users"></i> <span th:text="${o.porsjoner} + ' pors.'"></span>
-                    </span>
-                    <span th:if="${o.datoOpprettet != null}">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span th:text="${#temporals.format(o.datoOpprettet, 'dd.MM.yy')}"></span>
-                    </span>
+            <!-- FEED POSTS -->
+            <div th:each="o : ${oppskrifter}" class="post-card">
+                <!-- Header -->
+                <div class="post-header">
+                    <a th:href="@{'/profil/' + ${o.brukerEpost}}" class="post-user">
+                        <img th:if="${brukerBildeMap != null and brukerBildeMap.containsKey(o.brukerEpost)}"
+                             class="post-avatar" th:src="${brukerBildeMap.get(o.brukerEpost)}" alt="" style="object-fit:cover;">
+                        <div th:unless="${brukerBildeMap != null and brukerBildeMap.containsKey(o.brukerEpost)}"
+                             class="post-avatar" th:text="${#strings.substring(o.brukerNavn, 0, 1)}">U</div>
+                        <div>
+                            <div class="post-username" th:text="${o.brukerNavn}">Navn</div>
+                            <div class="post-time"
+                                 th:text="${o.datoOpprettet != null ? #temporals.format(o.datoOpprettet, 'dd.MM.yy') : 'nylig'}">nylig</div>
+                        </div>
+                    </a>
+                    <a th:href="@{'/detaljer/' + ${o.id}}" class="post-menu-btn" title="Se oppskrift">
+                        <i class="fa-solid fa-ellipsis"></i>
+                    </a>
                 </div>
 
+                <!-- Bilde -->
+                <div style="position:relative;">
+                    <img class="post-img"
+                         th:src="${o.bildeUrl != null && o.bildeUrl != '' ? o.bildeUrl : 'https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&w=800&q=70'}"
+                         alt="" loading="lazy" decoding="async">
+                    <span th:if="${o.kategori != null}" class="post-kat" th:text="${o.kategori}"></span>
+                </div>
+
+                <!-- Actions -->
                 <div class="post-actions">
-                    <!-- Like -->
                     <button class="btn-post-icon"
                             th:classappend="${erLiktMap != null and erLiktMap[o.id] ? ' liked' : ''}"
-                            th:attr="data-id=${o.id}, data-likt=${erLiktMap != null and erLiktMap[o.id]}"
+                            th:attr="data-id=${o.id}"
                             onclick="toggleLik(this)">
                         <i th:class="${erLiktMap != null and erLiktMap[o.id] ? 'fa-solid fa-heart' : 'fa-regular fa-heart'}"></i>
                         <span th:text="${likeAntallMap != null and likeAntallMap[o.id] != null ? likeAntallMap[o.id] : 0}">0</span>
                     </button>
-                    <!-- Kommentar -->
-                    <button class="btn-post-icon"
-                            th:attr="data-id=${o.id}"
-                            onclick="toggleKommentarer(this)">
+                    <button class="btn-post-icon" th:attr="data-id=${o.id}" onclick="toggleKommentarer(this)">
                         <i class="fa-regular fa-comment"></i>
                         <span th:text="${kommentarAntallMap != null and kommentarAntallMap[o.id] != null ? kommentarAntallMap[o.id] : 0}">0</span>
                     </button>
-                    <!-- Lagre -->
+                    <div class="post-actions-spacer"></div>
                     <button th:if="${brukerEpost != null}" class="btn-post-icon"
-                            th:attr="data-id=${o.id}" onclick="lagrePost(this)" title="Lagre til kokeboken">
+                            th:attr="data-id=${o.id}" onclick="lagrePost(this)" title="Lagre">
                         <i class="fa-regular fa-bookmark"></i>
                     </button>
-                    <!-- Se oppskrift -->
                     <a th:href="@{'/detaljer/' + ${o.id}}" class="btn-post-see">
                         Se oppskrift <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 </div>
 
-                <!-- Kommentar-seksjon (skjult som standard) -->
-                <div class="kommentar-seksjon" th:id="'ks-' + ${o.id}" style="display:none;"
-                     th:attr="data-id=${o.id}">
-                    <div th:id="'kl-' + ${o.id}"></div>
-                    <div class="kommentar-input-wrap" th:if="${brukerEpost != null}">
-                        <input type="text" class="kommentar-input"
-                               th:id="'ki-' + ${o.id}" placeholder="Skriv en kommentar…"
-                               th:attr="data-id=${o.id}"
-                               onkeydown="if(event.key==='Enter') sendKommentar(this)">
-                        <button class="kommentar-send" th:attr="data-id=${o.id}"
-                                onclick="sendKommentar(document.getElementById('ki-'+this.dataset.id))">
-                            <i class="fa-solid fa-paper-plane"></i>
-                        </button>
+                <!-- Post body -->
+                <div class="post-body">
+                    <a th:href="@{'/detaljer/' + ${o.id}}" class="post-title" th:text="${o.tittel}">Tittel</a>
+                    <div class="post-meta">
+                        <span th:if="${o.tilberedningstid != null}">
+                            <i class="fas fa-clock"></i><span th:text="${o.tilberedningstid} + ' min'"></span>
+                        </span>
+                        <span th:if="${o.porsjoner != null}">
+                            <i class="fas fa-users"></i><span th:text="${o.porsjoner} + ' pors.'"></span>
+                        </span>
                     </div>
+                </div>
+
+                <!-- Kommentar-seksjon -->
+                <div class="kommentar-seksjon" th:id="'ks-' + ${o.id}" style="display:none;" th:attr="data-id=${o.id}">
                     <a th:href="@{'/detaljer/' + ${o.id}}" class="kommentar-se-alle"
-                       th:if="${kommentarAntallMap != null and kommentarAntallMap[o.id] != null and kommentarAntallMap[o.id] > 0}">
-                        Se alle <span th:text="${kommentarAntallMap[o.id]}"></span> kommentarer →
-                    </a>
+                       th:if="${kommentarAntallMap != null and kommentarAntallMap[o.id] != null and kommentarAntallMap[o.id] > 0}"
+                       th:text="'Se alle ' + ${kommentarAntallMap[o.id]} + ' kommentarer'"></a>
+                    <div th:id="'kl-' + ${o.id}"></div>
+                    <div class="kommentar-input-row" th:if="${brukerEpost != null}">
+                        <img th:if="${megBilde != null}" class="meg-avatar" th:src="${megBilde}" alt="" style="object-fit:cover;">
+                        <div th:unless="${megBilde != null}" class="meg-avatar"
+                             th:text="${brukerEpost != null ? #strings.substring(brukerEpost, 0, 1).toUpperCase() : '?'}">M</div>
+                        <div class="kommentar-input-wrap">
+                            <input type="text" class="kommentar-input"
+                                   th:id="'ki-' + ${o.id}" placeholder="Legg igjen en kommentar…"
+                                   th:attr="data-id=${o.id}"
+                                   onkeydown="if(event.key==='Enter') sendKommentar(this)">
+                            <button class="kommentar-send" th:attr="data-id=${o.id}"
+                                    onclick="sendKommentar(document.getElementById('ki-'+this.dataset.id))">
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
 
+        <!-- ── HØYRE SIDEBAR ── -->
+        <aside class="feed-sidebar-right">
+            <div class="sidebar-card">
+                <div class="sidebar-title"><span>✨ Dagens inspirasjon</span></div>
+                <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=70"
+                     class="inspo-img" alt="Inspirasjon">
+                <p class="inspo-title">Utforsk nye smaker</p>
+                <p class="inspo-sub">Se hva andre kokker deler</p>
+                <a href="/oppdag" class="btn-inspo">Se Utforsk</a>
+            </div>
+
+            <div class="sidebar-card" th:if="${!oppskrifter.isEmpty()}">
+                <div class="sidebar-title"><span>🔥 Siste aktivitet</span></div>
+                <div th:each="o, stat : ${oppskrifter}" th:if="${stat.index < 3}" class="activity-item">
+                    <img th:if="${brukerBildeMap != null and brukerBildeMap.containsKey(o.brukerEpost)}"
+                         class="activity-av" th:src="${brukerBildeMap.get(o.brukerEpost)}" alt="">
+                    <div th:unless="${brukerBildeMap != null and brukerBildeMap.containsKey(o.brukerEpost)}"
+                         class="activity-av"
+                         style="background:linear-gradient(135deg,var(--mat-gronn),var(--mat-mork));color:white;font-weight:800;font-size:.7rem;display:flex;align-items:center;justify-content:center;"
+                         th:text="${#strings.substring(o.brukerNavn, 0, 1)}">?</div>
+                    <div class="activity-txt">
+                        <strong th:text="${o.brukerNavn}">Navn</strong> delte en oppskrift
+                        <div class="activity-time"
+                             th:text="${o.datoOpprettet != null ? #temporals.format(o.datoOpprettet, 'dd.MM') : ''}"></div>
+                    </div>
+                    <img th:if="${o.bildeUrl != null and o.bildeUrl != ''}"
+                         class="activity-thumb" th:src="${o.bildeUrl}" alt="">
+                </div>
+            </div>
+        </aside>
 
     </div>
 
@@ -562,11 +511,8 @@ function toggleLik(btn) {
     csrfFetch('/api/lik/' + id, { method: 'POST' })
         .then(r => r.json())
         .then(d => {
-            const erLikt = d.erLikt;
-            btn.dataset.likt = erLikt;
-            btn.classList.toggle('liked', erLikt);
-            const ico = btn.querySelector('i');
-            ico.className = erLikt ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+            btn.classList.toggle('liked', d.erLikt);
+            btn.querySelector('i').className = d.erLikt ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
             btn.querySelector('span').textContent = d.likeAntall;
         }).catch(() => {});
 }
@@ -584,7 +530,7 @@ function toggleKommentarer(btn) {
             .then(r => r.json())
             .then(kommentarer => {
                 liste.dataset.lastet = '1';
-                if (!kommentarer.length) { liste.innerHTML = '<p style="color:#94a3b8;font-size:.85rem;margin:0 0 8px;">Ingen kommentarer ennå.</p>'; return; }
+                if (!kommentarer.length) return;
                 liste.innerHTML = kommentarer.map(k => kommentarHtml(k)).join('');
             }).catch(() => {});
     }
@@ -600,27 +546,24 @@ function sendKommentar(input) {
         .then(r => r.json())
         .then(k => {
             const liste = document.getElementById('kl-' + id);
-            if (liste) {
-                liste.dataset.lastet = '1';
-                liste.innerHTML += kommentarHtml(k);
-            }
+            if (liste) { liste.dataset.lastet = '1'; liste.innerHTML += kommentarHtml(k); }
             input.value = '';
-            // oppdater teller
-            const komBtn = document.querySelector(`.btn-post-icon[data-id="${id}"]:nth-child(2)`);
-            // finn kommentarknappen etter likeknappen
-            const allBtns = document.querySelectorAll(`.btn-post-icon[data-id="${id}"]`);
-            allBtns.forEach(b => { if (b.querySelector('.fa-comment, .fa-regular.fa-comment')) { const s = b.querySelector('span'); if(s) s.textContent = parseInt(s.textContent||0)+1; } });
+            // oppdater kommentarteller på knapp
+            const card = input.closest('.post-card');
+            if (card) {
+                const komBtn = card.querySelector('.btn-post-icon[onclick*="toggleKommentarer"] span');
+                if (komBtn) komBtn.textContent = parseInt(komBtn.textContent || 0) + 1;
+            }
         }).catch(() => {});
 }
 
 function lagrePost(btn) {
     const id = btn.dataset.id;
-    const fd = new FormData();
-    csrfFetch('/kopier/' + id, { method: 'POST', body: fd })
+    csrfFetch('/kopier/' + id, { method: 'POST' })
         .then(r => {
-            if (r.redirected || r.ok) {
+            if (r.ok || r.redirected) {
                 btn.querySelector('i').className = 'fa-solid fa-bookmark';
-                btn.title = 'Lagret!';
+                btn.classList.add('saved');
                 btn.disabled = true;
             }
         }).catch(() => {});

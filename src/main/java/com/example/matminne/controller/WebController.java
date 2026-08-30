@@ -313,6 +313,20 @@ public class WebController {
                 model.addAttribute("likeAntallMap", likeAntallMap);
                 model.addAttribute("erLiktMap", erLiktMap);
                 model.addAttribute("kommentarAntallMap", kommentarAntallMap);
+
+                // Unik liste av venner som har postet (for venstre sidebar)
+                List<Map<String,String>> venneListe = new java.util.ArrayList<>();
+                java.util.Set<String> seenEmails = new java.util.LinkedHashSet<>();
+                for (com.example.matminne.model.Oppskrift o : oppskrifter) {
+                    if (o.getBrukerEpost() != null && seenEmails.add(o.getBrukerEpost())) {
+                        Map<String,String> v = new HashMap<>();
+                        v.put("navn", o.getBrukerNavn());
+                        v.put("epost", o.getBrukerEpost());
+                        v.put("bilde", brukerBildeMap.get(o.getBrukerEpost()));
+                        venneListe.add(v);
+                    }
+                }
+                model.addAttribute("venneListe", venneListe);
             }
             if (sok != null && !sok.isBlank()) {
                 List<Bruker> sokResultater = brukerService.sokEtterNavn(sok);
@@ -320,6 +334,7 @@ public class WebController {
                 Set<Long> fulgte = vennerIds.stream().collect(Collectors.toSet());
                 model.addAttribute("fulgteBrukerIds", fulgte);
             }
+            if (meg.getBildeUrl() != null) model.addAttribute("megBilde", meg.getBildeUrl());
         }
         model.addAttribute("brukerBildeMap", brukerBildeMap);
         return "vennefeed";
