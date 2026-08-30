@@ -236,11 +236,11 @@
                 <h3>Du har MatMinne AI!</h3>
                 <p>Alle AI-funksjoner er aktivert på kontoen din. Nyt tilgangen!</p>
             </div>
-            <form th:action="@{/abonnement/avbryt}" method="POST" style="margin-left:auto;">
-                <button type="submit" style="background:none;border:1px solid #e2e8f0;color:#94a3b8;
+            <form id="avbrytAbonnementForm" th:action="@{/abonnement/avbryt}" method="POST" style="margin-left:auto;">
+                <button type="button" id="avbrytBtn" style="background:none;border:1px solid #e2e8f0;color:#94a3b8;
                     padding:8px 16px;border-radius:10px;font-weight:700;font-size:.78rem;
                     cursor:pointer;font-family:inherit;transition:.2s;white-space:nowrap;"
-                    onclick="return confirm('Er du sikker på at du vil avslutte abonnementet?')">
+                    onclick="this.id=='avbrytBtnKlart'?document.getElementById('avbrytAbonnementForm').submit():(this.id='avbrytBtnKlart',this.textContent='Trykk igjen for å bekrefte',this.style.borderColor='#fca5a5',this.style.color='#dc2626',setTimeout(()=>{this.id='avbrytBtn';this.textContent='Avbryt abonnement';this.style.borderColor='';this.style.color='';},3000))">
                     Avbryt abonnement
                 </button>
             </form>

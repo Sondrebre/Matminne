@@ -425,9 +425,9 @@
                         </div>
                     </div>
                 </div>
-                <form th:action="@{/handleliste/forlat/{id}(id=${aktivGruppe.id})}" method="POST"
-                      onsubmit="return confirm('Forlate denne gruppen?')">
-                    <button type="submit" class="btn-forlat">
+                <form id="forlatGruppeForm" th:action="@{/handleliste/forlat/{id}(id=${aktivGruppe.id})}" method="POST">
+                    <button type="button" class="btn-forlat"
+                            onclick="showBekreft('Forlate gruppen?','Du mister tilgang til den delte handlelisten.',()=>document.getElementById(\'forlatGruppeForm\').submit())">
                         <i class="fa-solid fa-right-from-bracket"></i> Forlat
                     </button>
                 </form>
@@ -568,6 +568,46 @@
             </div>
         </div>
     </div>
+
+    <!-- Generell bekreftelsesmodal -->
+    <div id="bekreftModal" style="display:none;position:fixed;inset:0;z-index:9999;
+         background:rgba(0,0,0,.5);align-items:flex-end;justify-content:center;
+         backdrop-filter:blur(3px);">
+        <div style="background:white;border-radius:24px 24px 0 0;
+             padding:28px 24px calc(28px + env(safe-area-inset-bottom,0px));
+             width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(0,0,0,.18);">
+            <div style="width:36px;height:4px;background:#e2e8f0;border-radius:99px;margin:0 auto 20px;"></div>
+            <p id="bekreftTittel" style="font-size:1rem;font-weight:800;color:#0f172a;margin:0 0 8px;"></p>
+            <p id="bekreftTekst" style="font-size:.84rem;color:#64748b;margin:0 0 22px;line-height:1.55;"></p>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+                <button id="bekreftOK" style="background:#dc2626;color:white;border:none;padding:15px;
+                        border-radius:14px;font-weight:800;font-size:.95rem;cursor:pointer;font-family:inherit;">
+                    Bekreft
+                </button>
+                <button onclick="lukkBekreft()" style="background:#f1f5f9;color:#64748b;border:none;
+                        padding:15px;border-radius:14px;font-weight:700;font-size:.95rem;
+                        cursor:pointer;font-family:inherit;">
+                    Avbryt
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        var _bekreftCb = null;
+        function showBekreft(tittel, tekst, cb) {
+            document.getElementById('bekreftTittel').textContent = tittel;
+            document.getElementById('bekreftTekst').textContent = tekst;
+            _bekreftCb = cb;
+            document.getElementById('bekreftOK').onclick = function() { lukkBekreft(); if (_bekreftCb) _bekreftCb(); };
+            document.getElementById('bekreftModal').style.display = 'flex';
+        }
+        function lukkBekreft() {
+            document.getElementById('bekreftModal').style.display = 'none';
+        }
+        document.getElementById('bekreftModal').addEventListener('click', function(e) {
+            if (e.target === this) lukkBekreft();
+        });
+    </script>
 
     <div th:replace="~{fragments :: bottom_nav}"></div>
     <div th:replace="~{fragments :: scripts}"></div>
@@ -867,33 +907,35 @@
         }
 
         function ryddFerdig(gId) {
-            if (!confirm('Fjerne alle gjorte varer?')) return;
-            document.querySelectorAll('.liste-item.ferdig').forEach(item => {
-                item.classList.add('removing');
-                setTimeout(() => item.remove(), 260);
+            showBekreft('Fjerne gjorte varer?', 'Alle avkryssede varer slettes fra listen.', () => {
+                document.querySelectorAll('.liste-item.ferdig').forEach(item => {
+                    item.classList.add('removing');
+                    setTimeout(() => item.remove(), 260);
+                });
+                setTimeout(oppdaterStats, 300);
+                const url = '/handleliste/rydd' + (gId ? '?gruppeId=' + gId : '');
+                csrfFetch(url, { method: 'POST' })
+                    .then(r => { if (!r.ok) location.reload(); })
+                    .catch(() => location.reload());
             });
-            setTimeout(oppdaterStats, 300);
-            const url = '/handleliste/rydd' + (gId ? '?gruppeId=' + gId : '');
-            csrfFetch(url, { method: 'POST' })
-                .then(r => { if (!r.ok) location.reload(); })
-                .catch(() => location.reload());
         }
 
         function slettAlt(gId) {
-            if (!confirm('Slette hele handlelisten?')) return;
-            document.querySelectorAll('.liste-item').forEach(item => {
-                item.classList.add('removing');
-                setTimeout(() => item.remove(), 260);
+            showBekreft('Slette hele handlelisten?', 'Alle varer fjernes permanent.', () => {
+                document.querySelectorAll('.liste-item').forEach(item => {
+                    item.classList.add('removing');
+                    setTimeout(() => item.remove(), 260);
+                });
+                setTimeout(() => {
+                    const kort = document.getElementById('listeKort');
+                    if (kort) kort.innerHTML = '<div class="empty-state"><div class="empty-icon">🛒</div><h3>Handlelisten er tom</h3><p>Legg til varer manuelt, eller gå til en oppskrift og klikk "Legg i handleliste".</p></div>';
+                    oppdaterStats();
+                }, 300);
+                const url = '/handleliste/slett-alt' + (gId ? '?gruppeId=' + gId : '');
+                csrfFetch(url, { method: 'POST' })
+                    .then(r => { if (!r.ok) location.reload(); })
+                    .catch(() => location.reload());
             });
-            setTimeout(() => {
-                const kort = document.getElementById('listeKort');
-                if (kort) kort.innerHTML = '<div class="empty-state"><div class="empty-icon">🛒</div><h3>Handlelisten er tom</h3><p>Legg til varer manuelt, eller gå til en oppskrift og klikk "Legg i handleliste".</p></div>';
-                oppdaterStats();
-            }, 300);
-            const url = '/handleliste/slett-alt' + (gId ? '?gruppeId=' + gId : '');
-            csrfFetch(url, { method: 'POST' })
-                .then(r => { if (!r.ok) location.reload(); })
-                .catch(() => location.reload());
         }
 
         // Tving reload ved tilbake-navigering (unngår bfcache)
