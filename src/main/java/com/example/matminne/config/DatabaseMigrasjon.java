@@ -31,6 +31,8 @@ public class DatabaseMigrasjon {
             jdbcTemplate.execute(
                 "ALTER TABLE brukere ADD COLUMN IF NOT EXISTS har_godtatt_vilkar BOOLEAN DEFAULT FALSE"
             );
+            // Engangsreset: fjern alle eksisterende abonnenter (gamle test-data)
+            jdbcTemplate.execute("UPDATE brukere SET har_abonnement = FALSE");
             log.info("Database-migrasjoner fullført");
         } catch (Exception e) {
             log.warn("Migrasjonsadvarsel (kan ignoreres hvis kolonner allerede finnes): {}", e.getMessage());
