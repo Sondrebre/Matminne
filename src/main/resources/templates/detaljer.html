@@ -267,12 +267,19 @@
             display: flex; align-items: center; gap: 8px;
             padding: 14px 0 0; flex-wrap: wrap;
         }
-        .ko-timer-sel {
-            border: 1.5px solid #d1fae5; border-radius: 10px;
-            padding: 7px 10px; font-family: inherit; font-size: .82rem;
-            font-weight: 700; color: #374151; background: #f0fdf4;
-            outline: none; cursor: pointer;
+        .ko-timer-input-wrap {
+            display: flex; align-items: center; gap: 5px;
+            background: #f0fdf4; border: 1.5px solid #d1fae5;
+            border-radius: 10px; padding: 4px 10px 4px 6px;
         }
+        .ko-timer-sel {
+            border: none; background: transparent;
+            padding: 4px 4px; font-family: inherit; font-size: .9rem;
+            font-weight: 800; color: #374151;
+            outline: none; -moz-appearance: textfield;
+        }
+        .ko-timer-sel::-webkit-outer-spin-button,
+        .ko-timer-sel::-webkit-inner-spin-button { -webkit-appearance: none; }
         .ko-timer-btn {
             background: #16a34a; color: white; border: none;
             border-radius: 10px; padding: 8px 14px;
@@ -979,18 +986,13 @@
                     <div class="ko-swipe-hint">Sveip eller bruk piltastene for å navigere</div>
                 <!-- Mini timer -->
                 <div id="koTimer" class="ko-timer-row">
-                    <select id="koTimerMin" class="ko-timer-sel">
-                        <option value="1">1 min</option>
-                        <option value="2">2 min</option>
-                        <option value="3">3 min</option>
-                        <option value="5" selected>5 min</option>
-                        <option value="10">10 min</option>
-                        <option value="15">15 min</option>
-                        <option value="20">20 min</option>
-                        <option value="30">30 min</option>
-                        <option value="45">45 min</option>
-                        <option value="60">60 min</option>
-                    </select>
+                    <div class="ko-timer-input-wrap">
+                        <input id="koTimerMin" type="number" class="ko-timer-sel"
+                               value="5" min="1" max="999"
+                               style="width:70px;text-align:center;"
+                               onkeydown="if(event.key==='Enter')startKoTimer()">
+                        <span style="font-size:.78rem;font-weight:700;color:#6b7280;">min</span>
+                    </div>
                     <button onclick="startKoTimer()" id="koTimerBtn" class="ko-timer-btn">
                         <i class="fas fa-clock"></i> Start timer
                     </button>
