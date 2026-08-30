@@ -377,12 +377,10 @@
                             <a th:href="@{'/rediger/' + ${o.id}}" class="btn-icon btn-icon-edit" title="Rediger">
                                 <i class="fas fa-pen"></i>
                             </a>
-                            <form th:action="@{'/slett/' + ${o.id}}" method="POST">
-                                <button type="submit" class="btn-icon btn-icon-delete" title="Slett"
-                                        onclick="return confirm('Slette denne oppskriften?')">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </form>
+                            <button type="button" class="btn-icon btn-icon-delete" title="Slett"
+                                    th:attr="onclick='bekreftSlett(\'' + ${o.id} + '\',\'' + ${#strings.abbreviate(o.tittel,30)} + '\')'">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -399,6 +397,41 @@
     <a href="/ny-oppskrift" class="fab" title="Ny oppskrift">
         <i class="fas fa-plus"></i>
     </a>
+
+    <!-- Slett-bekreftelse modal -->
+    <div id="slettOppskriftModal" style="display:none;position:fixed;inset:0;z-index:9999;
+         background:rgba(0,0,0,.55);align-items:flex-end;justify-content:center;
+         padding:0;backdrop-filter:blur(3px);">
+        <div style="background:white;border-radius:24px 24px 0 0;padding:28px 24px calc(28px + env(safe-area-inset-bottom,0px));
+             width:100%;max-width:480px;box-shadow:0 -8px 40px rgba(0,0,0,.18);">
+            <div style="width:36px;height:4px;background:#e2e8f0;border-radius:99px;margin:0 auto 20px;"></div>
+            <p style="font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#dc2626;margin:0 0 6px;">Slett oppskrift</p>
+            <p id="slettOppskriftNavn" style="font-size:1rem;font-weight:800;color:#0f172a;margin:0 0 18px;"></p>
+            <p style="font-size:.84rem;color:#64748b;margin:0 0 22px;line-height:1.55;">Dette kan ikke angres. Oppskriften slettes permanent fra kokeboken din.</p>
+            <form id="slettOppskriftForm" method="POST" style="display:flex;flex-direction:column;gap:10px;">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <button type="submit" style="background:#dc2626;color:white;border:none;padding:15px;
+                        border-radius:14px;font-weight:800;font-size:.95rem;cursor:pointer;font-family:inherit;">
+                    <i class="fa-solid fa-trash"></i> Ja, slett oppskriften
+                </button>
+                <button type="button" onclick="document.getElementById('slettOppskriftModal').style.display='none'"
+                        style="background:#f1f5f9;color:#64748b;border:none;padding:15px;border-radius:14px;
+                        font-weight:700;font-size:.95rem;cursor:pointer;font-family:inherit;">
+                    Avbryt
+                </button>
+            </form>
+        </div>
+    </div>
+    <script>
+        function bekreftSlett(id, tittel) {
+            document.getElementById('slettOppskriftNavn').textContent = tittel;
+            document.getElementById('slettOppskriftForm').action = '/slett/' + id;
+            document.getElementById('slettOppskriftModal').style.display = 'flex';
+        }
+        document.getElementById('slettOppskriftModal').addEventListener('click', function(e) {
+            if (e.target === this) this.style.display = 'none';
+        });
+    </script>
 
     <div th:replace="~{fragments :: bottom_nav}"></div>
     <div th:replace="~{fragments :: scripts}"></div>

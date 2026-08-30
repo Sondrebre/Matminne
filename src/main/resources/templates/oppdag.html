@@ -341,7 +341,7 @@
                         <a th:href="@{'/detaljer/' + ${o.id}}" class="btn-see">
                             <i class="fa-solid fa-eye me-1"></i> Se
                         </a>
-                        <button class="btn-save" th:attr="data-id=${o.id}" onclick="lagreOppskrift(this)">
+                        <button th:if="${brukerEpost != null}" class="btn-save" th:attr="data-id=${o.id}" onclick="lagreOppskrift(this)">
                             <i class="fa-solid fa-bookmark me-1"></i> Lagre
                         </button>
                     </div>
@@ -360,10 +360,16 @@
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Lagrer...';
 
-            csrfFetch('/kopier/' + id, { method: 'POST', redirect: 'manual' })
-                .then(() => {
-                    btn.style.background = 'var(--mat-gronn-m)';
-                    btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Lagret!';
+            csrfFetch('/kopier/' + id, { method: 'POST' })
+                .then(res => {
+                    if (res.ok) {
+                        btn.style.background = 'var(--mat-gronn-m)';
+                        btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Lagret!';
+                    } else {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fa-solid fa-bookmark me-1"></i> Lagre';
+                        showToast('Noe gikk galt, prøv igjen', 'error');
+                    }
                 })
                 .catch(() => {
                     btn.disabled = false;
