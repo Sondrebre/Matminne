@@ -280,9 +280,13 @@ public class WebController {
         model.addAttribute("aktivKategori", kategori);
         model.addAttribute("sokeTekst", q);
         model.addAttribute("sortering", sorter);
-        // Like-data for inline like-knapp
+        // Bulk like-data (én spørring i stedet for N)
+        List<Long> oppIds = oppskrifter.stream().map(Oppskrift::getId).collect(Collectors.toList());
         Map<Long, Long> oppdagLikeMap = new HashMap<>();
-        oppskrifter.forEach(o -> oppdagLikeMap.put(o.getId(), likeRepository.countByOppskriftId(o.getId())));
+        if (!oppIds.isEmpty()) {
+            likeRepository.countByOppskriftIdIn(oppIds)
+                .forEach(row -> oppdagLikeMap.put((Long) row[0], (Long) row[1]));
+        }
         model.addAttribute("likeAntallMap", oppdagLikeMap);
         return "oppdag";
     }
@@ -301,19 +305,28 @@ public class WebController {
                 List<com.example.matminne.model.Oppskrift> oppskrifter =
                     repository.findByBrukerIdInAndErOffentligTrueOrderByIdDesc(vennerIds);
                 model.addAttribute("oppskrifter", oppskrifter);
+                // Bulk-spørringer: erstatter N+1 med 3 spørringer totalt
+                List<Long> feedIds = oppskrifter.stream().map(Oppskrift::getId).collect(Collectors.toList());
+
                 Map<Long, Long> likeAntallMap = new HashMap<>();
+                likeRepository.countByOppskriftIdIn(feedIds)
+                    .forEach(row -> likeAntallMap.put((Long) row[0], (Long) row[1]));
+
+                Set<Long> likedAvMeg = likeRepository.findLikedIdsByBrukerIdAndOppskriftIdIn(meg.getId(), feedIds);
                 Map<Long, Boolean> erLiktMap = new HashMap<>();
+                feedIds.forEach(id -> erLiktMap.put(id, likedAvMeg.contains(id)));
+
                 Map<Long, Long> kommentarAntallMap = new HashMap<>();
-                oppskrifter.forEach(o -> {
-                    if (o.getBrukerEpost() != null && !brukerBildeMap.containsKey(o.getBrukerEpost())) {
-                        Bruker b = brukerService.finnVedEpost(o.getBrukerEpost());
-                        if (b != null && b.getBildeUrl() != null)
-                            brukerBildeMap.put(o.getBrukerEpost(), b.getBildeUrl());
-                    }
-                    likeAntallMap.put(o.getId(), likeRepository.countByOppskriftId(o.getId()));
-                    erLiktMap.put(o.getId(), likeRepository.existsByBrukerIdAndOppskriftId(meg.getId(), o.getId()));
-                    kommentarAntallMap.put(o.getId(), kommentarRepository.countByOppskriftId(o.getId()));
-                });
+                kommentarRepository.countByOppskriftIdIn(feedIds)
+                    .forEach(row -> kommentarAntallMap.put((Long) row[0], (Long) row[1]));
+
+                // Brukerbilde: én spørring per unik bruker (ikke per oppskrift)
+                oppskrifter.stream()
+                    .filter(o -> o.getBrukerEpost() != null && !brukerBildeMap.containsKey(o.getBrukerEpost()))
+                    .map(o -> o.getBrukerEpost()).distinct().forEach(epost -> {
+                        Bruker b = brukerService.finnVedEpost(epost);
+                        if (b != null && b.getBildeUrl() != null) brukerBildeMap.put(epost, b.getBildeUrl());
+                    });
                 model.addAttribute("likeAntallMap", likeAntallMap);
                 model.addAttribute("erLiktMap", erLiktMap);
                 model.addAttribute("kommentarAntallMap", kommentarAntallMap);
