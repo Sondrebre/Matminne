@@ -69,15 +69,19 @@ public class WebController {
         if (principal != null) {
             String epost = principal.getAttribute("email");
             model.addAttribute("brukernavn", principal.getAttribute("name"));
-            model.addAttribute("profilBilde", principal.getAttribute("picture"));
             model.addAttribute("brukerEpost", epost);
             model.addAttribute("innlogget", true);
             Bruker meg = brukerService.finnVedEpost(epost);
             if (meg != null) {
+                String profilBilde = (meg.getBildeUrl() != null && !meg.getBildeUrl().isBlank())
+                        ? meg.getBildeUrl()
+                        : principal.getAttribute("picture");
+                model.addAttribute("profilBilde", profilBilde);
                 model.addAttribute("ulesVarsler",
                     varselRepository.countByMottakerBrukerIdAndLestFalse(meg.getId()));
                 model.addAttribute("harAbonnement", meg.isHarAbonnement());
             } else {
+                model.addAttribute("profilBilde", principal.getAttribute("picture"));
                 model.addAttribute("harAbonnement", false);
             }
         } else {
