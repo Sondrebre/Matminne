@@ -68,10 +68,10 @@ public class WebController {
     public void leggTilGlobalInfo(Model model, @AuthenticationPrincipal OAuth2User principal) {
         if (principal != null) {
             String epost = principal.getAttribute("email");
+            Bruker meg = brukerService.finnVedEpost(epost);
             model.addAttribute("brukernavn", meg != null ? meg.getVisningsnavn() : principal.getAttribute("name"));
             model.addAttribute("brukerEpost", epost);
             model.addAttribute("innlogget", true);
-            Bruker meg = brukerService.finnVedEpost(epost);
             if (meg != null) {
                 String profilBilde = (meg.getBildeUrl() != null && !meg.getBildeUrl().isBlank())
                         ? meg.getBildeUrl()
