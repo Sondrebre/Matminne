@@ -49,6 +49,8 @@ public class AiOppskriftService {
 
     /**
      * Henter og strukturerer en oppskrift fra en URL via Claude.
+     * Prøver JSON-LD (strukturert data) først, faller tilbake til rå brødtekst.
+     * Oversetter alltid til norsk bokmål.
      */
     public Oppskrift hentOgStrukturer(String url) {
         Oppskrift ny = new Oppskrift();
@@ -56,18 +58,40 @@ public class AiOppskriftService {
         try {
             Document doc = Jsoup.connect(url)
                     .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
-                    .timeout(10000)
+                    .timeout(12000)
                     .get();
-            String raaTekst = doc.body().text();
-            if (raaTekst.length() > 8000) {
-                raaTekst = raaTekst.substring(0, 8000);
+
+            // Prøv JSON-LD strukturert data (finnes på de fleste matlagingssider)
+            String jsonLd = trekkUtJsonLd(doc);
+            String kildeTekst;
+            if (jsonLd != null && !jsonLd.isBlank()) {
+                kildeTekst = jsonLd;
+                log.debug("Bruker JSON-LD for {}", url);
+            } else {
+                String raa = doc.body().text();
+                kildeTekst = raa.length() > 9000 ? raa.substring(0, 9000) : raa;
+                log.debug("Bruker brødtekst ({} tegn) for {}", kildeTekst.length(), url);
             }
-            String prompt = "Ekstraher oppskriften fra denne teksten. Svar nøyaktig i dette formatet:\n" +
-                            "TITTEL: [navn]\n" +
-                            "INGREDIENSER:\n- [ingrediens]\n" +
-                            "FREMGANGSMÅTE:\n1. [steg]\n\n" +
-                            "Tekst: " + raaTekst;
-            String aiSvar = kallClaude(prompt);
+
+            String prompt =
+                "Du er en profesjonell kokk-assistent. Ekstraher og strukturer oppskriften fra teksten nedenfor.\n\n" +
+                "VIKTIG: Svar ALLTID på norsk bokmål, uansett hvilket språk teksten er på. " +
+                "Oversett tittel, ingredienser og fremgangsmåte fullstendig til norsk.\n\n" +
+                "Svar nøyaktig i dette formatet (ikke noe annet):\n" +
+                "TITTEL: [norsk navn på retten]\n" +
+                "INGREDIENSER:\n" +
+                "- [mengde + enhet + ingrediens, f.eks. '200 g kyllingfilet', '2 ss olivenolje', '1 ts salt', '3 dl vann']\n" +
+                "FREMGANGSMÅTE:\n" +
+                "1. [konkret steg på norsk]\n\n" +
+                "Regler:\n" +
+                "- Inkluder ALLTID eksakt mengde og enhet for HVER ingrediens\n" +
+                "- Konverter cups → dl (1 cup ≈ 2,4 dl), oz → g (1 oz ≈ 28 g), fahrenheit → celsius\n" +
+                "- Bruk norske enheter: dl, g, kg, ts (teskje), ss (spiseskje), stk\n" +
+                "- Oversett alt innhold til norsk bokmål\n" +
+                "- Ikke legg til noe som ikke er i originalteksten\n\n" +
+                "Tekst:\n" + kildeTekst;
+
+            String aiSvar = kallClaudeMedModell(prompt, Model.CLAUDE_SONNET_4_5, 3000L);
             String bilde = doc.select("meta[property=og:image]").attr("content");
             ny.setBildeUrl(bilde);
             parseSvar(aiSvar, ny);
@@ -75,6 +99,66 @@ public class AiOppskriftService {
             ny.setTittel("Feil ved prosessering: " + e.getMessage());
         }
         return ny;
+    }
+
+    /**
+     * Trekker ut strukturert oppskriftsdata (JSON-LD, @type: Recipe) fra siden.
+     * Returnerer formatert tekst klar for Claude, eller null hvis ikke funnet.
+     */
+    private String trekkUtJsonLd(Document doc) {
+        ObjectMapper mapper = new ObjectMapper();
+        for (var el : doc.select("script[type=application/ld+json]")) {
+            try {
+                JsonNode root = mapper.readTree(el.data().trim());
+                // Kan være et enkelt objekt, en array, eller ha @graph
+                if (root.isArray()) {
+                    for (JsonNode item : root) {
+                        String res = jsonLdOppskrift(item);
+                        if (res != null) return res;
+                    }
+                } else if (root.has("@graph")) {
+                    for (JsonNode item : root.path("@graph")) {
+                        String res = jsonLdOppskrift(item);
+                        if (res != null) return res;
+                    }
+                } else {
+                    String res = jsonLdOppskrift(root);
+                    if (res != null) return res;
+                }
+            } catch (Exception ignored) {}
+        }
+        return null;
+    }
+
+    private String jsonLdOppskrift(JsonNode node) {
+        String type = node.path("@type").asText("");
+        if (!type.toLowerCase().contains("recipe")) return null;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Navn: ").append(node.path("name").asText("")).append("\n");
+
+        JsonNode ingredients = node.path("recipeIngredient");
+        if (ingredients.isArray() && ingredients.size() > 0) {
+            sb.append("Ingredienser:\n");
+            for (JsonNode ing : ingredients) {
+                sb.append("- ").append(ing.asText()).append("\n");
+            }
+        }
+
+        JsonNode instructions = node.path("recipeInstructions");
+        if (instructions.isArray() && instructions.size() > 0) {
+            sb.append("Fremgangsmåte:\n");
+            int steg = 1;
+            for (JsonNode inst : instructions) {
+                String tekst = inst.isTextual() ? inst.asText()
+                        : inst.path("text").asText(inst.path("name").asText(""));
+                if (!tekst.isBlank()) sb.append(steg++).append(". ").append(tekst).append("\n");
+            }
+        } else if (instructions.isTextual() && !instructions.asText().isBlank()) {
+            sb.append("Fremgangsmåte:\n").append(instructions.asText()).append("\n");
+        }
+
+        return sb.length() > 30 ? sb.toString() : null;
     }
 
     /**
