@@ -257,20 +257,20 @@ public class WebController {
                             @RequestParam(required = false) String kategori,
                             @RequestParam(required = false) String sorter) {
         List<Oppskrift> oppskrifter;
+        PageRequest side = PageRequest.of(0, 24);
         if (q != null && !q.isBlank()) {
             oppskrifter = repository.findByErOffentligTrueAndTittelContainingIgnoreCaseOrderByIdDesc(q);
         } else if (kategori != null && !kategori.isBlank()) {
-            oppskrifter = repository.findByErOffentligTrueAndKategoriOrderByIdDesc(kategori);
+            oppskrifter = repository.findByErOffentligTrueAndKategoriOrderByIdDesc(kategori, side);
         } else {
-            oppskrifter = repository.findByErOffentligTrueOrderByIdDesc();
+            oppskrifter = repository.findByErOffentligTrueOrderByIdDesc(side);
         }
         if ("eldst".equals(sorter)) Collections.reverse(oppskrifter);
         boolean visTrending = (q == null || q.isBlank()) && (kategori == null || kategori.isBlank());
         if (visTrending) {
             List<Long> trendingIds = likeRepository.findTopLikedOppskriftIds(PageRequest.of(0, 6));
-            List<Oppskrift> trending = trendingIds.stream()
-                .map(tid -> repository.findById(tid).orElse(null))
-                .filter(o -> o != null && o.isErOffentlig())
+            List<Oppskrift> trending = repository.findByIdIn(trendingIds).stream()
+                .filter(Oppskrift::isErOffentlig)
                 .collect(Collectors.toList());
             model.addAttribute("trending", trending);
         } else {
