@@ -36,6 +36,10 @@ public class BrukerService {
         return brukerRepository.findByFulltNavnContainingIgnoreCase(navn);
     }
 
+    public List<Bruker> findAllByIds(java.util.Collection<Long> ids) {
+        return brukerRepository.findAllById(ids);
+    }
+
     @Transactional
     public void slettBruker(Long brukerId) {
         // Samlinger

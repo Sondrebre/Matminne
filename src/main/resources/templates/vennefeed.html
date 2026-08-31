@@ -315,7 +315,7 @@
                     <a href="/vennefeed?sok=">Se alle</a>
                 </div>
                 <div th:if="${venneListe != null}" th:each="v : ${venneListe}">
-                    <a th:href="@{'/profil/' + ${v.epost}}" class="venn-item">
+                    <a th:href="@{'/profil/' + ${v.id}}" class="venn-item">
                         <img th:if="${v.bilde != null}" class="venn-avatar" th:src="${v.bilde}" alt="">
                         <div th:unless="${v.bilde != null}" class="venn-avatar"
                              th:text="${#strings.substring(v.navn, 0, 1)}">?</div>
@@ -354,17 +354,17 @@
                     <img th:if="${bruker.bildeUrl != null}" class="person-avatar"
                          th:src="${bruker.bildeUrl}" alt="" style="object-fit:cover;">
                     <div th:unless="${bruker.bildeUrl != null}" class="person-avatar"
-                         th:text="${#strings.substring(bruker.fulltNavn, 0, 1)}">N</div>
+                         th:text="${#strings.substring(bruker.visningsnavn, 0, 1)}">N</div>
                     <div style="flex:1;min-width:0;">
-                        <p class="person-name" th:text="${bruker.fulltNavn}">Navn</p>
+                        <p class="person-name" th:text="${bruker.visningsnavn}">Navn</p>
                         <p class="person-sub">MatMinne-kokk</p>
                     </div>
                     <form th:if="${fulgteBrukerIds != null and fulgteBrukerIds.contains(bruker.id)}"
-                          th:action="@{'/slutt-å-følge/' + ${bruker.epost}}" method="post">
+                          th:action="@{'/slutt-å-følge/' + ${bruker.id}}" method="post">
                         <button type="submit" class="btn-person-unfollow">Følger</button>
                     </form>
                     <form th:unless="${fulgteBrukerIds != null and fulgteBrukerIds.contains(bruker.id)}"
-                          th:action="@{'/følg/' + ${bruker.epost}}" method="post">
+                          th:action="@{'/følg/' + ${bruker.id}}" method="post">
                         <button type="submit" class="btn-person-follow">Følg</button>
                     </form>
                 </div>
@@ -384,13 +384,13 @@
             <div th:each="o : ${oppskrifter}" class="post-card">
                 <!-- Header -->
                 <div class="post-header">
-                    <a th:href="@{'/profil/' + ${o.brukerEpost}}" class="post-user">
-                        <img th:if="${brukerBildeMap != null and brukerBildeMap.containsKey(o.brukerEpost)}"
+                    <a th:href="@{'/profil/' + ${o.brukerId != null ? o.brukerId : o.brukerEpost}}" class="post-user">
+                        <img th:if="${brukerBildeMap != null and o.brukerEpost != null and brukerBildeMap.containsKey(o.brukerEpost)}"
                              class="post-avatar" th:src="${brukerBildeMap.get(o.brukerEpost)}" alt="" style="object-fit:cover;">
-                        <div th:unless="${brukerBildeMap != null and brukerBildeMap.containsKey(o.brukerEpost)}"
-                             class="post-avatar" th:text="${#strings.substring(o.brukerNavn, 0, 1)}">U</div>
+                        <div th:unless="${brukerBildeMap != null and o.brukerEpost != null and brukerBildeMap.containsKey(o.brukerEpost)}"
+                             class="post-avatar" th:text="${#strings.substring(brukerNavnMap != null and o.brukerId != null and brukerNavnMap.containsKey(o.brukerId) ? brukerNavnMap[o.brukerId] : o.brukerNavn, 0, 1)}">U</div>
                         <div>
-                            <div class="post-username" th:text="${o.brukerNavn}">Navn</div>
+                            <div class="post-username" th:text="${brukerNavnMap != null and o.brukerId != null and brukerNavnMap.containsKey(o.brukerId) ? brukerNavnMap[o.brukerId] : o.brukerNavn}">Navn</div>
                             <div class="post-time"
                                  th:text="${o.datoOpprettet != null ? #temporals.format(o.datoOpprettet, 'dd.MM.yy') : 'nylig'}">nylig</div>
                         </div>
@@ -483,14 +483,14 @@
             <div class="sidebar-card" th:if="${!oppskrifter.isEmpty()}">
                 <div class="sidebar-title"><span>🔥 Siste aktivitet</span></div>
                 <div th:each="o, stat : ${oppskrifter}" th:if="${stat.index < 3}" class="activity-item">
-                    <img th:if="${brukerBildeMap != null and brukerBildeMap.containsKey(o.brukerEpost)}"
+                    <img th:if="${brukerBildeMap != null and o.brukerEpost != null and brukerBildeMap.containsKey(o.brukerEpost)}"
                          class="activity-av" th:src="${brukerBildeMap.get(o.brukerEpost)}" alt="">
-                    <div th:unless="${brukerBildeMap != null and brukerBildeMap.containsKey(o.brukerEpost)}"
+                    <div th:unless="${brukerBildeMap != null and o.brukerEpost != null and brukerBildeMap.containsKey(o.brukerEpost)}"
                          class="activity-av"
                          style="background:linear-gradient(135deg,var(--mat-gronn),var(--mat-mork));color:white;font-weight:800;font-size:.7rem;display:flex;align-items:center;justify-content:center;"
-                         th:text="${#strings.substring(o.brukerNavn, 0, 1)}">?</div>
+                         th:text="${#strings.substring(brukerNavnMap != null and o.brukerId != null and brukerNavnMap.containsKey(o.brukerId) ? brukerNavnMap[o.brukerId] : o.brukerNavn, 0, 1)}">?</div>
                     <div class="activity-txt">
-                        <strong th:text="${o.brukerNavn}">Navn</strong> delte en oppskrift
+                        <strong th:text="${brukerNavnMap != null and o.brukerId != null and brukerNavnMap.containsKey(o.brukerId) ? brukerNavnMap[o.brukerId] : o.brukerNavn}">Navn</strong> delte en oppskrift
                         <div class="activity-time"
                              th:text="${o.datoOpprettet != null ? #temporals.format(o.datoOpprettet, 'dd.MM') : ''}"></div>
                     </div>

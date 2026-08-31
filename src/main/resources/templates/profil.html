@@ -274,12 +274,12 @@
 
                     <div class="profile-actions">
                         <th:block th:if="${!erEgenProfil}">
-                            <form th:if="${!følgerAllerede}" th:action="@{'/følg/' + ${profilEpost}}" method="post">
+                            <form th:if="${!følgerAllerede}" th:action="@{'/følg/' + ${profilId}}" method="post">
                                 <button type="submit" class="btn-follow">
                                     <i class="fa-solid fa-user-plus"></i> Følg kokk
                                 </button>
                             </form>
-                            <form th:if="${følgerAllerede}" th:action="@{'/slutt-å-følge/' + ${profilEpost}}" method="post">
+                            <form th:if="${følgerAllerede}" th:action="@{'/slutt-å-følge/' + ${profilId}}" method="post">
                                 <button type="submit" class="btn-unfollow">
                                     <i class="fa-solid fa-user-minus"></i> Slutt å følge
                                 </button>
@@ -429,7 +429,7 @@
 
     <script th:inline="javascript">
         // ── Sosial modal (følgere / følger) ──
-        const profilEpost = /*[[${profilEpost}]]*/ '';
+        const profilId = /*[[${profilId}]]*/ null;
 
         async function åpneSosialModal(type) {
             const modal   = document.getElementById('sosialModal');
@@ -441,7 +441,7 @@
             modal.classList.add('active');
 
             try {
-                const res  = await fetch(`/api/profil/${encodeURIComponent(profilEpost)}/${type}`);
+                const res  = await fetch(`/api/profil/${profilId}/${type}`);
                 const data = await res.json();
 
                 if (!data.length) {
@@ -453,7 +453,7 @@
                 }
 
                 innhold.innerHTML = data.map(b => `
-                    <a href="/profil/${encodeURIComponent(b.epost)}"
+                    <a href="/profil/${b.id}"
                        onclick="document.getElementById('sosialModal').classList.remove('active')"
                        style="display:flex;align-items:center;gap:14px;padding:12px 12px;
                               border-radius:14px;text-decoration:none;transition:.15s;"

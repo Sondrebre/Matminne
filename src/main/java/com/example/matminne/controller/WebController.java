@@ -71,6 +71,7 @@ public class WebController {
             Bruker meg = brukerService.finnVedEpost(epost);
             model.addAttribute("brukernavn", meg != null ? meg.getVisningsnavn() : principal.getAttribute("name"));
             model.addAttribute("brukerEpost", epost);
+            model.addAttribute("brukerId", meg != null ? meg.getId() : null);
             model.addAttribute("innlogget", true);
             if (meg != null) {
                 String profilBilde = (meg.getBildeUrl() != null && !meg.getBildeUrl().isBlank())
@@ -288,6 +289,16 @@ public class WebController {
                 .forEach(row -> oppdagLikeMap.put((Long) row[0], (Long) row[1]));
         }
         model.addAttribute("likeAntallMap", oppdagLikeMap);
+
+        // Kallenavn-kart: brukerId → visningsnavn
+        Set<Long> brukerIder = oppskrifter.stream().map(Oppskrift::getBrukerId)
+                .filter(id -> id != null).collect(Collectors.toSet());
+        Map<Long, String> brukerNavnMap = new HashMap<>();
+        if (!brukerIder.isEmpty()) {
+            brukerService.findAllByIds(brukerIder)
+                    .forEach(b -> brukerNavnMap.put(b.getId(), b.getVisningsnavn()));
+        }
+        model.addAttribute("brukerNavnMap", brukerNavnMap);
         return "oppdag";
     }
 
@@ -320,26 +331,33 @@ public class WebController {
                 kommentarRepository.countByOppskriftIdIn(feedIds)
                     .forEach(row -> kommentarAntallMap.put((Long) row[0], (Long) row[1]));
 
-                // Brukerbilde: én spørring per unik bruker (ikke per oppskrift)
-                oppskrifter.stream()
-                    .filter(o -> o.getBrukerEpost() != null && !brukerBildeMap.containsKey(o.getBrukerEpost()))
-                    .map(o -> o.getBrukerEpost()).distinct().forEach(epost -> {
-                        Bruker b = brukerService.finnVedEpost(epost);
-                        if (b != null && b.getBildeUrl() != null) brukerBildeMap.put(epost, b.getBildeUrl());
-                    });
+                // Bulk-hent alle unike forfattere (kallenavn + bilde)
+                Set<Long> feedBrukerIder = oppskrifter.stream().map(Oppskrift::getBrukerId)
+                        .filter(id -> id != null).collect(Collectors.toSet());
+                Map<Long, String> brukerNavnMap = new HashMap<>();
+                Map<Long, String> brukerBildeById = new HashMap<>();
+                brukerService.findAllByIds(feedBrukerIder).forEach(b -> {
+                    brukerNavnMap.put(b.getId(), b.getVisningsnavn());
+                    if (b.getBildeUrl() != null) {
+                        brukerBildeById.put(b.getId(), b.getBildeUrl());
+                        brukerBildeMap.put(b.getEpost(), b.getBildeUrl());
+                    }
+                });
+
                 model.addAttribute("likeAntallMap", likeAntallMap);
                 model.addAttribute("erLiktMap", erLiktMap);
                 model.addAttribute("kommentarAntallMap", kommentarAntallMap);
+                model.addAttribute("brukerNavnMap", brukerNavnMap);
 
                 // Unik liste av venner som har postet (for venstre sidebar)
-                List<Map<String,String>> venneListe = new java.util.ArrayList<>();
-                java.util.Set<String> seenEmails = new java.util.LinkedHashSet<>();
+                List<Map<String,Object>> venneListe = new java.util.ArrayList<>();
+                java.util.Set<Long> seenIds = new java.util.LinkedHashSet<>();
                 for (com.example.matminne.model.Oppskrift o : oppskrifter) {
-                    if (o.getBrukerEpost() != null && seenEmails.add(o.getBrukerEpost())) {
-                        Map<String,String> v = new HashMap<>();
-                        v.put("navn", o.getBrukerNavn());
-                        v.put("epost", o.getBrukerEpost());
-                        v.put("bilde", brukerBildeMap.get(o.getBrukerEpost()));
+                    if (o.getBrukerId() != null && seenIds.add(o.getBrukerId())) {
+                        Map<String,Object> v = new HashMap<>();
+                        v.put("navn", brukerNavnMap.getOrDefault(o.getBrukerId(), o.getBrukerNavn()));
+                        v.put("id", o.getBrukerId());
+                        v.put("bilde", brukerBildeById.get(o.getBrukerId()));
                         venneListe.add(v);
                     }
                 }
@@ -357,10 +375,16 @@ public class WebController {
         return "vennefeed";
     }
 
-    @GetMapping("/profil/{epost}")
-    public String visProfil(@PathVariable String epost, Model model,
+    /** Slår opp bruker via ID (ny URL) eller e-post (gammel URL, bakoverkompatibilitet). */
+    private Bruker finnProfilBruker(String ref) {
+        try { return brukerService.findById(Long.parseLong(ref)); }
+        catch (NumberFormatException e) { return brukerService.finnVedEpost(ref); }
+    }
+
+    @GetMapping("/profil/{ref}")
+    public String visProfil(@PathVariable String ref, Model model,
                             @AuthenticationPrincipal OAuth2User principal) {
-        Bruker profilBruker = brukerService.finnVedEpost(epost);
+        Bruker profilBruker = finnProfilBruker(ref);
         if (profilBruker == null) return "redirect:/oppdag";
         List<Oppskrift> offentlige = repository.findByBrukerId(profilBruker.getId())
                 .stream().filter(Oppskrift::isErOffentlig).collect(Collectors.toList());
@@ -372,10 +396,14 @@ public class WebController {
         }
         long antallFølgere = vennskapRepository.countByVennId(profilBruker.getId());
         long antallFølger  = vennskapRepository.findByBrukerId(profilBruker.getId()).size();
-        model.addAttribute("erEgenProfil", principal != null && epost.equals(principal.getAttribute("email")));
+        boolean erEgenProfil = principal != null &&
+                profilBruker.getEpost().equals(principal.getAttribute("email"));
+        model.addAttribute("erEgenProfil", erEgenProfil);
         model.addAttribute("følgerAllerede", følgerAllerede);
-        model.addAttribute("profilNavn", profilBruker.getFulltNavn());
-        model.addAttribute("profilEpost", epost);
+        model.addAttribute("profilNavn", profilBruker.getVisningsnavn());
+        model.addAttribute("profilId", profilBruker.getId());
+        model.addAttribute("profilEpost", profilBruker.getEpost());
+        model.addAttribute("profilKontaktEpost", profilBruker.getKontaktEpost());
         model.addAttribute("profilBrukerBilde", profilBruker.getBildeUrl());
         model.addAttribute("oppskrifter", offentlige);
         model.addAttribute("antallFølgere", antallFølgere);
@@ -384,18 +412,18 @@ public class WebController {
         return "profil";
     }
 
-    @GetMapping("/api/profil/{epost}/følgere")
+    @GetMapping("/api/profil/{ref}/følgere")
     @ResponseBody
-    public ResponseEntity<List<Map<String, Object>>> hentFølgere(@PathVariable String epost) {
-        Bruker bruker = brukerService.finnVedEpost(epost);
+    public ResponseEntity<List<Map<String, Object>>> hentFølgere(@PathVariable String ref) {
+        Bruker bruker = finnProfilBruker(ref);
         if (bruker == null) return ResponseEntity.notFound().build();
         List<Map<String, Object>> liste = vennskapRepository.findByVennId(bruker.getId())
                 .stream()
                 .map(v -> {
                     Bruker f = brukerService.findById(v.getBrukerId());
                     Map<String, Object> m = new HashMap<>();
-                    m.put("navn",  f != null ? f.getFulltNavn() : "Ukjent");
-                    m.put("epost", f != null ? f.getEpost() : "");
+                    m.put("navn",  f != null ? f.getVisningsnavn() : "Ukjent");
+                    m.put("id",    f != null ? f.getId() : 0L);
                     m.put("bilde", f != null ? f.getBildeUrl() : null);
                     return m;
                 })
@@ -403,18 +431,18 @@ public class WebController {
         return ResponseEntity.ok(liste);
     }
 
-    @GetMapping("/api/profil/{epost}/følger")
+    @GetMapping("/api/profil/{ref}/følger")
     @ResponseBody
-    public ResponseEntity<List<Map<String, Object>>> hentFølger(@PathVariable String epost) {
-        Bruker bruker = brukerService.finnVedEpost(epost);
+    public ResponseEntity<List<Map<String, Object>>> hentFølger(@PathVariable String ref) {
+        Bruker bruker = finnProfilBruker(ref);
         if (bruker == null) return ResponseEntity.notFound().build();
         List<Map<String, Object>> liste = vennskapRepository.findByBrukerId(bruker.getId())
                 .stream()
                 .map(v -> {
                     Bruker f = brukerService.findById(v.getVennId());
                     Map<String, Object> m = new HashMap<>();
-                    m.put("navn",  f != null ? f.getFulltNavn() : "Ukjent");
-                    m.put("epost", f != null ? f.getEpost() : "");
+                    m.put("navn",  f != null ? f.getVisningsnavn() : "Ukjent");
+                    m.put("id",    f != null ? f.getId() : 0L);
                     m.put("bilde", f != null ? f.getBildeUrl() : null);
                     return m;
                 })
@@ -423,12 +451,12 @@ public class WebController {
     }
 
     @Transactional
-    @PostMapping("/følg/{vennEpost}")
-    public String følgBruker(@PathVariable String vennEpost,
+    @PostMapping("/følg/{id}")
+    public String følgBruker(@PathVariable Long id,
                              @AuthenticationPrincipal OAuth2User principal) {
-        if (principal == null) return "redirect:/profil/" + vennEpost;
+        if (principal == null) return "redirect:/profil/" + id;
         Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
-        Bruker denAndre = brukerService.finnVedEpost(vennEpost);
+        Bruker denAndre = brukerService.findById(id);
         if (meg != null && denAndre != null && !meg.getId().equals(denAndre.getId())) {
             if (!vennskapRepository.existsByBrukerIdAndVennId(meg.getId(), denAndre.getId())) {
                 Vennskap v = new Vennskap();
@@ -436,24 +464,24 @@ public class WebController {
                 v.setVennId(denAndre.getId());
                 vennskapRepository.save(v);
                 lagrVarsel(denAndre.getId(),
-                    meg.getFulltNavn() + " begynte å følge deg!",
-                    "/profil/" + principal.getAttribute("email"));
+                    meg.getVisningsnavn() + " begynte å følge deg!",
+                    "/profil/" + meg.getId());
             }
         }
-        return "redirect:/profil/" + vennEpost;
+        return "redirect:/profil/" + id;
     }
 
-    @PostMapping("/slutt-å-følge/{vennEpost}")
-    public String sluttÅFølge(@PathVariable String vennEpost,
+    @PostMapping("/slutt-å-følge/{id}")
+    public String sluttÅFølge(@PathVariable Long id,
                               @AuthenticationPrincipal OAuth2User principal) {
-        if (principal == null) return "redirect:/profil/" + vennEpost;
+        if (principal == null) return "redirect:/profil/" + id;
         Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
-        Bruker denAndre = brukerService.finnVedEpost(vennEpost);
+        Bruker denAndre = brukerService.findById(id);
         if (meg != null && denAndre != null) {
             Vennskap v = vennskapRepository.findByBrukerIdAndVennId(meg.getId(), denAndre.getId());
             if (v != null) vennskapRepository.delete(v);
         }
-        return "redirect:/profil/" + vennEpost;
+        return "redirect:/profil/" + id;
     }
 
     private static final int GRATIS_GRENSE = 10;
@@ -468,7 +496,7 @@ public class WebController {
                     return "redirect:/abonnement?grense=true";
                 oppskrift.setBrukerId(meg.getId());
                 oppskrift.setBrukerEpost(meg.getEpost());
-                oppskrift.setBrukerNavn(principal.getAttribute("name"));
+                oppskrift.setBrukerNavn(meg.getVisningsnavn());
                 if (oppskrift.getBildeUrl() == null || oppskrift.getBildeUrl().isEmpty())
                     oppskrift.setBildeUrl(DEFAULT_IMAGE);
                 repository.save(oppskrift);
@@ -519,7 +547,7 @@ public class WebController {
                 kopi.setVanskelighet(original.getVanskelighet());
                 kopi.setBrukerId(meg.getId());
                 kopi.setBrukerEpost(meg.getEpost());
-                kopi.setBrukerNavn(meg.getFulltNavn());
+                kopi.setBrukerNavn(meg.getVisningsnavn());
                 kopi.setErOffentlig(false);
                 repository.save(kopi);
             }
@@ -813,8 +841,9 @@ public class WebController {
         if (meg != null && nyBildeUrl != null && !nyBildeUrl.isBlank()) {
             meg.setBildeUrl(nyBildeUrl);
             brukerService.lagreBruker(meg);
+            return "redirect:/profil/" + meg.getId();
         }
-        return "redirect:/profil/" + epost;
+        return "redirect:/innstillinger";
     }
 
     @PostMapping("/oppdater-bio")
@@ -826,16 +855,17 @@ public class WebController {
         if (meg != null) {
             meg.setBio(bio != null ? bio.trim() : "");
             brukerService.lagreBruker(meg);
+            return "redirect:/profil/" + meg.getId();
         }
-        return "redirect:/profil/" + epost;
+        return "redirect:/innstillinger";
     }
 
     @GetMapping("/sok")
     public String globalSok(@RequestParam(required = false) String q, Model model,
                             @AuthenticationPrincipal OAuth2User principal) {
-        Map<String, String> treff = new HashMap<>();
+        Map<String, Long> treff = new HashMap<>();
         if (q != null && !q.isBlank()) {
-            brukerService.sokEtterNavn(q).forEach(b -> treff.put(b.getFulltNavn(), b.getEpost()));
+            brukerService.sokEtterNavn(q).forEach(b -> treff.put(b.getVisningsnavn(), b.getId()));
         }
         model.addAttribute("query", q != null ? q : "");
         model.addAttribute("treff", treff);

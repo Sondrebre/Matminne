@@ -616,7 +616,7 @@
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider my-1"></li>
-                                    <li><a class="dropdown-item" th:href="@{'/profil/' + ${brukerEpost}}">
+                                    <li><a class="dropdown-item" th:href="@{'/profil/' + ${brukerId != null ? brukerId : brukerEpost}}">
                                         <i class="fa-regular fa-circle-user"></i> Min Profil</a></li>
                                     <li>
                                         <a class="dropdown-item" href="/varsler">
@@ -684,7 +684,7 @@
 
                     <div class="dw-divider"></div>
                     <div class="dw-section-label">Konto</div>
-                    <a th:href="@{'/profil/' + ${brukerEpost}}" class="dw-item"><i class="fa-regular fa-circle-user"></i> Min Profil</a>
+                    <a th:href="@{'/profil/' + ${brukerId != null ? brukerId : brukerEpost}}" class="dw-item"><i class="fa-regular fa-circle-user"></i> Min Profil</a>
                     <a href="/varsler" class="dw-item">
                         <i class="fa-solid fa-bell"></i> Varsler
                         <span th:if="${ulesVarsler != null and ulesVarsler > 0}" th:text="${ulesVarsler}"
@@ -696,7 +696,7 @@
 
                 <!-- Footer -->
                 <div class="dw-footer">
-                    <a th:href="@{'/profil/' + ${brukerEpost}}" class="dw-profil-btn">
+                    <a th:href="@{'/profil/' + ${brukerId != null ? brukerId : brukerEpost}}" class="dw-profil-btn">
                         <i class="fa-regular fa-circle-user" style="font-size:1.1rem;"></i>
                         <span>Min Profil</span>
                     </a>
@@ -1055,6 +1055,62 @@
                     el.classList.add('fade-up');
                 });
             });
+        </script>
+
+        <!-- Cookie/informasjonskapsel-banner (GDPR / ekomloven) -->
+        <div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:3000;
+             padding:0 16px calc(16px + env(safe-area-inset-bottom,0px));pointer-events:none;">
+            <div style="max-width:720px;margin:0 auto;background:white;border-radius:20px 20px 0 0;
+                 box-shadow:0 -4px 40px rgba(0,0,0,.14);border:1px solid #f1f5f9;border-bottom:none;
+                 padding:20px 20px 18px;pointer-events:all;">
+                <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:200px;">
+                        <div style="font-weight:800;font-size:.93rem;color:#0f172a;margin-bottom:5px;">
+                            🍪 Informasjonskapsler
+                        </div>
+                        <div style="font-size:.8rem;color:#64748b;line-height:1.55;">
+                            MatMinne bruker nødvendige informasjonskapsler for å holde deg innlogget og huske preferanser.
+                            Vi bruker ikke sporingskapsler eller reklame.
+                            <a href="/personvern" style="color:var(--mat-gronn-m);font-weight:600;">Les mer</a>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;margin-top:2px;">
+                        <button onclick="avslaaCookies()" style="background:#f1f5f9;color:#64748b;border:none;
+                                padding:9px 16px;border-radius:11px;font-weight:700;font-size:.82rem;
+                                cursor:pointer;font-family:inherit;white-space:nowrap;">
+                            Bare nødvendige
+                        </button>
+                        <button onclick="aksepterCookies()" style="background:var(--mat-gronn);color:white;border:none;
+                                padding:9px 18px;border-radius:11px;font-weight:800;font-size:.82rem;
+                                cursor:pointer;font-family:inherit;white-space:nowrap;
+                                box-shadow:0 4px 12px rgba(34,197,94,.3);">
+                            Godta
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            (function() {
+                if (!localStorage.getItem('cookieValgTatt')) {
+                    var b = document.getElementById('cookieBanner');
+                    if (b) {
+                        b.style.display = 'block';
+                        // Hold banner over bottom nav on mobile
+                        if (window.innerWidth <= 768) b.style.paddingBottom = 'calc(82px + env(safe-area-inset-bottom,0px))';
+                    }
+                }
+            })();
+            function aksepterCookies() {
+                localStorage.setItem('cookieValgTatt', 'godtatt');
+                var b = document.getElementById('cookieBanner');
+                if (b) { b.style.opacity='0'; b.style.transition='opacity .3s'; setTimeout(function(){b.remove();},320); }
+            }
+            function avslaaCookies() {
+                localStorage.setItem('cookieValgTatt', 'avslatt');
+                var b = document.getElementById('cookieBanner');
+                if (b) { b.style.opacity='0'; b.style.transition='opacity .3s'; setTimeout(function(){b.remove();},320); }
+            }
         </script>
 
         <style>

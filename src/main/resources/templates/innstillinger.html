@@ -317,7 +317,7 @@
                         <div class="s-row-label">Min profil</div>
                         <div class="s-row-sub">Se og rediger det andre ser</div>
                     </div>
-                    <a th:href="@{'/profil/' + ${epost}}" class="info-chip" style="text-decoration:none;color:#64748b;transition:.2s;"
+                    <a th:href="@{'/profil/' + ${brukerId != null ? brukerId : epost}}" class="info-chip" style="text-decoration:none;color:#64748b;transition:.2s;"
                        onmouseover="this.style.color='var(--mat-gronn)'" onmouseout="this.style.color='#64748b'">
                         <i class="fa-solid fa-arrow-right"></i> Gå til profil
                     </a>

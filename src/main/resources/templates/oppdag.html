@@ -327,9 +327,9 @@
             <div th:each="o : ${oppskrifter}" class="kort">
                 <div class="kort-img">
                     <img th:src="${o.bildeUrl != null && o.bildeUrl != '' ? o.bildeUrl : 'https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&w=600&q=70'}" alt="" loading="lazy" decoding="async">
-                    <a th:href="@{'/profil/' + ${o.brukerEpost}}" class="chef-badge">
+                    <a th:href="@{'/profil/' + ${o.brukerId != null ? o.brukerId : o.brukerEpost}}" class="chef-badge">
                         <i class="fa-solid fa-user"></i>
-                        <span th:text="${o.brukerNavn}">Kokk</span>
+                        <span th:text="${brukerNavnMap != null and o.brukerId != null and brukerNavnMap.containsKey(o.brukerId) ? brukerNavnMap[o.brukerId] : o.brukerNavn}">Kokk</span>
                     </a>
                     <span th:if="${o.kategori != null}" class="kat-badge" th:text="${o.kategori}"></span>
                 </div>
