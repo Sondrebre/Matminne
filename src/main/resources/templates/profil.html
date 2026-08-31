@@ -427,7 +427,7 @@
     <div th:replace="~{fragments :: bottom_nav}"></div>
     <div th:replace="~{fragments :: scripts}"></div>
 
-    <script>
+    <script th:inline="javascript">
         // ── Sosial modal (følgere / følger) ──
         const profilEpost = /*[[${profilEpost}]]*/ '';
 
