@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="nb">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Velg kallenavn | MatMinne</title>
+    <style>
+        body {
+            background: var(--bakgrunn);
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            padding-top: calc(20px + env(safe-area-inset-top, 0px));
+            padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+        }
+
+        .kallenavn-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 8px 40px rgba(0,0,0,.10);
+            max-width: 460px;
+            width: 100%;
+            padding: 40px 36px 32px;
+            text-align: center;
+        }
+        @media (max-width: 480px) { .kallenavn-card { padding: 32px 22px 24px; border-radius: 20px; } }
+
+        .kallenavn-logo {
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, #14532d, #22c55e);
+            border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            box-shadow: 0 4px 16px rgba(34,197,94,.35);
+        }
+
+        .kallenavn-card h1 {
+            font-size: 1.5rem; font-weight: 900; color: #0f172a;
+            letter-spacing: -1px; margin: 0 0 6px;
+        }
+
+        .kallenavn-card .subtitle {
+            font-size: .88rem; color: #64748b; margin: 0 0 28px; line-height: 1.5;
+        }
+
+        .input-gruppe {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .input-gruppe label {
+            display: block;
+            font-size: .82rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 8px;
+            letter-spacing: .3px;
+        }
+
+        .input-gruppe input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-family: inherit;
+            color: #0f172a;
+            background: #f8fafc;
+            box-sizing: border-box;
+            transition: border-color .2s, box-shadow .2s;
+            outline: none;
+        }
+
+        .input-gruppe input:focus {
+            border-color: #22c55e;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(34,197,94,.15);
+        }
+
+        .input-hint {
+            font-size: .76rem;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        .btn-lagre {
+            width: 100%;
+            background: linear-gradient(135deg, #16a34a, #22c55e);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 16px;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            letter-spacing: -.3px;
+            transition: opacity .15s, transform .1s;
+            box-shadow: 0 4px 16px rgba(34,197,94,.4);
+            font-family: inherit;
+        }
+
+        .btn-lagre:active { transform: scale(.98); opacity: .9; }
+        .btn-lagre:disabled { opacity: .5; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+<div class="kallenavn-card">
+    <div class="kallenavn-logo">👤</div>
+    <h1>Hva vil du hete?</h1>
+    <p class="subtitle">Velg et kallenavn som vises til andre. Du kan endre det når som helst i innstillingene.</p>
+
+    <form th:action="@{/velg-kallenavn}" method="post" onsubmit="return valider()">
+        <div class="input-gruppe">
+            <label for="kallenavn">Kallenavn</label>
+            <input type="text" id="kallenavn" name="kallenavn"
+                   th:value="${forslag}"
+                   maxlength="50" autocomplete="off"
+                   placeholder="Skriv inn kallenavn..." required>
+            <p class="input-hint">Maks 50 tegn. Vises på profil, oppskrifter og i feeden.</p>
+        </div>
+
+        <button type="submit" class="btn-lagre" id="lagreBtn">
+            Fortsett til MatMinne →
+        </button>
+    </form>
+</div>
+
+<script>
+function valider() {
+    const v = document.getElementById('kallenavn').value.trim();
+    if (!v) { alert('Skriv inn et kallenavn.'); return false; }
+    document.getElementById('lagreBtn').disabled = true;
+    document.getElementById('lagreBtn').textContent = 'Lagrer…';
+    return true;
+}
+</script>
+
+<div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

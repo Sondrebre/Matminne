@@ -233,8 +233,8 @@
                 </div>
                 <div class="s-row">
                     <div class="s-row-left">
-                        <div class="s-row-label" th:text="${navn}">Navn</div>
-                        <div class="s-row-sub">Hentet fra Google-kontoen din</div>
+                        <div class="s-row-label" th:text="${kallenavn != null and !#strings.isEmpty(kallenavn) ? kallenavn : navn}">Navn</div>
+                        <div class="s-row-sub" th:text="${kallenavn != null and !#strings.isEmpty(kallenavn) ? 'Kallenavn · ' + navn : 'Hentet fra Google-kontoen din'}">Hentet fra Google-kontoen din</div>
                     </div>
                     <img th:if="${bilde != null and !#strings.isEmpty(bilde)}"
                          th:src="${bilde}" class="settings-avatar" alt="">
@@ -244,10 +244,56 @@
                 <div class="s-row">
                     <div class="s-row-left">
                         <div class="s-row-label">E-postadresse</div>
-                        <div class="s-row-sub" th:text="${epost}">epost@eksempel.no</div>
+                        <div class="s-row-sub"
+                             th:text="${kontaktEpost != null and !#strings.isEmpty(kontaktEpost) ? kontaktEpost : epost}">epost@eksempel.no</div>
+                        <div th:if="${kontaktEpost != null and !#strings.isEmpty(kontaktEpost)}"
+                             style="font-size:.72rem;color:#94a3b8;margin-top:2px;"
+                             th:text="'Innlogging: ' + ${epost}"></div>
                     </div>
                     <span class="info-chip">Google</span>
                 </div>
+            </div>
+
+            <!-- ENDRE PROFIL -->
+            <div class="s-card">
+                <div class="s-card-header">
+                    <p class="s-card-title">Endre profil</p>
+                </div>
+                <form th:action="@{/endre-profil}" method="post" style="padding: 20px 24px; display: flex; flex-direction: column; gap: 16px;">
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:700;color:#475569;margin-bottom:7px;letter-spacing:.3px;">
+                            Kallenavn
+                        </label>
+                        <input type="text" name="kallenavn" th:value="${kallenavn}" maxlength="50"
+                               placeholder="Ditt kallenavn..."
+                               style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:12px;
+                                      font-size:.95rem;font-family:inherit;color:#0f172a;background:#f8fafc;
+                                      box-sizing:border-box;outline:none;transition:border-color .2s,box-shadow .2s;"
+                               onfocus="this.style.borderColor='#22c55e';this.style.boxShadow='0 0 0 3px rgba(34,197,94,.15)';this.style.background='white'"
+                               onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';this.style.background='#f8fafc'">
+                        <p style="font-size:.75rem;color:#94a3b8;margin:5px 0 0;">Vises på profil og i feeden i stedet for Google-navnet ditt.</p>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:700;color:#475569;margin-bottom:7px;letter-spacing:.3px;">
+                            Kontakt-e-post <span style="font-weight:400;color:#94a3b8;">(valgfri)</span>
+                        </label>
+                        <input type="email" name="kontaktEpost" th:value="${kontaktEpost}" maxlength="200"
+                               placeholder="epost@eksempel.no"
+                               style="width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:12px;
+                                      font-size:.95rem;font-family:inherit;color:#0f172a;background:#f8fafc;
+                                      box-sizing:border-box;outline:none;transition:border-color .2s,box-shadow .2s;"
+                               onfocus="this.style.borderColor='#22c55e';this.style.boxShadow='0 0 0 3px rgba(34,197,94,.15)';this.style.background='white'"
+                               onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none';this.style.background='#f8fafc'">
+                        <p style="font-size:.75rem;color:#94a3b8;margin:5px 0 0;">Alternativ e-post som vises på profilen din. Pålogging bruker fortsatt Google.</p>
+                    </div>
+                    <button type="submit"
+                            style="align-self:flex-start;background:linear-gradient(135deg,#16a34a,#22c55e);color:white;
+                                   border:none;border-radius:12px;padding:11px 22px;font-size:.9rem;font-weight:800;
+                                   cursor:pointer;font-family:inherit;transition:.15s;box-shadow:0 4px 14px rgba(34,197,94,.3);"
+                            onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+                        Lagre endringer
+                    </button>
+                </form>
             </div>
 
             <!-- KONTO -->

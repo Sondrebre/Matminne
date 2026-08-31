@@ -69,6 +69,12 @@ public class TilgangsSjekk implements AuthenticationSuccessHandler {
             return;
         }
 
+        // Krev kallenavn ved første innlogging (etter vilkår)
+        if (meg.getKallenavn() == null || meg.getKallenavn().isBlank()) {
+            response.sendRedirect("/velg-kallenavn");
+            return;
+        }
+
         response.sendRedirect("/kokebok");
     }
 }

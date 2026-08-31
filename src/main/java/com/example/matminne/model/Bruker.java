@@ -29,6 +29,12 @@ public class Bruker {
     @Column(length = 300)
     private String bio;
 
+    @Column(length = 50)
+    private String kallenavn;
+
+    @Column(length = 200)
+    private String kontaktEpost;
+
     public Bruker() {}
 
     public Bruker(String fulltNavn, String epost) {
@@ -41,6 +47,16 @@ public class Bruker {
 
     public String getFulltNavn() { return fulltNavn; }
     public void setFulltNavn(String fulltNavn) { this.fulltNavn = fulltNavn; }
+
+    public String getKallenavn() { return kallenavn; }
+    public void setKallenavn(String kallenavn) { this.kallenavn = kallenavn; }
+
+    public String getKontaktEpost() { return kontaktEpost; }
+    public void setKontaktEpost(String kontaktEpost) { this.kontaktEpost = kontaktEpost; }
+
+    public String getVisningsnavn() {
+        return (kallenavn != null && !kallenavn.isBlank()) ? kallenavn : fulltNavn;
+    }
 
     public String getEpost() { return epost; }
     public void setEpost(String epost) { this.epost = epost; }

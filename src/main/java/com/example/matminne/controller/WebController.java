@@ -68,7 +68,7 @@ public class WebController {
     public void leggTilGlobalInfo(Model model, @AuthenticationPrincipal OAuth2User principal) {
         if (principal != null) {
             String epost = principal.getAttribute("email");
-            model.addAttribute("brukernavn", principal.getAttribute("name"));
+            model.addAttribute("brukernavn", meg != null ? meg.getVisningsnavn() : principal.getAttribute("name"));
             model.addAttribute("brukerEpost", epost);
             model.addAttribute("innlogget", true);
             Bruker meg = brukerService.finnVedEpost(epost);
@@ -790,9 +790,17 @@ public class WebController {
     @GetMapping("/innstillinger")
     public String visInnstillinger(@AuthenticationPrincipal OAuth2User principal, Model model) {
         if (principal == null) return "redirect:/";
+        String epost = principal.getAttribute("email");
+        Bruker meg = brukerService.finnVedEpost(epost);
         model.addAttribute("navn", principal.getAttribute("name"));
-        model.addAttribute("epost", principal.getAttribute("email"));
-        model.addAttribute("bilde", principal.getAttribute("picture"));
+        model.addAttribute("epost", epost);
+        String bilde = (meg != null && meg.getBildeUrl() != null && !meg.getBildeUrl().isBlank())
+            ? meg.getBildeUrl() : principal.getAttribute("picture");
+        model.addAttribute("bilde", bilde);
+        if (meg != null) {
+            model.addAttribute("kallenavn", meg.getKallenavn() != null ? meg.getKallenavn() : "");
+            model.addAttribute("kontaktEpost", meg.getKontaktEpost() != null ? meg.getKontaktEpost() : "");
+        }
         return "innstillinger";
     }
 
@@ -1681,8 +1689,56 @@ public class WebController {
         if (meg != null) {
             meg.setHarGodtattVilkar(true);
             brukerService.lagreBruker(meg);
+            if (meg.getKallenavn() == null || meg.getKallenavn().isBlank()) {
+                return "redirect:/velg-kallenavn";
+            }
         }
         return "redirect:/kokebok";
+    }
+
+    @GetMapping("/velg-kallenavn")
+    public String visVelgKallenavn(@AuthenticationPrincipal OAuth2User principal, Model model) {
+        if (principal == null) return "redirect:/";
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg != null && meg.getKallenavn() != null && !meg.getKallenavn().isBlank()) {
+            return "redirect:/kokebok";
+        }
+        String forslag = principal.getAttribute("given_name");
+        if (forslag == null || forslag.isBlank()) {
+            String navn = principal.getAttribute("name");
+            forslag = (navn != null && navn.contains(" ")) ? navn.split(" ")[0] : (navn != null ? navn : "");
+        }
+        model.addAttribute("forslag", forslag);
+        return "velg-kallenavn";
+    }
+
+    @PostMapping("/velg-kallenavn")
+    public String lagreKallenavn(@RequestParam String kallenavn,
+                                  @AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) return "redirect:/";
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg != null && kallenavn != null && !kallenavn.isBlank()) {
+            meg.setKallenavn(kallenavn.trim());
+            brukerService.lagreBruker(meg);
+        }
+        return "redirect:/kokebok";
+    }
+
+    @PostMapping("/endre-profil")
+    public String endreProfil(@RequestParam String kallenavn,
+                               @RequestParam(required = false) String kontaktEpost,
+                               @AuthenticationPrincipal OAuth2User principal) {
+        if (principal == null) return "redirect:/";
+        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        if (meg != null) {
+            if (kallenavn != null && !kallenavn.isBlank()) {
+                meg.setKallenavn(kallenavn.trim());
+            }
+            String ke = (kontaktEpost != null) ? kontaktEpost.trim() : null;
+            meg.setKontaktEpost((ke != null && !ke.isBlank()) ? ke : null);
+            brukerService.lagreBruker(meg);
+        }
+        return "redirect:/innstillinger";
     }
 
     private void lagrVarsel(Long mottakerBrukerId, String tekst, String lenke) {
