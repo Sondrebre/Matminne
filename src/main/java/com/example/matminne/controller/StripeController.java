@@ -61,8 +61,11 @@ public class StripeController {
     @GetMapping("/abonnement")
     public String visAbonnement(Model model, @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) return "redirect:/";
-        Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+        String epost = principal.getAttribute("email");
+        Bruker meg = brukerService.finnVedEpost(epost);
         model.addAttribute("harAbonnement", meg != null && meg.isHarAbonnement());
+        model.addAttribute("brukerEpost", epost);
+        if (meg != null && meg.getBildeUrl() != null) model.addAttribute("profilBilde", meg.getBildeUrl());
         return "abonnement";
     }
 
