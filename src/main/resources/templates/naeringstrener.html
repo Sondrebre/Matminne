@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="~{fragments :: header_links}"></div>
@@ -440,7 +440,7 @@
     <div class="nt-hero-inner">
         <div class="nt-hero-icon">&#x1F9EC;</div>
         <h1>Næringstrener</h1>
-        <p>Sett dine mål, logg måltidene dine og følg fremgangen — og la AI lage skreddersydde dagsmenyer.</p>
+        <p>Sett dine mål, logg måltidene dine og følg fremgangen — og la MatMinne lage skreddersydde dagsmenyer.</p>
     </div>
 </div>
 
@@ -627,22 +627,22 @@
         background: linear-gradient(135deg,#14532d,#166534);
         border-radius:20px; padding:32px 24px; text-align:center; color:white;">
         <div style="font-size:2.5rem;margin-bottom:14px;">&#x1F512;</div>
-        <div style="font-size:1.2rem;font-weight:900;margin-bottom:8px;">AI-abonnement kreves</div>
+        <div style="font-size:1.2rem;font-weight:900;margin-bottom:8px;">MatMinne Premium kreves</div>
         <div style="font-size:.9rem;color:rgba(255,255,255,.72);margin-bottom:22px;line-height:1.6;">
-            AI-dagsmenyer krever aktivt abonnement.<br>Oppgrader for å generere personlige dagsmenyer.
+            MatMinne-dagsmenyer krever aktivt abonnement.<br>Oppgrader for å generere personlige dagsmenyer.
         </div>
         <a href="/abonnement" style="
             display:inline-block; padding:13px 28px;
             background:linear-gradient(135deg,#16a34a,#22c55e);
             color:white;font-weight:800;border-radius:12px;
             text-decoration:none;font-size:.95rem;">
-            &#x2728; Få AI-abonnement
+            &#x2728; Få MatMinne Premium
         </a>
     </div>
 
     <div class="nt-card" id="inputKort" th:if="${harAbonnement}">
         <div class="nt-card-hode">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> AI-dagsmeny — hva er målet ditt i dag?
+            <i class="fa-solid fa-wand-magic-sparkles"></i> MatMinne-dagsmeny — hva er målet ditt i dag?
         </div>
         <div class="nt-card-kropp">
             <textarea id="malInput" placeholder="F.eks: Jeg vil spise 100g protein i dag og gjerne ha noe godt til dessert..."></textarea>

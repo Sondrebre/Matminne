@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="~{fragments :: header_links}"></div>
-    <title>AI Ukesmeny | MatMinne</title>
+    <title>MatMinne Ukesmeny | MatMinne</title>
 
     <style>
         body { background: var(--bakgrunn); }
@@ -282,7 +282,7 @@
 
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner">🤖</div>
-        <div class="loading-title">AI bygger ukesmenyen din…</div>
+        <div class="loading-title">MatMinne bygger ukesmenyen din…</div>
         <div class="loading-sub">Analyserer preferanser, planlegger smarte rester og optimaliserer budsjettet. Ca. 20–30 sek.</div>
         <div class="loading-steps">
             <div class="loading-step aktiv" id="ls1"><div class="ls-dot"></div> Analyserer dine ønsker og mål</div>
@@ -297,9 +297,9 @@
     <div class="ai-hero">
         <div class="ai-hero-glow"></div>
         <div class="container ai-hero-inner">
-            <div class="ai-badge"><i class="fas fa-wand-magic-sparkles"></i> AI-funksjon</div>
-            <h1>Din personlige<br><span>AI-ukesmeny</span></h1>
-            <p>Fortell oss alt om deg — AI lager en komplett ukeplan med smarte rester, budsjettoptimalisering og retter du faktisk liker.</p>
+            <div class="ai-badge"><i class="fas fa-wand-magic-sparkles"></i> MatMinne-funksjon</div>
+            <h1>Din personlige<br><span>MatMinne-ukesmeny</span></h1>
+            <p>Fortell oss alt om deg — MatMinne lager en komplett ukeplan med smarte rester, budsjettoptimalisering og retter du faktisk liker.</p>
         </div>
     </div>
 
@@ -438,7 +438,7 @@
 
                     <div class="field">
                         <label><i class="fas fa-bullseye"></i> Hva er viktigst for deg?</label>
-                        <span class="field-hint">AI tilpasser næringsinnhold og porsjoner etter dette</span>
+                        <span class="field-hint">MatMinne tilpasser næringsinnhold og porsjoner etter dette</span>
                         <div class="option-grid col2">
                             <button type="button" class="option-btn sel" data-group="mal" data-val="Sunn og balansert - variert med grønnsaker, protein og karbohydrater" onclick="velgOption(this)">
                                 <span class="ob-icon">🥗</span>
@@ -568,8 +568,8 @@
                     <div class="form-section-title">Dine ønsker — viktigst av alt</div>
 
                     <div class="field">
-                        <label><i class="fas fa-comment-dots"></i> Fortell AI hva du vil ha</label>
-                        <span class="field-hint">Dette er det viktigste feltet. AI bygger hele menyen rundt disse ønskene. Vær gjerne spesifikk.</span>
+                        <label><i class="fas fa-comment-dots"></i> Skriv dine ønsker hva du vil ha</label>
+                        <span class="field-hint">Dette er det viktigste feltet. MatMinne bygger hele menyen rundt disse ønskene. Vær gjerne spesifikk.</span>
                         <textarea class="field-textarea" id="ekstraInput" name="ekstraOnsker" rows="4"
                                   placeholder="Eksempler: Vi liker asiatisk mat, gjerne thai eller wok. Barna vil ikke ha sterk mat. Vi vil ha taco på fredagen. Enkelt og kjent, ikke fancy. Vil ha fisk minst to ganger. Gjerne noe med linser eller kikerter."></textarea>
                     </div>
@@ -591,7 +591,7 @@
                 </button>
 
                 <p style="text-align:center;font-size:.75rem;color:#94a3b8;margin-top:12px;line-height:1.5;">
-                    AI lager en komplett plan med smarte rester og budsjettoptimalisering. Ca. 20–30 sekunder.
+                    MatMinne lager en komplett plan med smarte rester og budsjettoptimalisering. Ca. 20–30 sekunder.
                 </p>
             </form>
         </div>
@@ -713,8 +713,8 @@
                 : '<i class="fas fa-wand-magic-sparkles"></i> Generer min ukesmeny';
             const loadTitle = document.querySelector('.loading-title');
             if (loadTitle) loadTitle.textContent = modus === 'middag'
-                ? 'AI velger 7 perfekte middager…'
-                : 'AI bygger ukesmenyen din…';
+                ? 'MatMinne velger 7 perfekte middager…'
+                : 'MatMinne bygger ukesmenyen din…';
         }
 
         // ── PORSJONER ──

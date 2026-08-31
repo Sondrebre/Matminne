@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="~{fragments :: header_links}"></div>
-    <title>AI Matforslag | MatMinne</title>
+    <title>Matforslag | MatMinne</title>
     <style>
         body { background: var(--bakgrunn); }
 
@@ -152,9 +152,9 @@
     <div class="page-hero">
         <div class="hero-glow"></div>
         <div class="container hero-inner">
-            <span class="hero-tag">AI-assistent</span>
+            <span class="hero-tag">MatMinne-assistent</span>
             <h1>Hva kan jeg lage?</h1>
-            <p>Fortell hva du har hjemme — AI foreslår oppskrifter på sekunder</p>
+            <p>Fortell hva du har hjemme — MatMinne foreslår oppskrifter på sekunder</p>
         </div>
     </div>
 
@@ -165,7 +165,7 @@
             <div th:if="${!harAbonnement}" style="background:white;border-radius:24px;padding:32px;border:1.5px solid #bbf7d0;box-shadow:0 20px 56px rgba(0,0,0,.07);margin-bottom:20px;text-align:center;">
                 <div style="font-size:2.4rem;margin-bottom:14px;">✨</div>
                 <h2 style="font-weight:900;letter-spacing:-1px;color:#0f172a;margin:0 0 10px;">Krever abonnement</h2>
-                <p style="color:#64748b;font-size:.92rem;margin:0 0 22px;line-height:1.7;">AI-forslagene er en del av MatMinne Premium. Oppgrader for å få oppskriftsforslag basert på ingredienser du har hjemme.</p>
+                <p style="color:#64748b;font-size:.92rem;margin:0 0 22px;line-height:1.7;">MatMinne-forslagene er en del av MatMinne Premium. Oppgrader for å få oppskriftsforslag basert på ingredienser du har hjemme.</p>
                 <a href="/abonnement" style="display:inline-flex;align-items:center;gap:8px;background:#22c55e;color:white;text-decoration:none;padding:13px 28px;border-radius:14px;font-weight:800;font-size:.9rem;box-shadow:0 8px 24px rgba(34,197,94,.25);">Se abonnementsalternativer</a>
             </div>
 
@@ -220,7 +220,7 @@
             <!-- RATE LIMIT -->
             <div class="ratelimit-card" id="rateLimitCard">
                 <div class="rl-icon">⏳</div>
-                <h3>AI-tjenesten er midlertidig utilgjengelig</h3>
+                <h3>Tjenesten er midlertidig utilgjengelig</h3>
                 <p>Den daglige kapasiteten er brukt opp. Prøv igjen om litt — vanligvis er det tilgjengelig igjen etter noen minutter.</p>
                 <div class="countdown-wrap">
                     <span class="countdown-num" id="countdownNum">60</span>
@@ -234,7 +234,7 @@
             <!-- RESULT -->
             <div class="result-card" id="resultCard">
                 <div class="result-header">
-                    <div class="result-label"><i class="fa-solid fa-lightbulb"></i> AI-forslag basert på dine ingredienser</div>
+                    <div class="result-label"><i class="fa-solid fa-lightbulb"></i> MatMinne-forslag basert på dine ingredienser</div>
                     <button class="btn-retry" onclick="nullstill()">
                         <i class="fa-solid fa-rotate-left"></i> Prøv igjen
                     </button>

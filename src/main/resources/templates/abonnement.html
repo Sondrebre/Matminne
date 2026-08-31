@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="~{fragments :: header_links}"></div>
@@ -210,7 +210,7 @@
                 <i class="fas fa-wand-magic-sparkles"></i> MatMinne Premium
             </div>
             <h1>Gi matlagingen<br>din <span>superkrefter</span></h1>
-            <p>Lagre ubegrenset med oppskrifter, bruk AI-forslag og mye mer — alt for kun 29,90 kr/mnd.</p>
+            <p>Lagre ubegrenset med oppskrifter, bruk MatMinne-forslag og mye mer — alt for kun 29,90 kr/mnd.</p>
         </div>
     </div>
 
@@ -222,7 +222,7 @@
         <span style="font-size:2rem;flex-shrink:0;">📦</span>
         <div>
             <div style="font-weight:900;font-size:.95rem;color:#92400e;margin-bottom:4px;">Du har nådd grensen på 10 oppskrifter</div>
-            <div style="font-size:.83rem;color:#b45309;line-height:1.5;">Oppgrader til MatMinne Premium for å lagre ubegrensede oppskrifter og få tilgang til AI-funksjoner.</div>
+            <div style="font-size:.83rem;color:#b45309;line-height:1.5;">Oppgrader til MatMinne Premium for å lagre ubegrensede oppskrifter og få tilgang til MatMinne-funksjoner.</div>
         </div>
     </div>
 
@@ -242,7 +242,7 @@
             <div class="subscribed-icon">✅</div>
             <div>
                 <h3>Du har MatMinne Premium!</h3>
-                <p>Ubegrensede oppskrifter og alle AI-funksjoner er aktivert. Nyt tilgangen!</p>
+                <p>Ubegrensede oppskrifter og alle MatMinne-funksjoner er aktivert. Nyt tilgangen!</p>
             </div>
             <form id="avbrytAbonnementForm" th:action="@{/abonnement/avbryt}" method="POST" style="margin-left:auto;">
                 <button type="button" id="avbrytBtn"
@@ -274,8 +274,8 @@
                 <li><span class="check">✓</span> Handleliste og ukesmeny</li>
                 <li><span class="check">✓</span> Samlinger og eksport til PDF</li>
                 <li class="muted"><span class="cross">✕</span> Ubegrensede oppskrifter</li>
-                <li class="muted"><span class="cross">✕</span> AI-forslag og ingrediensbytte</li>
-                <li class="muted"><span class="cross">✕</span> AI import fra URL</li>
+                <li class="muted"><span class="cross">✕</span> MatMinne-forslag og ingrediensbytte</li>
+                <li class="muted"><span class="cross">✕</span> import fra URL</li>
             </ul>
             <a href="/kokebok" class="btn-plan-free">Fortsett gratis</a>
         </div>
@@ -295,9 +295,9 @@
                 <li><span class="check">✓</span> <strong>Ubegrensede oppskrifter</strong></li>
                 <li><span class="check">✓</span> Dele og følge venner</li>
                 <li><span class="check">✓</span> Handleliste og ukesmeny</li>
-                <li><span class="check">✓</span> <strong>AI-forslag og ingrediensbytte</strong></li>
-                <li><span class="check">✓</span> <strong>AI import fra hvilken som helst URL</strong></li>
-                <li><span class="check">✓</span> <strong>AI-generert ukesmeny</strong></li>
+                <li><span class="check">✓</span> <strong>MatMinne-forslag og ingrediensbytte</strong></li>
+                <li><span class="check">✓</span> <strong>import fra hvilken som helst URL</strong></li>
+                <li><span class="check">✓</span> <strong>automatisk ukesmeny</strong></li>
             </ul>
             <form th:action="@{/abonnement/checkout}" method="POST">
                 <button type="submit" class="btn-plan-pro">
@@ -321,22 +321,22 @@
             </div>
             <div class="feat-card">
                 <div class="feat-icon">🔄</div>
-                <h4>AI-ingrediensbytte</h4>
-                <p>Mangler du smør, fløte eller et krydder? AI gir deg 3 perfekte alternativer på sekunder.</p>
+                <h4>ingrediensbytte</h4>
+                <p>Mangler du smør, fløte eller et krydder? MatMinne gir deg 3 perfekte alternativer på sekunder.</p>
             </div>
             <div class="feat-card">
                 <div class="feat-icon">🌐</div>
                 <h4>Import fra URL</h4>
-                <p>Lim inn lenken til en oppskrift fra nett — AI trekker ut og strukturerer den automatisk.</p>
+                <p>Lim inn lenken til en oppskrift fra nett — MatMinne trekker ut og strukturerer den automatisk.</p>
             </div>
             <div class="feat-card">
                 <div class="feat-icon">🗓️</div>
-                <h4>AI-ukesmeny</h4>
-                <p>Fortell hva du har lyst på og AI lager en balansert ukesmeny tilpasset deg og familien.</p>
+                <h4>MatMinne-ukesmeny</h4>
+                <p>Fortell hva du har lyst på og MatMinne lager en balansert ukesmeny tilpasset deg og familien.</p>
             </div>
             <div class="feat-card">
                 <div class="feat-icon">⚡</div>
-                <h4>AI-forslag</h4>
+                <h4>MatMinne-forslag</h4>
                 <p>Skriv inn ingredienser du har hjemme og få komplette oppskrifter generert automatisk.</p>
             </div>
         </div>
@@ -355,8 +355,8 @@
             <div class="faq-a">Vi bruker Stripe for sikker betaling. Du kan betale med Visa, Mastercard, og andre vanlige kort. Betalingen håndteres trygt av Stripe og MatMinne lagrer aldri kortinformasjonen din.</div>
         </div>
         <div class="faq-item" onclick="toggleFaq(this)">
-            <div class="faq-q">Hva skjer med AI-funksjonene hvis jeg avslutter? <span class="faq-icon">+</span></div>
-            <div class="faq-a">AI-funksjonene deaktiveres ved slutten av betalingsperioden. Alle oppskriftene dine, venner og annet innhold forblir tilgjengelig — ingenting slettes.</div>
+            <div class="faq-q">Hva skjer med MatMinne-funksjonene hvis jeg avslutter? <span class="faq-icon">+</span></div>
+            <div class="faq-a">MatMinne-funksjonene deaktiveres ved slutten av betalingsperioden. Alle oppskriftene dine, venner og annet innhold forblir tilgjengelig — ingenting slettes.</div>
         </div>
         <div class="faq-item" onclick="toggleFaq(this)">
             <div class="faq-q">Hva er grensen på gratisplanen? <span class="faq-icon">+</span></div>

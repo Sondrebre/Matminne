@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="~{fragments :: header_links}"></div>
@@ -615,12 +615,12 @@
                 </a>
                 <th:block th:if="${harAbonnement}">
                     <a href="/ukesmeny/ai" class="uk-btn uk-btn-ai">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> Ny AI-ukeplan
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Ny MatMinne-ukeplan
                     </a>
                 </th:block>
                 <th:block th:unless="${harAbonnement}">
                     <a href="/abonnement" class="uk-btn uk-btn-ai">
-                        <i class="fa-solid fa-bolt"></i> Lås opp AI-ukeplan
+                        <i class="fa-solid fa-bolt"></i> Lås opp MatMinne-ukeplan
                     </a>
                 </th:block>
             </div>
@@ -633,7 +633,7 @@
             <!-- AI-suksess-banner -->
             <div class="ai-banner" th:if="${param.ai != null}">
                 <span style="font-size:1.4rem">✨</span>
-                <div><strong>AI-ukesmenyen er klar!</strong> — Claude har laget en personlig plan for deg. Juster gjerne enkeltdager.</div>
+                <div><strong>MatMinne-ukesmenyen er klar!</strong> — Claude har laget en personlig plan for deg. Juster gjerne enkeltdager.</div>
             </div>
 
             <!-- Print-header (kun synlig på utskrift) -->

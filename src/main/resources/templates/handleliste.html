@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="~{fragments :: header_links}"></div>
@@ -563,7 +563,7 @@
             <div id="smartInnhold">
                 <div class="smart-laster">
                     <i class="fa-solid fa-spinner fa-spin"></i>
-                    <p style="color:#94a3b8;font-size:.88rem;margin:0;">AI sorterer og slår sammen varer...</p>
+                    <p style="color:#94a3b8;font-size:.88rem;margin:0;">MatMinne sorterer og slår sammen varer...</p>
                 </div>
             </div>
         </div>
@@ -958,7 +958,7 @@
             document.getElementById('smartOverlay').classList.add('vis');
             document.getElementById('smartInnhold').innerHTML =
                 '<div class="smart-laster"><i class="fa-solid fa-spinner fa-spin"></i>' +
-                '<p style="color:#94a3b8;font-size:.88rem;margin:0;">AI sorterer og slår sammen varer...</p></div>';
+                '<p style="color:#94a3b8;font-size:.88rem;margin:0;">MatMinne sorterer og slår sammen varer...</p></div>';
 
             csrfFetch('/api/handleliste/smartsorter', {
                 method: 'POST',
