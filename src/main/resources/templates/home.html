@@ -3,223 +3,277 @@
 <head>
     <div th:replace="~{fragments :: header_links}"></div>
     <title>MatMinne | Din digitale kokebok</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,800;1,9..144,400;1,9..144,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,700&display=swap" rel="stylesheet">
 
     <style>
-        /* ── TOKENS ── */
-        :root {
-            --gnd:       #F4EEE2;
-            --surface:   #FDFAF5;
-            --ink:       #1A1812;
-            --ink-2:     #6B6358;
-            --forest:    #1A3D1A;
-            --sage:      #3D7234;
-            --sage-soft: #C8DDB8;
-            --sage-line: #BBCFA8;
-            --band-bg:   #152E15;
-            --band-line: rgba(255,255,255,.07);
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) {
-                --gnd:       #131810;
-                --surface:   #1C2419;
-                --ink:       #EDE8DC;
-                --ink-2:     #8A9480;
-                --forest:    #4A8A40;
-                --sage:      #6DB560;
-                --sage-soft: #263B1E;
-                --sage-line: #2E4228;
-                --band-bg:   #0E1C0E;
-                --band-line: rgba(255,255,255,.06);
-            }
-        }
-
-        :root[data-theme="dark"] {
-            --gnd:       #131810;
-            --surface:   #1C2419;
-            --ink:       #EDE8DC;
-            --ink-2:     #8A9480;
-            --forest:    #4A8A40;
-            --sage:      #6DB560;
-            --sage-soft: #263B1E;
-            --sage-line: #2E4228;
-            --band-bg:   #0E1C0E;
-            --band-line: rgba(255,255,255,.06);
-        }
-
         *, *::before, *::after { box-sizing: border-box; }
 
         body {
-            background: var(--gnd);
-            color: var(--ink);
+            background: #fff;
+            color: #0f172a;
             margin: 0;
         }
 
-        .ff-d { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; }
+        .ff-d { font-family: 'Fraunces', Georgia, serif; }
 
-        /* ── HERO ── */
+        /* ──────────────────────────────
+           HERO
+        ────────────────────────────── */
         .hero {
+            background: #fff;
+            position: relative;
+            overflow: hidden;
             display: grid;
-            grid-template-columns: 52fr 48fr;
+            grid-template-columns: 1fr 1fr;
             min-height: calc(100vh - 68px);
         }
 
+        /* subtle mint radial behind the text */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -120px; left: -80px;
+            width: 620px; height: 620px;
+            background: radial-gradient(ellipse, #bbf7d0 0%, #ecfdf5 40%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
         .hero-left {
+            position: relative;
+            z-index: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 80px 60px 80px 72px;
-            background: var(--gnd);
+            padding: 80px 56px 80px 72px;
         }
 
         .hero-kicker {
             display: inline-flex;
             align-items: center;
-            gap: 9px;
+            gap: 8px;
+            background: #f0fdf4;
+            border: 1px solid #a7f3d0;
+            color: #16a34a;
             font-size: .7rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--sage);
+            font-weight: 700;
+            letter-spacing: .5px;
+            padding: 6px 14px;
+            border-radius: 99px;
             margin-bottom: 32px;
+            align-self: flex-start;
         }
 
-        .hero-kicker::before {
-            content: '';
-            display: block;
-            width: 22px;
-            height: 1.5px;
-            background: var(--sage);
-            flex-shrink: 0;
+        .kicker-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34,197,94,.25);
         }
 
         .hero-h1 {
-            font-size: clamp(2.8rem, 4.2vw, 4.8rem);
-            font-weight: 800;
-            line-height: 1.02;
-            letter-spacing: -2.5px;
-            color: var(--ink);
-            margin: 0 0 26px;
+            font-size: clamp(2.8rem, 4vw, 5rem);
+            font-weight: 900;
+            line-height: 1.0;
+            letter-spacing: -3px;
+            color: #0f172a;
+            margin: 0 0 24px;
             text-wrap: balance;
         }
 
         .hero-h1 em {
             font-style: italic;
-            font-weight: 400;
-            color: var(--sage);
+            font-weight: 700;
+            color: #16a34a;
         }
 
         .hero-p {
-            font-size: 1rem;
-            color: var(--ink-2);
-            line-height: 1.8;
-            max-width: 390px;
+            font-size: 1.05rem;
+            color: #64748b;
+            line-height: 1.75;
+            max-width: 400px;
             margin: 0 0 40px;
         }
 
-        .btn-hero {
+        .hero-btns {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn-primary {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            background: var(--forest);
+            gap: 9px;
+            background: #16a34a;
             color: #fff !important;
             text-decoration: none;
-            padding: 14px 26px;
-            border-radius: 7px;
+            padding: 14px 24px;
+            border-radius: 14px;
             font-weight: 700;
-            font-size: .88rem;
-            align-self: flex-start;
-            margin-bottom: 16px;
-            transition: opacity .15s, transform .15s;
+            font-size: .9rem;
+            transition: background .15s, transform .15s, box-shadow .15s;
+            box-shadow: 0 4px 20px rgba(22,163,74,.3);
         }
 
-        .btn-hero:hover { opacity: .86; transform: translateY(-1px); color: #fff !important; }
+        .btn-primary:hover {
+            background: #15803d;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(22,163,74,.4);
+            color: #fff !important;
+        }
 
-        .link-utforsk {
-            font-size: .86rem;
-            font-weight: 600;
-            color: var(--sage);
-            text-decoration: none;
+        .btn-secondary {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            background: #f0fdf4;
+            color: #16a34a !important;
+            text-decoration: none;
+            padding: 14px 22px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: .9rem;
+            border: 1.5px solid #a7f3d0;
+            transition: background .15s, border-color .15s;
         }
 
-        .link-utforsk:hover { text-decoration: underline; color: var(--sage); }
+        .btn-secondary:hover {
+            background: #dcfce7;
+            border-color: #22c55e;
+            color: #16a34a !important;
+        }
 
         .hero-right {
-            overflow: hidden;
             position: relative;
+            overflow: hidden;
         }
 
         .hero-right img {
             width: 100%; height: 100%;
             object-fit: cover;
-            object-position: center 35%;
+            object-position: center 30%;
             display: block;
         }
 
-        /* ── STORY ── */
+        /* image overlay gradient */
+        .hero-right::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(255,255,255,.15) 0%, transparent 30%);
+            pointer-events: none;
+        }
+
+        /* ──────────────────────────────
+           SOURCE STRIP
+        ────────────────────────────── */
+        .s-strip {
+            background: #f0fdf4;
+            border-top: 1px solid #d1fae5;
+            border-bottom: 1px solid #d1fae5;
+            padding: 16px 0;
+        }
+
+        .strip-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .strip-lbl {
+            font-size: .72rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-right: 4px;
+        }
+
+        .strip-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #fff;
+            border: 1px solid #d1fae5;
+            color: #475569;
+            font-size: .72rem;
+            font-weight: 700;
+            padding: 5px 13px;
+            border-radius: 99px;
+        }
+
+        .strip-pill i { color: #22c55e; font-size: .65rem; }
+
+        /* ──────────────────────────────
+           STORY
+        ────────────────────────────── */
         .s-story {
-            background: var(--surface);
-            border-top: 1px solid var(--sage-line);
+            background: #fff;
             padding: 96px 0;
         }
 
         .story-inner {
-            max-width: 660px;
+            max-width: 680px;
             margin: 0 auto;
             padding: 0 24px;
         }
 
         .sec-label {
             font-size: .66rem;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: 2.5px;
             text-transform: uppercase;
-            color: var(--sage);
-            margin-bottom: 20px;
+            color: #16a34a;
+            margin-bottom: 18px;
             display: block;
         }
 
         .story-h2 {
-            font-size: clamp(1.65rem, 2.4vw, 2.2rem);
+            font-size: clamp(1.7rem, 2.4vw, 2.3rem);
             font-weight: 700;
-            color: var(--ink);
-            line-height: 1.28;
-            letter-spacing: -.7px;
-            margin: 0 0 30px;
+            color: #0f172a;
+            line-height: 1.25;
+            letter-spacing: -.8px;
+            margin: 0 0 28px;
             text-wrap: balance;
         }
 
         .story-body {
             font-size: .97rem;
-            color: var(--ink-2);
+            color: #64748b;
             line-height: 1.85;
         }
 
         .story-body p { margin: 0 0 16px; }
         .story-body p:last-child { margin-bottom: 0; }
 
-        /* ── HOW IT WORKS ── */
+        /* ──────────────────────────────
+           HOW IT WORKS
+        ────────────────────────────── */
         .s-how {
-            background: var(--gnd);
-            border-top: 1px solid var(--sage-line);
-            padding: 96px 0;
+            background: #f0fdf4;
+            border-top: 1px solid #d1fae5;
+            border-bottom: 1px solid #d1fae5;
+            padding: 88px 0;
         }
 
-        .sec-head {
+        .how-inner {
+            max-width: 900px;
+            margin: 0 auto;
             padding: 0 24px;
-            max-width: 880px;
-            margin: 0 auto 52px;
         }
 
-        .sec-head h2 {
-            font-size: clamp(1.5rem, 2.2vw, 1.95rem);
-            font-weight: 700;
-            color: var(--ink);
-            letter-spacing: -.5px;
+        .how-head {
+            margin-bottom: 52px;
+        }
+
+        .how-head h2 {
+            font-size: clamp(1.5rem, 2vw, 2rem);
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -.6px;
             text-wrap: balance;
             margin: 0;
         }
@@ -227,47 +281,48 @@
         .how-steps {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 2px;
-            max-width: 880px;
-            margin: 0 auto;
-            padding: 0 24px;
+            gap: 16px;
         }
 
         .how-step {
-            background: var(--surface);
-            padding: 36px 30px 34px;
+            background: #fff;
+            border: 1px solid #d1fae5;
+            border-radius: 20px;
+            padding: 32px 28px;
         }
 
-        .how-step:first-child { border-radius: 14px 0 0 14px; }
-        .how-step:last-child  { border-radius: 0 14px 14px 0; }
-
-        .step-n {
-            font-family: 'Fraunces', Georgia, serif;
-            font-size: 3rem;
-            font-weight: 800;
-            line-height: 1;
-            color: var(--sage-soft);
-            margin-bottom: 18px;
-            letter-spacing: -2px;
-            display: block;
+        .step-badge {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: #dcfce7;
+            color: #16a34a;
+            font-weight: 900;
+            font-size: .82rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
         }
 
         .step-t {
-            font-weight: 700;
-            font-size: .93rem;
-            color: var(--ink);
-            margin-bottom: 7px;
+            font-weight: 800;
+            font-size: .95rem;
+            color: #0f172a;
+            margin-bottom: 8px;
+            letter-spacing: -.2px;
         }
 
         .step-d {
-            font-size: .8rem;
-            color: var(--ink-2);
+            font-size: .82rem;
+            color: #64748b;
             line-height: 1.65;
         }
 
-        /* ── FEATURES ── */
+        /* ──────────────────────────────
+           FEATURES
+        ────────────────────────────── */
         .s-feat {
-            background: var(--band-bg);
+            background: #0f172a;
             padding: 88px 0;
         }
 
@@ -278,102 +333,88 @@
         }
 
         .feat-head { margin-bottom: 52px; }
-        .feat-head .sec-label { color: rgba(255,255,255,.35); }
+
+        .feat-head .sec-label { color: #4ade80; }
 
         .feat-head h2 {
-            font-size: clamp(1.5rem, 2.2vw, 1.95rem);
-            font-weight: 700;
+            font-size: clamp(1.5rem, 2vw, 2rem);
+            font-weight: 800;
             color: #fff;
-            letter-spacing: -.5px;
+            letter-spacing: -.6px;
             text-wrap: balance;
             margin: 0;
         }
 
-        .feat-list {
+        .feat-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            border: 1px solid var(--band-line);
-            border-radius: 14px;
-            overflow: hidden;
+            gap: 16px;
         }
 
-        .feat-item {
-            padding: 34px 30px;
-            border-right: 1px solid var(--band-line);
-            border-bottom: 1px solid var(--band-line);
+        .feat-card {
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 20px;
+            padding: 28px 26px;
+            transition: background .2s, border-color .2s;
         }
 
-        .feat-item:nth-child(2n) { border-right: none; }
-        .feat-item:nth-child(3), .feat-item:nth-child(4) { border-bottom: none; }
+        .feat-card:hover {
+            background: rgba(255,255,255,.08);
+            border-color: rgba(34,197,94,.3);
+        }
 
-        .feat-ico { font-size: 1.4rem; margin-bottom: 14px; display: block; line-height: 1; }
-        .feat-t { font-weight: 700; font-size: .9rem; color: rgba(255,255,255,.88); margin-bottom: 6px; }
-        .feat-d { font-size: .78rem; color: rgba(255,255,255,.36); line-height: 1.65; }
+        .feat-ico { font-size: 1.5rem; margin-bottom: 14px; display: block; }
+        .feat-t { font-weight: 800; font-size: .92rem; color: #fff; margin-bottom: 7px; letter-spacing: -.2px; }
+        .feat-d { font-size: .8rem; color: rgba(255,255,255,.38); line-height: 1.65; }
 
-        /* ── CTA ── */
+        /* ──────────────────────────────
+           CTA
+        ────────────────────────────── */
         .s-cta {
-            background: var(--surface);
-            border-top: 1px solid var(--sage-line);
-            padding: 100px 0;
+            background: #f0fdf4;
+            border-top: 1px solid #d1fae5;
+            padding: 96px 0;
             text-align: center;
         }
 
         .cta-h2 {
-            font-size: clamp(1.9rem, 3vw, 2.8rem);
-            font-weight: 700;
-            color: var(--ink);
-            letter-spacing: -1.5px;
-            margin: 0 0 12px;
+            font-size: clamp(2rem, 3vw, 3rem);
+            font-weight: 900;
+            color: #0f172a;
+            letter-spacing: -2px;
+            margin: 0 0 14px;
             text-wrap: balance;
         }
 
         .cta-sub {
-            font-size: .95rem;
-            color: var(--ink-2);
+            font-size: .97rem;
+            color: #64748b;
             margin: 0 auto 36px;
             max-width: 380px;
             line-height: 1.7;
         }
 
-        .btn-cta {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--forest);
-            color: #fff !important;
-            text-decoration: none;
-            padding: 14px 28px;
-            border-radius: 7px;
-            font-weight: 700;
-            font-size: .88rem;
-            transition: opacity .15s;
-        }
-
-        .btn-cta:hover { opacity: .86; color: #fff !important; }
-
-        /* ── RESPONSIVE ── */
+        /* ──────────────────────────────
+           RESPONSIVE
+        ────────────────────────────── */
         @media (max-width: 1024px) {
-            .hero { grid-template-columns: 55fr 45fr; }
-            .hero-left { padding: 64px 44px 64px 52px; }
+            .hero-left { padding: 64px 40px 64px 48px; }
         }
 
         @media (max-width: 768px) {
             .hero { grid-template-columns: 1fr; min-height: auto; }
             .hero-right { height: 260px; order: -1; }
-            .hero-left { padding: 48px 24px 56px; }
-            .how-steps { grid-template-columns: 1fr; gap: 2px; padding: 0 20px; }
-            .how-step:first-child { border-radius: 14px 14px 0 0; }
-            .how-step:last-child  { border-radius: 0 0 14px 14px; }
-            .feat-list { grid-template-columns: 1fr; }
-            .feat-item:nth-child(2n) { border-right: 1px solid var(--band-line); }
-            .feat-item:nth-child(3)  { border-bottom: 1px solid var(--band-line); }
-            .feat-item:last-child    { border-bottom: none; }
+            .hero-left { padding: 44px 20px 52px; }
+            .hero-h1 { letter-spacing: -2px; }
+            .how-steps { grid-template-columns: 1fr; }
+            .feat-grid { grid-template-columns: 1fr; }
             .s-story, .s-how, .s-feat, .s-cta { padding: 64px 0; }
         }
 
         @media (max-width: 480px) {
-            .hero-left { padding: 36px 20px 44px; }
-            .hero-h1 { font-size: 2.5rem; letter-spacing: -1.8px; }
+            .hero-h1 { font-size: 2.5rem; letter-spacing: -1.5px; }
+            .hero-btns { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -383,7 +424,10 @@
     <!-- HERO -->
     <section class="hero">
         <div class="hero-left">
-            <span class="hero-kicker">Din kokebok, alltid med deg</span>
+            <span class="hero-kicker">
+                <span class="kicker-dot"></span>
+                Din kokebok, alltid med deg
+            </span>
             <h1 class="hero-h1 ff-d">
                 Aldri mist en<br>
                 god oppskrift<br>
@@ -393,18 +437,32 @@
                 Lagre fra nettet, skriv dine egne, del med dem du er glad i.
                 MatMinne samler alt på ett sted – søkbart og alltid tilgjengelig.
             </p>
-            <a href="/oauth2/authorization/google" class="btn-hero">
-                <i class="fa-brands fa-google"></i> Kom i gang gratis
-            </a>
-            <a href="/oppdag" class="link-utforsk">
-                Utforsk oppskrifter <i class="fa-solid fa-arrow-right" style="font-size:.72rem;"></i>
-            </a>
+            <div class="hero-btns">
+                <a href="/oauth2/authorization/google" class="btn-primary">
+                    <i class="fa-brands fa-google"></i> Kom i gang gratis
+                </a>
+                <a href="/oppdag" class="btn-secondary">
+                    Utforsk oppskrifter
+                </a>
+            </div>
         </div>
         <div class="hero-right">
             <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=1000&q=85"
-                 alt="Ferske råvarer og en kokebok på kjøkkenbenken" loading="eager">
+                 alt="Ferske råvarer" loading="eager">
         </div>
     </section>
+
+    <!-- KILDESTRIPE -->
+    <div class="s-strip">
+        <div class="strip-row">
+            <span class="strip-lbl">Henter automatisk fra</span>
+            <span class="strip-pill"><i class="fa-solid fa-utensils"></i> Matprat.no</span>
+            <span class="strip-pill"><i class="fa-solid fa-utensils"></i> Godt.no</span>
+            <span class="strip-pill"><i class="fa-solid fa-utensils"></i> VG Mat</span>
+            <span class="strip-pill"><i class="fa-solid fa-utensils"></i> Tine.no</span>
+            <span class="strip-pill"><i class="fa-solid fa-globe"></i> Alle nettsider</span>
+        </div>
+    </div>
 
     <!-- OM OSS -->
     <section class="s-story">
@@ -417,17 +475,15 @@
             <div class="story-body">
                 <p>
                     Vi har alle vært der. Du husker at du lagret en oppskrift et sted – men var det i en
-                    Facebook-gruppe? En innboks? Et screenshot på telefonen? Et bokmerke i en nettleser
-                    du ikke bruker lenger?
+                    Facebook-gruppe? En innboks? Et screenshot på telefonen? Et bokmerke i en nettleser du ikke bruker lenger?
                 </p>
                 <p>
-                    MatMinne ble til for å løse akkurat dette. Ikke som en funksjonspakket app, men som
-                    ett enkelt sted der alt du lager og liker faktisk finnes. Du kan lime inn en lenke fra
-                    Matprat eller Godt.no, skrive din mormors kake-oppskrift med egne ord, eller importere
-                    fra et nettsted på et annet språk – MatMinne henter innholdet og oversetter for deg.
+                    MatMinne ble til for å løse akkurat dette. Du kan lime inn en lenke fra Matprat eller Godt.no,
+                    skrive din mormors kake-oppskrift med egne ord, eller importere fra et nettsted på et annet språk –
+                    MatMinne henter innholdet og oversetter for deg.
                 </p>
                 <p>
-                    Alt samlet. Søkbart. Alltid tilgjengelig. Og du deler det du vil, med dem du vil.
+                    Alt samlet. Søkbart. Alltid tilgjengelig.
                 </p>
             </div>
         </div>
@@ -435,26 +491,26 @@
 
     <!-- SLIK FUNGERER DET -->
     <section class="s-how">
-        <div class="container">
-            <div class="sec-head">
+        <div class="how-inner">
+            <div class="how-head">
                 <span class="sec-label">Slik fungerer det</span>
                 <h2 class="ff-d">Fra lenke til kokebok på under ett minutt</h2>
             </div>
             <div class="how-steps">
                 <div class="how-step">
-                    <span class="step-n">1</span>
+                    <div class="step-badge">1</div>
                     <div class="step-t">Finn en oppskrift du liker</div>
-                    <div class="step-d">Fra Matprat, Godt.no, et utenlandsk nettsted – eller skriv den selv fra bunnen av.</div>
+                    <div class="step-d">Fra Matprat, Godt.no, et utenlandsk nettsted – eller skriv den selv.</div>
                 </div>
                 <div class="how-step">
-                    <span class="step-n">2</span>
+                    <div class="step-badge">2</div>
                     <div class="step-t">MatMinne henter innholdet</div>
-                    <div class="step-d">Lim inn lenken og vi fyller inn tittel, ingredienser og fremgangsmåte automatisk – på norsk.</div>
+                    <div class="step-d">Lim inn lenken og vi fyller inn tittel, ingredienser og fremgangsmåte – på norsk.</div>
                 </div>
                 <div class="how-step">
-                    <span class="step-n">3</span>
-                    <div class="step-t">Lagret – for alltid</div>
-                    <div class="step-d">I din kokebok, søkbar og tilgjengelig på alle enheter. Du mister den aldri igjen.</div>
+                    <div class="step-badge">3</div>
+                    <div class="step-t">Lagret for alltid</div>
+                    <div class="step-d">Søkbar og tilgjengelig på alle enheter. Du mister den aldri igjen.</div>
                 </div>
             </div>
         </div>
@@ -467,26 +523,26 @@
                 <span class="sec-label">Hva du får</span>
                 <h2 class="ff-d">Mer enn bare en oppskriftsbok</h2>
             </div>
-            <div class="feat-list">
-                <div class="feat-item">
+            <div class="feat-grid">
+                <div class="feat-card">
                     <span class="feat-ico">🛒</span>
                     <div class="feat-t">Automatisk handleliste</div>
-                    <div class="feat-d">Velg oppskrifter for uken – MatMinne setter opp handlelisten for deg.</div>
+                    <div class="feat-d">Velg oppskrifter for uken – MatMinne setter opp handlelisten for deg, sortert og klar.</div>
                 </div>
-                <div class="feat-item">
+                <div class="feat-card">
                     <span class="feat-ico">📅</span>
                     <div class="feat-t">Ukesmeny</div>
-                    <div class="feat-d">Planlegg måltider og få oversikt over hele uken samlet på ett sted.</div>
+                    <div class="feat-d">Planlegg hele uken og få en samlet oversikt på sekunder.</div>
                 </div>
-                <div class="feat-item">
+                <div class="feat-card">
                     <span class="feat-ico">👩‍🍳</span>
                     <div class="feat-t">Del med de du er glad i</div>
-                    <div class="feat-d">Følg andres kokker, del det du lager, og finn inspirasjon blant venner.</div>
+                    <div class="feat-d">Følg venner, del det du lager og finn inspirasjon i nettverket ditt.</div>
                 </div>
-                <div class="feat-item">
+                <div class="feat-card">
                     <span class="feat-ico">✨</span>
                     <div class="feat-t">MatMinne-forslag</div>
-                    <div class="feat-d">Hjelp til å lage ukesmeny og importere oppskrifter fra nettet – med Premium.</div>
+                    <div class="feat-d">Hjelp til ukesmeny og import av oppskrifter fra nettet – tilgjengelig med Premium.</div>
                 </div>
             </div>
         </div>
@@ -497,7 +553,7 @@
         <div class="container">
             <h2 class="cta-h2 ff-d">Klar til å starte?</h2>
             <p class="cta-sub">Logg inn med Google og begynn å samle. Gratis, ingen installasjon nødvendig.</p>
-            <a href="/oauth2/authorization/google" class="btn-cta">
+            <a href="/oauth2/authorization/google" class="btn-primary" style="margin: 0 auto;">
                 <i class="fa-brands fa-google"></i> Kom i gang med Google
             </a>
         </div>
