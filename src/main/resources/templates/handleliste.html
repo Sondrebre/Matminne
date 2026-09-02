@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="~{fragments :: header_links}"></div>
@@ -6,375 +6,426 @@
     <style>
         body { background: var(--bakgrunn); }
 
+        /* ── HERO ── */
         .page-hero {
-            background: linear-gradient(160deg, #ecfdf5 0%, #d1fae5 60%, #bbf7d0 100%);
-            border-bottom: 1px solid #a7f3d0;
-            padding: 48px 0 72px;
-            position: relative; overflow: hidden;
-        }
-        .page-hero::before {
-            content: ''; position: absolute; inset: 0;
-            background-image: radial-gradient(rgba(34,197,94,.15) 1px, transparent 1px);
-            background-size: 24px 24px;
-        }
-        .page-hero-glow {
-            position: absolute; width: 360px; height: 360px;
-            background: radial-gradient(circle, rgba(34,197,94,.18), transparent 65%);
-            right: -60px; top: -80px; pointer-events: none;
+            background: white;
+            border-bottom: 1px solid #e8f5e9;
+            padding: 36px 0 24px;
         }
         .hero-inner {
-            position: relative; z-index: 1;
-            display: flex; align-items: center; justify-content: space-between;
-            gap: 20px; flex-wrap: wrap;
+            display: flex; align-items: center;
+            justify-content: space-between; gap: 16px; flex-wrap: wrap;
         }
         .hero-tag {
-            font-size:.62rem; font-weight:800; text-transform:uppercase; letter-spacing:2.5px;
-            color:var(--mat-gronn-m); display:inline-flex; align-items:center; gap:6px;
-            margin-bottom:10px;
+            font-size: .65rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 2.5px; color: var(--mat-gronn-m);
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #f0fdf4; padding: 5px 12px; border-radius: 99px;
+            margin-bottom: 10px;
         }
-        .page-hero h1 { font-size:clamp(2rem,5vw,2.8rem); font-weight:900; letter-spacing:-2px; color:var(--mat-mork); margin:0 0 5px; }
-        .page-hero p { color:#64748b; font-size:.88rem; margin:0; }
+        .page-hero h1 {
+            font-size: clamp(1.9rem, 5vw, 2.6rem); font-weight: 900;
+            letter-spacing: -1.5px; color: var(--mat-mork); margin: 0 0 4px;
+        }
+        .page-hero p { color: #94a3b8; font-size: .85rem; margin: 0; }
 
-        /* Progress ring */
-        .hero-ring-wrap { display:flex; align-items:center; gap:16px; flex-shrink:0; }
-        .hero-ring-stat { text-align:right; }
-        .hero-ring-num { font-size:2rem; font-weight:900; color:var(--mat-mork); line-height:1; }
-        .hero-ring-label { font-size:.68rem; color:#64748b; font-weight:600; margin-top:2px; }
-        .hero-ring-svg { width:64px; height:64px; flex-shrink:0; }
-        .hero-ring-svg circle { fill:none; stroke-width:5; stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%; }
-        .ring-bg  { stroke:rgba(34,197,94,.2); }
-        .ring-fill { stroke:#16a34a; stroke-dasharray:163; transition:stroke-dashoffset .6s ease; }
+        /* ── PROGRESS RING ── */
+        .hero-ring-wrap { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+        .hero-ring-stat { text-align: right; }
+        .hero-ring-num { font-size: 2.2rem; font-weight: 900; color: var(--mat-mork); line-height: 1; }
+        .hero-ring-label { font-size: .65rem; color: #94a3b8; font-weight: 600; margin-top: 3px; }
+        .hero-ring-svg { width: 64px; height: 64px; flex-shrink: 0; }
+        .hero-ring-svg circle { fill: none; stroke-width: 5; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; }
+        .ring-bg   { stroke: rgba(34,197,94,.2); }
+        .ring-fill { stroke: #16a34a; stroke-dasharray: 163; transition: stroke-dashoffset .6s ease; }
 
-        .content-wrap { max-width:640px; margin:-36px auto 80px; padding:0 20px; position:relative; z-index:10; }
+        /* ── LAYOUT ── */
+        .content-wrap { max-width: 640px; margin: 0 auto 80px; padding: 20px 16px 0; }
 
-        /* ADD FORM */
+        /* ── ADD FORM ── */
         .add-card {
-            background:white; border-radius:24px; padding:22px 24px;
-            border:1px solid #f1f5f9; box-shadow:0 20px 56px rgba(0,0,0,.07);
-            margin-bottom:20px;
+            background: white; border-radius: 20px;
+            border: 1.5px solid #f1f5f9;
+            box-shadow: 0 4px 24px rgba(0,0,0,.05);
+            padding: 16px 18px; margin-bottom: 14px;
         }
-        .add-row { display:flex; gap:10px; flex-wrap:wrap; }
+        .add-row { display: flex; gap: 8px; }
         .add-input {
-            flex:1; min-width:180px; border:2px solid #f1f5f9; border-radius:14px;
-            padding:12px 16px; font-size:.95rem; font-family:inherit; font-weight:500;
-            color:var(--mat-mork); background:#f8fafc; outline:none; transition:.2s;
+            flex: 1; border: 2px solid #f1f5f9; border-radius: 14px;
+            padding: 13px 16px; font-size: .95rem; font-family: inherit;
+            font-weight: 500; color: var(--mat-mork);
+            background: #f8fafc; outline: none; transition: .2s;
         }
-        .add-input:focus { border-color:var(--mat-gronn); background:white; }
+        .add-input:focus { border-color: var(--mat-gronn); background: white; box-shadow: 0 0 0 3px rgba(34,197,94,.1); }
         .btn-add {
-            background:var(--mat-gronn); color:white; border:none; padding:12px 22px;
-            border-radius:14px; font-weight:800; font-size:.9rem; cursor:pointer;
-            font-family:inherit; transition:.2s; white-space:nowrap;
-            box-shadow:0 8px 24px rgba(46,204,113,.25);
+            background: var(--mat-gronn); color: white; border: none;
+            padding: 13px 20px; border-radius: 14px; font-weight: 800;
+            font-size: .9rem; cursor: pointer; font-family: inherit;
+            transition: .2s; white-space: nowrap;
+            box-shadow: 0 4px 16px rgba(34,197,94,.3);
         }
-        .btn-add:hover { background:var(--mat-gronn-m); transform:translateY(-2px); }
+        .btn-add:hover { background: var(--mat-gronn-m); transform: translateY(-1px); }
+        .btn-add:active { transform: scale(.96); }
 
-        /* STATS */
+        /* ── STATS ── */
         .stats-bar {
-            display:flex; align-items:center; justify-content:space-between;
-            margin-bottom:14px; flex-wrap:wrap; gap:10px;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 12px; gap: 10px; flex-wrap: wrap;
         }
-        .stats-text { font-size:.8rem; font-weight:700; color:#94a3b8; }
-        .progress-wrap { flex:1; min-width:120px; max-width:200px; }
-        .progress-bar { height:6px; background:#f1f5f9; border-radius:99px; overflow:hidden; }
-        .progress-fill { height:100%; background:var(--mat-gronn); border-radius:99px; transition:width .4s; }
+        .stats-text { font-size: .8rem; font-weight: 700; color: #94a3b8; }
+        .progress-wrap { flex: 1; min-width: 120px; max-width: 200px; }
+        .progress-bar { height: 6px; background: #f1f5f9; border-radius: 99px; overflow: hidden; }
+        .progress-fill {
+            height: 100%; background: linear-gradient(90deg, #22c55e, #16a34a);
+            border-radius: 99px; transition: width .5s cubic-bezier(.4,0,.2,1);
+        }
 
-        /* LIST */
+        /* ── LIST CARD ── */
         .liste-card {
-            background:white; border-radius:24px;
-            border:1px solid #e8f5e9;
-            box-shadow:0 4px 24px rgba(34,197,94,.07), 0 1px 4px rgba(0,0,0,.03);
-            overflow:hidden;
+            background: white; border-radius: 20px;
+            border: 1.5px solid #e8f5e9;
+            box-shadow: 0 4px 24px rgba(34,197,94,.06), 0 1px 3px rgba(0,0,0,.03);
+            overflow: hidden;
         }
+
+        /* ── CATEGORY GROUP HEADERS ── */
         .liste-gruppe-header {
-            padding:9px 20px 7px; font-size:.6rem; font-weight:800;
-            text-transform:uppercase; letter-spacing:1.5px; color:#94a3b8;
-            background:#f8fafc; border-bottom:1px solid #f1f5f9;
-            display:flex; align-items:center; gap:6px;
+            padding: 11px 18px 11px 14px;
+            display: flex; align-items: center; gap: 9px;
+            font-size: .7rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 1.5px;
+            background: #f8fafc; color: #64748b;
+            border-left: 4px solid #cbd5e1;
+            border-top: 1px solid #f1f5f9;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background .2s, color .2s, border-color .2s;
         }
+        .liste-gruppe-header:first-child { border-top: none; }
+        .gruppe-ikon { font-size: 1rem; flex-shrink: 0; }
+        .gruppe-navn { flex: 1; }
+        .gruppe-count {
+            font-size: .65rem; font-weight: 900;
+            padding: 2px 8px; border-radius: 99px;
+            background: rgba(0,0,0,.07);
+            letter-spacing: 0;
+        }
+
+        /* ── LIST ITEMS ── */
         .liste-item {
-            display:flex; align-items:center; gap:14px; padding:14px 20px;
-            border-bottom:1px solid #f8fafc; transition:.15s;
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px 18px; min-height: 64px;
+            border-bottom: 1px solid #f8fafc;
+            transition: background .15s;
+            position: relative;
         }
-        .liste-item:last-child { border-bottom:none; }
-        .liste-item:hover { background:#fafffe; }
-        .liste-item.ferdig { opacity:.45; }
-
-        .item-kat-badge {
-            font-size:.6rem; font-weight:700; color:#94a3b8;
-            background:#f1f5f9; border-radius:6px; padding:2px 7px;
-            white-space:nowrap; flex-shrink:0;
+        .liste-item:last-child { border-bottom: none; }
+        .liste-item:hover { background: #fafffe; }
+        .liste-item.ferdig { opacity: .42; }
+        .liste-item.removing {
+            opacity: 0; transform: translateX(24px);
+            transition: opacity .25s, transform .25s;
         }
 
+        /* ── ROUND CHECKBOX ── */
         .check-btn {
-            width:28px; height:28px; border-radius:9px;
-            border:2px solid #cbd5e1; background:white; cursor:pointer;
-            flex-shrink:0; display:flex; align-items:center; justify-content:center;
-            transition:.2s; font-size:.9rem; font-family:inherit;
+            width: 32px; height: 32px; border-radius: 50%;
+            border: 2.5px solid #d1d5db; background: white; cursor: pointer;
+            flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+            transition: all .22s; font-size: .85rem; font-family: inherit;
         }
-        .liste-item.ferdig .check-btn { background:var(--mat-gronn); border-color:var(--mat-gronn); color:white; }
-
-        .item-tekst { flex:1; font-size:.95rem; font-weight:600; color:var(--mat-mork); }
-        .liste-item.ferdig .item-tekst { text-decoration:line-through; color:#94a3b8; }
-
-        .btn-slett-item {
-            background:none; border:none; color:#cbd5e1; cursor:pointer;
-            font-size:.85rem; padding:4px; transition:color .2s;
+        .check-btn:hover { border-color: var(--mat-gronn); transform: scale(1.08); }
+        .check-btn:active { transform: scale(.9); }
+        .liste-item.ferdig .check-btn {
+            background: var(--mat-gronn); border-color: var(--mat-gronn); color: white;
+            box-shadow: 0 2px 10px rgba(34,197,94,.35);
         }
-        .btn-slett-item:hover { color:#e74c3c; }
 
-        .item-tekst { cursor:pointer; }
-        .item-tekst:hover { color:var(--mat-gronn); }
+        /* ── ITEM TEXT ── */
+        .item-tekst {
+            flex: 1; font-size: .97rem; font-weight: 600; color: var(--mat-mork);
+            line-height: 1.35; word-break: break-word; cursor: pointer;
+        }
+        .item-tekst:hover { color: var(--mat-gronn-m); }
+        .liste-item.ferdig .item-tekst { text-decoration: line-through; color: #94a3b8; }
+
+        /* ── EDIT INPUT ── */
         .edit-input {
-            flex:1; border:2px solid var(--mat-gronn); border-radius:10px;
-            padding:4px 10px; font-size:.95rem; font-family:inherit; font-weight:600;
-            color:var(--mat-mork); outline:none; background:white;
+            flex: 1; border: 2px solid var(--mat-gronn); border-radius: 10px;
+            padding: 6px 12px; font-size: .95rem; font-family: inherit;
+            font-weight: 600; color: var(--mat-mork); outline: none;
+            background: white; box-shadow: 0 0 0 3px rgba(34,197,94,.12);
         }
 
-        .btn-slett-alt {
-            background:white; border:1px solid #fecaca; color:#dc2626; padding:10px 18px;
-            border-radius:12px; font-weight:700; font-size:.85rem; cursor:pointer;
-            font-family:inherit; transition:.2s; display:flex; align-items:center; gap:7px;
+        /* ── DELETE BUTTON ── */
+        .btn-slett-item {
+            background: none; border: none; color: #e2e8f0; cursor: pointer;
+            font-size: .85rem; padding: 6px 4px; border-radius: 8px;
+            transition: all .18s; opacity: 0; flex-shrink: 0;
         }
-        .btn-slett-alt:hover { background:#fee2e2; }
+        .liste-item:hover .btn-slett-item { opacity: 1; }
+        .btn-slett-item:hover { color: #ef4444; background: #fee2e2; opacity: 1; }
 
-        /* ACTIONS */
-        .action-row { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
+        /* ── EMPTY STATE ── */
+        .empty-state { text-align: center; padding: 60px 20px; }
+        .empty-icon {
+            width: 80px; height: 80px; background: #f0fdf4; border-radius: 28px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.4rem; margin: 0 auto 20px;
+        }
+        .empty-state h3 { font-weight: 900; font-size: 1.2rem; color: var(--mat-mork); margin-bottom: 8px; }
+        .empty-state p { color: #94a3b8; font-size: .88rem; max-width: 280px; margin: 0 auto; }
+
+        /* ── ACTIONS ── */
+        .action-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+        .btn-smart {
+            flex: 1; background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+            color: white; border: none; padding: 12px 20px; border-radius: 14px;
+            font-weight: 800; font-size: .9rem; cursor: pointer; font-family: inherit;
+            transition: .2s; display: flex; align-items: center;
+            justify-content: center; gap: 8px;
+            box-shadow: 0 4px 18px rgba(99,102,241,.35);
+        }
+        .btn-smart:hover { opacity: .9; transform: translateY(-1px); }
+        .btn-smart:disabled { opacity: .6; cursor: not-allowed; transform: none; }
         .btn-action {
-            background:white; border:1px solid #f1f5f9; color:#64748b; padding:10px 18px;
-            border-radius:12px; font-weight:700; font-size:.85rem; cursor:pointer;
-            font-family:inherit; transition:.2s; display:flex; align-items:center; gap:7px;
-            text-decoration:none;
+            display: flex; align-items: center; gap: 7px;
+            background: white; border: 1.5px solid #f1f5f9; color: #64748b;
+            padding: 10px 16px; border-radius: 12px; font-weight: 700;
+            font-size: .84rem; cursor: pointer; font-family: inherit;
+            transition: .2s; text-decoration: none;
         }
-        .btn-action:hover { background:#fee2e2; color:#dc2626; border-color:#fecaca; }
-        .btn-action.green:hover { background:var(--mat-lys-gronn); color:var(--mat-gronn); border-color:var(--mat-gronn); }
-        .btn-action.ai-btn {
-            background: linear-gradient(135deg,#4338ca,#6366f1);
-            color:white; border-color:transparent;
-            box-shadow:0 4px 16px rgba(99,102,241,.3);
+        .btn-action:hover { background: #f0fdf4; color: var(--mat-gronn-m); border-color: #bbf7d0; }
+        .btn-slett-alt {
+            background: white; border: 1.5px solid #fecaca; color: #dc2626;
+            padding: 10px 14px; border-radius: 12px; font-weight: 700;
+            font-size: .84rem; cursor: pointer; font-family: inherit;
+            transition: .2s; display: flex; align-items: center; gap: 7px;
         }
-        .btn-action.ai-btn:hover { opacity:.9; background: linear-gradient(135deg,#4338ca,#6366f1); color:white; border-color:transparent; }
-        .btn-action.ai-btn:disabled { opacity:.6; cursor:not-allowed; }
+        .btn-slett-alt:hover { background: #fee2e2; }
 
-        /* SMART SORT OVERLAY */
-        .smart-overlay {
-            display:none; position:fixed; inset:0; z-index:9000;
-            background:rgba(15,23,42,.6); backdrop-filter:blur(4px);
-            align-items:flex-end; justify-content:center;
+        /* ── FEIL MELDING ── */
+        .feil-melding {
+            background: #fee2e2; color: #dc2626; border-radius: 14px;
+            padding: 12px 16px; font-size: .84rem; font-weight: 700;
+            margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
         }
-        .smart-overlay.vis { display:flex; }
-        .smart-panel {
-            background:white; border-radius:28px 28px 0 0;
-            width:100%; max-width:640px; max-height:85vh;
-            overflow-y:auto; padding:28px 24px 40px;
-            animation: slideUp .3s ease;
-        }
-        @keyframes slideUp { from{transform:translateY(60px);opacity:0} to{transform:translateY(0);opacity:1} }
-        .smart-header {
-            display:flex; align-items:center; justify-content:space-between;
-            margin-bottom:20px;
-        }
-        .smart-title { font-size:1.15rem; font-weight:900; color:#1e293b; }
-        .smart-close {
-            background:#f1f5f9; border:none; border-radius:50%; width:36px; height:36px;
-            cursor:pointer; font-size:1rem; color:#64748b; display:flex; align-items:center; justify-content:center;
-        }
-        .smart-gruppe { margin-bottom:20px; }
-        .sg-header {
-            display:flex; align-items:center; gap:8px;
-            font-size:.75rem; font-weight:800; text-transform:uppercase;
-            letter-spacing:1.5px; color:#64748b; margin-bottom:10px;
-        }
-        .sg-header span.sg-ikon { font-size:1.1rem; }
-        .sg-varer { display:flex; flex-direction:column; gap:6px; }
-        .sg-vare {
-            display:flex; align-items:center; gap:10px;
-            background:#f8fafc; border-radius:12px; padding:10px 14px;
-            font-size:.9rem; font-weight:600; color:#1e293b;
-            cursor:pointer; user-select:none; transition:.12s;
-        }
-        .sg-vare:hover { background:#f0fdf4; }
-        .sg-vare.sjekket { opacity:.45; }
-        .sg-sjekk {
-            width:18px; height:18px; border-radius:6px; flex-shrink:0;
-            border:2px solid #cbd5e1; background:white; transition:.12s;
-            display:flex; align-items:center; justify-content:center; font-size:.6rem;
-        }
-        .sg-vare.sjekket .sg-sjekk { background:var(--mat-gronn); border-color:var(--mat-gronn); color:white; }
-        .smart-actions { display:flex; gap:10px; margin-top:24px; }
-        .smart-btn {
-            flex:1; padding:13px; border-radius:14px; border:none;
-            font-weight:800; font-size:.9rem; cursor:pointer; font-family:inherit;
-        }
-        .smart-btn-apply {
-            background:linear-gradient(135deg,#16a34a,#22c55e); color:white;
-        }
-        .smart-btn-cancel { background:#f1f5f9; color:#64748b; }
-        .smart-laster { text-align:center; padding:40px 20px; color:#6366f1; }
-        .smart-laster i { font-size:2rem; margin-bottom:10px; display:block; }
 
-        /* EMPTY */
-        .empty-state { text-align:center; padding:64px 20px; }
-        .empty-icon { width:80px; height:80px; background:var(--mat-lys-gronn); border-radius:24px; display:flex; align-items:center; justify-content:center; font-size:2.4rem; margin:0 auto 20px; }
-        .empty-state h3 { font-weight:900; font-size:1.3rem; color:var(--mat-mork); margin-bottom:8px; }
-        .empty-state p { color:#94a3b8; }
-
-        .hidden-action { display:none !important; }
-
-        /* Optimistic toggle animation */
-        .liste-item { transition: opacity .2s; }
-        .liste-item.removing { opacity: 0; transform: translateX(20px); transition: opacity .25s, transform .25s; }
-
-        /* GRUPPE TABS */
-        .gruppe-tabs {
-            display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;
-        }
+        /* ── GRUPPE TABS ── */
+        .gruppe-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
         .gruppe-tab {
-            padding:8px 16px; border-radius:12px; font-size:.82rem; font-weight:700;
-            border:2px solid #e2e8f0; background:white; color:#64748b;
-            cursor:pointer; text-decoration:none; transition:.15s; font-family:inherit;
+            padding: 8px 16px; border-radius: 12px; font-size: .82rem; font-weight: 700;
+            border: 2px solid #e2e8f0; background: white; color: #64748b;
+            cursor: pointer; text-decoration: none; transition: .15s; font-family: inherit;
         }
-        .gruppe-tab:hover { border-color:var(--mat-gronn); color:var(--mat-gronn); }
-        .gruppe-tab.aktiv { background:var(--mat-gronn); border-color:var(--mat-gronn); color:white; }
+        .gruppe-tab:hover { border-color: var(--mat-gronn); color: var(--mat-gronn); }
+        .gruppe-tab.aktiv { background: var(--mat-gronn); border-color: var(--mat-gronn); color: white; }
 
-        /* GRUPPE BANNER */
+        /* ── GRUPPE BANNER ── */
         .gruppe-banner {
-            background:white; border:1px solid #e0f2fe; border-radius:18px;
-            padding:16px 20px; margin-bottom:14px;
-            display:flex; align-items:center; justify-content:space-between;
-            gap:12px; flex-wrap:wrap;
-            box-shadow:0 2px 12px rgba(14,165,233,.08);
+            background: white; border: 1.5px solid #e0f2fe; border-radius: 18px;
+            padding: 16px 18px; margin-bottom: 14px;
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px; flex-wrap: wrap;
         }
-        .gruppe-banner-left { display:flex; align-items:center; gap:12px; }
+        .gruppe-banner-left { display: flex; align-items: center; gap: 12px; }
         .gruppe-banner-ikon {
-            width:40px; height:40px; border-radius:12px;
-            background:linear-gradient(135deg,#0ea5e9,#38bdf8);
-            display:flex; align-items:center; justify-content:center;
-            font-size:1.1rem; flex-shrink:0;
+            width: 40px; height: 40px; border-radius: 12px;
+            background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; flex-shrink: 0;
         }
-        .gruppe-banner-navn { font-weight:800; color:#0f172a; font-size:.95rem; }
-        .gruppe-banner-kode {
-            font-size:.78rem; color:#64748b; margin-top:2px;
-            display:flex; align-items:center; gap:6px;
-        }
+        .gruppe-banner-navn { font-weight: 800; color: #0f172a; font-size: .95rem; }
+        .gruppe-banner-kode { font-size: .78rem; color: #64748b; margin-top: 2px; display: flex; align-items: center; gap: 6px; }
         .kode-chip {
-            background:#f0f9ff; border:1px solid #bae6fd; color:#0369a1;
-            font-weight:800; letter-spacing:2px; padding:2px 9px; border-radius:8px;
-            font-size:.8rem; cursor:pointer; transition:.15s;
+            background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1;
+            font-weight: 800; letter-spacing: 2px; padding: 2px 9px; border-radius: 8px;
+            font-size: .8rem; cursor: pointer; transition: .15s;
         }
-        .kode-chip:hover { background:#e0f2fe; }
-        .kode-kopiert { color:#16a34a !important; border-color:#bbf7d0 !important; background:#f0fdf4 !important; }
+        .kode-chip:hover { background: #e0f2fe; }
+        .kode-kopiert { color: #16a34a !important; border-color: #bbf7d0 !important; background: #f0fdf4 !important; }
         .btn-forlat {
-            background:none; border:1px solid #fecaca; color:#dc2626; padding:7px 14px;
-            border-radius:10px; font-weight:700; font-size:.8rem; cursor:pointer;
-            font-family:inherit; transition:.2s; white-space:nowrap;
+            background: none; border: 1.5px solid #fecaca; color: #dc2626;
+            padding: 7px 14px; border-radius: 10px; font-weight: 700; font-size: .8rem;
+            cursor: pointer; font-family: inherit; transition: .2s; white-space: nowrap;
         }
-        .btn-forlat:hover { background:#fee2e2; }
+        .btn-forlat:hover { background: #fee2e2; }
 
-        /* DELT HANDLELISTE SECTION */
+        /* ── DELT SEKSJON ── */
         .delt-seksjon {
-            margin-top:20px; background:white; border-radius:20px;
-            border:1px solid #f1f5f9; overflow:hidden;
+            margin-top: 16px; background: white; border-radius: 18px;
+            border: 1.5px solid #f1f5f9; overflow: hidden;
         }
         .delt-header {
-            padding:14px 20px; display:flex; align-items:center; justify-content:space-between;
-            cursor:pointer; gap:10px;
+            padding: 14px 18px; display: flex; align-items: center;
+            justify-content: space-between; cursor: pointer; gap: 10px;
         }
-        .delt-header-left { display:flex; align-items:center; gap:10px; }
+        .delt-header-left { display: flex; align-items: center; gap: 10px; }
         .delt-ikon {
-            width:36px; height:36px; border-radius:10px;
-            background:linear-gradient(135deg,#0ea5e9,#38bdf8);
-            display:flex; align-items:center; justify-content:center; font-size:.95rem;
+            width: 36px; height: 36px; border-radius: 10px;
+            background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+            display: flex; align-items: center; justify-content: center; font-size: .95rem;
         }
-        .delt-tittel { font-weight:800; font-size:.88rem; color:#0f172a; }
-        .delt-sub { font-size:.75rem; color:#94a3b8; margin-top:1px; }
-        .delt-chevron { color:#94a3b8; font-size:.8rem; transition:transform .2s; }
-        .delt-chevron.open { transform:rotate(180deg); }
-        .delt-body { padding:0 20px 18px; display:none; }
-        .delt-body.vis { display:block; }
-        .delt-rad { display:flex; gap:10px; margin-top:12px; }
+        .delt-tittel { font-weight: 800; font-size: .88rem; color: #0f172a; }
+        .delt-sub { font-size: .75rem; color: #94a3b8; margin-top: 1px; }
+        .delt-chevron { color: #94a3b8; font-size: .8rem; transition: transform .2s; }
+        .delt-chevron.open { transform: rotate(180deg); }
+        .delt-body { padding: 0 18px 18px; display: none; }
+        .delt-body.vis { display: block; }
+        .delt-rad { display: flex; gap: 8px; margin-top: 12px; }
         .delt-input {
-            flex:1; border:2px solid #f1f5f9; border-radius:12px; padding:10px 14px;
-            font-size:.88rem; font-family:inherit; font-weight:600; color:#0f172a;
-            background:#f8fafc; outline:none; transition:.2s;
+            flex: 1; border: 2px solid #f1f5f9; border-radius: 12px;
+            padding: 10px 14px; font-size: .88rem; font-family: inherit;
+            font-weight: 600; color: #0f172a; background: #f8fafc; outline: none; transition: .2s;
         }
-        .delt-input:focus { border-color:#0ea5e9; background:white; }
+        .delt-input:focus { border-color: #0ea5e9; background: white; }
         .btn-delt {
-            background:linear-gradient(135deg,#0ea5e9,#0284c7); color:white; border:none;
-            padding:10px 18px; border-radius:12px; font-weight:800; font-size:.85rem;
-            cursor:pointer; font-family:inherit; white-space:nowrap; transition:.2s;
+            background: linear-gradient(135deg, #0ea5e9, #0284c7); color: white; border: none;
+            padding: 10px 16px; border-radius: 12px; font-weight: 800; font-size: .85rem;
+            cursor: pointer; font-family: inherit; white-space: nowrap; transition: .2s;
         }
-        .btn-delt:hover { opacity:.88; }
+        .btn-delt:hover { opacity: .88; }
         .delt-divider {
-            display:flex; align-items:center; gap:10px; margin:14px 0 2px;
-            color:#94a3b8; font-size:.78rem; font-weight:700;
+            display: flex; align-items: center; gap: 10px; margin: 14px 0 2px;
+            color: #94a3b8; font-size: .78rem; font-weight: 700;
         }
-        .delt-divider::before, .delt-divider::after {
-            content:''; flex:1; height:1px; background:#f1f5f9;
-        }
-        .feil-melding {
-            background:#fee2e2; color:#dc2626; border-radius:12px; padding:10px 14px;
-            font-size:.82rem; font-weight:700; margin-bottom:14px;
-            display:flex; align-items:center; gap:8px;
-        }
+        .delt-divider::before, .delt-divider::after { content: ''; flex: 1; height: 1px; background: #f1f5f9; }
 
-        /* DISAMBIGUATION MODAL */
-        .disamb-overlay {
-            display:none; position:fixed; inset:0; z-index:9500;
-            background:rgba(15,23,42,.55); backdrop-filter:blur(4px);
-            align-items:center; justify-content:center; padding:16px;
+        /* ── SMART SORT OVERLAY ── */
+        .smart-overlay {
+            display: none; position: fixed; inset: 0; z-index: 9000;
+            background: rgba(15,23,42,.65); backdrop-filter: blur(4px);
+            align-items: flex-end; justify-content: center;
         }
-        .disamb-overlay.vis { display:flex; }
+        .smart-overlay.vis { display: flex; }
+        .smart-panel {
+            background: white; border-radius: 28px 28px 0 0;
+            width: 100%; max-width: 640px; max-height: 88vh;
+            overflow-y: auto; padding: 10px 20px 48px;
+            animation: slideUp .3s cubic-bezier(.4,0,.2,1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(60px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+        .smart-drag {
+            width: 36px; height: 4px; background: #e2e8f0; border-radius: 99px;
+            margin: 8px auto 20px; display: block;
+        }
+        .smart-header {
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;
+        }
+        .smart-title { font-size: 1.12rem; font-weight: 900; color: #1e293b; }
+        .smart-subtitle { font-size: .78rem; color: #94a3b8; margin: 0 0 20px; }
+        .smart-close {
+            background: #f1f5f9; border: none; border-radius: 50%;
+            width: 36px; height: 36px; cursor: pointer; font-size: 1rem;
+            color: #64748b; display: flex; align-items: center; justify-content: center;
+        }
+        .smart-close:hover { background: #e2e8f0; }
+        .smart-gruppe { margin-bottom: 16px; }
+        .sg-header {
+            display: flex; align-items: center; gap: 8px;
+            padding: 9px 14px; border-radius: 12px; margin-bottom: 8px;
+            font-size: .7rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 1.5px; border-left: 4px solid currentColor;
+        }
+        .sg-ikon { font-size: 1rem; flex-shrink: 0; }
+        .sg-count {
+            margin-left: auto; font-size: .7rem; font-weight: 900;
+            padding: 2px 8px; border-radius: 99px;
+            background: rgba(0,0,0,.1);
+        }
+        .sg-varer { display: flex; flex-direction: column; gap: 5px; }
+        .sg-vare {
+            display: flex; align-items: center; gap: 10px;
+            background: #f8fafc; border-radius: 10px;
+            padding: 10px 14px; font-size: .9rem; font-weight: 600; color: #1e293b;
+            cursor: pointer; user-select: none; transition: .12s;
+        }
+        .sg-vare:hover { background: #f0fdf4; }
+        .sg-sjekk {
+            width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0;
+            border: 2px solid #cbd5e1; background: white; transition: .12s;
+            display: flex; align-items: center; justify-content: center; font-size: .6rem;
+        }
+        .sg-vare.sjekket { opacity: .4; }
+        .sg-vare.sjekket .sg-sjekk { background: var(--mat-gronn); border-color: var(--mat-gronn); color: white; }
+        .smart-actions {
+            display: flex; gap: 10px; margin-top: 24px;
+            position: sticky; bottom: 0; background: white;
+            padding-top: 14px; border-top: 1px solid #f1f5f9;
+        }
+        .smart-btn {
+            flex: 1; padding: 14px; border-radius: 14px; border: none;
+            font-weight: 800; font-size: .92rem; cursor: pointer; font-family: inherit; transition: .2s;
+        }
+        .smart-btn-apply {
+            background: linear-gradient(135deg, #16a34a, #22c55e); color: white;
+            box-shadow: 0 4px 16px rgba(34,197,94,.3);
+        }
+        .smart-btn-apply:hover { opacity: .92; transform: translateY(-1px); }
+        .smart-btn-cancel { background: #f1f5f9; color: #64748b; }
+        .smart-btn-cancel:hover { background: #e2e8f0; }
+        .smart-laster { text-align: center; padding: 52px 20px; color: #6366f1; }
+        .smart-laster i { font-size: 2.2rem; margin-bottom: 12px; display: block; }
+
+        /* ── DISAMBIGUATION ── */
+        .disamb-overlay {
+            display: none; position: fixed; inset: 0; z-index: 9500;
+            background: rgba(15,23,42,.55); backdrop-filter: blur(4px);
+            align-items: center; justify-content: center; padding: 16px;
+        }
+        .disamb-overlay.vis { display: flex; }
         .disamb-panel {
-            background:white; border-radius:24px; padding:28px 24px;
-            width:min(380px, 100%);
-            box-shadow: 0 24px 64px rgba(0,0,0,.15);
+            background: white; border-radius: 24px; padding: 28px 24px;
+            width: min(380px, 100%); box-shadow: 0 24px 64px rgba(0,0,0,.15);
             animation: slideUp .25s ease;
         }
-        .disamb-tittel { font-weight:900; font-size:1.1rem; color:#1e293b; margin-bottom:4px; }
-        .disamb-sub { font-size:.82rem; color:#94a3b8; margin-bottom:18px; }
-        .disamb-valg { display:flex; flex-direction:column; gap:10px; }
+        .disamb-tittel { font-weight: 900; font-size: 1.1rem; color: #1e293b; margin-bottom: 4px; }
+        .disamb-sub { font-size: .82rem; color: #94a3b8; margin-bottom: 18px; }
+        .disamb-valg { display: flex; flex-direction: column; gap: 10px; }
         .disamb-btn {
-            display:flex; align-items:center; gap:12px;
-            background:#f8fafc; border:2px solid #f1f5f9; border-radius:14px;
-            padding:14px 16px; cursor:pointer; font-family:inherit;
-            transition:.15s; text-align:left; width:100%;
+            display: flex; align-items: center; gap: 12px;
+            background: #f8fafc; border: 2px solid #f1f5f9; border-radius: 14px;
+            padding: 14px 16px; cursor: pointer; font-family: inherit;
+            transition: .15s; text-align: left; width: 100%;
         }
-        .disamb-btn:hover { border-color:var(--mat-gronn); background:#f0fdf4; }
-        .disamb-btn-ikon { font-size:1.4rem; flex-shrink:0; }
-        .disamb-btn-tekst { font-weight:700; font-size:.92rem; color:#1e293b; }
-        .disamb-btn-sub { font-size:.75rem; color:#94a3b8; margin-top:2px; }
+        .disamb-btn:hover { border-color: var(--mat-gronn); background: #f0fdf4; }
+        .disamb-btn-ikon { font-size: 1.4rem; flex-shrink: 0; }
+        .disamb-btn-tekst { font-weight: 700; font-size: .92rem; color: #1e293b; }
+        .disamb-btn-sub { font-size: .75rem; color: #94a3b8; margin-top: 2px; }
         .disamb-avbryt {
-            width:100%; margin-top:12px; background:none; border:none;
-            color:#94a3b8; font-family:inherit; font-size:.82rem;
-            font-weight:700; cursor:pointer; padding:8px;
+            width: 100%; margin-top: 12px; background: none; border: none;
+            color: #94a3b8; font-family: inherit; font-size: .82rem;
+            font-weight: 700; cursor: pointer; padding: 8px;
         }
-        .disamb-avbryt:hover { color:#64748b; }
+        .disamb-avbryt:hover { color: #64748b; }
 
         @media (max-width: 600px) {
-            .page-hero { padding: 32px 0 48px; }
-            .page-hero h1 { font-size: 2rem; letter-spacing: -1.5px; }
-            .content-wrap { padding: 0 12px; margin-top: -24px; }
-            .add-card { padding: 16px; }
-            .add-row { gap: 8px; }
-            .add-input { min-width: 0; }
-            .action-row { gap: 8px; }
+            .page-hero { padding: 24px 0 18px; }
+            .page-hero h1 { font-size: 1.9rem; }
+            .content-wrap { padding: 14px 12px 0; }
+            .add-card { padding: 14px; }
+            .liste-item { padding: 14px 14px; gap: 12px; min-height: 58px; }
+            .check-btn { width: 28px; height: 28px; }
+            .item-tekst { font-size: .93rem; }
+            .btn-slett-item { opacity: 1; }
             .btn-action, .btn-slett-alt { padding: 9px 13px; font-size: .82rem; }
-            .liste-item { padding: 12px 14px; gap: 10px; }
+            .action-row { gap: 7px; }
         }
     </style>
 </head>
 <body>
     <div th:replace="~{fragments :: navbar}"></div>
 
+    <!-- HERO -->
     <div class="page-hero">
-        <div class="page-hero-glow"></div>
         <div class="container hero-inner">
             <div>
                 <span class="hero-tag"><i class="fa-solid fa-cart-shopping"></i> Planlegging</span>
                 <h1>Handleliste</h1>
                 <p>Hold oversikt over hva du trenger å kjøpe</p>
             </div>
-            <!-- Progress ring — updated by JS -->
             <div class="hero-ring-wrap" id="heroRingWrap" style="display:none;">
                 <div class="hero-ring-stat">
                     <div class="hero-ring-num" id="heroRingNum">0</div>
@@ -391,7 +442,7 @@
     <div class="container">
         <div class="content-wrap">
 
-            <!-- FEIL MELDING -->
+            <!-- FEIL -->
             <div class="feil-melding" th:if="${feil != null}">
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 <span th:text="${feil == 'ugyldig-kode'} ? 'Ugyldig kode — sjekk at du skrev riktig.' : feil"></span>
@@ -420,7 +471,7 @@
                         <div class="gruppe-banner-navn" th:text="${aktivGruppe.navn}"></div>
                         <div class="gruppe-banner-kode">
                             Inviteringskode:
-                            <span class="kode-chip" th:id="'kodeChip'" th:data-kode="${aktivGruppe.inviteringskode}"
+                            <span class="kode-chip" th:data-kode="${aktivGruppe.inviteringskode}"
                                   th:text="${aktivGruppe.inviteringskode}" onclick="kopierKode(this)"></span>
                         </div>
                     </div>
@@ -437,7 +488,7 @@
             <div class="add-card">
                 <form th:action="@{/handleliste/legg-til}" method="POST" class="add-row">
                     <input th:if="${aktivGruppe != null}" type="hidden" name="gruppeId" th:value="${aktivGruppe.id}">
-                    <input type="text" name="tekst" class="add-input" placeholder="f.eks. 500g kyllingfilet" required>
+                    <input type="text" name="tekst" class="add-input" placeholder="f.eks. 500g kyllingfilet" required autocomplete="off">
                     <button type="submit" class="btn-add">
                         <i class="fa-solid fa-plus me-1"></i> Legg til
                     </button>
@@ -455,34 +506,36 @@
                 </div>
             </div>
 
-            <!-- LISTE -->
+            <!-- LISTE (TOM) -->
             <div th:if="${items.isEmpty()}" class="liste-card" id="listeKort">
                 <div class="empty-state">
                     <div class="empty-icon">🛒</div>
                     <h3>Handlelisten er tom</h3>
-                    <p>Legg til varer manuelt, eller gå til en oppskrift og klikk "Legg i handleliste".</p>
+                    <p>Legg til varer manuelt, eller gå til en oppskrift og klikk «Legg i handleliste».</p>
                 </div>
             </div>
 
+            <!-- LISTE (MED VARER) -->
             <div th:unless="${items.isEmpty()}" class="liste-card" id="listeKort">
-                <!-- Server-side gruppert etter kategori: header vises når kategorien endrer seg -->
                 <th:block th:each="item, stat : ${items}">
                     <div class="liste-gruppe-header"
                          th:if="${item.kategori != null and !#strings.isEmpty(item.kategori)
-                                  and (stat.first or !item.kategori.equals(items[stat.index - 1].kategori))}">
-                        <i class="fa-solid fa-tag"></i>
-                        <span th:text="${item.kategori}"></span>
+                                  and (stat.first or !item.kategori.equals(items[stat.index - 1].kategori))}"
+                         th:attr="data-kat=${item.kategori}">
+                        <span class="gruppe-ikon">🏷️</span>
+                        <span class="gruppe-navn" th:text="${item.kategori}"></span>
+                        <span class="gruppe-count"></span>
                     </div>
                     <div th:classappend="${item.ferdig} ? ' ferdig' : ''"
                          th:attr="data-id=${item.id}, data-kat=${item.kategori != null ? item.kategori : ''}"
                          class="liste-item">
                         <button class="check-btn"
-                                th:classappend="${item.ferdig} ? ' ferdig' : ''"
                                 th:title="${item.ferdig ? 'Merk ugjort' : 'Merk gjort'}"
                                 onclick="toggleItem(this)">
                             <i th:if="${item.ferdig}" class="fa-solid fa-check"></i>
                         </button>
-                        <span class="item-tekst" th:text="${item.tekst}" onclick="startRediger(this)" title="Klikk for å redigere">Vare</span>
+                        <span class="item-tekst" onclick="startRediger(this)" title="Klikk for å redigere"
+                              th:text="${item.tekst}">Vare</span>
                         <button class="btn-slett-item" title="Slett" onclick="slettItem(this)">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
@@ -490,23 +543,23 @@
                 </th:block>
             </div>
 
-            <!-- ACTIONS -->
+            <!-- HANDLINGER -->
             <div class="action-row" th:if="${antall > 0}">
-                <button class="btn-action ai-btn" id="smartSorterBtn" onclick="smartSorter(this)">
+                <button class="btn-smart" id="smartSorterBtn" onclick="smartSorter(this)">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> Smartsorter
                 </button>
                 <button class="btn-action" id="ryddBtn"
                         th:attr="onclick=${'ryddFerdig(' + (aktivGruppe != null ? aktivGruppe.id : 'null') + ')'}"
                         th:style="${antallFerdig > 0} ? '' : 'display:none'">
-                    <i class="fa-solid fa-broom"></i> Rydd ferdiggjorte
+                    <i class="fa-solid fa-broom"></i> Rydd
                 </button>
                 <button class="btn-slett-alt"
                         th:attr="onclick=${'slettAlt(' + (aktivGruppe != null ? aktivGruppe.id : 'null') + ')'}">
-                    <i class="fa-solid fa-trash"></i> Slett alt
+                    <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
 
-            <!-- DELT HANDLELISTE SEKSJON -->
+            <!-- DELT HANDLELISTE -->
             <div class="delt-seksjon">
                 <div class="delt-header" onclick="toggleDelt()">
                     <div class="delt-header-left">
@@ -528,8 +581,8 @@
                     </form>
                     <div class="delt-divider">eller bli med i en eksisterende</div>
                     <form th:action="@{/handleliste/bli-med}" method="POST" class="delt-rad">
-                        <input type="text" name="kode" class="delt-input" placeholder="Skriv inn kode (f.eks. MAT4X2)" required maxlength="10"
-                               style="text-transform:uppercase;letter-spacing:2px;">
+                        <input type="text" name="kode" class="delt-input" placeholder="Skriv inn kode (f.eks. MAT4X2)"
+                               required maxlength="10" style="text-transform:uppercase;letter-spacing:2px;">
                         <button type="submit" class="btn-delt"><i class="fa-solid fa-right-to-bracket"></i> Bli med</button>
                     </form>
                 </div>
@@ -551,6 +604,7 @@
     <!-- SMART SORT OVERLAY -->
     <div class="smart-overlay" id="smartOverlay" onclick="lukkSmartOverlay(event)">
         <div class="smart-panel" id="smartPanel">
+            <span class="smart-drag"></span>
             <div class="smart-header">
                 <span class="smart-title"><i class="fa-solid fa-wand-magic-sparkles" style="color:#6366f1;margin-right:8px;"></i>Smartsortert handleliste</span>
                 <button class="smart-close" onclick="lukkSmartOverlay(null)"><i class="fa-solid fa-xmark"></i></button>
@@ -558,13 +612,13 @@
             <div id="smartInnhold">
                 <div class="smart-laster">
                     <i class="fa-solid fa-spinner fa-spin"></i>
-                    <p style="color:#94a3b8;font-size:.88rem;margin:0;">MatMinne sorterer og slår sammen varer...</p>
+                    <p style="color:#94a3b8;font-size:.88rem;margin:0;">Sorterer varene etter butikkavdeling...</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Generell bekreftelsesmodal -->
+    <!-- BEKREFT MODAL -->
     <div id="bekreftModal" style="display:none;position:fixed;inset:0;z-index:9999;
          background:rgba(0,0,0,.5);align-items:flex-end;justify-content:center;
          backdrop-filter:blur(3px);">
@@ -587,6 +641,7 @@
             </div>
         </div>
     </div>
+
     <script>
         var _bekreftCb = null;
         function showBekreft(tittel, tekst, cb) {
@@ -596,9 +651,7 @@
             document.getElementById('bekreftOK').onclick = function() { lukkBekreft(); if (_bekreftCb) _bekreftCb(); };
             document.getElementById('bekreftModal').style.display = 'flex';
         }
-        function lukkBekreft() {
-            document.getElementById('bekreftModal').style.display = 'none';
-        }
+        function lukkBekreft() { document.getElementById('bekreftModal').style.display = 'none'; }
         document.getElementById('bekreftModal').addEventListener('click', function(e) {
             if (e.target === this) lukkBekreft();
         });
@@ -607,23 +660,92 @@
     <div th:replace="~{fragments :: bottom_nav}"></div>
     <div th:replace="~{fragments :: scripts}"></div>
 
-    <!-- Thymeleaf sender gruppeId til JS -->
     <div id="jsData"
          th:attr="data-gruppe-id=${aktivGruppe != null ? aktivGruppe.id : ''},
                   data-gruppe-navn=${aktivGruppe != null ? aktivGruppe.navn : ''}"
          style="display:none;"></div>
 
     <script>
-        const _jsData = document.getElementById('jsData');
+        const _jsData  = document.getElementById('jsData');
         const _gruppeId = _jsData.dataset.gruppeId || null;
 
-        function getItemId(el) {
-            return el.closest('.liste-item').dataset.id;
+        /* ══ KATEGORI FARGE-SYSTEM ══════════════════════════════════════ */
+        const KAT_STYLES = {
+            'frukt & grønt':         { color: '#10b981', bg: '#ecfdf5' },
+            'meieri & egg':          { color: '#0ea5e9', bg: '#f0f9ff' },
+            'kjøtt & fisk':          { color: '#f43f5e', bg: '#fff1f2' },
+            'bakeri & brød':         { color: '#d97706', bg: '#fffbeb' },
+            'tørrvarer & hermetikk': { color: '#f97316', bg: '#fff7ed' },
+            'frysedisk':             { color: '#0891b2', bg: '#ecfeff' },
+            'drikke':                { color: '#8b5cf6', bg: '#f5f3ff' },
+            'brus/øl':               { color: '#8b5cf6', bg: '#f5f3ff' },
+            'kjølevarer':            { color: '#38bdf8', bg: '#f0f9ff' },
+            'annet':                 { color: '#94a3b8', bg: '#f8fafc' },
+        };
+        const KAT_IKONER = {
+            'frukt & grønt': '🥦', 'meieri & egg': '🥛', 'kjøtt & fisk': '🥩',
+            'bakeri & brød': '🍞', 'tørrvarer & hermetikk': '🥫', 'frysedisk': '❄️',
+            'drikke': '🥤', 'brus/øl': '🥤', 'kjølevarer': '🧊', 'annet': '🛒',
+        };
+
+        function getKatStyle(navn) {
+            const key = (navn || '').toLowerCase().trim();
+            if (KAT_STYLES[key]) return KAT_STYLES[key];
+            for (const [k, v] of Object.entries(KAT_STYLES)) {
+                if (key.includes(k) || k.includes(key)) return v;
+            }
+            return { color: '#94a3b8', bg: '#f8fafc' };
+        }
+        function katColor(navn) { return getKatStyle(navn).color; }
+        function katBg(navn)    { return getKatStyle(navn).bg; }
+        function katIkon(navn) {
+            const key = (navn || '').toLowerCase().trim();
+            if (KAT_IKONER[key]) return KAT_IKONER[key];
+            for (const [k, v] of Object.entries(KAT_IKONER)) {
+                if (key.includes(k)) return v;
+            }
+            return '🛒';
         }
 
-        /* ── GRUPPE POLLING ── */
-        let _pollingTimer = null;
+        function applyKatColors() {
+            document.querySelectorAll('.liste-gruppe-header').forEach(h => {
+                const kat = h.dataset.kat || h.querySelector('.gruppe-navn')?.textContent?.trim() || '';
+                const style = getKatStyle(kat);
+                h.style.borderLeftColor = style.color;
+                h.style.backgroundColor = style.bg;
+                h.style.color = style.color;
+                const ikonEl = h.querySelector('.gruppe-ikon');
+                if (ikonEl) ikonEl.textContent = katIkon(kat);
+            });
+            updateGroupCounts();
+        }
 
+        function updateGroupCounts() {
+            document.querySelectorAll('.liste-gruppe-header').forEach(h => {
+                const countEl = h.querySelector('.gruppe-count');
+                if (!countEl) return;
+                let count = 0;
+                let next = h.nextElementSibling;
+                while (next && !next.classList.contains('liste-gruppe-header')) {
+                    if (next.classList.contains('liste-item') && !next.classList.contains('ferdig')) count++;
+                    next = next.nextElementSibling;
+                }
+                countEl.textContent = count > 0 ? count : '';
+            });
+        }
+
+        /* Strip ledende "- " fra eksisterende varer i databasen */
+        function cleanItemTekster() {
+            document.querySelectorAll('.item-tekst').forEach(el => {
+                const raw = el.textContent;
+                if (/^[-*•]\s+/.test(raw)) {
+                    el.textContent = raw.replace(/^[-*•]\s+/, '');
+                }
+            });
+        }
+
+        /* ══ GRUPPE POLLING ══════════════════════════════════════════════ */
+        let _pollingTimer = null;
         function startPolling() {
             if (!_gruppeId) return;
             _pollingTimer = setInterval(() => {
@@ -637,68 +759,54 @@
         function oppdaterListeMedPoll(items) {
             const kort = document.getElementById('listeKort');
             if (!kort) return;
-            const eksisterendeIds = new Set([...kort.querySelectorAll('.liste-item')].map(el => el.dataset.id));
+            const eksIds = new Set([...kort.querySelectorAll('.liste-item')].map(el => el.dataset.id));
             const nyeIds = new Set(items.map(i => String(i.id)));
-
-            // Fjern slettede
-            eksisterendeIds.forEach(id => {
+            eksIds.forEach(id => {
                 if (!nyeIds.has(id)) {
                     const el = kort.querySelector(`.liste-item[data-id="${id}"]`);
                     if (el) { el.classList.add('removing'); setTimeout(() => el.remove(), 260); }
                 }
             });
-
-            // Legg til nye
             items.forEach(item => {
                 const id = String(item.id);
-                if (!eksisterendeIds.has(id)) {
+                if (!eksIds.has(id)) {
                     const div = document.createElement('div');
                     div.className = 'liste-item' + (item.ferdig ? ' ferdig' : '');
                     div.dataset.id = id;
                     div.dataset.kat = item.kategori || '';
                     div.innerHTML =
-                        `<button class="check-btn${item.ferdig ? ' ferdig' : ''}" onclick="toggleItem(this)" title="${item.ferdig ? 'Merk ugjort' : 'Merk gjort'}">
+                        `<button class="check-btn" onclick="toggleItem(this)" title="${item.ferdig ? 'Merk ugjort' : 'Merk gjort'}">
                             ${item.ferdig ? '<i class="fa-solid fa-check"></i>' : ''}
                          </button>
                          <span class="item-tekst" onclick="startRediger(this)" title="Klikk for å redigere">${escHtml(item.tekst)}</span>
-                         ${item.kategori ? `<span class="item-kat-badge">${escHtml(item.kategori)}</span>` : ''}
                          <button class="btn-slett-item" title="Slett" onclick="slettItem(this)"><i class="fa-solid fa-xmark"></i></button>`;
                     kort.appendChild(div);
                 } else {
-                    // Synkroniser ferdig-tilstand
                     const el = kort.querySelector(`.liste-item[data-id="${id}"]`);
                     if (el && el.classList.contains('ferdig') !== item.ferdig) {
                         el.classList.toggle('ferdig', item.ferdig);
                         const btn = el.querySelector('.check-btn');
-                        if (btn) {
-                            btn.classList.toggle('ferdig', item.ferdig);
-                            btn.innerHTML = item.ferdig ? '<i class="fa-solid fa-check"></i>' : '';
-                        }
+                        if (btn) btn.innerHTML = item.ferdig ? '<i class="fa-solid fa-check"></i>' : '';
                     }
                 }
             });
-
             if (kort.querySelectorAll('.liste-item').length === 0) {
                 kort.innerHTML = '<div class="empty-state"><div class="empty-icon">🛒</div><h3>Handlelisten er tom</h3><p>Legg til varer manuelt.</p></div>';
             }
             oppdaterStats();
+            applyKatColors();
         }
 
-        /* ── DELT SEKSJON TOGGLE ── */
+        /* ══ DIVERSE UTILS ═══════════════════════════════════════════════ */
         function toggleDelt() {
-            const body = document.getElementById('deltBody');
-            const chev = document.getElementById('deltChevron');
-            body.classList.toggle('vis');
-            chev.classList.toggle('open');
+            document.getElementById('deltBody').classList.toggle('vis');
+            document.getElementById('deltChevron').classList.toggle('open');
         }
-
-        /* ── KOPIER KODE ── */
         function kopierKode(el) {
-            const kode = el.dataset.kode;
-            navigator.clipboard.writeText(kode).then(() => {
+            navigator.clipboard.writeText(el.dataset.kode).then(() => {
                 el.textContent = 'Kopiert!';
                 el.classList.add('kode-kopiert');
-                setTimeout(() => { el.textContent = kode; el.classList.remove('kode-kopiert'); }, 1800);
+                setTimeout(() => { el.textContent = el.dataset.kode; el.classList.remove('kode-kopiert'); }, 1800);
             });
         }
 
@@ -709,103 +817,41 @@
             const fill      = document.querySelector('.progress-fill');
             const statsBar  = document.querySelector('.stats-bar');
             const ryddBtn   = document.getElementById('ryddBtn');
-
             if (statsBar) statsBar.style.display = alle.length > 0 ? 'flex' : 'none';
             if (statsText) statsText.textContent = ferdig.length + ' av ' + alle.length + ' gjort';
             if (fill) fill.style.width = (alle.length > 0 ? (ferdig.length * 100 / alle.length) : 0) + '%';
             if (ryddBtn) ryddBtn.style.display = ferdig.length > 0 ? '' : 'none';
-
-            // Update hero ring
-            const wrap  = document.getElementById('heroRingWrap');
-            const num   = document.getElementById('heroRingNum');
-            const tot   = document.getElementById('heroRingTotal');
-            const circ  = document.getElementById('heroRingCircle');
+            const wrap = document.getElementById('heroRingWrap');
+            const num  = document.getElementById('heroRingNum');
+            const tot  = document.getElementById('heroRingTotal');
+            const circ = document.getElementById('heroRingCircle');
             if (wrap && alle.length > 0) {
                 wrap.style.display = 'flex';
-                num.textContent  = ferdig.length;
-                tot.textContent  = alle.length;
+                num.textContent = ferdig.length;
+                tot.textContent = alle.length;
                 const pct = ferdig.length / alle.length;
                 circ.style.strokeDashoffset = (163 * (1 - pct)).toFixed(1);
                 circ.style.stroke = pct === 1 ? '#22c55e' : '#16a34a';
             } else if (wrap) {
                 wrap.style.display = 'none';
             }
+            updateGroupCounts();
         }
 
-        // ── DISAMBIGUATION ──────────────────────────────────────────────
+        /* ══ DISAMBIGUATION ══════════════════════════════════════════════ */
         const DISAMB = {
-            'erter':          { navn: 'Erter', valg: [
-                { tekst: 'Erter (frosne)',      sub: 'Frysedisk ❄️',              ikon: '❄️' },
-                { tekst: 'Erter (hermetisk)',   sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
-            'mais':           { navn: 'Mais', valg: [
-                { tekst: 'Maiskolbe',           sub: 'Frukt & Grønt 🥦',          ikon: '🌽' },
-                { tekst: 'Mais (hermetisk)',    sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
-            'pitabrød':       { navn: 'Pitabrød', valg: [
-                { tekst: 'Pitabrød (fersk)',    sub: 'Bakeri & Brød 🍞',          ikon: '🍞' },
-                { tekst: 'Pitabrød (fryst)',    sub: 'Frysedisk ❄️',              ikon: '❄️' }
-            ]},
-            'appelsinjuice':  { navn: 'Appelsinjuice', valg: [
-                { tekst: 'Appelsinjuice (kjølt)', sub: 'Kjølevarer 🧊',           ikon: '🧃' },
-                { tekst: 'Appelsinjuice',       sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
-            'mineralvann':    { navn: 'Mineralvann', valg: [
-                { tekst: 'Mineralvann (kjølt)', sub: 'Kjølevarer 🧊',             ikon: '🧊' },
-                { tekst: 'Mineralvann',         sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
-            'kyllingnuggets': { navn: 'Kyllingnuggets', valg: [
-                { tekst: 'Kyllingnuggets (kjølt)', sub: 'Kjølevarer 🧊',          ikon: '🧊' },
-                { tekst: 'Kyllingnuggets (fryst)', sub: 'Frysedisk ❄️',           ikon: '❄️' }
-            ]},
-            'guacamole':      { navn: 'Guacamole', valg: [
-                { tekst: 'Guacamole (kjølt)',   sub: 'Kjølevarer 🧊',             ikon: '🧊' },
-                { tekst: 'Guacamole',           sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
-            'eplejuice':      { navn: 'Eplejuice', valg: [
-                { tekst: 'Eplejuice (kjølt)',   sub: 'Kjølevarer 🧊',             ikon: '🧃' },
-                { tekst: 'Eplejuice',           sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
-            'risgrøt':        { navn: 'Risgrøt', valg: [
-                { tekst: 'Risgrøt (ferdig, kjølt)', sub: 'Kjølevarer 🧊',         ikon: '🧊' },
-                { tekst: 'Risgrøt (pose)',      sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
-            'leverpostei':    { navn: 'Leverpostei', valg: [
-                { tekst: 'Leverpostei (kjølt)', sub: 'Kjølevarer 🧊',             ikon: '🧊' },
-                { tekst: 'Leverpostei',         sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
-            'basilikum':      { navn: 'Basilikum', valg: [
-                { tekst: 'Basilikum (fersk)',   sub: 'Frukt & Grønt 🥦',          ikon: '🌿' },
-                { tekst: 'Basilikum (tørket)', sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
-            'timian':         { navn: 'Timian', valg: [
-                { tekst: 'Timian (fersk)',      sub: 'Frukt & Grønt 🥦',          ikon: '🌿' },
-                { tekst: 'Timian (tørket)',     sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
-            'rosmarin':       { navn: 'Rosmarin', valg: [
-                { tekst: 'Rosmarin (fersk)',    sub: 'Frukt & Grønt 🥦',          ikon: '🌿' },
-                { tekst: 'Rosmarin (tørket)',   sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
-            'koriander':      { navn: 'Koriander', valg: [
-                { tekst: 'Koriander (fersk)',   sub: 'Frukt & Grønt 🥦',          ikon: '🌿' },
-                { tekst: 'Koriander (tørket)',  sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
-            'persille':       { navn: 'Persille', valg: [
-                { tekst: 'Persille (fersk)',    sub: 'Frukt & Grønt 🥦',          ikon: '🌿' },
-                { tekst: 'Persille (tørket)',   sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
-            'dill':           { navn: 'Dill', valg: [
-                { tekst: 'Dill (fersk)',        sub: 'Frukt & Grønt 🥦',          ikon: '🌿' },
-                { tekst: 'Dill (tørket)',       sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
-            'mynte':          { navn: 'Mynte', valg: [
-                { tekst: 'Mynte (fersk)',       sub: 'Frukt & Grønt 🥦',          ikon: '🌿' },
-                { tekst: 'Mynte (tørket)',      sub: 'Tørrvarer & Hermetikk 🥫',  ikon: '🥫' }
-            ]},
+            'erter':          { navn: 'Erter', valg: [{ tekst: 'Erter (frosne)', sub: 'Frysedisk ❄️', ikon: '❄️' }, { tekst: 'Erter (hermetisk)', sub: 'Tørrvarer 🥫', ikon: '🥫' }]},
+            'mais':           { navn: 'Mais', valg: [{ tekst: 'Maiskolbe', sub: 'Frukt & Grønt 🥦', ikon: '🌽' }, { tekst: 'Mais (hermetisk)', sub: 'Tørrvarer 🥫', ikon: '🥫' }]},
+            'pitabrød':       { navn: 'Pitabrød', valg: [{ tekst: 'Pitabrød (fersk)', sub: 'Bakeri 🍞', ikon: '🍞' }, { tekst: 'Pitabrød (fryst)', sub: 'Frysedisk ❄️', ikon: '❄️' }]},
+            'basilikum':      { navn: 'Basilikum', valg: [{ tekst: 'Basilikum (fersk)', sub: 'Frukt & Grønt 🥦', ikon: '🌿' }, { tekst: 'Basilikum (tørket)', sub: 'Tørrvarer 🥫', ikon: '🥫' }]},
+            'timian':         { navn: 'Timian', valg: [{ tekst: 'Timian (fersk)', sub: 'Frukt & Grønt 🥦', ikon: '🌿' }, { tekst: 'Timian (tørket)', sub: 'Tørrvarer 🥫', ikon: '🥫' }]},
+            'rosmarin':       { navn: 'Rosmarin', valg: [{ tekst: 'Rosmarin (fersk)', sub: 'Frukt & Grønt 🥦', ikon: '🌿' }, { tekst: 'Rosmarin (tørket)', sub: 'Tørrvarer 🥫', ikon: '🥫' }]},
+            'koriander':      { navn: 'Koriander', valg: [{ tekst: 'Koriander (fersk)', sub: 'Frukt & Grønt 🥦', ikon: '🌿' }, { tekst: 'Koriander (tørket)', sub: 'Tørrvarer 🥫', ikon: '🥫' }]},
+            'persille':       { navn: 'Persille', valg: [{ tekst: 'Persille (fersk)', sub: 'Frukt & Grønt 🥦', ikon: '🌿' }, { tekst: 'Persille (tørket)', sub: 'Tørrvarer 🥫', ikon: '🥫' }]},
+            'dill':           { navn: 'Dill', valg: [{ tekst: 'Dill (fersk)', sub: 'Frukt & Grønt 🥦', ikon: '🌿' }, { tekst: 'Dill (tørket)', sub: 'Tørrvarer 🥫', ikon: '🥫' }]},
+            'mynte':          { navn: 'Mynte', valg: [{ tekst: 'Mynte (fersk)', sub: 'Frukt & Grønt 🥦', ikon: '🌿' }, { tekst: 'Mynte (tørket)', sub: 'Tørrvarer 🥫', ikon: '🥫' }]},
         };
-
-        let _disambForm = null;
-        let _disambInput = null;
+        let _disambForm = null, _disambInput = null;
 
         function sjekkDisamb(e) {
             const form = e.target;
@@ -815,24 +861,20 @@
             for (const [nokkel, data] of Object.entries(DISAMB)) {
                 if (tekst === nokkel || tekst.startsWith(nokkel + ' ') || tekst.startsWith(nokkel + ',')) {
                     e.preventDefault();
-                    _disambForm = form;
-                    _disambInput = input;
+                    _disambForm = form; _disambInput = input;
                     visDisamb(data);
                     return;
                 }
             }
         }
-
         function visDisamb(data) {
             document.getElementById('disambTittel').textContent = data.navn;
             const valgDiv = document.getElementById('disambValg');
             valgDiv.innerHTML = '';
             data.valg.forEach(v => {
                 const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'disamb-btn';
-                btn.innerHTML =
-                    '<span class="disamb-btn-ikon">' + v.ikon + '</span>' +
+                btn.type = 'button'; btn.className = 'disamb-btn';
+                btn.innerHTML = '<span class="disamb-btn-ikon">' + v.ikon + '</span>' +
                     '<div><div class="disamb-btn-tekst">' + escHtml(v.tekst) + '</div>' +
                     '<div class="disamb-btn-sub">' + escHtml(v.sub) + '</div></div>';
                 btn.onclick = () => velgDisamb(v.tekst);
@@ -840,42 +882,33 @@
             });
             document.getElementById('disambOverlay').classList.add('vis');
         }
+        function velgDisamb(tekst) { if (_disambInput) _disambInput.value = tekst; lukkDisamb(); if (_disambForm) _disambForm.submit(); }
+        function lukkDisamb() { document.getElementById('disambOverlay').classList.remove('vis'); }
 
-        function velgDisamb(tekst) {
-            if (_disambInput) _disambInput.value = tekst;
-            lukkDisamb();
-            if (_disambForm) _disambForm.submit();
-        }
-
-        function lukkDisamb() {
-            document.getElementById('disambOverlay').classList.remove('vis');
-        }
-
-        // Init ring on page load + start polling
+        /* ══ INIT ════════════════════════════════════════════════════════ */
         document.addEventListener('DOMContentLoaded', () => {
+            cleanItemTekster();
+            applyKatColors();
             oppdaterStats();
             startPolling();
             const addForm = document.querySelector('.add-card form');
             if (addForm) addForm.addEventListener('submit', sjekkDisamb);
         });
 
+        /* ══ TOGGLE / SLETT / RYDD ═══════════════════════════════════════ */
         function toggleItem(btn) {
-            const item = btn.closest('.liste-item');
-            const id   = item.dataset.id;
+            const item    = btn.closest('.liste-item');
+            const id      = item.dataset.id;
             const erFerdig = item.classList.contains('ferdig');
-
             item.classList.toggle('ferdig', !erFerdig);
-            btn.classList.toggle('ferdig', !erFerdig);
             if (!erFerdig) {
                 btn.innerHTML = '<i class="fa-solid fa-check"></i>';
-                // Flytt avkrysset vare til bunnen
                 const kort = document.getElementById('listeKort');
                 if (kort) kort.appendChild(item);
             } else {
                 btn.innerHTML = '';
             }
             oppdaterStats();
-
             csrfFetch('/handleliste/toggle/' + id, { method: 'POST' })
                 .then(r => { if (!r.ok) location.reload(); })
                 .catch(() => location.reload());
@@ -884,20 +917,16 @@
         function slettItem(btn) {
             const item = btn.closest('.liste-item');
             const id   = item.dataset.id;
-
             item.classList.add('removing');
             setTimeout(() => item.remove(), 260);
             oppdaterStats();
-
-            // Vis tom-tilstand hvis siste element
             setTimeout(() => {
                 const kort = document.getElementById('listeKort');
                 if (kort && kort.querySelectorAll('.liste-item').length === 0) {
-                    kort.innerHTML = '<div class="empty-state"><div class="empty-icon">🛒</div><h3>Handlelisten er tom</h3><p>Legg til varer manuelt, eller gå til en oppskrift og klikk "Legg i handleliste".</p></div>';
+                    kort.innerHTML = '<div class="empty-state"><div class="empty-icon">🛒</div><h3>Handlelisten er tom</h3><p>Legg til varer manuelt, eller gå til en oppskrift og klikk «Legg i handleliste».</p></div>';
                 }
                 oppdaterStats();
             }, 300);
-
             csrfFetch('/handleliste/slett/' + id, { method: 'POST' })
                 .then(r => { if (!r.ok) location.reload(); })
                 .catch(() => location.reload());
@@ -911,9 +940,7 @@
                 });
                 setTimeout(oppdaterStats, 300);
                 const url = '/handleliste/rydd' + (gId ? '?gruppeId=' + gId : '');
-                csrfFetch(url, { method: 'POST' })
-                    .then(r => { if (!r.ok) location.reload(); })
-                    .catch(() => location.reload());
+                csrfFetch(url, { method: 'POST' }).then(r => { if (!r.ok) location.reload(); }).catch(() => location.reload());
             });
         }
 
@@ -925,22 +952,18 @@
                 });
                 setTimeout(() => {
                     const kort = document.getElementById('listeKort');
-                    if (kort) kort.innerHTML = '<div class="empty-state"><div class="empty-icon">🛒</div><h3>Handlelisten er tom</h3><p>Legg til varer manuelt, eller gå til en oppskrift og klikk "Legg i handleliste".</p></div>';
+                    if (kort) kort.innerHTML = '<div class="empty-state"><div class="empty-icon">🛒</div><h3>Handlelisten er tom</h3><p>Legg til varer manuelt, eller gå til en oppskrift og klikk «Legg i handleliste».</p></div>';
                     oppdaterStats();
                 }, 300);
                 const url = '/handleliste/slett-alt' + (gId ? '?gruppeId=' + gId : '');
-                csrfFetch(url, { method: 'POST' })
-                    .then(r => { if (!r.ok) location.reload(); })
-                    .catch(() => location.reload());
+                csrfFetch(url, { method: 'POST' }).then(r => { if (!r.ok) location.reload(); }).catch(() => location.reload());
             });
         }
 
-        // Tving reload ved tilbake-navigering (unngår bfcache)
         window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
 
-        // ── SMART SORTER ──────────────────────────────────────────────
+        /* ══ SMART SORTER ════════════════════════════════════════════════ */
         let smartResultat = null;
-        // Tekst (lowercase) → DOM-element, bygget FØR API-kallet
         let _itemElByTekst = new Map();
 
         function smartSorter(btn) {
@@ -948,16 +971,12 @@
             const varer = [];
             document.querySelectorAll('.liste-item').forEach(el => {
                 const tekst = el.querySelector('.item-tekst')?.textContent?.trim();
-                if (tekst) {
-                    varer.push(tekst);
-                    _itemElByTekst.set(tekst.toLowerCase(), el);
-                }
+                if (tekst) { varer.push(tekst); _itemElByTekst.set(tekst.toLowerCase(), el); }
             });
             if (varer.length === 0) return;
 
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sorterer...';
-
             document.getElementById('smartOverlay').classList.add('vis');
             document.getElementById('smartInnhold').innerHTML =
                 '<div class="smart-laster"><i class="fa-solid fa-spinner fa-spin"></i>' +
@@ -975,7 +994,7 @@
                 if (data.feil) {
                     if (data.feil.startsWith('RATE_LIMIT:')) {
                         const sek = parseInt(data.feil.replace('RATE_LIMIT:', '')) || 60;
-                        visSmartFeil('For mange forespørsler akkurat nå. Vent ' + sek + ' sekunder og prøv igjen.');
+                        visSmartFeil('For mange forespørsler. Vent ' + sek + ' sekunder og prøv igjen.');
                     } else {
                         visSmartFeil('Kunne ikke sortere akkurat nå. Prøv igjen om litt.');
                     }
@@ -992,28 +1011,35 @@
         }
 
         function visSmartResultat(data) {
-            let html = '<p style="font-size:.78rem;color:#94a3b8;margin:0 0 14px;">Trykk «Bruk» for å sortere listen etter butikkavdeling.</p>';
+            let html = '<p class="smart-subtitle">Slik vil listen bli sortert etter butikkavdeling.</p>';
             (data.grupper || []).forEach(g => {
-                html += '<div class="smart-gruppe">' +
-                    '<div class="sg-header"><span class="sg-ikon">' + g.ikon + '</span>' + escHtml(g.navn) + '</div>' +
-                    '<div class="sg-varer">';
+                const color = katColor(g.navn);
+                const bg    = katBg(g.navn);
+                const count = (g.varer || []).length;
+                html += `<div class="smart-gruppe">
+                    <div class="sg-header" style="color:${color};background:${bg};border-left-color:${color};">
+                        <span class="sg-ikon">${escHtml(g.ikon)}</span>
+                        <span>${escHtml(g.navn)}</span>
+                        <span class="sg-count">${count}</span>
+                    </div>
+                    <div class="sg-varer">`;
                 (g.varer || []).forEach(v => {
-                    html += '<div class="sg-vare"><span>' + escHtml(v) + '</span></div>';
+                    html += `<div class="sg-vare"><span class="sg-sjekk"></span><span>${escHtml(v)}</span></div>`;
                 });
                 html += '</div></div>';
             });
-            html += '<div class="smart-actions">' +
-                '<button class="smart-btn smart-btn-cancel" onclick="lukkSmartOverlay(null)">Avbryt</button>' +
-                '<button class="smart-btn smart-btn-apply" onclick="brukSmartSortering()">Bruk denne sorteringen</button>' +
-                '</div>';
+            html += `<div class="smart-actions">
+                <button class="smart-btn smart-btn-cancel" onclick="lukkSmartOverlay(null)">Avbryt</button>
+                <button class="smart-btn smart-btn-apply" onclick="brukSmartSortering()">
+                    <i class="fa-solid fa-check" style="margin-right:6px;"></i>Bruk denne sorteringen
+                </button>
+            </div>`;
             document.getElementById('smartInnhold').innerHTML = html;
         }
 
         function finnItemEl(tekst) {
             const low = tekst.toLowerCase();
-            // 1. Eksakt match
             if (_itemElByTekst.has(low)) return _itemElByTekst.get(low);
-            // 2. Contains-match (AI kan ha kortet av teksten)
             for (const [k, el] of _itemElByTekst) {
                 if (k.includes(low) || low.includes(k)) return el;
             }
@@ -1024,11 +1050,8 @@
             if (!smartResultat) return;
             const kort = document.getElementById('listeKort');
             if (!kort) return;
-
-            // Fjern gamle gruppe-headers
             kort.querySelectorAll('.liste-gruppe-header').forEach(h => h.remove());
-
-            const plassert = new Set();
+            const plassert  = new Set();
             const ferdigEls = [...kort.querySelectorAll('.liste-item.ferdig')];
 
             (smartResultat.grupper || []).forEach(g => {
@@ -1036,33 +1059,39 @@
                 (g.varer || []).forEach(v => {
                     const el = finnItemEl(v);
                     if (el && !plassert.has(el) && !el.classList.contains('ferdig')) {
-                        gruppeEls.push(el);
-                        plassert.add(el);
+                        gruppeEls.push(el); plassert.add(el);
                     }
                 });
                 if (gruppeEls.length === 0) return;
                 const header = document.createElement('div');
                 header.className = 'liste-gruppe-header';
-                header.innerHTML = '<i class="fa-solid fa-tag"></i><span>' + escHtml(g.ikon + ' ' + g.navn) + '</span>';
+                header.dataset.kat = g.navn;
+                header.innerHTML =
+                    `<span class="gruppe-ikon">${escHtml(g.ikon)}</span>` +
+                    `<span class="gruppe-navn">${escHtml(g.navn)}</span>` +
+                    `<span class="gruppe-count"></span>`;
                 kort.appendChild(header);
                 gruppeEls.forEach(el => kort.appendChild(el));
             });
 
-            // Uplacerte aktive varer (AI glemte dem)
+            // Uplacerte aktive varer
             kort.querySelectorAll('.liste-item:not(.ferdig)').forEach(el => {
                 if (!plassert.has(el)) kort.appendChild(el);
             });
-
-            // Ferdige varer helt nederst
+            // Ferdig-varer helt nederst
             ferdigEls.forEach(el => kort.appendChild(el));
 
+            applyKatColors();
             lukkSmartOverlay(null);
         }
 
         function visSmartFeil(msg) {
             document.getElementById('smartInnhold').innerHTML =
-                '<p style="color:#ef4444;text-align:center;padding:20px;">' + escHtml(msg) + '</p>' +
-                '<button class="smart-btn smart-btn-cancel" style="width:100%;" onclick="lukkSmartOverlay(null)">Lukk</button>';
+                '<div style="text-align:center;padding:32px 20px;">' +
+                '<div style="font-size:2rem;margin-bottom:12px;">⚠️</div>' +
+                '<p style="color:#64748b;font-size:.9rem;margin:0 0 20px;">' + escHtml(msg) + '</p>' +
+                '<button class="smart-btn smart-btn-cancel" style="width:100%;max-width:280px;" onclick="lukkSmartOverlay(null)">Lukk</button>' +
+                '</div>';
         }
 
         function lukkSmartOverlay(e) {
@@ -1072,19 +1101,18 @@
         }
 
         function escHtml(str) {
-            return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+            if (str == null) return '';
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         }
 
+        /* ══ REDIGER ═════════════════════════════════════════════════════ */
         function startRediger(span) {
             if (span.closest('.liste-item').classList.contains('ferdig')) return;
             const gammelTekst = span.textContent;
             const input = document.createElement('input');
-            input.type = 'text';
-            input.className = 'edit-input';
-            input.value = gammelTekst;
+            input.type = 'text'; input.className = 'edit-input'; input.value = gammelTekst;
             span.replaceWith(input);
-            input.focus();
-            input.select();
+            input.focus(); input.select();
 
             function lagre() {
                 const nyTekst = input.value.trim();
@@ -1103,7 +1131,6 @@
                     }).catch(() => { nySpan.textContent = gammelTekst; });
                 }
             }
-
             input.addEventListener('blur', lagre);
             input.addEventListener('keydown', e => {
                 if (e.key === 'Enter') input.blur();

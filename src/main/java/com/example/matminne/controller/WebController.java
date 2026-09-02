@@ -1050,7 +1050,8 @@ public class WebController {
         Oppskrift o = repository.findById(id).orElse(null);
         if (meg != null && o != null && o.getIngredienser() != null) {
             for (String linje : o.getIngredienser().split("\n")) {
-                String trimmet = linje.trim();
+                // Strip ledende "- ", "* ", "• " fra oppskriftsformat
+                String trimmet = linje.trim().replaceFirst("^[-*•]\\s+", "");
                 if (!trimmet.isEmpty()) {
                     HandelListeItem item = new HandelListeItem();
                     item.setBrukerId(meg.getId());

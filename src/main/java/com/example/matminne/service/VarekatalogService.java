@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -72,23 +73,54 @@ public class VarekatalogService {
     }
 
     /**
-     * Slår opp kategori (1-9) for en vare. Tåler mengde/enhet foran varenavnet,
-     * f.eks. "2 store løk" → "løk".
+     * Slår opp kategori (1-9) for en vare.
+     * Prøver flere strategier: direkte oppslag, komma-deling, ord-for-ord, delstreng-match.
      */
     public Optional<Integer> finnKategori(String vare) {
         if (vare == null || vare.isBlank()) return Optional.empty();
-        String normalisert = normaliser(vare);
-        if (normalisert.isEmpty()) return Optional.empty();
+        String norm = normaliser(vare);
+        if (norm.isEmpty()) return Optional.empty();
 
-        Integer kategori = katalog.get(normalisert);
-        if (kategori == null) {
-            // Prøv uten parentes-notat, f.eks. "løk (gul)" → "løk"
-            String utenParentes = normalisert.replaceAll("\\s*\\([^)]*\\)\\s*$", "").trim();
-            if (!utenParentes.isEmpty() && !utenParentes.equals(normalisert)) {
-                kategori = katalog.get(utenParentes);
+        // 1. Direkte oppslag (inkl. uten parentes)
+        Optional<Integer> funnet = slaaOpp(norm);
+        if (funnet.isPresent()) return funnet;
+
+        // 2. Hvert komma-ledd (f.eks. "lønnesirup, blåbær eller andre bær" → prøv "lønnesirup", "blåbær")
+        if (norm.contains(",")) {
+            for (String del : norm.split(",")) {
+                funnet = slaaOpp(normaliser(del.trim()));
+                if (funnet.isPresent()) return funnet;
             }
         }
-        return Optional.ofNullable(kategori);
+
+        // 3. Hvert enkelt ord ≥ 4 bokstaver (f.eks. "fint havsalt" → "havsalt")
+        for (String ord : norm.split("[\\s,]+")) {
+            if (ord.length() >= 4) {
+                funnet = slaaOpp(ord);
+                if (funnet.isPresent()) return funnet;
+            }
+        }
+
+        // 4. Lengste katalognøkkel som finnes som delstreng i teksten
+        final String normFinal = norm;
+        return katalog.entrySet().stream()
+                .filter(e -> e.getKey().length() >= 4 && normFinal.contains(e.getKey()))
+                .max(Comparator.comparingInt(e -> e.getKey().length()))
+                .map(Map.Entry::getValue);
+    }
+
+    private Optional<Integer> slaaOpp(String tekst) {
+        if (tekst == null || tekst.isBlank()) return Optional.empty();
+        String t = tekst.trim();
+        Integer k = katalog.get(t);
+        if (k != null) return Optional.of(k);
+        // Uten parentes, f.eks. "løk (gul)" → "løk"
+        String utenP = t.replaceAll("\\s*\\([^)]*\\)\\s*$", "").trim();
+        if (!utenP.equals(t)) {
+            k = katalog.get(utenP);
+            if (k != null) return Optional.of(k);
+        }
+        return Optional.empty();
     }
 
     /** Visningsnavn for et kategori-nummer. */
@@ -117,9 +149,15 @@ public class VarekatalogService {
         };
     }
 
-    /** Lowercase + trim + fjerner ledende mengde/enhet og mengdeord. */
+    /** Lowercase + trim + fjerner ledende bindestrek, brøktegn, suffikser, mengde/enhet og mengdeord. */
     private String normaliser(String vare) {
         String s = vare.toLowerCase(Locale.ROOT).trim();
+        // Strip ledende "- ", "* ", "• " (fra oppskriftsformat)
+        s = s.replaceFirst("^[-*•]\\s+", "");
+        // Strip Unicode brøktegn (¼ ½ ¾ ⅓ ⅔ ⅛ ⅜ ⅝ ⅞)
+        s = s.replaceAll("[¼½¾⅓⅔⅛⅜⅝⅞]", "");
+        // Strip vanlige suffikser fra oppskrifter etter komma
+        s = s.replaceAll(",?\\s*(til servering|til pynt|etter smak|pluss ekstra[^,]*|om nødvendig|delt i .*)$", "").trim();
         String forrige;
         int vakt = 0;
         do {
