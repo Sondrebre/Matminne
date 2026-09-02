@@ -533,9 +533,7 @@ public class AiOppskriftService {
         String listeStr = String.join("\n", varer);
         String prompt = "Du er en smart handleliste-assistent. Her er en handleliste:\n\n" +
                 listeStr + "\n\n" +
-                "Gjør følgende:\n" +
-                "1. Slå sammen duplikater (f.eks. '2 løk' og '1 løk' → '3 løk totalt')\n" +
-                "2. Grupper varene i butikkavdelinger\n\n" +
+                "Grupper varene i butikkavdelinger. VIKTIG: Behold den eksakte vareteksten uendret — ikke slå sammen, ikke endre, ikke oversett noen varer.\n\n" +
                 "Bruk KUN disse avdelingene (bare ta med avdelinger som har varer):\n" +
                 "- Frukt & Grønt\n- Meieri & Egg\n- Kjøtt & Fisk\n- Bakeri & Brød\n" +
                 "- Tørrvarer & Hermetikk\n- Frysedisk\n- Drikke\n- Annet\n\n" +
