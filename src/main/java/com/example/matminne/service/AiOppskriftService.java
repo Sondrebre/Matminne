@@ -33,6 +33,9 @@ public class AiOppskriftService {
     @Autowired
     private PrisConfig prisConfig;
 
+    @Autowired
+    private VarekatalogService varekatalogService;
+
     private AnthropicClient client;
 
     @PostConstruct
@@ -546,8 +549,9 @@ public class AiOppskriftService {
                 "}";
         String svar = kallClaude(prompt);
         if (svar == null || svar.startsWith("FEIL") || svar.startsWith("RATE_LIMIT")) {
-            feilSvar.put("feil", svar != null ? svar : "Ukjent feil");
-            return feilSvar;
+            // Fallback: sorter med statisk varekatalog uten AI
+            log.info("smartSorter fallback til varekatalog (AI utilgjengelig: {})", svar);
+            return smartSorterMedKatalog(varer);
         }
         try {
             // Strip markdown code fences if present
@@ -575,9 +579,34 @@ public class AiOppskriftService {
             return res;
         } catch (Exception e) {
             log.error("Feil ved parsing av smart handleliste: {}", e.getMessage());
-            feilSvar.put("feil", "Kunne ikke tolke AI-svaret. Prøv igjen.");
-            return feilSvar;
+            return smartSorterMedKatalog(varer);
         }
+    }
+
+    private static final java.util.Map<String, String> KATEGORI_IKON = java.util.Map.of(
+        "Frukt & Grønt", "🥦", "Meieri & Egg", "🥛", "Kjøtt & Fisk", "🥩",
+        "Bakeri & Brød", "🍞", "Tørrvarer & Hermetikk", "🥫", "Frysedisk", "❄️",
+        "Kjølevarer", "🧊", "Brus/Øl", "🥤", "Annet", "🛒");
+
+    private Map<String, Object> smartSorterMedKatalog(List<String> varer) {
+        java.util.LinkedHashMap<String, List<String>> grupper = new java.util.LinkedHashMap<>();
+        for (String vare : varer) {
+            String kat = varekatalogService.finnKategori(vare)
+                    .map(varekatalogService::kategoriNavn)
+                    .orElse("Annet");
+            grupper.computeIfAbsent(kat, k -> new ArrayList<>()).add(vare);
+        }
+        List<Map<String, Object>> grupperList = new ArrayList<>();
+        grupper.forEach((navn, gVarer) -> {
+            Map<String, Object> g = new HashMap<>();
+            g.put("navn", navn);
+            g.put("ikon", KATEGORI_IKON.getOrDefault(navn, "🛒"));
+            g.put("varer", gVarer);
+            grupperList.add(g);
+        });
+        Map<String, Object> res = new HashMap<>();
+        res.put("grupper", grupperList);
+        return res;
     }
 
     /** Gyldige kategori-navn for handleliste-varer. */
