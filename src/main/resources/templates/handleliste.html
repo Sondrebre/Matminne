@@ -940,12 +940,18 @@
 
         // ── SMART SORTER ──────────────────────────────────────────────
         let smartResultat = null;
+        // Tekst (lowercase) → DOM-element, bygget FØR API-kallet
+        let _itemElByTekst = new Map();
 
         function smartSorter(btn) {
+            _itemElByTekst = new Map();
             const varer = [];
-            document.querySelectorAll('.liste-item .item-tekst').forEach(el => {
-                const tekst = el.textContent.trim();
-                if (tekst) varer.push(tekst);
+            document.querySelectorAll('.liste-item').forEach(el => {
+                const tekst = el.querySelector('.item-tekst')?.textContent?.trim();
+                if (tekst) {
+                    varer.push(tekst);
+                    _itemElByTekst.set(tekst.toLowerCase(), el);
+                }
             });
             if (varer.length === 0) return;
 
@@ -955,7 +961,7 @@
             document.getElementById('smartOverlay').classList.add('vis');
             document.getElementById('smartInnhold').innerHTML =
                 '<div class="smart-laster"><i class="fa-solid fa-spinner fa-spin"></i>' +
-                '<p style="color:#94a3b8;font-size:.88rem;margin:0;">MatMinne sorterer og slår sammen varer...</p></div>';
+                '<p style="color:#94a3b8;font-size:.88rem;margin:0;">MatMinne sorterer varene...</p></div>';
 
             csrfFetch('/api/handleliste/smartsorter', {
                 method: 'POST',
@@ -966,10 +972,7 @@
             .then(data => {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Smartsorter';
-                if (data.feil) {
-                    visSmartFeil(data.feil);
-                    return;
-                }
+                if (data.feil) { visSmartFeil(data.feil); return; }
                 smartResultat = data;
                 visSmartResultat(data);
             })
@@ -981,15 +984,13 @@
         }
 
         function visSmartResultat(data) {
-            let html = '<p style="font-size:.78rem;color:#94a3b8;margin:0 0 14px;">Klikk varer for å krysse av. Trykk «Bruk» for å sortere listen.</p>';
+            let html = '<p style="font-size:.78rem;color:#94a3b8;margin:0 0 14px;">Trykk «Bruk» for å sortere listen etter butikkavdeling.</p>';
             (data.grupper || []).forEach(g => {
                 html += '<div class="smart-gruppe">' +
-                    '<div class="sg-header"><span class="sg-ikon">' + g.ikon + '</span>' + g.navn + '</div>' +
+                    '<div class="sg-header"><span class="sg-ikon">' + g.ikon + '</span>' + escHtml(g.navn) + '</div>' +
                     '<div class="sg-varer">';
                 (g.varer || []).forEach(v => {
-                    html += '<div class="sg-vare" onclick="toggleSgVare(this)">' +
-                        '<div class="sg-sjekk"><i class="fa-solid fa-check"></i></div>' +
-                        '<span>' + escHtml(v) + '</span></div>';
+                    html += '<div class="sg-vare"><span>' + escHtml(v) + '</span></div>';
                 });
                 html += '</div></div>';
             });
@@ -1000,20 +1001,60 @@
             document.getElementById('smartInnhold').innerHTML = html;
         }
 
-        function toggleSgVare(el) {
-            el.classList.toggle('sjekket');
+        function finnItemEl(tekst) {
+            const low = tekst.toLowerCase();
+            // 1. Eksakt match
+            if (_itemElByTekst.has(low)) return _itemElByTekst.get(low);
+            // 2. Contains-match (AI kan ha kortet av teksten)
+            for (const [k, el] of _itemElByTekst) {
+                if (k.includes(low) || low.includes(k)) return el;
+            }
+            return null;
+        }
+
+        function brukSmartSortering() {
+            if (!smartResultat) return;
+            const kort = document.getElementById('listeKort');
+            if (!kort) return;
+
+            // Fjern gamle gruppe-headers
+            kort.querySelectorAll('.liste-gruppe-header').forEach(h => h.remove());
+
+            const plassert = new Set();
+            const ferdigEls = [...kort.querySelectorAll('.liste-item.ferdig')];
+
+            (smartResultat.grupper || []).forEach(g => {
+                const gruppeEls = [];
+                (g.varer || []).forEach(v => {
+                    const el = finnItemEl(v);
+                    if (el && !plassert.has(el) && !el.classList.contains('ferdig')) {
+                        gruppeEls.push(el);
+                        plassert.add(el);
+                    }
+                });
+                if (gruppeEls.length === 0) return;
+                const header = document.createElement('div');
+                header.className = 'liste-gruppe-header';
+                header.innerHTML = '<i class="fa-solid fa-tag"></i><span>' + escHtml(g.ikon + ' ' + g.navn) + '</span>';
+                kort.appendChild(header);
+                gruppeEls.forEach(el => kort.appendChild(el));
+            });
+
+            // Uplacerte aktive varer (AI glemte dem)
+            kort.querySelectorAll('.liste-item:not(.ferdig)').forEach(el => {
+                if (!plassert.has(el)) kort.appendChild(el);
+            });
+
+            // Ferdige varer helt nederst
+            ferdigEls.forEach(el => kort.appendChild(el));
+
+            lukkSmartOverlay(null);
         }
 
         function visSmartFeil(msg) {
             document.getElementById('smartInnhold').innerHTML =
                 '<p style="color:#ef4444;text-align:center;padding:20px;">' + escHtml(msg) + '</p>' +
                 '<button class="smart-btn smart-btn-cancel" style="width:100%;" onclick="lukkSmartOverlay(null)">Lukk</button>';
-        }
-
-        function brukSmartSortering() {
-            // Kategorier er lagret i DB av smartsorter-endepunktet.
-            // Reload viser server-sortert liste (gruppert etter kategori).
-            location.reload();
         }
 
         function lukkSmartOverlay(e) {
