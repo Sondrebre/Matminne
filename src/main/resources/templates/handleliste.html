@@ -1010,8 +1010,55 @@
             });
         }
 
+        /* Rensker varetekst for visning: fjerner mengde, enheter, lange beskrivelser */
+        function renskVareTekst(tekst) {
+            if (!tekst) return '';
+            let s = tekst.trim();
+            s = s.replace(/^[-*•]\s+/, '');
+            s = s.replace(/^[\d¼½¾⅓⅔⅛⅜⅝⅞.,/\s]+(kg|hg|g|gram|l|liter|dl|cl|ml|stk|pk|pakke\w*|boks\w*|pose\w*|glass|flaske\w*|bunte\w*|never?\w*|ss|ts|dråper?)\.?\s*/i, '');
+            if (s.includes(',')) s = s.split(',')[0].trim();
+            s = s.replace(/\s*(til servering|til pynt|etter smak|pluss ekstra.*|om nødvendig|delt i.*|hakket|revet|presset|skyllet)$/i, '').trim();
+            return s.charAt(0).toUpperCase() + s.slice(1);
+        }
+
+        /* Finner åpenbare duplikater basert på renset tekst-overlap */
+        function finnDuplikater(varer) {
+            const funnet = [];
+            const sett = new Set();
+            const renset = varer.map(v => renskVareTekst(v).toLowerCase());
+            for (let i = 0; i < renset.length; i++) {
+                for (let j = i + 1; j < renset.length; j++) {
+                    const a = renset[i], b = renset[j];
+                    const nøkkel = [i, j].sort().join('-');
+                    if (sett.has(nøkkel)) continue;
+                    if (a.length >= 4 && b.length >= 4 && (a === b || a.includes(b) || b.includes(a))) {
+                        sett.add(nøkkel);
+                        funnet.push([varer[i], varer[j]]);
+                    }
+                }
+            }
+            return funnet;
+        }
+
         function visSmartResultat(data) {
-            let html = '<p class="smart-subtitle">Slik vil listen bli sortert etter butikkavdeling.</p>';
+            const alleVarer = (data.grupper || []).flatMap(g => g.varer || []);
+            const duplikater = finnDuplikater(alleVarer);
+
+            let html = '<p class="smart-subtitle">Slik vil listen bli sortert etter butikkavdeling — i rekkefølgen du handler.</p>';
+
+            if (duplikater.length > 0) {
+                html += '<div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:12px;padding:11px 14px;margin-bottom:16px;">' +
+                    '<div style="font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#92400e;margin-bottom:7px;">⚠️ Mulige duplikater</div>';
+                duplikater.forEach(([a, b]) => {
+                    html += `<div style="font-size:.82rem;color:#78350f;padding:2px 0;">
+                        <span style="background:#fef3c7;border-radius:6px;padding:1px 7px;">${escHtml(renskVareTekst(a))}</span>
+                        <span style="color:#d97706;margin:0 5px;">og</span>
+                        <span style="background:#fef3c7;border-radius:6px;padding:1px 7px;">${escHtml(renskVareTekst(b))}</span>
+                    </div>`;
+                });
+                html += '</div>';
+            }
+
             (data.grupper || []).forEach(g => {
                 const color = katColor(g.navn);
                 const bg    = katBg(g.navn);
@@ -1024,10 +1071,12 @@
                     </div>
                     <div class="sg-varer">`;
                 (g.varer || []).forEach(v => {
-                    html += `<div class="sg-vare"><span class="sg-sjekk"></span><span>${escHtml(v)}</span></div>`;
+                    const display = renskVareTekst(v) || v;
+                    html += `<div class="sg-vare"><span class="sg-sjekk"></span><span>${escHtml(display)}</span></div>`;
                 });
                 html += '</div></div>';
             });
+
             html += `<div class="smart-actions">
                 <button class="smart-btn smart-btn-cancel" onclick="lukkSmartOverlay(null)">Avbryt</button>
                 <button class="smart-btn smart-btn-apply" onclick="brukSmartSortering()">

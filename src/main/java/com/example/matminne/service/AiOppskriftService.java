@@ -534,13 +534,22 @@ public class AiOppskriftService {
             return feilSvar;
         }
         String listeStr = String.join("\n", varer);
-        String prompt = "Du er en smart handleliste-assistent. Her er en handleliste:\n\n" +
+        String prompt = "Du er en smart handleliste-assistent for norsk dagligvare. Her er en handleliste:\n\n" +
                 listeStr + "\n\n" +
-                "Grupper varene i butikkavdelinger. VIKTIG: Behold den eksakte vareteksten uendret — ikke slå sammen, ikke endre, ikke oversett noen varer.\n\n" +
-                "Bruk KUN disse avdelingene (bare ta med avdelinger som har varer):\n" +
-                "- Frukt & Grønt\n- Meieri & Egg\n- Kjøtt & Fisk\n- Bakeri & Brød\n" +
-                "- Tørrvarer & Hermetikk\n- Frysedisk\n- Drikke\n- Annet\n\n" +
-                "Svar KUN med gyldig JSON i dette formatet, ingen forklaring rundt:\n" +
+                "Grupper varene i butikkavdelinger.\n" +
+                "REGLER:\n" +
+                "1. Behold den EKSAKTE vareteksten uendret — ikke slå sammen, ikke endre, ikke oversett.\n" +
+                "2. Sorter avdelingene i DENNE REKKEFØLGEN (typisk rute gjennom butikken — ta bare med avdelinger som har varer):\n" +
+                "   1. Frukt & Grønt\n" +
+                "   2. Bakeri & Brød\n" +
+                "   3. Kjøtt & Fisk\n" +
+                "   4. Meieri & Egg\n" +
+                "   5. Tørrvarer & Hermetikk\n" +
+                "   6. Frysedisk\n" +
+                "   7. Kjølevarer\n" +
+                "   8. Drikke\n" +
+                "   9. Annet\n\n" +
+                "Svar KUN med gyldig JSON, ingen forklaring:\n" +
                 "{\n" +
                 "  \"grupper\": [\n" +
                 "    { \"navn\": \"Frukt & Grønt\", \"ikon\": \"🥦\", \"varer\": [\"2 epler\", \"1 løk\"] },\n" +
@@ -588,21 +597,40 @@ public class AiOppskriftService {
         "Bakeri & Brød", "🍞", "Tørrvarer & Hermetikk", "🥫", "Frysedisk", "❄️",
         "Kjølevarer", "🧊", "Brus/Øl", "🥤", "Annet", "🛒");
 
+    /** Optimal rekkefølge for å handle i butikken. */
+    private static final List<String> BUTIKK_RUTE = List.of(
+        "Frukt & Grønt", "Bakeri & Brød", "Kjøtt & Fisk", "Meieri & Egg",
+        "Tørrvarer & Hermetikk", "Frysedisk", "Kjølevarer", "Brus/Øl", "Annet");
+
     private Map<String, Object> smartSorterMedKatalog(List<String> varer) {
-        java.util.LinkedHashMap<String, List<String>> grupper = new java.util.LinkedHashMap<>();
+        java.util.LinkedHashMap<String, List<String>> rawGrupper = new java.util.LinkedHashMap<>();
         for (String vare : varer) {
             String kat = varekatalogService.finnKategori(vare)
                     .map(varekatalogService::kategoriNavn)
                     .orElse("Annet");
-            grupper.computeIfAbsent(kat, k -> new ArrayList<>()).add(vare);
+            rawGrupper.computeIfAbsent(kat, k -> new ArrayList<>()).add(vare);
         }
         List<Map<String, Object>> grupperList = new ArrayList<>();
-        grupper.forEach((navn, gVarer) -> {
-            Map<String, Object> g = new HashMap<>();
-            g.put("navn", navn);
-            g.put("ikon", KATEGORI_IKON.getOrDefault(navn, "🛒"));
-            g.put("varer", gVarer);
-            grupperList.add(g);
+        // Legg til i optimal butikk-rekkefølge
+        for (String ruteKat : BUTIKK_RUTE) {
+            List<String> gVarer = rawGrupper.remove(ruteKat);
+            if (gVarer != null && !gVarer.isEmpty()) {
+                Map<String, Object> g = new HashMap<>();
+                g.put("navn", ruteKat);
+                g.put("ikon", KATEGORI_IKON.getOrDefault(ruteKat, "🛒"));
+                g.put("varer", gVarer);
+                grupperList.add(g);
+            }
+        }
+        // Legg til evt. ukjente kategorier sist
+        rawGrupper.forEach((navn, gVarer) -> {
+            if (!gVarer.isEmpty()) {
+                Map<String, Object> g = new HashMap<>();
+                g.put("navn", navn);
+                g.put("ikon", KATEGORI_IKON.getOrDefault(navn, "🛒"));
+                g.put("varer", gVarer);
+                grupperList.add(g);
+            }
         });
         Map<String, Object> res = new HashMap<>();
         res.put("grupper", grupperList);
