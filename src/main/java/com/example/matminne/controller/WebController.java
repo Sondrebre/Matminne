@@ -1000,7 +1000,8 @@ public class WebController {
         // eksisterende rekkefølge (uferdige først) innenfor hver kategori.
         items = new ArrayList<>(items);
         items.sort(Comparator
-                .comparingInt((HandelListeItem i) -> varekatalogService.kategoriRekkefolge(i.getKategori()))
+                .comparingInt((HandelListeItem i) -> i.isFerdig() ? 1 : 0)
+                .thenComparingInt((HandelListeItem i) -> varekatalogService.kategoriRekkefolge(i.getKategori()))
                 .thenComparing(i -> i.getKategori() == null ? "" : i.getKategori()));
 
         model.addAttribute("items", items);
