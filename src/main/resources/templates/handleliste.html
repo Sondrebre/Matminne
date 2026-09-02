@@ -972,7 +972,15 @@
             .then(data => {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Smartsorter';
-                if (data.feil) { visSmartFeil(data.feil); return; }
+                if (data.feil) {
+                    if (data.feil.startsWith('RATE_LIMIT:')) {
+                        const sek = parseInt(data.feil.replace('RATE_LIMIT:', '')) || 60;
+                        visSmartFeil('For mange forespørsler akkurat nå. Vent ' + sek + ' sekunder og prøv igjen.');
+                    } else {
+                        visSmartFeil('Kunne ikke sortere akkurat nå. Prøv igjen om litt.');
+                    }
+                    return;
+                }
                 smartResultat = data;
                 visSmartResultat(data);
             })
