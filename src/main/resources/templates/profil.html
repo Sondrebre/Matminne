@@ -153,7 +153,10 @@
             padding: 32px 14px 14px;
             background: linear-gradient(to top, rgba(0,0,0,.75) 0%, transparent 100%);
         }
-        .tile-title { color: white; font-weight: 800; font-size: .88rem; line-height: 1.3; margin-bottom: 8px; }
+        .tile-title {
+            color: white; font-weight: 800; font-size: .88rem; line-height: 1.3; margin-bottom: 8px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
 
         .tile-overlay {
             position: absolute; inset: 0;
@@ -325,17 +328,12 @@
             </div>
 
             <div class="recipe-grid" th:unless="${oppskrifter.isEmpty()}">
-                <div class="recipe-tile" th:each="o : ${oppskrifter}">
+                <a class="recipe-tile" th:href="@{'/detaljer/' + ${o.id}}" th:each="o : ${oppskrifter}" style="display:block;text-decoration:none;">
                     <img th:src="${o.bildeUrl != null && o.bildeUrl != '' ? o.bildeUrl : 'https://images.unsplash.com/photo-1543353071-873f17a7a088?auto=format&fit=crop&w=600&q=70'}" alt="" loading="lazy">
-                    <div class="tile-overlay">
-                        <a th:href="@{'/detaljer/' + ${o.id}}" class="btn-tile-view">
-                            <i class="fa-solid fa-eye"></i> Se oppskrift
-                        </a>
-                    </div>
                     <div class="tile-bottom">
                         <div class="tile-title" th:text="${o.tittel}">Tittel</div>
                     </div>
-                </div>
+                </a>
             </div>
         </div>
     </div>

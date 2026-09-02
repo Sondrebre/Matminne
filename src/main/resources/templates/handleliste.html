@@ -869,11 +869,13 @@
             const id   = item.dataset.id;
             const erFerdig = item.classList.contains('ferdig');
 
-            // Optimistic UI
             item.classList.toggle('ferdig', !erFerdig);
             btn.classList.toggle('ferdig', !erFerdig);
             if (!erFerdig) {
                 btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                // Flytt avkrysset vare til bunnen
+                const kort = document.getElementById('listeKort');
+                if (kort) kort.appendChild(item);
             } else {
                 btn.innerHTML = '';
             }
@@ -1014,9 +1016,43 @@
         }
 
         function brukSmartSortering() {
-            // Kategoriene er allerede lagret i databasen av smartsorter-endepunktet.
-            // Last siden på nytt slik at listen rendres server-side gruppert etter kategori.
-            location.reload();
+            if (!smartResultat) { location.reload(); return; }
+            const kort = document.getElementById('listeKort');
+            if (!kort) { location.reload(); return; }
+
+            // Bygg oppslagstabell: tekst (lowercase) → DOM-element
+            const itemByTekst = {};
+            kort.querySelectorAll('.liste-item').forEach(el => {
+                const t = el.querySelector('.item-tekst')?.textContent?.trim()?.toLowerCase();
+                if (t) itemByTekst[t] = el;
+            });
+
+            // Fjern gamle gruppe-headers
+            kort.querySelectorAll('.liste-gruppe-header').forEach(h => h.remove());
+
+            // Legg ut varer gruppe for gruppe
+            const ferdigVarer = [];
+            (smartResultat.grupper || []).forEach(g => {
+                const vareEls = (g.varer || []).map(v => itemByTekst[v.toLowerCase()]).filter(Boolean);
+                const aktive = vareEls.filter(el => !el.classList.contains('ferdig'));
+                const ferdige = vareEls.filter(el => el.classList.contains('ferdig'));
+                ferdigVarer.push(...ferdige);
+                if (aktive.length === 0) return;
+                const header = document.createElement('div');
+                header.className = 'liste-gruppe-header';
+                header.innerHTML = `<i class="fa-solid fa-tag"></i><span>${escHtml(g.ikon + ' ' + g.navn)}</span>`;
+                kort.appendChild(header);
+                aktive.forEach(el => kort.appendChild(el));
+            });
+            // Alle ferdige varer havner helt nederst
+            ferdigVarer.forEach(el => kort.appendChild(el));
+
+            lukkSmartOverlay(null);
+            const sorterBtn = document.getElementById('smartSorterBtn');
+            if (sorterBtn) {
+                sorterBtn.disabled = false;
+                sorterBtn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Smartsorter';
+            }
         }
 
         function lukkSmartOverlay(e) {
