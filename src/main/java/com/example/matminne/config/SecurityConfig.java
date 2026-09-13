@@ -25,6 +25,9 @@ public class SecurityConfig {
             .csrf(csrf -> csrf
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .csrfTokenRequestHandler(new XorCsrfTokenRequestAttributeHandler())
+                // Stripe kan ikke sende CSRF-token. Forespørselen autentiseres
+                // i stedet med signaturen, som verifiseres i StripeController.
+                .ignoringRequestMatchers("/stripe/webhook")
             )
             // ── Sikkerhetshoder ──────────────────────────────────
             .headers(headers -> headers
@@ -41,6 +44,8 @@ public class SecurityConfig {
             // ── Tilgangskontroll ──────────────────────────────────
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/ingen-tilgang", "/css/**", "/js/**", "/images/**", "/webjars/**", "/manifest.json", "/sw.js", "/icons/**", "/installer-app", "/personvern", "/vilkar", "/offline.html").permitAll()
+                // Stripe-webhook: autentiseres med signatur, ikke sesjon
+                .requestMatchers("/stripe/webhook").permitAll()
                 .requestMatchers("/h2-console/**").denyAll()  // Aldri eksponér H2-console
                 .anyRequest().authenticated()
             )

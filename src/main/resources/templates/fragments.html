@@ -610,9 +610,18 @@
                                             <span th:unless="${harAbonnement}">Oppgrader til Premium</span>
                                         </a>
                                     </li>
+                                    <!-- Skaperstudio: bare for inviterte skapere -->
+                                    <li th:if="${erSkaper}">
+                                        <a class="dropdown-item" href="/skaper"
+                                           style="color:var(--mat-gronn-m);font-weight:700;">
+                                            <i class="fa-solid fa-book-open"></i> Skaperstudio
+                                        </a>
+                                    </li>
                                     <li><hr class="dropdown-divider my-1"></li>
                                     <li><a class="dropdown-item" th:href="@{'/profil/' + ${brukerId != null ? brukerId : brukerEpost}}">
                                         <i class="fa-regular fa-circle-user"></i> Min Profil</a></li>
+                                    <li><a class="dropdown-item" href="/mine-kjop">
+                                        <i class="fa-solid fa-book-bookmark"></i> Mine kjøp</a></li>
                                     <li>
                                         <a class="dropdown-item" href="/varsler">
                                             <i class="fa-solid fa-bell"></i> Varsler

@@ -33,6 +33,24 @@ public class DatabaseMigrasjon {
             );
             // Engangsreset: fjern alle eksisterende abonnenter (gamle test-data)
             jdbcTemplate.execute("UPDATE brukere SET har_abonnement = FALSE");
+
+            // ── Skaperprogram: Stripe Connect og betalte samlinger ──
+            jdbcTemplate.execute(
+                "ALTER TABLE brukere ADD COLUMN IF NOT EXISTS stripe_connect_id VARCHAR(255)"
+            );
+            jdbcTemplate.execute(
+                "ALTER TABLE brukere ADD COLUMN IF NOT EXISTS connect_klar BOOLEAN DEFAULT FALSE"
+            );
+            jdbcTemplate.execute(
+                "ALTER TABLE samlinger ADD COLUMN IF NOT EXISTS pris INTEGER"
+            );
+            jdbcTemplate.execute(
+                "ALTER TABLE samlinger ADD COLUMN IF NOT EXISTS er_publisert BOOLEAN DEFAULT FALSE"
+            );
+            jdbcTemplate.execute(
+                "ALTER TABLE samlinger ADD COLUMN IF NOT EXISTS bilde_url TEXT"
+            );
+
             log.info("Database-migrasjoner fullført");
         } catch (Exception e) {
             log.warn("Migrasjonsadvarsel (kan ignoreres hvis kolonner allerede finnes): {}", e.getMessage());

@@ -47,6 +47,36 @@
         }
         .back-btn:hover { background: rgba(255,255,255,.22); color: white; }
 
+        /* ── EDIT BUTTON (owner only, top-right of hero) ── */
+        .edit-hero-btn {
+            position: absolute; top: 80px; right: 24px; z-index: 20;
+            background: rgba(22,163,74,.88); backdrop-filter: blur(12px);
+            border: 1px solid rgba(134,239,172,.4); color: white;
+            padding: 9px 18px; border-radius: 12px; font-weight: 700; font-size: .84rem;
+            text-decoration: none; display: flex; align-items: center; gap: 7px;
+            transition: .2s; box-shadow: 0 4px 18px rgba(22,163,74,.35);
+        }
+        .edit-hero-btn:hover { background: rgba(21,128,61,.98); color: white; transform: translateY(-1px); }
+
+        /* ── REDIGER FAB (mobil, alltid synlig over bunnmeny) ── */
+        .edit-fab {
+            display: none;
+        }
+        @media (max-width: 860px) {
+            .edit-fab {
+                display: flex; align-items: center; gap: 9px;
+                position: fixed;
+                bottom: calc(66px + env(safe-area-inset-bottom, 0px) + 14px);
+                right: 16px; z-index: 200;
+                background: var(--mat-gronn-m); color: white;
+                padding: 14px 22px; border-radius: 18px;
+                font-weight: 800; font-size: .92rem; text-decoration: none;
+                box-shadow: 0 6px 24px rgba(22,163,74,.45);
+                transition: transform .15s, box-shadow .15s;
+            }
+            .edit-fab:active { transform: scale(.96); box-shadow: 0 3px 12px rgba(22,163,74,.3); }
+        }
+
         /* ── LAYOUT ── */
         .recipe-wrap {
             max-width: 1040px; margin: 0 auto; padding: 0 20px 120px;
@@ -603,16 +633,28 @@
         @media (max-width: 860px) {
             .content-grid { grid-template-columns: 1fr; }
             .back-btn { top: 70px; }
+            .edit-hero-btn { top: 70px; }
         }
         @media (max-width: 600px) {
             .recipe-hero { height: 42vh; min-height: 280px; }
             .hero-overlay { padding: 28px 20px; }
             .hero-title { font-size: 1.75rem; letter-spacing: -1px; }
             .back-btn { top: 65px; left: 14px; padding: 7px 13px; font-size: .78rem; }
+            .edit-hero-btn { top: 65px; right: 14px; padding: 7px 13px; font-size: .78rem; }
             .recipe-wrap { padding: 0 12px 100px; }
-            .stats-bar { gap: 0; overflow-x: auto; flex-wrap: nowrap; justify-content: flex-start; }
-            .stat-item { min-width: 80px; padding: 12px 10px; flex-shrink: 0; }
-            .stat-item strong { font-size: .88rem; }
+            .stats-bar {
+                display: grid; grid-template-columns: repeat(3, 1fr);
+                overflow-x: unset; flex-wrap: unset;
+            }
+            .stat-item {
+                flex: unset; min-width: 0; padding: 14px 8px;
+                border-right: 1px solid #f1f5f9;
+                border-bottom: 1px solid #f1f5f9;
+                flex-shrink: unset;
+            }
+            .stat-item:nth-child(3n) { border-right: none; }
+            .stat-item:nth-last-child(-n+3) { border-bottom: none; }
+            .stat-item strong { font-size: .85rem; }
             .actions-strip { gap: 8px; }
             .act-btn { padding: 8px 12px; font-size: .8rem; }
             .main-card-head { padding: 14px 16px; flex-wrap: wrap; gap: 8px; }
@@ -638,6 +680,11 @@
             <a href="/kokebok" onclick="if(history.length>1&&document.referrer.includes(location.hostname)){history.back();event.preventDefault();}" class="back-btn">
                 <i class="fas fa-chevron-left"></i> Tilbake
             </a>
+            <th:block th:if="${erEier}">
+                <a th:href="@{'/rediger/' + ${o.id}}" class="edit-hero-btn">
+                    <i class="fas fa-pen"></i> Rediger
+                </a>
+            </th:block>
             <div class="hero-overlay">
                 <div class="hero-chips">
                     <span th:if="${o.kategori != null}" class="hero-chip green" th:text="${o.kategori}"></span>
@@ -647,6 +694,13 @@
                 <h1 class="hero-title" th:text="${o.tittel}">Tittel</h1>
             </div>
         </div>
+
+        <!-- Flytende rediger-knapp (mobil, fast øverst ved scrolling) -->
+        <th:block th:if="${erEier}">
+            <a th:href="@{'/rediger/' + ${o.id}}" class="edit-fab">
+                <i class="fas fa-pen"></i> Rediger
+            </a>
+        </th:block>
 
         <div class="recipe-wrap">
 
@@ -690,7 +744,7 @@
                 <aside class="sidebar">
 
                     <!-- Ingredienser -->
-                    <div class="side-card" th:if="${o.ingredienser != null and !#strings.isEmpty(o.ingredienser)}">
+                    <div class="side-card" th:if="${o.ingredienser != null and !#strings.isEmpty(o.ingredienser) and !erLast}">
                         <div class="side-card-head">
                             <i class="fas fa-list-ul"></i>
                             <h3>Ingredienser</h3>
@@ -701,8 +755,23 @@
                         </div>
                     </div>
 
+                    <!-- Ingredienser låst bak kjøp -->
+                    <div class="side-card" th:if="${erLast}">
+                        <div class="side-card-head">
+                            <i class="fas fa-lock" style="color:#94a3b8;"></i>
+                            <h3>Ingredienser</h3>
+                        </div>
+                        <div class="side-card-body" style="text-align:center;padding:22px 20px;">
+                            <div style="font-size:2rem;margin-bottom:10px;opacity:.5;">🔒</div>
+                            <p style="font-size:.85rem;color:#64748b;margin:0;line-height:1.6;">
+                                Ingredienslisten er en del av kokeboka
+                                <strong th:if="${laasSamling != null}" th:text="'«' + ${laasSamling.navn} + '»'"></strong>.
+                            </p>
+                        </div>
+                    </div>
+
                     <!-- Ingrediens-substitutt (AI) -->
-                    <div class="side-card" th:if="${o.ingredienser != null and !#strings.isEmpty(o.ingredienser) and innlogget}">
+                    <div class="side-card" th:if="${o.ingredienser != null and !#strings.isEmpty(o.ingredienser) and innlogget and !erLast}">
                         <div class="side-card-head">
                             <i class="fas fa-wand-magic-sparkles" style="color:var(--mat-gronn);"></i>
                             <h3>Ingredienssubstitutt</h3>
@@ -772,7 +841,7 @@
                             <button class="act-btn" onclick="visQr()" style="width:100%;justify-content:center;">
                                 <i class="fa-solid fa-qrcode"></i> QR-kode
                             </button>
-                            <form th:if="${innloggetBrukerId != null}" id="handlelisteForm"
+                            <form th:if="${innloggetBrukerId != null and !erLast}" id="handlelisteForm"
                                   th:action="@{'/handleliste/fra-oppskrift/' + ${o.id}}" method="POST">
                                 <button type="button" class="act-btn" style="width:100%;justify-content:center;"
                                         onclick="leggTilHandellisteFiltrert(this)">
@@ -846,8 +915,37 @@
                         </div>
                     </div>
 
+                    <!-- LÅST: kjøpsoppfordring i stedet for oppskriften -->
+                    <div class="main-card laas-kort" th:if="${erLast and laasSamling != null}">
+                        <div class="main-card-body" style="text-align:center;padding:38px 28px;">
+                            <div style="font-size:2.6rem;margin-bottom:14px;">🔒</div>
+                            <div style="font-size:.66rem;font-weight:800;text-transform:uppercase;
+                                        letter-spacing:2.5px;color:var(--mat-gronn);margin-bottom:10px;">
+                                Del av en kokebok
+                            </div>
+                            <h2 style="font-size:1.35rem;font-weight:900;color:var(--mat-mork);
+                                       margin:0 0 10px;letter-spacing:-.7px;"
+                                th:text="${laasSamling.navn}">Kokebok</h2>
+                            <p style="font-size:.92rem;color:#64748b;line-height:1.65;
+                                      max-width:420px;margin:0 auto 24px;">
+                                Denne oppskriften er en del av
+                                <strong th:if="${laasSkaper != null}"
+                                        th:text="${laasSkaper.visningsnavn} + 's'">skaperens</strong>
+                                kokebok. Kjøp den én gang og få varig tilgang til alle oppskriftene.
+                            </p>
+                            <a th:href="@{'/samling/' + ${laasSamling.id}}"
+                               style="background:var(--mat-gronn-m);color:white;padding:15px 30px;
+                                      border-radius:15px;font-weight:800;font-size:.98rem;
+                                      text-decoration:none;display:inline-flex;align-items:center;
+                                      gap:9px;box-shadow:0 5px 18px rgba(22,163,74,.32);">
+                                <i class="fa-solid fa-lock-open"></i>
+                                Lås opp for <span th:text="${laasSamling.prisFormatert()}">149 kr</span>
+                            </a>
+                        </div>
+                    </div>
+
                     <!-- Fremgangsmåte -->
-                    <div class="main-card" th:if="${o.fremgangsmate != null and !#strings.isEmpty(o.fremgangsmate)}">
+                    <div class="main-card" th:if="${o.fremgangsmate != null and !#strings.isEmpty(o.fremgangsmate) and !erLast}">
                         <div class="main-card-head">
                             <h2><i class="fas fa-list-ol"></i> Fremgangsmåte</h2>
                             <button class="cook-btn" onclick="startKokemodus()" id="cookToggle">
@@ -862,11 +960,16 @@
                                 <div class="cook-progress-bar"><div class="cook-progress-fill" id="progressFill"></div></div>
                             </div>
 
-                            <!-- Footer-handlinger -->
-                            <div class="footer-actions">
+                        </div>
+                    </div>
+
+                    <!-- Handlinger (alltid synlig, men ikke for låst innhold) -->
+                    <div class="main-card" th:if="${!erLast}">
+                        <div class="main-card-body" style="padding-top:20px;padding-bottom:20px;">
+                            <div style="display:flex;gap:10px;flex-wrap:wrap;">
                                 <th:block th:if="${erEier}">
-                                    <a th:href="@{'/rediger/' + ${o.id}}" class="btn-action">
-                                        <i class="fas fa-pen"></i> Rediger
+                                    <a th:href="@{'/rediger/' + ${o.id}}" class="btn-action" style="background:#16a34a;color:white;">
+                                        <i class="fas fa-pen"></i> Rediger oppskrift
                                     </a>
                                     <form th:action="@{/pdf}" method="POST" style="display:inline;">
                                         <input type="hidden" name="id" th:value="${o.id}">
@@ -957,8 +1060,10 @@
         </div>
 
         <!-- FULLSKJERM KOKEMODUS -->
+        <!-- Ingredienslisten holdes tom for låst innhold; ellers ville hele
+             lista ligget lesbar i HTML-kilden selv om kortet er skjult. -->
         <div id="kokeOverlay"
-             th:attr="data-ing=${o.ingredienser},data-img=${o.bildeUrl != null ? o.bildeUrl : ''}">
+             th:attr="data-ing=${erLast ? '' : o.ingredienser},data-img=${o.bildeUrl != null ? o.bildeUrl : ''}">
 
             <!-- Venstre: Ingrediensliste (desktop) -->
             <div class="ko-left">

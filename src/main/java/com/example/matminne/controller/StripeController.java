@@ -47,6 +47,9 @@ public class StripeController {
     @Autowired
     private BrukerRepository brukerRepository;
 
+    @Autowired
+    private com.example.matminne.service.KjopService kjopService;
+
     @PostConstruct
     public void init() {
         if (stripeSecretKey != null && !stripeSecretKey.isBlank()) {
@@ -180,6 +183,38 @@ public class StripeController {
         }
 
         switch (event.getType()) {
+            // Engangskjøp av betalt samling. Viktigst av alle: fanger kjøpet
+            // selv om brukeren lukker fanen før suksess-redirecten rekker å kjøre.
+            case "checkout.session.completed": {
+                event.getDataObjectDeserializer().getObject().ifPresent(obj -> {
+                    Session sesjon = (Session) obj;
+                    try {
+                        kjopService.registrer(sesjon);
+                    } catch (Exception e) {
+                        log.error("Webhook kunne ikke registrere kjøp {}: {}",
+                                sesjon.getId(), e.getMessage());
+                    }
+                });
+                break;
+            }
+
+            // Connect-konto oppdatert — skaperen kan ha fullført onboarding
+            case "account.updated": {
+                event.getDataObjectDeserializer().getObject().ifPresent(obj -> {
+                    com.stripe.model.Account konto = (com.stripe.model.Account) obj;
+                    boolean klar = Boolean.TRUE.equals(konto.getChargesEnabled())
+                            && Boolean.TRUE.equals(konto.getPayoutsEnabled());
+                    brukerRepository.findByStripeConnectId(konto.getId()).ifPresent(b -> {
+                        if (b.isConnectKlar() != klar) {
+                            b.setConnectKlar(klar);
+                            brukerRepository.save(b);
+                            log.info("Connect-status for {} satt til {}", b.getEpost(), klar);
+                        }
+                    });
+                });
+                break;
+            }
+
             case "customer.subscription.deleted":
             case "customer.subscription.paused": {
                 event.getDataObjectDeserializer().getObject().ifPresent(obj -> {

@@ -26,6 +26,12 @@ public class Bruker {
     private String stripeCustomerId;
     private boolean harGodtattVilkar = false;
 
+    /** Stripe Connect-konto for skapere som selger betalte samlinger. */
+    private String stripeConnectId;
+
+    /** True når Connect-onboarding er fullført og kontoen kan motta utbetalinger. */
+    private boolean connectKlar = false;
+
     @Column(length = 300)
     private String bio;
 
@@ -72,6 +78,12 @@ public class Bruker {
 
     public String getStripeCustomerId() { return stripeCustomerId; }
     public void setStripeCustomerId(String stripeCustomerId) { this.stripeCustomerId = stripeCustomerId; }
+
+    public String getStripeConnectId() { return stripeConnectId; }
+    public void setStripeConnectId(String stripeConnectId) { this.stripeConnectId = stripeConnectId; }
+
+    public boolean isConnectKlar() { return connectKlar; }
+    public void setConnectKlar(boolean connectKlar) { this.connectKlar = connectKlar; }
 
     public String getBio() { return bio; }
     public void setBio(String bio) { this.bio = bio; }

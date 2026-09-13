@@ -21,6 +21,10 @@ class AiOppskriftServiceTest {
         service = new AiOppskriftService();
         // Tom API-nøkkel — simulerer manglende konfigurasjon
         ReflectionTestUtils.setField(service, "apiKey", "");
+        // Uten Spring blir feltinjiserte avhengigheter null; prisestimat
+        // leser prisConfig.getPriser() og trenger derfor en tom instans.
+        ReflectionTestUtils.setField(service, "prisConfig",
+                new com.example.matminne.config.PrisConfig());
         service.init();
     }
 

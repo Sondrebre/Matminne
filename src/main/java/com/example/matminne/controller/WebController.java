@@ -42,6 +42,7 @@ public class WebController {
     @Autowired private VarselRepository varselRepository;
     @Autowired private SamlingRepository samlingRepository;
     @Autowired private SamlingOppskriftRepository samlingOppskriftRepository;
+    @Autowired private com.example.matminne.service.SkaperService skaperService;
     @Autowired private RatingRepository ratingRepository;
     @Autowired private HandelListeRepository handelListeRepository;
     @Autowired private HandlelisteGruppeRepository handlelisteGruppeRepository;
@@ -64,32 +65,8 @@ public class WebController {
 
     private static final String DEFAULT_IMAGE = "https://images.unsplash.com/photo-1495195129352-aeb325a55b65?auto=format&fit=crop&w=1600&q=90";
 
-    @ModelAttribute
-    public void leggTilGlobalInfo(Model model, @AuthenticationPrincipal OAuth2User principal) {
-        if (principal != null) {
-            String epost = principal.getAttribute("email");
-            Bruker meg = brukerService.finnVedEpost(epost);
-            model.addAttribute("brukernavn", meg != null ? meg.getVisningsnavn() : principal.getAttribute("name"));
-            model.addAttribute("brukerEpost", epost);
-            model.addAttribute("brukerId", meg != null ? meg.getId() : null);
-            model.addAttribute("innlogget", true);
-            if (meg != null) {
-                String profilBilde = (meg.getBildeUrl() != null && !meg.getBildeUrl().isBlank())
-                        ? meg.getBildeUrl()
-                        : principal.getAttribute("picture");
-                model.addAttribute("profilBilde", profilBilde);
-                model.addAttribute("ulesVarsler",
-                    varselRepository.countByMottakerBrukerIdAndLestFalse(meg.getId()));
-                model.addAttribute("harAbonnement", meg.isHarAbonnement());
-            } else {
-                model.addAttribute("profilBilde", principal.getAttribute("picture"));
-                model.addAttribute("harAbonnement", false);
-            }
-        } else {
-            model.addAttribute("innlogget", false);
-            model.addAttribute("ulesVarsler", 0L);
-        }
-    }
+    // Felles modellverdier for navbar/bunnmeny ligger i GlobalModelAdvice,
+    // slik at de også gjelder skaper- og kjøpssidene.
 
     @GetMapping("/ingen-tilgang")
     public String ingenTilgang() {
@@ -409,6 +386,10 @@ public class WebController {
         model.addAttribute("antallFølgere", antallFølgere);
         model.addAttribute("antallFølger", antallFølger);
         model.addAttribute("profilBio", profilBruker.getBio());
+
+        // Kokebøker til salgs — her lander følgerne hennes, så de må vises
+        model.addAttribute("kokeboker",
+                samlingRepository.finnTilSalgsAvSkaper(profilBruker.getId()));
         return "profil";
     }
 
@@ -533,6 +514,12 @@ public class WebController {
         if (original == null) return "redirect:/kokebok";
         if (principal != null) {
             Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
+
+            // Låst innhold kan ikke kopieres inn i egen kokebok — ellers
+            // kunne hvem som helst tømme betalingsmuren med ett klikk.
+            if (skaperService.erLast(id, original.getBrukerId(), meg))
+                return "redirect:/detaljer/" + id;
+
             if (meg != null) {
                 if (!meg.isHarAbonnement() && repository.countByBrukerId(meg.getId()) >= GRATIS_GRENSE)
                     return "redirect:/abonnement?grense=true";
@@ -591,6 +578,19 @@ public class WebController {
             if (eksRating != null) minRating = eksRating.getVerdi();
         }
         List<Kommentar> alleKommentarer = kommentarRepository.findByOppskriftIdOrderByOpprettetAsc(id);
+
+        // Ligger oppskriften i en betalt samling brukeren ikke har kjøpt,
+        // vises bare et smakebit-kort med kjøpsoppfordring.
+        Bruker megNa = epost != null ? brukerService.finnVedEpost(epost) : null;
+        boolean erLast = skaperService.erLast(id, o.getBrukerId(), megNa);
+        if (erLast) {
+            skaperService.samlingSomLaserOpp(id).ifPresent(s -> {
+                model.addAttribute("laasSamling", s);
+                model.addAttribute("laasSkaper", brukerService.findById(s.getBrukerId()));
+            });
+        }
+        model.addAttribute("erLast", erLast);
+
         model.addAttribute("o", o);
         model.addAttribute("erEier", erEier);
         model.addAttribute("likeAntall", likeAntall);
@@ -898,6 +898,12 @@ public class WebController {
         try {
             Oppskrift o = repository.findById(id).orElse(null);
             if (o == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+            // Låst innhold skal ikke kunne hentes ut som PDF
+            Bruker megPdf = brukerService.finnVedEpost(principal.getAttribute("email"));
+            if (skaperService.erLast(id, o.getBrukerId(), megPdf))
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
             String ingSafe  = o.getIngredienser()  != null ? HtmlUtils.htmlEscape(o.getIngredienser()).replace("\n", "<br>")  : "";
             String stegSafe = o.getFremgangsmate()  != null ? HtmlUtils.htmlEscape(o.getFremgangsmate()).replace("\n", "<br>") : "";
             String bildeSrc = (o.getBildeUrl() != null && !o.getBildeUrl().isEmpty()) ? HtmlUtils.htmlEscape(o.getBildeUrl()) : "";
@@ -1048,6 +1054,11 @@ public class WebController {
         if (principal == null) return "redirect:/handleliste";
         Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
         Oppskrift o = repository.findById(id).orElse(null);
+
+        // Låst innhold: ingredienslisten skal ikke kunne hentes ut via handlelisten
+        if (o != null && skaperService.erLast(id, o.getBrukerId(), meg))
+            return "redirect:/detaljer/" + id;
+
         if (meg != null && o != null && o.getIngredienser() != null) {
             for (String linje : o.getIngredienser().split("\n")) {
                 // Strip ledende "- ", "* ", "• " fra oppskriftsformat
