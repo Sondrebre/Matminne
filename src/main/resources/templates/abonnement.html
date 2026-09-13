@@ -67,6 +67,83 @@
         .subscribed-banner p { font-size: .85rem; color: #64748b; margin: 0; }
 
         /* ── PRICING CARDS ── */
+        /* ── NIVÅVELGER ── */
+        .niva-wrap { max-width: 660px; margin: 0 auto 60px; padding: 40px 20px 0; }
+
+        .niva-intro { text-align: center; margin-bottom: 26px; }
+        .niva-intro h2 {
+            font-size: 1.5rem; font-weight: 900; color: var(--mat-mork);
+            letter-spacing: -1px; margin: 0 0 10px; text-wrap: balance;
+        }
+        .niva-intro p {
+            font-size: .9rem; color: #64748b; line-height: 1.6;
+            max-width: 460px; margin: 0 auto;
+        }
+        .niva-status {
+            display: inline-block; margin-top: 16px;
+            background: var(--mat-mint); border: 1px solid #a7f3d0;
+            border-radius: 12px; padding: 10px 18px;
+            font-size: .85rem; color: #15803d; font-weight: 600;
+        }
+
+        .niva-rad {
+            display: flex; align-items: center; gap: 16px;
+            background: white; border: 2px solid #e8f5e9;
+            border-radius: 16px; padding: 16px 20px; margin-bottom: 10px;
+            transition: border-color .15s, box-shadow .15s, transform .15s;
+        }
+        .niva-rad:hover {
+            border-color: var(--mat-lys-gronn);
+            box-shadow: 0 6px 20px rgba(34,197,94,.1);
+        }
+        .niva-rad.anbefalt {
+            border-color: var(--mat-gronn);
+            background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+            box-shadow: 0 8px 28px rgba(34,197,94,.16);
+        }
+        .niva-rad.gratis { background: #fafafa; border-color: #f1f5f9; }
+
+        .niva-venstre { flex: 1; min-width: 0; }
+        .niva-venstre strong {
+            display: block; font-size: 1.02rem; font-weight: 800;
+            color: var(--mat-mork); letter-spacing: -.3px; margin-bottom: 2px;
+        }
+        .niva-venstre span { font-size: .8rem; color: #94a3b8; font-weight: 600; }
+        .anbefalt-merke {
+            display: inline-block; background: var(--mat-gronn); color: white !important;
+            font-size: .64rem; font-weight: 800; padding: 3px 9px;
+            border-radius: 99px; text-transform: uppercase; letter-spacing: .8px;
+        }
+
+        .niva-pris {
+            font-size: .78rem; color: #94a3b8; font-weight: 700;
+            flex-shrink: 0; white-space: nowrap;
+        }
+        .niva-pris .belop {
+            font-size: 1.45rem; font-weight: 900; color: var(--mat-mork);
+            letter-spacing: -1px; font-variant-numeric: tabular-nums;
+        }
+
+        .niva-btn {
+            background: var(--mat-gronn); color: white; border: none;
+            padding: 11px 24px; border-radius: 12px; font-weight: 800;
+            font-size: .88rem; cursor: pointer; font-family: inherit;
+            text-decoration: none; flex-shrink: 0; transition: .15s;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        .niva-btn:hover { background: var(--mat-gronn-m); color: white; }
+        .niva-btn.sekundar { background: #f1f5f9; color: var(--mat-mork); }
+        .niva-btn.sekundar:hover { background: #e2e8f0; color: var(--mat-mork); }
+        .niva-btn.utilgjengelig {
+            background: #f1f5f9; color: #cbd5e1; cursor: not-allowed;
+        }
+        .niva-btn.utilgjengelig:hover { background: #f1f5f9; color: #cbd5e1; }
+
+        .niva-fot {
+            font-size: .76rem; color: #94a3b8; text-align: center;
+            margin-top: 20px; line-height: 1.6;
+        }
+
         .pricing-wrap {
             max-width: 780px; margin: 0 auto 60px;
             padding: 40px 20px 0;
@@ -195,6 +272,14 @@
 
         @media (max-width: 700px) {
             .pricing-wrap { grid-template-columns: 1fr; }
+            .niva-wrap { padding: 28px 14px 0; }
+            .niva-intro h2 { font-size: 1.25rem; }
+            .niva-rad {
+                flex-wrap: wrap; gap: 10px; padding: 14px 16px;
+            }
+            .niva-venstre { flex: 1 1 100%; }
+            .niva-pris { flex: 1; }
+            .niva-btn { flex-shrink: 0; padding: 10px 20px; }
             .subscribed-banner { padding: 20px; }
         }
     </style>
@@ -210,7 +295,8 @@
                 <i class="fas fa-wand-magic-sparkles"></i> MatMinne Premium
             </div>
             <h1>Gi matlagingen<br>din <span>superkrefter</span></h1>
-            <p>Lagre ubegrenset med oppskrifter, bruk MatMinne-forslag og mye mer — alt for kun 29,90 kr/mnd.</p>
+            <p>Større kokebok, MatMinne-forslag og import fra URL. Fra 29 kr/mnd,
+               og du betaler bare for plassen du trenger.</p>
         </div>
     </div>
 
@@ -221,8 +307,15 @@
                 display:flex;align-items:center;gap:16px;box-shadow:0 8px 32px rgba(245,158,11,.2);">
         <span style="font-size:2rem;flex-shrink:0;">📦</span>
         <div>
-            <div style="font-weight:900;font-size:.95rem;color:#92400e;margin-bottom:4px;">Du har nådd grensen på 10 oppskrifter</div>
-            <div style="font-size:.83rem;color:#b45309;line-height:1.5;">Oppgrader til MatMinne Premium for å lagre ubegrensede oppskrifter og få tilgang til MatMinne-funksjoner.</div>
+            <div style="font-weight:900;font-size:.95rem;color:#92400e;margin-bottom:4px;">
+                Kokeboka di er full
+                <span th:if="${plan != null}"
+                      th:text="'— ' + ${plan.grenseTekst()} + ' er brukt opp'"></span>
+            </div>
+            <div style="font-size:.83rem;color:#b45309;line-height:1.5;">
+                Velg en større plan under for å lagre flere. Oppskriftene du
+                allerede har blir liggende uansett.
+            </div>
         </div>
     </div>
 
@@ -242,7 +335,13 @@
             <div class="subscribed-icon">✅</div>
             <div>
                 <h3>Du har MatMinne Premium!</h3>
-                <p>Ubegrensede oppskrifter og alle MatMinne-funksjoner er aktivert. Nyt tilgangen!</p>
+                <p>
+                    Planen din gir
+                    <strong th:text="${plan != null ? plan.grenseTekst() : 'flere oppskrifter'}">
+                        150 oppskrifter</strong><span th:if="${plan != null and !plan.erUbegrenset()}"
+                        th:text="' — du bruker ' + ${antallOppskrifter} + ' av dem'"></span>.
+                    Alle MatMinne-funksjoner er aktivert.
+                </p>
             </div>
             <form id="avbrytAbonnementForm" th:action="@{/abonnement/avbryt}" method="POST" style="margin-left:auto;">
                 <button type="button" id="avbrytBtn"
@@ -254,60 +353,89 @@
                 </button>
             </form>
         </div>
-    </div>
 
-    <!-- PRICING -->
-    <div class="pricing-wrap" th:unless="${harAbonnement}">
-
-        <!-- Gratis -->
-        <div class="price-card">
-            <div class="plan-name">Gratis</div>
-            <div class="price-block">
-                <span class="price-currency">kr</span>
-                <span class="price-amount">0</span>
+        <!-- BYTT PLAN -->
+        <div class="niva-wrap" style="padding-top:28px;">
+            <div class="niva-intro">
+                <h2>Bytt plan</h2>
+                <p>Trenger du mer eller mindre plass? Velg et annet nivå —
+                   det gamle avsluttes automatisk.</p>
             </div>
-            <div class="price-period">/mnd</div>
-            <div class="plan-desc">Kom i gang gratis — ingen bindingstid</div>
-            <ul class="plan-features">
-                <li><span class="check">✓</span> Maks 10 oppskrifter</li>
-                <li><span class="check">✓</span> Dele og følge venner</li>
-                <li><span class="check">✓</span> Handleliste og ukesmeny</li>
-                <li><span class="check">✓</span> Samlinger og eksport til PDF</li>
-                <li class="muted"><span class="cross">✕</span> Ubegrensede oppskrifter</li>
-                <li class="muted"><span class="cross">✕</span> MatMinne-forslag og ingrediensbytte</li>
-                <li class="muted"><span class="cross">✕</span> import fra URL</li>
-            </ul>
-            <a href="/kokebok" class="btn-plan-free">Fortsett gratis</a>
-        </div>
 
-        <!-- Premium -->
-        <div class="price-card featured">
-            <span class="featured-pill">✨ Anbefalt</span>
-            <div class="plan-name">MatMinne Premium</div>
-            <div class="price-block">
-                <span class="price-currency">kr</span>
-                <span class="price-amount">29</span>
-                <span class="price-decimal">,90</span>
-            </div>
-            <div class="price-period">/mnd</div>
-            <div class="plan-desc">Alt du trenger for en komplett matopplevelse</div>
-            <ul class="plan-features">
-                <li><span class="check">✓</span> <strong>Ubegrensede oppskrifter</strong></li>
-                <li><span class="check">✓</span> Dele og følge venner</li>
-                <li><span class="check">✓</span> Handleliste og ukesmeny</li>
-                <li><span class="check">✓</span> <strong>MatMinne-forslag og ingrediensbytte</strong></li>
-                <li><span class="check">✓</span> <strong>import fra hvilken som helst URL</strong></li>
-                <li><span class="check">✓</span> <strong>automatisk ukesmeny</strong></li>
-            </ul>
-            <form th:action="@{/abonnement/checkout}" method="POST">
-                <button type="submit" class="btn-plan-pro">
-                    <i class="fas fa-bolt"></i> Start Premium — 29,90 kr/mnd
+            <form th:each="n : ${niva}" th:action="@{/abonnement/checkout}" method="POST"
+                  class="niva-rad" th:classappend="${n == plan} ? 'anbefalt' : ''">
+                <input type="hidden" name="niva" th:value="${n.name()}">
+                <div class="niva-venstre">
+                    <strong th:text="${n.grenseTekst()}">30 oppskrifter</strong>
+                    <span th:if="${n == plan}" class="anbefalt-merke">Din plan</span>
+                </div>
+                <div class="niva-pris">
+                    <span class="belop" th:text="${n.prisKroner}">29</span> kr/mnd
+                </div>
+                <button type="submit" class="niva-btn"
+                        th:disabled="${n == plan or !tilgjengelig[n.name()]}"
+                        th:classappend="${n == plan or !tilgjengelig[n.name()]} ? 'utilgjengelig' : ''">
+                    <span th:if="${n == plan}">Aktiv</span>
+                    <span th:unless="${n == plan}"
+                          th:text="${tilgjengelig[n.name()]} ? 'Bytt' : 'Kommer'">Bytt</span>
                 </button>
             </form>
-            <p style="font-size:.72rem;color:#94a3b8;text-align:center;margin-top:10px;">
-                Sikker betaling via Stripe · Avslutt når som helst
-            </p>
         </div>
+    </div>
+
+    <!-- NIVÅVELGER -->
+    <div class="niva-wrap" th:unless="${harAbonnement}">
+
+        <div class="niva-intro">
+            <h2>Velg hvor stor kokebok du trenger</h2>
+            <p>Prisen følger antall oppskrifter. Alle planer gir de samme
+               MatMinne-funksjonene, og du kan bytte eller avslutte når som helst.</p>
+            <div class="niva-status" th:if="${antallOppskrifter > 0}">
+                Du har <strong th:text="${antallOppskrifter}">0</strong> oppskrifter nå
+                — gratisplanen rommer <span th:text="${gratisGrense}">10</span>.
+            </div>
+        </div>
+
+        <!-- Gratis -->
+        <div class="niva-rad gratis">
+            <div class="niva-venstre">
+                <strong>Gratis</strong>
+                <span th:text="${gratisGrense} + ' oppskrifter'">10 oppskrifter</span>
+            </div>
+            <div class="niva-pris"><span class="belop">0</span> kr/mnd</div>
+            <a href="/kokebok" class="niva-btn sekundar">Fortsett gratis</a>
+        </div>
+
+        <!-- Betalte nivåer -->
+        <form th:each="n : ${niva}" th:action="@{/abonnement/checkout}" method="POST"
+              class="niva-rad"
+              th:classappend="${n == anbefalt} ? 'anbefalt' : ''">
+            <input type="hidden" name="niva" th:value="${n.name()}">
+
+            <div class="niva-venstre">
+                <strong th:text="${n.grenseTekst()}">30 oppskrifter</strong>
+                <span th:if="${n == anbefalt}" class="anbefalt-merke">Passer deg</span>
+                <span th:unless="${n == anbefalt}"
+                      th:text="${n.erUbegrenset()} ? 'Ingen grense' : 'Opptil ' + ${n.oppskriftGrense} + ' lagret'">
+                </span>
+            </div>
+
+            <div class="niva-pris">
+                <span class="belop" th:text="${n.prisKroner}">29</span> kr/mnd
+            </div>
+
+            <button type="submit" class="niva-btn"
+                    th:disabled="${!tilgjengelig[n.name()]}"
+                    th:classappend="${!tilgjengelig[n.name()]} ? 'utilgjengelig' : ''">
+                <span th:if="${tilgjengelig[n.name()]}">Velg</span>
+                <span th:unless="${tilgjengelig[n.name()]}">Kommer</span>
+            </button>
+        </form>
+
+        <p class="niva-fot">
+            Sikker betaling via Stripe · Avslutt når som helst ·
+            Alle planer inkluderer MatMinne-forslag, ingrediensbytte og import fra URL
+        </p>
     </div>
 
     <!-- FEATURES -->
@@ -316,8 +444,9 @@
         <div class="features-grid">
             <div class="feat-card">
                 <div class="feat-icon">📚</div>
-                <h4>Ubegrensede oppskrifter</h4>
-                <p>Gratisplanen er begrenset til 10 oppskrifter. Premium gir deg ubegrenset kokebok.</p>
+                <h4>Større kokebok</h4>
+                <p>Gratisplanen rommer 10 oppskrifter. Betalte planer gir fra 30
+                   og opp til ubegrenset — du velger selv hvor mye du trenger.</p>
             </div>
             <div class="feat-card">
                 <div class="feat-icon">🔄</div>
@@ -360,7 +489,7 @@
         </div>
         <div class="faq-item" onclick="toggleFaq(this)">
             <div class="faq-q">Hva er grensen på gratisplanen? <span class="faq-icon">+</span></div>
-            <div class="faq-a">Gratisplanen lar deg lagre opptil 10 oppskrifter. Alle andre funksjoner som handleliste, ukesmeny, samlinger og sosialt deling er inkludert. Trenger du mer, kan du oppgradere til Premium for 29,90 kr/mnd.</div>
+            <div class="faq-a">Gratisplanen lar deg lagre opptil 10 oppskrifter. Alle andre funksjoner som handleliste, ukesmeny, samlinger og sosial deling er inkludert. Trenger du mer plass, starter betalte planer på 29 kr/mnd for 30 oppskrifter, og går opp til 199 kr/mnd for ubegrenset. Nedgraderer du senere, beholder du oppskriftene du har — du kan bare ikke legge til nye før du er under grensen.</div>
         </div>
     </div>
 

@@ -69,6 +69,19 @@ public class DatabaseMigrasjon {
             // publisert regnes som godkjent, resten som utkast.
             migrerPublisertTilStatus();
 
+            // ── Nivådelt abonnement ──
+            jdbcTemplate.execute(
+                "ALTER TABLE brukere ADD COLUMN IF NOT EXISTS abonnement_niva VARCHAR(20)"
+            );
+            // Eksisterende abonnenter hadde ubegrenset kokebok, så de beholder det
+            jdbcTemplate.execute(
+                "UPDATE brukere SET abonnement_niva = 'UBEGRENSET' "
+              + "WHERE abonnement_niva IS NULL AND har_abonnement = TRUE"
+            );
+            jdbcTemplate.execute(
+                "UPDATE brukere SET abonnement_niva = 'GRATIS' WHERE abonnement_niva IS NULL"
+            );
+
             log.info("Database-migrasjoner fullført");
         } catch (Exception e) {
             log.warn("Migrasjonsadvarsel (kan ignoreres hvis kolonner allerede finnes): {}", e.getMessage());

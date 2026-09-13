@@ -106,7 +106,9 @@ public class WebController {
         model.addAttribute("oppskrifter", mineOppskrifter);
         model.addAttribute("antall", mineOppskrifter.size());
         model.addAttribute("harAbonnement", meg.isHarAbonnement());
-        model.addAttribute("oppskriftGrense", GRATIS_GRENSE);
+        model.addAttribute("oppskriftGrense", meg.oppskriftGrense());
+        model.addAttribute("plan", meg.gjeldendePlan());
+        model.addAttribute("harPlass", meg.harPlassTilFlere(mineOppskrifter.size()));
         return "kokebok";
     }
 
@@ -465,15 +467,14 @@ public class WebController {
         return "redirect:/profil/" + id;
     }
 
-    private static final int GRATIS_GRENSE = 10;
-
     @PostMapping("/lagre")
     public String lagreOppskrift(@ModelAttribute Oppskrift oppskrift,
                                  @AuthenticationPrincipal OAuth2User principal) {
         if (principal != null) {
             Bruker meg = brukerService.finnVedEpost(principal.getAttribute("email"));
             if (meg != null) {
-                if (!meg.isHarAbonnement() && repository.countByBrukerId(meg.getId()) >= GRATIS_GRENSE)
+                // Grensen følger planen brukeren betaler for
+                if (!meg.harPlassTilFlere(repository.countByBrukerId(meg.getId())))
                     return "redirect:/abonnement?grense=true";
                 oppskrift.setBrukerId(meg.getId());
                 oppskrift.setBrukerEpost(meg.getEpost());
@@ -521,7 +522,7 @@ public class WebController {
                 return "redirect:/detaljer/" + id;
 
             if (meg != null) {
-                if (!meg.isHarAbonnement() && repository.countByBrukerId(meg.getId()) >= GRATIS_GRENSE)
+                if (!meg.harPlassTilFlere(repository.countByBrukerId(meg.getId())))
                     return "redirect:/abonnement?grense=true";
                 Oppskrift kopi = new Oppskrift();
                 kopi.setTittel(original.getTittel() + " (Kopi)");

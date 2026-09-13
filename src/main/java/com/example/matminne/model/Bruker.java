@@ -23,6 +23,12 @@ public class Bruker {
     @Column(columnDefinition = "TEXT")
     private String bildeUrl;
     private boolean harAbonnement = false;
+
+    /** Hvilket nivå brukeren betaler for. Styrer hvor mange oppskrifter som kan lagres. */
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private Abonnement abonnementNiva = Abonnement.GRATIS;
+
     private String stripeCustomerId;
     private boolean harGodtattVilkar = false;
 
@@ -75,6 +81,29 @@ public class Bruker {
 
     public boolean isHarAbonnement() { return harAbonnement; }
     public void setHarAbonnement(boolean harAbonnement) { this.harAbonnement = harAbonnement; }
+
+    public Abonnement getAbonnementNiva() {
+        return abonnementNiva != null ? abonnementNiva : Abonnement.GRATIS;
+    }
+    public void setAbonnementNiva(Abonnement abonnementNiva) { this.abonnementNiva = abonnementNiva; }
+
+    /**
+     * Planen som gjelder nå. Er abonnementet oppsagt eller utløpt faller
+     * brukeren tilbake til gratisplanen, uansett hva nivået sier.
+     */
+    public Abonnement gjeldendePlan() {
+        return harAbonnement ? getAbonnementNiva() : Abonnement.GRATIS;
+    }
+
+    /** Hvor mange oppskrifter brukeren kan lagre nå. -1 = ubegrenset. */
+    public int oppskriftGrense() {
+        return gjeldendePlan().getOppskriftGrense();
+    }
+
+    /** Har brukeren plass til én oppskrift mer? */
+    public boolean harPlassTilFlere(long antallNa) {
+        return gjeldendePlan().harPlass(antallNa);
+    }
 
     public String getStripeCustomerId() { return stripeCustomerId; }
     public void setStripeCustomerId(String stripeCustomerId) { this.stripeCustomerId = stripeCustomerId; }

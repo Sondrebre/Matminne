@@ -17,8 +17,11 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.example.matminne.model.Abonnement;
 import com.example.matminne.model.Bruker;
 import com.example.matminne.repository.BrukerRepository;
+import com.example.matminne.repository.OppskriftRepository;
+import com.example.matminne.service.AbonnementService;
 import com.example.matminne.service.BrukerService;
 
 @Controller
@@ -50,6 +53,12 @@ public class StripeController {
     @Autowired
     private com.example.matminne.service.KjopService kjopService;
 
+    @Autowired
+    private AbonnementService abonnementService;
+
+    @Autowired
+    private OppskriftRepository oppskriftRepository;
+
     @PostConstruct
     public void init() {
         if (stripeSecretKey != null && !stripeSecretKey.isBlank()) {
@@ -66,30 +75,54 @@ public class StripeController {
         if (principal == null) return "redirect:/";
         String epost = principal.getAttribute("email");
         Bruker meg = brukerService.finnVedEpost(epost);
+
+        long antallOppskrifter = meg != null ? oppskriftRepository.countByBrukerId(meg.getId()) : 0;
+        Abonnement plan = meg != null ? meg.gjeldendePlan() : Abonnement.GRATIS;
+
         model.addAttribute("harAbonnement", meg != null && meg.isHarAbonnement());
         model.addAttribute("brukerEpost", epost);
+        model.addAttribute("plan", plan);
+        model.addAttribute("niva", Abonnement.betalte());
+        model.addAttribute("tilgjengelig", abonnementService.tilgjengelighet());
+        model.addAttribute("antallOppskrifter", antallOppskrifter);
+        model.addAttribute("gratisGrense", Abonnement.GRATIS.getOppskriftGrense());
+        // Foreslår minste plan som rommer det brukeren alt har lagret
+        model.addAttribute("anbefalt", Abonnement.minsteSomRommer(antallOppskrifter));
         if (meg != null && meg.getBildeUrl() != null) model.addAttribute("profilBilde", meg.getBildeUrl());
         return "abonnement";
     }
 
     // ── START STRIPE CHECKOUT ─────────────────────────────────────
     @PostMapping("/abonnement/checkout")
-    public String startCheckout(@AuthenticationPrincipal OAuth2User principal) {
+    public String startCheckout(@RequestParam(required = false) String niva,
+                                @AuthenticationPrincipal OAuth2User principal) {
         if (principal == null) return "redirect:/";
-        if (stripeSecretKey.isBlank() || stripePriceId.isBlank()) {
-            log.error("Stripe ikke konfigurert — mangler secret key eller price ID");
+
+        Abonnement valgt = Abonnement.fraNavn(niva);
+        if (valgt.erGratis()) return "redirect:/abonnement?feil=ugyldig-niva";
+
+        if (stripeSecretKey.isBlank()) {
+            log.error("Stripe ikke konfigurert — mangler secret key");
             return "redirect:/abonnement?feil=stripe-ikke-konfigurert";
         }
+
+        String prisId = abonnementService.prisIdFor(valgt).orElse(null);
+        if (prisId == null) {
+            log.error("Mangler Stripe-pris for nivå {} (stripe.price.{})", valgt, valgt.prisNokkel());
+            return "redirect:/abonnement?feil=stripe-ikke-konfigurert";
+        }
+
         String epost = principal.getAttribute("email");
         try {
             SessionCreateParams params = SessionCreateParams.builder()
                     .setMode(SessionCreateParams.Mode.SUBSCRIPTION)
                     .setCustomerEmail(epost)
                     .addLineItem(SessionCreateParams.LineItem.builder()
-                            .setPrice(stripePriceId)
+                            .setPrice(prisId)
                             .setQuantity(1L)
                             .build())
                     .putMetadata("brukerEpost", epost)
+                    .putMetadata("niva", valgt.name())
                     .setSuccessUrl(baseUrl + "/abonnement/suksess?session_id={CHECKOUT_SESSION_ID}")
                     .setCancelUrl(baseUrl + "/abonnement")
                     .build();
@@ -114,12 +147,14 @@ public class StripeController {
                 if (epost != null) {
                     Bruker bruker = brukerService.finnVedEpost(epost);
                     if (bruker != null) {
+                        Abonnement niva = Abonnement.fraNavn(session.getMetadata().get("niva"));
                         bruker.setHarAbonnement(true);
+                        if (!niva.erGratis()) bruker.setAbonnementNiva(niva);
                         if (session.getCustomer() != null) {
                             bruker.setStripeCustomerId(session.getCustomer());
                         }
                         brukerRepository.save(bruker);
-                        log.info("Abonnement aktivert for: {}", epost);
+                        log.info("Abonnement {} aktivert for: {}", niva, epost);
                     }
                 }
             }
@@ -223,9 +258,32 @@ public class StripeController {
                     brukerRepository.findByStripeCustomerId(customerId)
                             .ifPresent(b -> {
                                 b.setHarAbonnement(false);
+                                // Nivået beholdes, slik at en gjenopptakelse
+                                // treffer samme plan som før
                                 brukerRepository.save(b);
                                 log.info("Abonnement deaktivert via webhook for customer: {}", customerId);
                             });
+                });
+                break;
+            }
+
+            // Oppgradering eller nedgradering: prisen på abonnementet er endret
+            case "customer.subscription.updated": {
+                event.getDataObjectDeserializer().getObject().ifPresent(obj -> {
+                    com.stripe.model.Subscription sub = (com.stripe.model.Subscription) obj;
+                    nivaFraAbonnement(sub).ifPresent(niva ->
+                        brukerRepository.findByStripeCustomerId(sub.getCustomer())
+                                .ifPresent(b -> {
+                                    boolean aktiv = "active".equals(sub.getStatus())
+                                            || "trialing".equals(sub.getStatus());
+                                    if (b.getAbonnementNiva() != niva || b.isHarAbonnement() != aktiv) {
+                                        b.setAbonnementNiva(niva);
+                                        b.setHarAbonnement(aktiv);
+                                        brukerRepository.save(b);
+                                        log.info("Abonnement for {} endret til {} (aktiv: {})",
+                                                b.getEpost(), niva, aktiv);
+                                    }
+                                }));
                 });
                 break;
             }
@@ -246,5 +304,24 @@ public class StripeController {
                 break;
         }
         return ResponseEntity.ok("ok");
+    }
+
+    /**
+     * Finner abonnementsnivået ut fra prisen på Stripe-abonnementet.
+     * Tom hvis prisen ikke er én av våre konfigurerte nivåpriser.
+     */
+    private java.util.Optional<Abonnement> nivaFraAbonnement(com.stripe.model.Subscription sub) {
+        try {
+            if (sub.getItems() == null || sub.getItems().getData() == null) return java.util.Optional.empty();
+            return sub.getItems().getData().stream()
+                    .filter(i -> i.getPrice() != null && i.getPrice().getId() != null)
+                    .map(i -> abonnementService.nivaFor(i.getPrice().getId()))
+                    .filter(java.util.Optional::isPresent)
+                    .map(java.util.Optional::get)
+                    .findFirst();
+        } catch (Exception e) {
+            log.warn("Kunne ikke lese nivå fra abonnement {}: {}", sub.getId(), e.getMessage());
+            return java.util.Optional.empty();
+        }
     }
 }
