@@ -893,6 +893,15 @@
             startPolling();
             const addForm = document.querySelector('.add-card form');
             if (addForm) addForm.addEventListener('submit', sjekkDisamb);
+
+            // På mobil: Enter lukker tastaturet i stedet for å sende skjema.
+            // Brukeren må trykke eksplisitt på "Legg til"-knappen.
+            document.querySelectorAll('.add-input, .delt-input').forEach(inp => {
+                inp.setAttribute('enterkeyhint', 'done');
+                inp.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
+                });
+            });
         });
 
         /* ══ TOGGLE / SLETT / RYDD ═══════════════════════════════════════ */

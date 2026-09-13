@@ -293,8 +293,8 @@
 
                 <!-- ACTIONS -->
                 <div class="form-actions">
-                    <a href="/kokebok" class="btn-back">
-                        <i class="fas fa-chevron-left"></i> Tilbake uten å lagre
+                    <a th:href="@{'/detaljer/' + ${o.id}}" class="btn-back">
+                        <i class="fas fa-chevron-left"></i> Avbryt
                     </a>
                     <button type="submit" class="btn-save">
                         <i class="fa-solid fa-floppy-disk"></i> Lagre endringer
