@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Kokebøker til salgs | MatMinne</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        .page-hero {
+            background: linear-gradient(160deg, #ecfdf5 0%, #d1fae5 60%, #bbf7d0 100%);
+            border-bottom: 1px solid #a7f3d0;
+            padding: 44px 0 64px; position: relative; overflow: hidden;
+        }
+        .page-hero::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(34,197,94,.15) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .hero-inner { position: relative; z-index: 1; }
+        .hero-tag {
+            font-size: .68rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 2.5px; color: var(--mat-gronn-m);
+            display: block; margin-bottom: 10px;
+        }
+        .page-hero h1 {
+            font-size: 2.5rem; font-weight: 900; letter-spacing: -2px;
+            color: var(--mat-mork); margin: 0 0 6px;
+        }
+        .page-hero p { color: #64748b; font-size: .92rem; margin: 0; }
+
+        .content-wrap {
+            max-width: 1040px; margin: -36px auto 100px;
+            padding: 0 20px; position: relative; z-index: 10;
+        }
+
+        /* ── SORTERING ── */
+        .sorter-rad {
+            display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap;
+            background: white; padding: 10px; border-radius: 16px;
+            border: 1px solid #e8f5e9; box-shadow: 0 4px 18px rgba(34,197,94,.06);
+        }
+        .sorter-btn {
+            padding: 9px 18px; border-radius: 11px; font-size: .84rem;
+            font-weight: 700; text-decoration: none; color: #64748b;
+            transition: .15s; border: none; background: none;
+        }
+        .sorter-btn:hover { background: #f8fafc; color: var(--mat-mork); }
+        .sorter-btn.aktiv {
+            background: var(--mat-gronn-m); color: white;
+        }
+        .sorter-btn.aktiv:hover { background: #15803d; color: white; }
+
+        /* ── KORT ── */
+        .bok-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .bok-kort {
+            background: white; border-radius: 20px; overflow: hidden;
+            border: 1px solid #e8f5e9; box-shadow: 0 6px 24px rgba(34,197,94,.08);
+            text-decoration: none; display: flex; flex-direction: column;
+            transition: transform .16s, box-shadow .16s;
+        }
+        .bok-kort:hover {
+            transform: translateY(-4px); box-shadow: 0 14px 36px rgba(34,197,94,.18);
+        }
+        .bok-bilde { position: relative; height: 168px; background: var(--mat-mint); }
+        .bok-bilde img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .bok-bilde-tom {
+            width: 100%; height: 100%; display: flex; align-items: center;
+            justify-content: center; color: var(--mat-gronn); font-size: 2.2rem;
+        }
+        .bok-pris {
+            position: absolute; bottom: 12px; right: 12px;
+            background: rgba(15,23,42,.88); backdrop-filter: blur(8px);
+            color: white; font-size: .84rem; font-weight: 800;
+            padding: 6px 14px; border-radius: 99px;
+        }
+        .bok-eid {
+            position: absolute; top: 12px; left: 12px;
+            background: var(--mat-gronn-m); color: white;
+            font-size: .64rem; font-weight: 800; padding: 5px 11px;
+            border-radius: 99px; text-transform: uppercase; letter-spacing: .7px;
+        }
+
+        .bok-kropp { padding: 16px 18px 18px; flex: 1; display: flex; flex-direction: column; }
+        .bok-tittel {
+            font-weight: 800; color: var(--mat-mork); font-size: 1.02rem;
+            line-height: 1.3; margin-bottom: 10px;
+            display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2;
+            -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .bok-skaper {
+            display: flex; align-items: center; gap: 9px; margin-bottom: 12px;
+        }
+        .bok-skaper img {
+            width: 28px; height: 28px; border-radius: 50%; object-fit: cover;
+            border: 1.5px solid var(--mat-lys-gronn); flex-shrink: 0;
+        }
+        .bok-skaper-tom {
+            width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+            background: var(--mat-mint); display: flex; align-items: center;
+            justify-content: center; color: var(--mat-gronn); font-size: .7rem;
+        }
+        .bok-skaper span {
+            font-size: .84rem; color: #475569; font-weight: 600;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .bok-meta {
+            margin-top: auto; padding-top: 12px; border-top: 1px solid #f1f5f9;
+            display: flex; gap: 14px; font-size: .77rem; color: #94a3b8;
+            font-weight: 600;
+        }
+        .bok-meta i { color: var(--mat-gronn); margin-right: 4px; }
+
+        /* ── TOM ── */
+        .tom-tilstand {
+            background: white; border-radius: 24px; padding: 64px 28px;
+            text-align: center; border: 1px solid #f1f5f9;
+            box-shadow: 0 20px 56px rgba(0,0,0,.07);
+        }
+        .tom-tilstand .ikon { font-size: 3.2rem; margin-bottom: 16px; opacity: .45; }
+        .tom-tilstand strong {
+            display: block; color: var(--mat-mork); font-size: 1.15rem;
+            font-weight: 900; margin-bottom: 8px;
+        }
+        .tom-tilstand p {
+            color: #64748b; font-size: .92rem; line-height: 1.7;
+            max-width: 380px; margin: 0 auto 22px;
+        }
+        .btn-gronn {
+            background: var(--mat-gronn-m); color: white; padding: 14px 26px;
+            border-radius: 14px; font-weight: 800; font-size: .92rem;
+            text-decoration: none; display: inline-flex; align-items: center;
+            gap: 9px; transition: .15s;
+        }
+        .btn-gronn:hover { background: #15803d; color: white; }
+
+        /* ── SELG-BANNER ── */
+        .selg-banner {
+            background: var(--mat-mork); border-radius: 20px;
+            padding: 26px 28px; margin-top: 32px;
+            display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+        }
+        .selg-banner-tekst { flex: 1; min-width: 240px; }
+        .selg-banner strong {
+            display: block; color: white; font-size: 1.1rem;
+            font-weight: 900; margin-bottom: 5px; letter-spacing: -.4px;
+        }
+        .selg-banner p {
+            color: rgba(255,255,255,.5); font-size: .87rem;
+            margin: 0; line-height: 1.55;
+        }
+
+        @media (max-width: 600px) {
+            .page-hero h1 { font-size: 1.8rem; letter-spacing: -1px; }
+            .content-wrap { padding: 0 12px; }
+            .bok-grid { grid-template-columns: 1fr; gap: 16px; }
+            .sorter-rad { padding: 8px; }
+            .sorter-btn { padding: 9px 14px; font-size: .8rem; flex: 1; text-align: center; }
+            .selg-banner { padding: 22px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="page-hero">
+        <div class="hero-inner container">
+            <span class="hero-tag">Markedsplass</span>
+            <h1>Kokebøker til salgs</h1>
+            <p>Digitale kokebøker fra matskapere. Kjøp én gang, behold for alltid.</p>
+        </div>
+    </div>
+
+    <div class="content-wrap">
+
+        <!-- SORTERING -->
+        <div class="sorter-rad" th:if="${!#lists.isEmpty(kokeboker)}">
+            <a href="/kokeboker" class="sorter-btn"
+               th:classappend="${sorter == 'nyest'} ? 'aktiv'">Nyeste</a>
+            <a href="/kokeboker?sorter=populær" class="sorter-btn"
+               th:classappend="${sorter == 'populær'} ? 'aktiv'">Mest solgt</a>
+            <a href="/kokeboker?sorter=billigst" class="sorter-btn"
+               th:classappend="${sorter == 'billigst'} ? 'aktiv'">Lavest pris</a>
+        </div>
+
+        <!-- TOM -->
+        <div th:if="${#lists.isEmpty(kokeboker)}" class="tom-tilstand">
+            <div class="ikon">📚</div>
+            <strong>Ingen kokebøker ennå</strong>
+            <p>Ingen har fått godkjent en kokebok for salg akkurat nå.
+               Har du oppskrifter folk vil betale for, kan du søke.</p>
+            <a href="/skaper" class="btn-gronn">
+                <i class="fa-solid fa-tag"></i> Selg oppskriftene dine
+            </a>
+        </div>
+
+        <!-- LISTE -->
+        <div class="bok-grid" th:unless="${#lists.isEmpty(kokeboker)}">
+            <a th:each="b : ${kokeboker}" th:href="@{'/samling/' + ${b.id}}" class="bok-kort">
+                <div class="bok-bilde">
+                    <img th:if="${b.bildeUrl != null and b.bildeUrl != ''}"
+                         th:src="${b.bildeUrl}" alt="" loading="lazy">
+                    <div th:unless="${b.bildeUrl != null and b.bildeUrl != ''}"
+                         class="bok-bilde-tom"><i class="fa-solid fa-book"></i></div>
+                    <span th:if="${mine.contains(b.id)}" class="bok-eid">Din</span>
+                    <span class="bok-pris" th:text="${b.prisFormatert()}">149 kr</span>
+                </div>
+                <div class="bok-kropp">
+                    <div class="bok-tittel" th:text="${b.navn}">Kokebok</div>
+
+                    <div class="bok-skaper" th:if="${skapere[b.id] != null}">
+                        <img th:if="${skapere[b.id].bildeUrl != null and skapere[b.id].bildeUrl != ''}"
+                             th:src="${skapere[b.id].bildeUrl}" alt="">
+                        <div th:unless="${skapere[b.id].bildeUrl != null and skapere[b.id].bildeUrl != ''}"
+                             class="bok-skaper-tom"><i class="fa-solid fa-user"></i></div>
+                        <span th:text="${skapere[b.id].visningsnavn}">Skaper</span>
+                    </div>
+
+                    <div class="bok-meta">
+                        <span><i class="fa-solid fa-utensils"></i>
+                            <span th:text="${antallOppskrifter[b.id]}">0</span> oppskrifter</span>
+                        <span th:if="${antallSalg[b.id] > 0}">
+                            <i class="fa-solid fa-fire"></i>
+                            <span th:text="${antallSalg[b.id]}">0</span> solgt</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- SELG SELV -->
+        <div class="selg-banner" th:if="${!#lists.isEmpty(kokeboker)}">
+            <div class="selg-banner-tekst">
+                <strong>Har du oppskrifter folk vil betale for?</strong>
+                <p>Lag en kokebok, sett din egen pris, og send den inn til godkjenning.
+                   MatMinne tar 20 % av hvert salg.</p>
+            </div>
+            <a href="/skaper" class="btn-gronn">
+                <i class="fa-solid fa-tag"></i> Kom i gang
+            </a>
+        </div>
+
+    </div>
+
+    <div th:replace="~{fragments :: bottom_nav}"></div>
+    <div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

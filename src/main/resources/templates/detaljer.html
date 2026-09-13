@@ -977,6 +977,13 @@
                                             <i class="fas fa-file-pdf"></i> Last ned PDF
                                         </button>
                                     </form>
+                                    <!-- Inngangen til å låse og selge oppskriften -->
+                                    <form th:action="@{'/skaper/selg-oppskrift/' + ${o.id}}"
+                                          method="POST" style="display:inline;">
+                                        <button type="submit" class="btn-action">
+                                            <i class="fas fa-tag"></i> Selg i kokebok
+                                        </button>
+                                    </form>
                                 </th:block>
                                 <th:block th:unless="${erEier}">
                                     <form th:action="@{'/kopier/' + ${o.id}}" method="POST" style="display:inline;">

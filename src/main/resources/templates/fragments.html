@@ -610,16 +610,28 @@
                                             <span th:unless="${harAbonnement}">Oppgrader til Premium</span>
                                         </a>
                                     </li>
-                                    <!-- Skaperstudio: bare for inviterte skapere -->
-                                    <li th:if="${erSkaper}">
+                                    <!-- Selg oppskriftene dine — åpent for alle -->
+                                    <li>
                                         <a class="dropdown-item" href="/skaper"
                                            style="color:var(--mat-gronn-m);font-weight:700;">
-                                            <i class="fa-solid fa-book-open"></i> Skaperstudio
+                                            <i class="fa-solid fa-book-open"></i> Selg oppskrifter
+                                        </a>
+                                    </li>
+                                    <!-- Godkjenningskø: bare for MatMinne-admin -->
+                                    <li th:if="${erAdmin}">
+                                        <a class="dropdown-item" href="/admin/kokeboker"
+                                           style="font-weight:700;">
+                                            <i class="fa-solid fa-clipboard-check"></i> Til godkjenning
+                                            <span th:if="${antallTilGodkjenning > 0}"
+                                                  th:text="${antallTilGodkjenning}"
+                                                  style="margin-left:auto;background:#f59e0b;color:white;border-radius:99px;font-size:.6rem;font-weight:900;min-width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;"></span>
                                         </a>
                                     </li>
                                     <li><hr class="dropdown-divider my-1"></li>
                                     <li><a class="dropdown-item" th:href="@{'/profil/' + ${brukerId != null ? brukerId : brukerEpost}}">
                                         <i class="fa-regular fa-circle-user"></i> Min Profil</a></li>
+                                    <li><a class="dropdown-item" href="/kokeboker">
+                                        <i class="fa-solid fa-store"></i> Kokebøker til salgs</a></li>
                                     <li><a class="dropdown-item" href="/mine-kjop">
                                         <i class="fa-solid fa-book-bookmark"></i> Mine kjøp</a></li>
                                     <li>

@@ -30,7 +30,8 @@ public class GlobalModelAdvice {
             model.addAttribute("innlogget", false);
             model.addAttribute("ulesVarsler", 0L);
             model.addAttribute("harAbonnement", false);
-            model.addAttribute("erSkaper", false);
+            model.addAttribute("erAdmin", false);
+            model.addAttribute("antallTilGodkjenning", 0L);
             return;
         }
 
@@ -42,7 +43,11 @@ public class GlobalModelAdvice {
         model.addAttribute("brukerEpost", epost);
         model.addAttribute("brukerId", meg != null ? meg.getId() : null);
         model.addAttribute("innlogget", true);
-        model.addAttribute("erSkaper", skaperService.erSkaper(epost));
+
+        boolean erAdmin = skaperService.erAdmin(epost);
+        model.addAttribute("erAdmin", erAdmin);
+        model.addAttribute("antallTilGodkjenning",
+                erAdmin ? skaperService.antallTilGodkjenning() : 0L);
 
         if (meg != null) {
             String profilBilde = (meg.getBildeUrl() != null && !meg.getBildeUrl().isBlank())

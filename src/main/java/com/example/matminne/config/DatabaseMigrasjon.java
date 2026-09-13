@@ -51,9 +51,50 @@ public class DatabaseMigrasjon {
                 "ALTER TABLE samlinger ADD COLUMN IF NOT EXISTS bilde_url TEXT"
             );
 
+            // ── Godkjenningsløp for betalte kokebøker ──
+            jdbcTemplate.execute(
+                "ALTER TABLE samlinger ADD COLUMN IF NOT EXISTS status VARCHAR(20)"
+            );
+            jdbcTemplate.execute(
+                "ALTER TABLE samlinger ADD COLUMN IF NOT EXISTS avslagsgrunn VARCHAR(500)"
+            );
+            jdbcTemplate.execute(
+                "ALTER TABLE samlinger ADD COLUMN IF NOT EXISTS dato_sendt_inn TIMESTAMP"
+            );
+            jdbcTemplate.execute(
+                "ALTER TABLE samlinger ADD COLUMN IF NOT EXISTS dato_behandlet TIMESTAMP"
+            );
+
+            // Overgang fra er_publisert-boolean til status: alt som var
+            // publisert regnes som godkjent, resten som utkast.
+            migrerPublisertTilStatus();
+
             log.info("Database-migrasjoner fullført");
         } catch (Exception e) {
             log.warn("Migrasjonsadvarsel (kan ignoreres hvis kolonner allerede finnes): {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Fyller status for rader som mangler den. Kjøres i egen try/catch fordi
+     * er_publisert-kolonnen ikke finnes i helt nye databaser — da er det
+     * ingenting å migrere, og statusen settes av entiteten.
+     */
+    private void migrerPublisertTilStatus() {
+        try {
+            jdbcTemplate.execute(
+                "UPDATE samlinger SET status = 'GODKJENT' WHERE status IS NULL AND er_publisert = TRUE");
+            jdbcTemplate.execute(
+                "UPDATE samlinger SET status = 'UTKAST' WHERE status IS NULL");
+            log.info("Statusmigrering av samlinger fullført");
+        } catch (Exception e) {
+            // Ny database uten er_publisert — sett status på alt som mangler den
+            try {
+                jdbcTemplate.execute(
+                    "UPDATE samlinger SET status = 'UTKAST' WHERE status IS NULL");
+            } catch (Exception ignorert) {
+                log.debug("Ingen samlinger å migrere status for");
+            }
         }
     }
 }

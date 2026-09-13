@@ -3,12 +3,14 @@ package com.example.matminne.service;
 import com.example.matminne.model.Bruker;
 import com.example.matminne.model.Kjop;
 import com.example.matminne.model.Samling;
+import com.example.matminne.model.SamlingStatus;
 import com.example.matminne.repository.KjopRepository;
 import com.example.matminne.repository.SamlingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -18,19 +20,19 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * Avgjør hvem som kan selge betalte samlinger, og hvem som har tilgang til
+ * Avgjør hvem som kan selge betalte kokebøker, og hvem som har tilgang til
  * innholdet i dem.
  *
- * Skaperstatus er invitasjonsbasert: bare e-poster listet i app.skapere kan
- * opprette betalte samlinger. Det holder programmet lukket uten at vi trenger
- * et admin-grensesnitt.
+ * Alle kan søke om å selge: de setter egen pris og sender inn til
+ * godkjenning. MatMinne (app.admin) godkjenner prisen før kokeboka kan
+ * selges, og utbetaling krever i tillegg fullført Stripe Connect-onboarding.
  */
 @Service
 public class SkaperService {
 
-    /** Komma-separert liste med e-poster som får selge. Settes som miljøvariabel. */
-    @Value("${app.skapere:}")
-    private String skapereRaa;
+    /** E-poster som kan behandle søknader. Settes som miljøvariabel. */
+    @Value("${app.admin:}")
+    private String adminRaa;
 
     /** Plattformens andel av hvert salg, i prosent. */
     @Value("${app.plattform.andel:20}")
@@ -39,29 +41,32 @@ public class SkaperService {
     @Autowired private SamlingRepository samlingRepository;
     @Autowired private KjopRepository kjopRepository;
 
-    // ── SKAPERSTATUS ──────────────────────────────────────────────
+    // ── ROLLER ────────────────────────────────────────────────────
 
-    private Set<String> skapere() {
-        if (skapereRaa == null || skapereRaa.isBlank()) return Set.of();
-        return Arrays.stream(skapereRaa.split(","))
+    private Set<String> adminEposter() {
+        if (adminRaa == null || adminRaa.isBlank()) return Set.of();
+        return Arrays.stream(adminRaa.split(","))
                 .map(s -> s.trim().toLowerCase(Locale.ROOT))
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toCollection(HashSet::new));
     }
 
-    /** True hvis e-posten er invitert inn i skaperprogrammet. */
-    public boolean erSkaper(String epost) {
+    /** True hvis brukeren kan godkjenne og avslå søknader. */
+    public boolean erAdmin(String epost) {
         if (epost == null || epost.isBlank()) return false;
-        return skapere().contains(epost.trim().toLowerCase(Locale.ROOT));
+        return adminEposter().contains(epost.trim().toLowerCase(Locale.ROOT));
     }
 
-    public boolean erSkaper(Bruker bruker) {
-        return bruker != null && erSkaper(bruker.getEpost());
+    public boolean erAdmin(Bruker bruker) {
+        return bruker != null && erAdmin(bruker.getEpost());
     }
 
-    /** True hvis skaperen faktisk kan ta imot penger (Connect-onboarding fullført). */
+    /**
+     * True hvis skaperen faktisk kan ta imot penger.
+     * Alle kan søke, men ingen kan selge før Stripe kan betale ut til dem.
+     */
     public boolean kanSelge(Bruker bruker) {
-        return erSkaper(bruker)
+        return bruker != null
                 && bruker.getStripeConnectId() != null
                 && !bruker.getStripeConnectId().isBlank()
                 && bruker.isConnectKlar();
@@ -125,6 +130,69 @@ public class SkaperService {
         if (samling.getBrukerId() != null && samling.getBrukerId().equals(bruker.getId())) return true;
         return harKjopt(bruker, samling.getId());
     }
+
+    // ── GODKJENNINGSLØPET ─────────────────────────────────────────
+
+    /**
+     * Sender en kokebok inn til godkjenning.
+     * @return null hvis den ble sendt inn, ellers en feilkode til brukeren.
+     */
+    public String sendInn(Samling s, long antallOppskrifter) {
+        if (!s.getStatus().kanSendesInn()) return "allerede-sendt";
+        if (!s.erBetalt())                 return "pris";
+        if (antallOppskrifter == 0)        return "tom";
+
+        s.setStatus(SamlingStatus.TIL_GODKJENNING);
+        s.setDatoSendtInn(LocalDateTime.now());
+        s.setAvslagsgrunn(null);
+        samlingRepository.save(s);
+        return null;
+    }
+
+    /** Trekker en innsendt søknad tilbake, slik at skaperen kan redigere videre. */
+    public void trekkTilbake(Samling s) {
+        if (s.getStatus() == SamlingStatus.TIL_GODKJENNING
+                || s.getStatus() == SamlingStatus.GODKJENT) {
+            s.setStatus(SamlingStatus.UTKAST);
+            samlingRepository.save(s);
+        }
+    }
+
+    public void godkjenn(Samling s) {
+        s.setStatus(SamlingStatus.GODKJENT);
+        s.setAvslagsgrunn(null);
+        s.setDatoBehandlet(LocalDateTime.now());
+        samlingRepository.save(s);
+    }
+
+    public void avsla(Samling s, String grunn) {
+        s.setStatus(SamlingStatus.AVSLATT);
+        s.setAvslagsgrunn(grunn != null && !grunn.isBlank() ? grunn.trim() : "Ingen begrunnelse oppgitt.");
+        s.setDatoBehandlet(LocalDateTime.now());
+        samlingRepository.save(s);
+    }
+
+    /**
+     * Kalles når skaperen endrer prisen. Det er prisen MatMinne har godkjent,
+     * så en godkjent kokebok må behandles på nytt hvis prisen endres.
+     * @return true hvis endringen sendte den tilbake i kø.
+     */
+    public boolean handterPrisendring(Samling s, int nyPrisOre) {
+        Integer gammel = s.getPris();
+        s.setPris(nyPrisOre);
+        if (s.getStatus() == SamlingStatus.GODKJENT
+                && (gammel == null || gammel != nyPrisOre)) {
+            s.setStatus(SamlingStatus.TIL_GODKJENNING);
+            s.setDatoSendtInn(LocalDateTime.now());
+            s.setDatoBehandlet(null);
+            return true;
+        }
+        return false;
+    }
+
+    public List<Samling> soknadskoen() { return samlingRepository.finnTilGodkjenning(); }
+
+    public long antallTilGodkjenning() { return samlingRepository.antallTilGodkjenning(); }
 
     // ── SKAPER-STATISTIKK ─────────────────────────────────────────
 

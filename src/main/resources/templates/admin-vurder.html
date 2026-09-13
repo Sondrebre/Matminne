@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title th:text="'Vurder: ' + ${samling.navn}">Vurder søknad</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        .page-hero {
+            background: var(--mat-mork);
+            padding: 40px 0 60px; position: relative; overflow: hidden;
+        }
+        .page-hero::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(245,158,11,.08) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .hero-inner { position: relative; z-index: 1; }
+        .tilbake {
+            color: rgba(255,255,255,.5); text-decoration: none; font-size: .82rem;
+            font-weight: 700; display: inline-flex; align-items: center; gap: 6px;
+            margin-bottom: 14px; transition: color .15s;
+        }
+        .tilbake:hover { color: white; }
+        .page-hero h1 {
+            font-size: 2rem; font-weight: 900; letter-spacing: -1.5px;
+            color: white; margin: 0 0 8px;
+        }
+        .hero-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+        .merke {
+            font-size: .64rem; font-weight: 800; padding: 5px 12px;
+            border-radius: 99px; text-transform: uppercase; letter-spacing: .8px;
+            background: rgba(255,255,255,.1); color: white;
+            border: 1px solid rgba(255,255,255,.15);
+        }
+        .merke.venter   { background: rgba(245,158,11,.2); color: #fbbf24; border-color: rgba(245,158,11,.35); }
+        .merke.godkjent { background: rgba(34,197,94,.2); color: #4ade80; border-color: rgba(34,197,94,.35); }
+        .merke.avslatt  { background: rgba(239,68,68,.2); color: #f87171; border-color: rgba(239,68,68,.35); }
+
+        .content-wrap {
+            max-width: 900px; margin: -36px auto 100px;
+            padding: 0 20px; position: relative; z-index: 10;
+        }
+
+        .kort {
+            background: white; border-radius: 24px; padding: 26px 28px;
+            border: 1px solid #f1f5f9; box-shadow: 0 20px 56px rgba(0,0,0,.07);
+            margin-bottom: 22px;
+        }
+        .kort-tittel {
+            font-size: .68rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 2px; color: #94a3b8;
+            margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+        }
+
+        /* ── ØKONOMI ── */
+        .okonomi { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .okonomi-boks {
+            border-radius: 16px; padding: 18px 16px; text-align: center;
+            background: #f8fafc; border: 1px solid #f1f5f9;
+        }
+        .okonomi-boks.din { background: var(--mat-mint); border-color: #a7f3d0; }
+        .okonomi-boks strong {
+            display: block; font-size: 1.5rem; font-weight: 900;
+            color: var(--mat-mork); letter-spacing: -1px;
+            font-variant-numeric: tabular-nums;
+        }
+        .okonomi-boks span {
+            font-size: .66rem; font-weight: 800; color: #64748b;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* ── SKAPER ── */
+        .skaper-rad { display: flex; align-items: center; gap: 14px; }
+        .skaper-bilde {
+            width: 52px; height: 52px; border-radius: 50%; object-fit: cover;
+            flex-shrink: 0; border: 2px solid var(--mat-lys-gronn);
+        }
+        .skaper-bilde-tom {
+            width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+            background: var(--mat-mint); display: flex; align-items: center;
+            justify-content: center; color: var(--mat-gronn);
+        }
+        .skaper-tekst strong {
+            display: block; font-weight: 800; color: var(--mat-mork); font-size: 1rem;
+        }
+        .skaper-tekst span { font-size: .82rem; color: #94a3b8; }
+
+        .beskrivelse {
+            font-size: .93rem; line-height: 1.7; color: #475569;
+            white-space: pre-line;
+        }
+
+        /* ── OPPSKRIFTER ── */
+        .opp-rad {
+            display: flex; align-items: center; gap: 14px;
+            padding: 12px 0; border-bottom: 1px solid #f1f5f9;
+            text-decoration: none;
+        }
+        .opp-rad:last-child { border-bottom: none; }
+        .opp-bilde {
+            width: 52px; height: 52px; border-radius: 12px; object-fit: cover;
+            flex-shrink: 0; background: var(--mat-mint);
+        }
+        .opp-bilde-tom {
+            width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0;
+            background: var(--mat-mint); display: flex; align-items: center;
+            justify-content: center; color: var(--mat-gronn);
+        }
+        .opp-info { flex: 1; min-width: 0; }
+        .opp-info strong {
+            display: block; font-weight: 700; color: var(--mat-mork);
+            font-size: .93rem; white-space: nowrap; overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .opp-info span { font-size: .77rem; color: #94a3b8; }
+
+        /* ── AVGJØRELSE ── */
+        .btn-godkjenn {
+            background: var(--mat-gronn-m); color: white; border: none;
+            padding: 15px 28px; border-radius: 14px; font-weight: 800;
+            font-size: .95rem; cursor: pointer; font-family: inherit;
+            display: inline-flex; align-items: center; gap: 9px; transition: .15s;
+            box-shadow: 0 5px 18px rgba(22,163,74,.3);
+        }
+        .btn-godkjenn:hover { background: #15803d; }
+        .btn-avsla {
+            background: #fff5f5; color: #dc2626; border: 1px solid #fecaca;
+            padding: 15px 28px; border-radius: 14px; font-weight: 800;
+            font-size: .95rem; cursor: pointer; font-family: inherit;
+            display: inline-flex; align-items: center; gap: 9px; transition: .15s;
+        }
+        .btn-avsla:hover { background: #fee2e2; color: #b91c1c; }
+
+        .felt-input {
+            width: 100%; border: 1.5px solid #e2e8f0; border-radius: 13px;
+            padding: 13px 16px; font-size: .92rem; font-family: inherit;
+            background: #fafafa; min-height: 74px; resize: vertical;
+            margin-bottom: 12px;
+        }
+        .felt-input:focus { outline: none; border-color: #f59e0b; background: white; }
+        .felt-etikett {
+            display: block; font-size: .72rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1.2px;
+            color: #64748b; margin-bottom: 7px;
+        }
+
+        .avgjor-rad { display: flex; gap: 12px; flex-wrap: wrap; }
+
+        .varsel {
+            border-radius: 14px; padding: 14px 18px; margin-bottom: 18px;
+            font-size: .88rem; font-weight: 600; line-height: 1.55;
+            display: flex; align-items: flex-start; gap: 10px;
+        }
+        .varsel.ok   { background: #dcfce7; color: #15803d; border: 1px solid #a7f3d0; }
+        .varsel.feil { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+        .varsel i { margin-top: 2px; }
+
+        @media (max-width: 600px) {
+            .page-hero h1 { font-size: 1.55rem; letter-spacing: -1px; }
+            .content-wrap { padding: 0 12px; }
+            .kort { padding: 20px 18px; border-radius: 20px; }
+            .okonomi { grid-template-columns: 1fr; gap: 10px; }
+            .okonomi-boks {
+                display: flex; align-items: center; justify-content: space-between;
+                text-align: left; padding: 14px 16px;
+            }
+            .okonomi-boks strong { font-size: 1.2rem; }
+            .btn-godkjenn, .btn-avsla { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="page-hero">
+        <div class="hero-inner container">
+            <a href="/admin/kokeboker" class="tilbake">
+                <i class="fas fa-chevron-left"></i> Til godkjenning
+            </a>
+            <h1 th:text="${samling.navn}">Kokebok</h1>
+            <div class="hero-meta">
+                <span class="merke"
+                      th:classappend="${samling.status.name() == 'GODKJENT'} ? 'godkjent'
+                                    : (${samling.status.name() == 'AVSLATT'} ? 'avslatt' : 'venter')"
+                      th:text="${samling.status.visningsnavn}">Status</span>
+                <span class="merke" th:text="${#lists.size(oppskrifter)} + ' oppskrifter'">0</span>
+                <span class="merke" th:if="${antallSalg > 0}"
+                      th:text="${antallSalg} + ' solgt'">0 solgt</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-wrap">
+
+        <div th:if="${samling.status.name() == 'AVSLATT'}" class="varsel feil">
+            <i class="fa-solid fa-circle-xmark"></i>
+            <span><strong>Avslått.</strong> <span th:text="${samling.avslagsgrunn}"></span></span>
+        </div>
+        <div th:if="${samling.status.name() == 'GODKJENT'}" class="varsel ok">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Godkjent
+                <span th:if="${samling.datoBehandlet != null}"
+                      th:text="${#temporals.format(samling.datoBehandlet,'dd.MM.yyyy')}"></span>.
+                Godkjenner du på nytt endres ingenting.</span>
+        </div>
+
+        <!-- ØKONOMI: det du faktisk vurderer -->
+        <div class="kort">
+            <div class="kort-tittel"><i class="fa-solid fa-coins"></i> Pris og fordeling</div>
+            <div class="okonomi">
+                <div class="okonomi-boks">
+                    <strong th:text="${samling.prisFormatert()}">149 kr</strong>
+                    <span>Kjøperen betaler</span>
+                </div>
+                <div class="okonomi-boks">
+                    <strong th:text="${skaperAndel} + ' kr'">119 kr</strong>
+                    <span>Til skaperen</span>
+                </div>
+                <div class="okonomi-boks din">
+                    <strong th:text="${dinAndel} + ' kr'">30 kr</strong>
+                    <span>Til MatMinne (<span th:text="${plattformAndel}">20</span> %)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SKAPEREN -->
+        <div class="kort" th:if="${skaper != null}">
+            <div class="kort-tittel"><i class="fa-solid fa-user"></i> Skaper</div>
+            <div class="skaper-rad">
+                <img th:if="${skaper.bildeUrl != null and skaper.bildeUrl != ''}"
+                     th:src="${skaper.bildeUrl}" class="skaper-bilde" alt="">
+                <div th:unless="${skaper.bildeUrl != null and skaper.bildeUrl != ''}"
+                     class="skaper-bilde-tom"><i class="fa-solid fa-user"></i></div>
+                <div class="skaper-tekst">
+                    <strong th:text="${skaper.visningsnavn}">Navn</strong>
+                    <span th:text="${skaper.epost}">epost</span>
+                </div>
+                <a th:href="@{'/profil/' + ${skaper.id}}" class="merke"
+                   style="margin-left:auto;background:#f1f5f9;color:#64748b;border:none;text-decoration:none;">
+                    Se profil
+                </a>
+            </div>
+        </div>
+
+        <!-- BESKRIVELSE -->
+        <div class="kort" th:if="${samling.beskrivelse != null and samling.beskrivelse != ''}">
+            <div class="kort-tittel"><i class="fa-solid fa-align-left"></i> Beskrivelse</div>
+            <div class="beskrivelse" th:text="${samling.beskrivelse}"></div>
+        </div>
+
+        <!-- INNHOLDET -->
+        <div class="kort">
+            <div class="kort-tittel">
+                <i class="fa-solid fa-list-ul"></i> Oppskriftene som låses
+            </div>
+
+            <div th:if="${#lists.isEmpty(oppskrifter)}"
+                 style="text-align:center;padding:24px;color:#94a3b8;font-size:.88rem;">
+                Kokeboka er tom — bør ikke godkjennes.
+            </div>
+
+            <a th:each="o : ${oppskrifter}" th:href="@{'/detaljer/' + ${o.id}}"
+               target="_blank" class="opp-rad">
+                <img th:if="${o.bildeUrl != null and o.bildeUrl != ''}"
+                     th:src="${o.bildeUrl}" class="opp-bilde" alt="">
+                <div th:unless="${o.bildeUrl != null and o.bildeUrl != ''}" class="opp-bilde-tom">
+                    <i class="fa-solid fa-utensils"></i>
+                </div>
+                <div class="opp-info">
+                    <strong th:text="${o.tittel}">Oppskrift</strong>
+                    <span th:text="${o.kategori != null ? o.kategori : 'Uten kategori'}">–</span>
+                </div>
+                <i class="fa-solid fa-arrow-up-right-from-square" style="color:#cbd5e1;"></i>
+            </a>
+        </div>
+
+        <!-- AVGJØRELSE -->
+        <div class="kort">
+            <div class="kort-tittel"><i class="fa-solid fa-gavel"></i> Avgjørelse</div>
+
+            <form th:action="@{'/admin/kokeboker/' + ${samling.id} + '/godkjenn'}"
+                  method="POST" style="margin-bottom:20px;">
+                <button type="submit" class="btn-godkjenn">
+                    <i class="fa-solid fa-check"></i> Godkjenn til
+                    <span th:text="${samling.prisFormatert()}">149 kr</span>
+                </button>
+            </form>
+
+            <form th:action="@{'/admin/kokeboker/' + ${samling.id} + '/avsla'}" method="POST">
+                <label class="felt-etikett" for="grunn">Begrunnelse ved avslag</label>
+                <textarea id="grunn" name="grunn" class="felt-input"
+                          maxlength="500"
+                          placeholder="Skaperen ser dette, så si hva som må rettes."></textarea>
+                <button type="submit" class="btn-avsla">
+                    <i class="fa-solid fa-xmark"></i> Avslå søknaden
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+    <div th:replace="~{fragments :: bottom_nav}"></div>
+    <div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>

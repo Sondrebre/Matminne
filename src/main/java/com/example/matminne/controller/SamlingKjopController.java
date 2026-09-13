@@ -17,8 +17,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -41,6 +45,50 @@ public class SamlingKjopController {
     private Bruker innlogget(OAuth2User principal) {
         if (principal == null) return null;
         return brukerService.finnVedEpost(principal.getAttribute("email"));
+    }
+
+    // ── MARKEDSPLASS ──────────────────────────────────────────────
+
+    /** Alle godkjente kokebøker, sortert. Her finner folk dem som selger. */
+    @GetMapping("/kokeboker")
+    public String markedsplass(@RequestParam(required = false) String sorter,
+                               Model model, @AuthenticationPrincipal OAuth2User principal) {
+        Bruker meg = innlogget(principal);
+        List<Samling> kokeboker = samlingRepository.finnTilSalgs();
+
+        Map<Long, Bruker> skapere = new HashMap<>();
+        Map<Long, Long> antallOppskrifter = new HashMap<>();
+        Map<Long, Long> antallSalg = new HashMap<>();
+        Set<Long> mine = new HashSet<>();
+
+        for (Samling s : kokeboker) {
+            if (s.getBrukerId() != null && !skapere.containsKey(s.getId())) {
+                Bruker sk = brukerService.findById(s.getBrukerId());
+                if (sk != null) skapere.put(s.getId(), sk);
+            }
+            antallOppskrifter.put(s.getId(), samlingOppskriftRepository.countBySamlingId(s.getId()));
+            antallSalg.put(s.getId(), kjopRepository.countBySamlingId(s.getId()));
+            if (meg != null && skaperService.harTilgangTilSamling(meg, s)) mine.add(s.getId());
+        }
+
+        // Standard er nyest først (slik repoet leverer); ellers sorter om
+        if ("populær".equals(sorter)) {
+            kokeboker = new ArrayList<>(kokeboker);
+            kokeboker.sort((a, b) -> Long.compare(
+                    antallSalg.getOrDefault(b.getId(), 0L),
+                    antallSalg.getOrDefault(a.getId(), 0L)));
+        } else if ("billigst".equals(sorter)) {
+            kokeboker = new ArrayList<>(kokeboker);
+            kokeboker.sort(Comparator.comparingInt(s -> s.getPris() != null ? s.getPris() : 0));
+        }
+
+        model.addAttribute("kokeboker", kokeboker);
+        model.addAttribute("skapere", skapere);
+        model.addAttribute("antallOppskrifter", antallOppskrifter);
+        model.addAttribute("antallSalg", antallSalg);
+        model.addAttribute("mine", mine);
+        model.addAttribute("sorter", sorter != null ? sorter : "nyest");
+        return "kokeboker";
     }
 
     // ── OFFENTLIG SALGSSIDE ───────────────────────────────────────

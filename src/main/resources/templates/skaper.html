@@ -124,8 +124,29 @@
             border-radius: 99px; text-transform: uppercase; letter-spacing: .8px;
             flex-shrink: 0;
         }
-        .merke.live  { background: #dcfce7; color: #15803d; }
-        .merke.utkast { background: #f1f5f9; color: #64748b; }
+        .merke.live    { background: #dcfce7; color: #15803d; }
+        .merke.utkast  { background: #f1f5f9; color: #64748b; }
+        .merke.venter  { background: #fef3c7; color: #b45309; }
+        .merke.avslatt { background: #fee2e2; color: #b91c1c; }
+
+        /* ── VILKÅRSBOKS I SØKNADEN ── */
+        .vilkar-boks {
+            background: var(--mat-mint); border: 1px solid #a7f3d0;
+            border-radius: 14px; padding: 16px 18px; margin-bottom: 18px;
+        }
+        .vilkar-boks h4 {
+            font-size: .8rem; font-weight: 900; color: var(--mat-mork);
+            margin: 0 0 10px; display: flex; align-items: center; gap: 8px;
+        }
+        .vilkar-liste { list-style: none; padding: 0; margin: 0; }
+        .vilkar-liste li {
+            display: flex; align-items: flex-start; gap: 9px;
+            font-size: .84rem; color: #475569; line-height: 1.55;
+            margin-bottom: 8px;
+        }
+        .vilkar-liste li:last-child { margin-bottom: 0; }
+        .vilkar-liste i { color: var(--mat-gronn); margin-top: 3px; flex-shrink: 0; }
+        .vilkar-liste strong { color: var(--mat-mork); }
 
         /* ── SKJEMA ── */
         .felt { margin-bottom: 16px; }
@@ -197,8 +218,8 @@
     <div class="page-hero">
         <div class="hero-inner container">
             <span class="hero-tag">Skaperstudio</span>
-            <h1>Dine kokebøker</h1>
-            <p>Lag betalte samlinger, velg hvilke oppskrifter som låses, og få utbetalt direkte.</p>
+            <h1>Selg oppskriftene dine</h1>
+            <p>Lag en kokebok, sett din egen pris, og send den inn til godkjenning.</p>
         </div>
     </div>
 
@@ -274,6 +295,27 @@
         <!-- NY KOKEBOK -->
         <div class="kort">
             <div class="kort-tittel"><i class="fa-solid fa-plus"></i> Ny kokebok</div>
+
+            <div class="vilkar-boks">
+                <h4><i class="fa-solid fa-circle-info" style="color:var(--mat-gronn);"></i>
+                    Slik fungerer det</h4>
+                <ul class="vilkar-liste">
+                    <li><i class="fa-solid fa-1"></i>
+                        <span>Du lager kokeboka, velger hvilke oppskrifter som skal inn,
+                              og <strong>setter prisen selv</strong>.</span></li>
+                    <li><i class="fa-solid fa-2"></i>
+                        <span>Du sender den inn, og <strong>MatMinne går gjennom
+                              innhold og pris</strong> før den kan selges.</span></li>
+                    <li><i class="fa-solid fa-3"></i>
+                        <span>Når den er godkjent låses oppskriftene for alle som
+                              ikke har kjøpt den.</span></li>
+                    <li><i class="fa-solid fa-percent"></i>
+                        <span><strong>MatMinne tar 20 % av hvert salg</strong>
+                              (<span th:text="${plattformAndel}">20</span> % med dagens sats).
+                              Resten går rett til deg, minus Stripes transaksjonsgebyr.</span></li>
+                </ul>
+            </div>
+
             <form th:action="@{/skaper/samling/ny}" method="POST">
                 <div class="felt">
                     <label class="felt-etikett" for="navn">Tittel</label>
@@ -330,8 +372,11 @@
                         · <span th:text="${antallSalg[s.id]}">0</span> solgt
                     </div>
                 </div>
-                <span th:if="${s.erPublisert}" class="merke live">Live</span>
-                <span th:unless="${s.erPublisert}" class="merke utkast">Utkast</span>
+                <span class="merke"
+                      th:classappend="${s.status.name() == 'GODKJENT'} ? 'live'
+                                    : (${s.status.name() == 'TIL_GODKJENNING'} ? 'venter'
+                                    : (${s.status.name() == 'AVSLATT'} ? 'avslatt' : 'utkast'))"
+                      th:text="${s.status.visningsnavn}">Utkast</span>
             </a>
         </div>
 

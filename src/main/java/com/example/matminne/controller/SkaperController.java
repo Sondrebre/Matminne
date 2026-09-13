@@ -21,10 +21,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Skaperprogrammet: onboarding mot Stripe, administrasjon av betalte
- * samlinger, og salgsoversikt.
- *
- * Alle ruter krever at brukeren er invitert inn (app.skapere).
+ * Skaperstudio: alle kan lage en kokebok, sette egen pris og søke om å selge.
+ * MatMinne godkjenner prisen før den kan kjøpes, og utbetaling krever i
+ * tillegg fullført Stripe Connect-onboarding.
  */
 @Controller
 @RequestMapping("/skaper")
@@ -52,7 +51,6 @@ public class SkaperController {
     public String dashboard(Model model, @AuthenticationPrincipal OAuth2User principal) {
         Bruker meg = innlogget(principal);
         if (meg == null) return "redirect:/";
-        if (!skaperService.erSkaper(meg)) return "redirect:/kokebok";
 
         List<Samling> samlinger = samlingRepository.finnBetalteAvSkaper(meg.getId());
         Map<Long, Long> antallOppskrifter = new HashMap<>();
@@ -64,18 +62,19 @@ public class SkaperController {
 
         List<Kjop> salg = skaperService.salgFor(meg.getId());
 
-        model.addAttribute("brukerEpost", meg.getEpost());
-        model.addAttribute("profilBilde", meg.getBildeUrl());
         model.addAttribute("samlinger", samlinger);
         model.addAttribute("antallOppskrifter", antallOppskrifter);
         model.addAttribute("antallSalg", antallSalg);
         model.addAttribute("salg", salg);
         model.addAttribute("kanSelge", skaperService.kanSelge(meg));
-        model.addAttribute("connectStartet", meg.getStripeConnectId() != null && !meg.getStripeConnectId().isBlank());
+        model.addAttribute("connectStartet",
+                meg.getStripeConnectId() != null && !meg.getStripeConnectId().isBlank());
         model.addAttribute("inntjening", SkaperService.kr(skaperService.totalInntjening(meg.getId())));
         model.addAttribute("antallSalgTotalt", salg.size());
         model.addAttribute("plattformAndel", skaperService.getPlattformAndelProsent());
         model.addAttribute("stripeKonfigurert", stripeConnect.erKonfigurert());
+        model.addAttribute("harOppskrifter",
+                !oppskriftRepository.findByBrukerId(meg.getId()).isEmpty());
         return "skaper";
     }
 
@@ -85,7 +84,6 @@ public class SkaperController {
     public String onboarding(@AuthenticationPrincipal OAuth2User principal) {
         Bruker meg = innlogget(principal);
         if (meg == null) return "redirect:/";
-        if (!skaperService.erSkaper(meg)) return "redirect:/kokebok";
         if (!stripeConnect.erKonfigurert()) return "redirect:/skaper?feil=stripe";
 
         try {
@@ -123,7 +121,7 @@ public class SkaperController {
         }
     }
 
-    // ── BETALTE SAMLINGER ─────────────────────────────────────────
+    // ── KOKEBØKER ─────────────────────────────────────────────────
 
     @PostMapping("/samling/ny")
     public String nySamling(@RequestParam String navn,
@@ -132,7 +130,7 @@ public class SkaperController {
                             @RequestParam Integer prisKroner,
                             @AuthenticationPrincipal OAuth2User principal) {
         Bruker meg = innlogget(principal);
-        if (meg == null || !skaperService.erSkaper(meg)) return "redirect:/kokebok";
+        if (meg == null) return "redirect:/";
         if (navn == null || navn.isBlank()) return "redirect:/skaper?feil=navn";
         if (prisKroner == null || prisKroner < 1) return "redirect:/skaper?feil=pris";
 
@@ -142,18 +140,25 @@ public class SkaperController {
         s.setBeskrivelse(beskrivelse != null ? beskrivelse.trim() : null);
         s.setBildeUrl(bildeUrl != null && !bildeUrl.isBlank() ? bildeUrl.trim() : null);
         s.setPris(prisKroner * 100);
-        s.setErPublisert(false);
+        s.setStatus(SamlingStatus.UTKAST);
         samlingRepository.save(s);
         return "redirect:/skaper/samling/" + s.getId();
+    }
+
+    /** Henter kokeboka hvis den finnes og innlogget bruker eier den. */
+    private Samling minSamling(Long id, Bruker meg) {
+        if (meg == null) return null;
+        Samling s = samlingRepository.findById(id).orElse(null);
+        if (s == null || s.getBrukerId() == null || !s.getBrukerId().equals(meg.getId())) return null;
+        return s;
     }
 
     @GetMapping("/samling/{id}")
     public String redigerSamling(@PathVariable Long id, Model model,
                                  @AuthenticationPrincipal OAuth2User principal) {
         Bruker meg = innlogget(principal);
-        if (meg == null || !skaperService.erSkaper(meg)) return "redirect:/kokebok";
-        Samling s = samlingRepository.findById(id).orElse(null);
-        if (s == null || !s.getBrukerId().equals(meg.getId())) return "redirect:/skaper";
+        Samling s = minSamling(id, meg);
+        if (s == null) return "redirect:/skaper";
 
         List<Long> iSamling = samlingOppskriftRepository.findBySamlingId(id)
                 .stream().map(SamlingOppskrift::getOppskriftId).collect(Collectors.toList());
@@ -161,18 +166,17 @@ public class SkaperController {
         List<Oppskrift> valgte = iSamling.isEmpty()
                 ? new ArrayList<>() : oppskriftRepository.findAllById(iSamling);
 
-        // Skaperens øvrige oppskrifter, som kan legges til
         List<Oppskrift> tilgjengelige = oppskriftRepository.findByBrukerId(meg.getId())
                 .stream().filter(o -> !iSamling.contains(o.getId())).collect(Collectors.toList());
 
-        model.addAttribute("brukerEpost", meg.getEpost());
-        model.addAttribute("profilBilde", meg.getBildeUrl());
+        int andel = skaperService.getPlattformAndelProsent();
         model.addAttribute("samling", s);
         model.addAttribute("valgte", valgte);
         model.addAttribute("tilgjengelige", tilgjengelige);
         model.addAttribute("antallSalg", kjopRepository.countBySamlingId(id));
         model.addAttribute("kanSelge", skaperService.kanSelge(meg));
-        model.addAttribute("plattformAndel", skaperService.getPlattformAndelProsent());
+        model.addAttribute("plattformAndel", andel);
+        model.addAttribute("dinAndel", s.skaperAndelKroner(andel));
         return "skaper-samling";
     }
 
@@ -184,56 +188,54 @@ public class SkaperController {
                                   @RequestParam Integer prisKroner,
                                   @AuthenticationPrincipal OAuth2User principal) {
         Bruker meg = innlogget(principal);
-        if (meg == null || !skaperService.erSkaper(meg)) return "redirect:/kokebok";
-        Samling s = samlingRepository.findById(id).orElse(null);
-        if (s == null || !s.getBrukerId().equals(meg.getId())) return "redirect:/skaper";
+        Samling s = minSamling(id, meg);
+        if (s == null) return "redirect:/skaper";
 
         if (navn != null && !navn.isBlank()) s.setNavn(navn.trim());
         s.setBeskrivelse(beskrivelse != null ? beskrivelse.trim() : null);
         s.setBildeUrl(bildeUrl != null && !bildeUrl.isBlank() ? bildeUrl.trim() : null);
-        if (prisKroner != null && prisKroner >= 1) s.setPris(prisKroner * 100);
+
+        boolean maaBehandlesPaNytt = false;
+        if (prisKroner != null && prisKroner >= 1)
+            maaBehandlesPaNytt = skaperService.handterPrisendring(s, prisKroner * 100);
+
         samlingRepository.save(s);
-        return "redirect:/skaper/samling/" + id + "?lagret=true";
+        return "redirect:/skaper/samling/" + id
+                + (maaBehandlesPaNytt ? "?ny-pris=true" : "?lagret=true");
     }
 
-    @PostMapping("/samling/{id}/publiser")
-    public String publiser(@PathVariable Long id, @AuthenticationPrincipal OAuth2User principal) {
+    /** Søknaden: skaperen sender kokeboka til MatMinne for godkjenning. */
+    @PostMapping("/samling/{id}/send-inn")
+    public String sendInn(@PathVariable Long id, @AuthenticationPrincipal OAuth2User principal) {
         Bruker meg = innlogget(principal);
-        if (meg == null || !skaperService.erSkaper(meg)) return "redirect:/kokebok";
-        Samling s = samlingRepository.findById(id).orElse(null);
-        if (s == null || !s.getBrukerId().equals(meg.getId())) return "redirect:/skaper";
+        Samling s = minSamling(id, meg);
+        if (s == null) return "redirect:/skaper";
 
-        // Kan ikke selge før Stripe kan betale ut til henne
-        if (!skaperService.kanSelge(meg))
-            return "redirect:/skaper/samling/" + id + "?feil=ikke-klar";
-        if (samlingOppskriftRepository.countBySamlingId(id) == 0)
-            return "redirect:/skaper/samling/" + id + "?feil=tom";
+        long antall = samlingOppskriftRepository.countBySamlingId(id);
+        String feil = skaperService.sendInn(s, antall);
+        if (feil != null) return "redirect:/skaper/samling/" + id + "?feil=" + feil;
 
-        s.setErPublisert(true);
-        samlingRepository.save(s);
-        log.info("Samling {} publisert av {}", id, meg.getEpost());
-        return "redirect:/skaper/samling/" + id + "?publisert=true";
+        log.info("Kokebok {} sendt til godkjenning av {}", id, meg.getEpost());
+        return "redirect:/skaper/samling/" + id + "?sendt=true";
     }
 
-    @PostMapping("/samling/{id}/avpubliser")
-    public String avpubliser(@PathVariable Long id, @AuthenticationPrincipal OAuth2User principal) {
+    @PostMapping("/samling/{id}/trekk-tilbake")
+    public String trekkTilbake(@PathVariable Long id, @AuthenticationPrincipal OAuth2User principal) {
         Bruker meg = innlogget(principal);
-        if (meg == null || !skaperService.erSkaper(meg)) return "redirect:/kokebok";
-        Samling s = samlingRepository.findById(id).orElse(null);
-        if (s == null || !s.getBrukerId().equals(meg.getId())) return "redirect:/skaper";
-        s.setErPublisert(false);
-        samlingRepository.save(s);
-        return "redirect:/skaper/samling/" + id;
+        Samling s = minSamling(id, meg);
+        if (s == null) return "redirect:/skaper";
+        skaperService.trekkTilbake(s);
+        return "redirect:/skaper/samling/" + id + "?trukket=true";
     }
 
     @PostMapping("/samling/{id}/legg-til/{oppskriftId}")
     public String leggTil(@PathVariable Long id, @PathVariable Long oppskriftId,
                           @AuthenticationPrincipal OAuth2User principal) {
         Bruker meg = innlogget(principal);
-        if (meg == null || !skaperService.erSkaper(meg)) return "redirect:/kokebok";
-        Samling s = samlingRepository.findById(id).orElse(null);
+        Samling s = minSamling(id, meg);
+        if (s == null) return "redirect:/skaper";
+
         Oppskrift o = oppskriftRepository.findById(oppskriftId).orElse(null);
-        if (s == null || !s.getBrukerId().equals(meg.getId())) return "redirect:/skaper";
         if (o == null || !meg.getId().equals(o.getBrukerId()))
             return "redirect:/skaper/samling/" + id;
 
@@ -246,12 +248,47 @@ public class SkaperController {
     public String fjern(@PathVariable Long id, @PathVariable Long oppskriftId,
                         @AuthenticationPrincipal OAuth2User principal) {
         Bruker meg = innlogget(principal);
-        if (meg == null || !skaperService.erSkaper(meg)) return "redirect:/kokebok";
-        Samling s = samlingRepository.findById(id).orElse(null);
-        if (s == null || !s.getBrukerId().equals(meg.getId())) return "redirect:/skaper";
+        Samling s = minSamling(id, meg);
+        if (s == null) return "redirect:/skaper";
 
         samlingOppskriftRepository.findBySamlingIdAndOppskriftId(id, oppskriftId)
                 .ifPresent(samlingOppskriftRepository::delete);
         return "redirect:/skaper/samling/" + id;
+    }
+
+    /**
+     * Snarvei fra en oppskrift: lager kokebok hvis skaperen ikke har en i
+     * utkast, og legger oppskriften rett inn. Dette er inngangen folk finner.
+     */
+    @PostMapping("/selg-oppskrift/{oppskriftId}")
+    public String selgOppskrift(@PathVariable Long oppskriftId,
+                                @AuthenticationPrincipal OAuth2User principal) {
+        Bruker meg = innlogget(principal);
+        if (meg == null) return "redirect:/";
+
+        Oppskrift o = oppskriftRepository.findById(oppskriftId).orElse(null);
+        if (o == null || !meg.getId().equals(o.getBrukerId()))
+            return "redirect:/detaljer/" + oppskriftId;
+
+        // Bruk et eksisterende utkast hvis det finnes, ellers lag et nytt
+        Samling maal = samlingRepository.finnBetalteAvSkaper(meg.getId()).stream()
+                .filter(s -> s.getStatus().kanRedigeres())
+                .findFirst()
+                .orElse(null);
+
+        if (maal == null) {
+            maal = new Samling();
+            maal.setBrukerId(meg.getId());
+            maal.setNavn("Min kokebok");
+            maal.setPris(14900);
+            maal.setStatus(SamlingStatus.UTKAST);
+            maal.setBildeUrl(o.getBildeUrl());
+            samlingRepository.save(maal);
+        }
+
+        if (!samlingOppskriftRepository.existsBySamlingIdAndOppskriftId(maal.getId(), oppskriftId))
+            samlingOppskriftRepository.save(new SamlingOppskrift(maal.getId(), oppskriftId));
+
+        return "redirect:/skaper/samling/" + maal.getId() + "?lagt-til=true";
     }
 }

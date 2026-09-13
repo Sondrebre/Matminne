@@ -169,8 +169,9 @@
             <a href="/skaper" class="tilbake"><i class="fas fa-chevron-left"></i> Skaperstudio</a>
             <h1 th:text="${samling.navn}">Kokebok</h1>
             <div class="hero-meta">
-                <span th:if="${samling.erPublisert}" class="merke live">Live</span>
-                <span th:unless="${samling.erPublisert}" class="merke utkast">Utkast</span>
+                <span class="merke"
+                      th:classappend="${samling.status.name() == 'GODKJENT'} ? 'live' : 'utkast'"
+                      th:text="${samling.status.visningsnavn}">Utkast</span>
                 <span class="merke pris" th:text="${samling.prisFormatert()}">149 kr</span>
                 <span class="merke pris" th:text="${antallSalg} + ' solgt'">0 solgt</span>
             </div>
@@ -182,44 +183,91 @@
         <div th:if="${param.lagret}" class="varsel ok">
             <i class="fa-solid fa-circle-check"></i> Endringene er lagret.
         </div>
-        <div th:if="${param.publisert}" class="varsel ok">
-            <i class="fa-solid fa-circle-check"></i> Kokeboka er live og kan kjøpes nå.
+        <div th:if="${param['lagt-til']}" class="varsel ok">
+            <i class="fa-solid fa-circle-check"></i> Oppskriften er lagt i kokeboka.
         </div>
-        <div th:if="${param.feil != null and param.feil[0] == 'ikke-klar'}" class="varsel feil">
+        <div th:if="${param.sendt}" class="varsel ok">
+            <i class="fa-solid fa-paper-plane"></i>
+            Sendt inn! MatMinne ser over pris og innhold, og du får svar her.
+        </div>
+        <div th:if="${param.trukket}" class="varsel ok">
+            <i class="fa-solid fa-circle-check"></i>
+            Trukket tilbake. Du kan redigere og sende inn på nytt.
+        </div>
+        <div th:if="${param['ny-pris']}" class="varsel feil">
             <i class="fa-solid fa-circle-exclamation"></i>
-            Du må fullføre Stripe-oppsettet før du kan publisere.
+            Prisen er endret, så kokeboka må godkjennes på nytt før den selges igjen.
         </div>
         <div th:if="${param.feil != null and param.feil[0] == 'tom'}" class="varsel feil">
             <i class="fa-solid fa-circle-exclamation"></i>
-            Legg til minst én oppskrift før du publiserer.
+            Legg til minst én oppskrift før du sender inn.
+        </div>
+        <div th:if="${param.feil != null and param.feil[0] == 'pris'}" class="varsel feil">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            Sett en pris før du sender inn.
+        </div>
+        <div th:if="${param.feil != null and param.feil[0] == 'allerede-sendt'}" class="varsel feil">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            Denne er allerede sendt inn eller godkjent.
         </div>
 
-        <!-- PUBLISER -->
+        <!-- STATUS OG INNSENDING -->
         <div class="kort">
-            <div class="kort-tittel"><i class="fa-solid fa-tower-broadcast"></i> Status</div>
+            <div class="kort-tittel"><i class="fa-solid fa-clipboard-check"></i> Status</div>
+
+            <!-- Avslag: vis begrunnelsen først, det er det viktigste -->
+            <div th:if="${samling.status.name() == 'AVSLATT'}" class="varsel feil"
+                 style="margin-bottom:16px;align-items:flex-start;">
+                <i class="fa-solid fa-circle-xmark" style="margin-top:2px;"></i>
+                <span><strong>Ikke godkjent.</strong>
+                      <span th:text="${samling.avslagsgrunn}"></span><br>
+                      Rett opp og send inn på nytt.</span>
+            </div>
+
             <div class="publiser-rad">
-                <div class="publiser-tekst" th:if="${!samling.erPublisert}">
-                    <strong>Ikke publisert</strong>
-                    Kokeboka er bare synlig for deg. Oppskriftene i den er fortsatt
-                    åpne for alle til du publiserer.
+                <div class="publiser-tekst" th:if="${samling.status.name() == 'UTKAST'}">
+                    <strong>Utkast</strong>
+                    Bare synlig for deg. Oppskriftene er fortsatt åpne for alle
+                    til kokeboka er godkjent.
                 </div>
-                <div class="publiser-tekst" th:if="${samling.erPublisert}">
-                    <strong>Live</strong>
+                <div class="publiser-tekst" th:if="${samling.status.name() == 'TIL_GODKJENNING'}">
+                    <strong>Til godkjenning</strong>
+                    MatMinne ser over innhold og pris. Du kan trekke den tilbake
+                    hvis du vil endre noe.
+                </div>
+                <div class="publiser-tekst" th:if="${samling.status.name() == 'GODKJENT'}">
+                    <strong>Godkjent og til salgs</strong>
                     Oppskriftene under er låst for alle som ikke har kjøpt kokeboka.
                 </div>
+                <div class="publiser-tekst" th:if="${samling.status.name() == 'AVSLATT'}">
+                    <strong>Avslått</strong>
+                    Kokeboka selges ikke. Oppskriftene er åpne som normalt.
+                </div>
 
-                <form th:unless="${samling.erPublisert}"
-                      th:action="@{'/skaper/samling/' + ${samling.id} + '/publiser'}" method="POST">
+                <!-- Send inn -->
+                <form th:if="${samling.status.kanSendesInn()}"
+                      th:action="@{'/skaper/samling/' + ${samling.id} + '/send-inn'}" method="POST">
                     <button type="submit" class="btn-gronn">
-                        <i class="fa-solid fa-rocket"></i> Publiser
+                        <i class="fa-solid fa-paper-plane"></i> Send inn til godkjenning
                     </button>
                 </form>
-                <form th:if="${samling.erPublisert}"
-                      th:action="@{'/skaper/samling/' + ${samling.id} + '/avpubliser'}" method="POST">
+
+                <!-- Trekk tilbake -->
+                <form th:if="${samling.status.name() == 'TIL_GODKJENNING'
+                              or samling.status.name() == 'GODKJENT'}"
+                      th:action="@{'/skaper/samling/' + ${samling.id} + '/trekk-tilbake'}" method="POST">
                     <button type="submit" class="btn-hvit btn-fare">
-                        <i class="fa-solid fa-eye-slash"></i> Avpubliser
+                        <i class="fa-solid fa-rotate-left"></i> Trekk tilbake
                     </button>
                 </form>
+            </div>
+
+            <!-- Utbetaling må være klar før den faktisk kan selges -->
+            <div th:if="${samling.status.name() == 'GODKJENT' and !kanSelge}" class="varsel feil"
+                 style="margin:16px 0 0;align-items:flex-start;">
+                <i class="fa-solid fa-triangle-exclamation" style="margin-top:2px;"></i>
+                <span>Kokeboka er godkjent, men <strong>ingen kan kjøpe den før du har
+                      satt opp utbetaling</strong>. Gjør det i skaperstudioet.</span>
             </div>
         </div>
 
@@ -246,7 +294,7 @@
                     <strong th:text="${o.tittel}">Oppskrift</strong>
                     <span th:text="${o.kategori != null ? o.kategori : 'Uten kategori'}">–</span>
                 </div>
-                <span th:if="${samling.erPublisert}" class="laast-merke">Låst</span>
+                <span th:if="${samling.erTilSalgs()}" class="laast-merke">Låst</span>
                 <form th:action="@{'/skaper/samling/' + ${samling.id} + '/fjern/' + ${o.id}}"
                       method="POST" style="display:inline;">
                     <button type="submit" class="ikon-btn fjern" title="Fjern fra kokeboka">
@@ -306,14 +354,16 @@
                     <label class="felt-etikett" for="prisKroner">Pris i kroner</label>
                     <input type="number" id="prisKroner" name="prisKroner" class="felt-input"
                            min="1" max="9999" required
-                           th:value="${samling.pris != null ? samling.pris / 100 : 149}">
+                           th:value="${samling.prisKroner() > 0 ? samling.prisKroner() : 149}">
                     <div class="andel-info" id="andelInfo"
                          th:attr="data-andel=${plattformAndel}">
-                        Du beholder
-                        <strong th:text="${samling.pris != null
-                            ? (samling.pris / 100) * (100 - plattformAndel) / 100 : 0} + ' kr'">0 kr</strong>
+                        Du beholder <strong th:text="${dinAndel} + ' kr'">0 kr</strong>
                         per salg. MatMinne tar <span th:text="${plattformAndel}">20</span> %,
                         og Stripe trekker sitt transaksjonsgebyr.
+                    </div>
+                    <div class="andel-info" th:if="${samling.status.name() == 'GODKJENT'}"
+                         style="background:#fffbeb;color:#b45309;">
+                        Endrer du prisen må kokeboka godkjennes på nytt før den selges videre.
                     </div>
                 </div>
                 <button type="submit" class="btn-gronn">
@@ -322,7 +372,7 @@
             </form>
         </div>
 
-        <div class="kort" th:if="${samling.erPublisert}">
+        <div class="kort" th:if="${samling.erTilSalgs()}">
             <div class="kort-tittel"><i class="fa-solid fa-link"></i> Del kokeboka</div>
             <p style="font-size:.86rem;color:#64748b;line-height:1.6;margin-bottom:14px;">
                 Send denne lenken til følgerne dine. Den viser forsiden, hva som er inkludert,

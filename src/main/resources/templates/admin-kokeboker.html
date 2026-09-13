@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="~{fragments :: header_links}"></div>
+    <title>Til godkjenning | MatMinne</title>
+
+    <style>
+        body { background: var(--bakgrunn); }
+
+        .page-hero {
+            background: var(--mat-mork);
+            padding: 44px 0 64px; position: relative; overflow: hidden;
+        }
+        .page-hero::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: radial-gradient(rgba(245,158,11,.08) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .hero-inner { position: relative; z-index: 1; }
+        .hero-tag {
+            font-size: .68rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 2.5px; color: #fbbf24; display: block; margin-bottom: 10px;
+        }
+        .page-hero h1 {
+            font-size: 2.3rem; font-weight: 900; letter-spacing: -2px;
+            color: white; margin: 0 0 6px;
+        }
+        .page-hero p { color: rgba(255,255,255,.45); font-size: .9rem; margin: 0; }
+
+        .content-wrap {
+            max-width: 900px; margin: -36px auto 100px;
+            padding: 0 20px; position: relative; z-index: 10;
+        }
+
+        .kort {
+            background: white; border-radius: 24px; padding: 8px 26px;
+            border: 1px solid #f1f5f9; box-shadow: 0 20px 56px rgba(0,0,0,.07);
+            margin-bottom: 22px;
+        }
+        .kort-hode {
+            font-size: .68rem; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 2px; color: #94a3b8;
+            padding: 20px 0 4px; display: flex; align-items: center; gap: 8px;
+        }
+        .kort-hode .antall {
+            background: #f59e0b; color: white; border-radius: 99px;
+            font-size: .62rem; font-weight: 900; padding: 2px 8px;
+            letter-spacing: 0;
+        }
+
+        /* ── SØKNADSRAD ── */
+        .soknad {
+            display: flex; align-items: center; gap: 16px;
+            padding: 18px 0; border-bottom: 1px solid #f1f5f9;
+            text-decoration: none;
+        }
+        .soknad:last-child { border-bottom: none; }
+        .soknad-bilde {
+            width: 68px; height: 68px; border-radius: 14px; object-fit: cover;
+            flex-shrink: 0; background: var(--mat-mint);
+        }
+        .soknad-bilde-tom {
+            width: 68px; height: 68px; border-radius: 14px; flex-shrink: 0;
+            background: var(--mat-mint); display: flex; align-items: center;
+            justify-content: center; color: var(--mat-gronn); font-size: 1.2rem;
+        }
+        .soknad-info { flex: 1; min-width: 0; }
+        .soknad-info strong {
+            display: block; font-weight: 800; color: var(--mat-mork);
+            font-size: 1rem; margin-bottom: 3px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .soknad-skaper { font-size: .82rem; color: #64748b; font-weight: 600; margin-bottom: 3px; }
+        .soknad-meta { font-size: .77rem; color: #94a3b8; }
+        .soknad-pris {
+            font-size: 1.15rem; font-weight: 900; color: var(--mat-mork);
+            flex-shrink: 0; text-align: right; letter-spacing: -.5px;
+            font-variant-numeric: tabular-nums;
+        }
+        .soknad-pris small {
+            display: block; font-size: .66rem; font-weight: 700;
+            color: #94a3b8; letter-spacing: .5px; text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .merke {
+            font-size: .62rem; font-weight: 800; padding: 4px 10px;
+            border-radius: 99px; text-transform: uppercase; letter-spacing: .7px;
+            flex-shrink: 0;
+        }
+        .merke.godkjent { background: #dcfce7; color: #15803d; }
+        .merke.avslatt  { background: #fee2e2; color: #b91c1c; }
+
+        .tom-tilstand {
+            text-align: center; padding: 48px 24px; color: #94a3b8;
+            font-size: .92rem; line-height: 1.7;
+        }
+        .tom-tilstand .ikon { font-size: 2.8rem; margin-bottom: 14px; opacity: .45; }
+        .tom-tilstand strong {
+            display: block; color: var(--mat-mork); font-size: 1.02rem;
+            font-weight: 800; margin-bottom: 6px;
+        }
+
+        .varsel {
+            border-radius: 14px; padding: 14px 18px; margin-bottom: 18px;
+            font-size: .88rem; font-weight: 600;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .varsel.ok   { background: #dcfce7; color: #15803d; border: 1px solid #a7f3d0; }
+        .varsel.info { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+
+        @media (max-width: 600px) {
+            .page-hero h1 { font-size: 1.7rem; letter-spacing: -1px; }
+            .content-wrap { padding: 0 12px; }
+            .kort { padding: 6px 18px; border-radius: 20px; }
+            .soknad { gap: 12px; flex-wrap: wrap; }
+            .soknad-pris { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="page-hero">
+        <div class="hero-inner container">
+            <span class="hero-tag">MatMinne admin</span>
+            <h1>Til godkjenning</h1>
+            <p>Se over pris og innhold før kokebøker slippes til salg.</p>
+        </div>
+    </div>
+
+    <div class="content-wrap">
+
+        <div th:if="${param.godkjent}" class="varsel ok">
+            <i class="fa-solid fa-circle-check"></i> Kokeboka er godkjent og til salgs.
+        </div>
+        <div th:if="${param.avslatt}" class="varsel info">
+            <i class="fa-solid fa-circle-info"></i>
+            Avslått. Skaperen ser begrunnelsen og kan sende inn på nytt.
+        </div>
+
+        <!-- KØEN -->
+        <div class="kort">
+            <div class="kort-hode">
+                <i class="fa-solid fa-inbox"></i> Venter på svar
+                <span class="antall" th:if="${!#lists.isEmpty(koen)}"
+                      th:text="${#lists.size(koen)}">0</span>
+            </div>
+
+            <div th:if="${#lists.isEmpty(koen)}" class="tom-tilstand">
+                <div class="ikon">✅</div>
+                <strong>Ingen søknader i kø</strong>
+                Alt er behandlet.
+            </div>
+
+            <a th:each="s : ${koen}" th:href="@{'/admin/kokeboker/' + ${s.id}}" class="soknad">
+                <img th:if="${s.bildeUrl != null and s.bildeUrl != ''}"
+                     th:src="${s.bildeUrl}" class="soknad-bilde" alt="">
+                <div th:unless="${s.bildeUrl != null and s.bildeUrl != ''}" class="soknad-bilde-tom">
+                    <i class="fa-solid fa-book"></i>
+                </div>
+                <div class="soknad-info">
+                    <strong th:text="${s.navn}">Kokebok</strong>
+                    <div class="soknad-skaper"
+                         th:text="${skapere[s.id] != null ? skapere[s.id].visningsnavn : 'Ukjent skaper'}">Skaper</div>
+                    <div class="soknad-meta">
+                        <span th:text="${antallOppskrifter[s.id]}">0</span> oppskrifter
+                        · sendt inn <span th:text="${s.datoSendtInn != null
+                            ? #temporals.format(s.datoSendtInn,'dd.MM.yy') : '–'}">–</span>
+                    </div>
+                </div>
+                <div class="soknad-pris">
+                    <span th:text="${s.prisFormatert()}">149 kr</span>
+                    <small th:text="'din andel ' + (${s.prisKroner()} - ${s.skaperAndelKroner(plattformAndel)}) + ' kr'">din andel</small>
+                </div>
+            </a>
+        </div>
+
+        <!-- HISTORIKK -->
+        <div class="kort" th:if="${!#lists.isEmpty(behandlede)}">
+            <div class="kort-hode"><i class="fa-solid fa-clock-rotate-left"></i> Behandlet</div>
+
+            <a th:each="s : ${behandlede}" th:href="@{'/admin/kokeboker/' + ${s.id}}" class="soknad">
+                <img th:if="${s.bildeUrl != null and s.bildeUrl != ''}"
+                     th:src="${s.bildeUrl}" class="soknad-bilde" alt="">
+                <div th:unless="${s.bildeUrl != null and s.bildeUrl != ''}" class="soknad-bilde-tom">
+                    <i class="fa-solid fa-book"></i>
+                </div>
+                <div class="soknad-info">
+                    <strong th:text="${s.navn}">Kokebok</strong>
+                    <div class="soknad-skaper"
+                         th:text="${skapere[s.id] != null ? skapere[s.id].visningsnavn : 'Ukjent skaper'}">Skaper</div>
+                    <div class="soknad-meta">
+                        <span th:text="${s.prisFormatert()}">149 kr</span>
+                        · <span th:text="${antallOppskrifter[s.id]}">0</span> oppskrifter
+                    </div>
+                </div>
+                <span class="merke"
+                      th:classappend="${s.status.name() == 'GODKJENT'} ? 'godkjent' : 'avslatt'"
+                      th:text="${s.status.visningsnavn}">Status</span>
+            </a>
+        </div>
+
+    </div>
+
+    <div th:replace="~{fragments :: bottom_nav}"></div>
+    <div th:replace="~{fragments :: scripts}"></div>
+</body>
+</html>
