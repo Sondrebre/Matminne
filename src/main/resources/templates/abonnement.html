@@ -86,6 +86,117 @@
             font-size: .85rem; color: #15803d; font-weight: 600;
         }
 
+        /* ── SKYVEVELGER ── */
+        .visually-hidden {
+            position: absolute; width: 1px; height: 1px; overflow: hidden;
+            clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+        }
+
+        .velger-kort {
+            background: white; border: 2px solid var(--mat-gronn);
+            border-radius: 24px; padding: 28px 30px 26px;
+            box-shadow: 0 16px 48px rgba(34,197,94,.16);
+            margin-bottom: 14px;
+        }
+
+        .velger-topp {
+            display: flex; align-items: flex-end; justify-content: space-between;
+            gap: 16px; flex-wrap: wrap; margin-bottom: 24px;
+        }
+        .velger-antall {
+            font-size: 1.75rem; font-weight: 900; color: var(--mat-mork);
+            letter-spacing: -1.2px; line-height: 1.1;
+        }
+        .velger-merke {
+            display: block; margin-top: 6px;
+            background: var(--mat-mint); color: #15803d;
+            border: 1px solid #a7f3d0; border-radius: 99px;
+            font-size: .68rem; font-weight: 800; padding: 3px 11px;
+            letter-spacing: .5px; text-transform: uppercase;
+            width: fit-content;
+        }
+        .velger-pris { text-align: right; white-space: nowrap; }
+        .velger-pris .belop {
+            font-size: 2.5rem; font-weight: 900; color: var(--mat-gronn-m);
+            letter-spacing: -2px; font-variant-numeric: tabular-nums;
+        }
+        .velger-pris .per {
+            font-size: .82rem; font-weight: 700; color: #94a3b8;
+            display: block; margin-top: -4px;
+        }
+
+        /* Skyveknapp — trengs egen styling i hver nettlesermotor */
+        .skyve-felt { margin-bottom: 22px; }
+        .skyve {
+            -webkit-appearance: none; appearance: none;
+            width: 100%; height: 34px; background: none;
+            cursor: pointer; margin: 0; display: block;
+        }
+        .skyve:focus { outline: none; }
+        .skyve:focus-visible::-webkit-slider-thumb {
+            box-shadow: 0 0 0 4px rgba(34,197,94,.3), 0 2px 8px rgba(0,0,0,.15);
+        }
+        .skyve:focus-visible::-moz-range-thumb {
+            box-shadow: 0 0 0 4px rgba(34,197,94,.3), 0 2px 8px rgba(0,0,0,.15);
+        }
+        /* WebKit / Blink */
+        .skyve::-webkit-slider-runnable-track {
+            height: 8px; border-radius: 99px;
+            background: linear-gradient(to right,
+                var(--mat-gronn) 0%, var(--mat-gronn) var(--fyll, 0%),
+                #e8f5e9 var(--fyll, 0%), #e8f5e9 100%);
+        }
+        .skyve::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 28px; height: 28px; border-radius: 50%;
+            background: white; border: 3px solid var(--mat-gronn);
+            margin-top: -10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.15);
+            transition: transform .12s;
+        }
+        .skyve:active::-webkit-slider-thumb { transform: scale(1.12); }
+        /* Gecko */
+        .skyve::-moz-range-track {
+            height: 8px; border-radius: 99px; background: #e8f5e9;
+        }
+        .skyve::-moz-range-progress {
+            height: 8px; border-radius: 99px; background: var(--mat-gronn);
+        }
+        .skyve::-moz-range-thumb {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: white; border: 3px solid var(--mat-gronn);
+            box-shadow: 0 2px 8px rgba(0,0,0,.15);
+        }
+
+        .skyve-merker {
+            display: flex; justify-content: space-between;
+            margin-top: 4px; padding: 0 2px;
+        }
+        .skyve-merker span {
+            font-size: .7rem; font-weight: 700; color: #cbd5e1;
+            font-variant-numeric: tabular-nums; transition: color .15s;
+        }
+        .skyve-merker span.aktiv { color: var(--mat-gronn-m); font-weight: 900; }
+
+        .velger-btn {
+            width: 100%; background: var(--mat-gronn); color: white; border: none;
+            padding: 16px; border-radius: 15px; font-weight: 800;
+            font-size: 1rem; cursor: pointer; font-family: inherit;
+            display: flex; align-items: center; justify-content: center; gap: 9px;
+            transition: .15s; box-shadow: 0 6px 20px rgba(34,197,94,.32);
+        }
+        .velger-btn:hover { background: var(--mat-gronn-m); }
+        .velger-btn:disabled {
+            background: #f1f5f9; color: #cbd5e1; cursor: not-allowed;
+            box-shadow: none;
+        }
+        .velger-info {
+            font-size: .8rem; color: #b45309; background: #fffbeb;
+            border: 1px solid #fde68a; border-radius: 12px;
+            padding: 10px 14px; margin: 14px 0 0; line-height: 1.5;
+            text-align: center;
+        }
+
         .niva-rad {
             display: flex; align-items: center; gap: 16px;
             background: white; border: 2px solid #e8f5e9;
@@ -274,6 +385,15 @@
             .pricing-wrap { grid-template-columns: 1fr; }
             .niva-wrap { padding: 28px 14px 0; }
             .niva-intro h2 { font-size: 1.25rem; }
+            .velger-kort { padding: 22px 18px 20px; border-radius: 20px; }
+            .velger-topp { margin-bottom: 20px; gap: 10px; }
+            .velger-antall { font-size: 1.35rem; }
+            .velger-pris .belop { font-size: 2rem; }
+            /* Større trykkflate på håndtaket */
+            .skyve { height: 40px; }
+            .skyve::-webkit-slider-thumb { width: 32px; height: 32px; margin-top: -12px; }
+            .skyve::-moz-range-thumb { width: 32px; height: 32px; }
+            .skyve-merker span { font-size: .64rem; }
             .niva-rad {
                 flex-wrap: wrap; gap: 10px; padding: 14px 16px;
             }
@@ -354,83 +474,84 @@
             </form>
         </div>
 
-        <!-- BYTT PLAN -->
-        <div class="niva-wrap" style="padding-top:28px;">
-            <div class="niva-intro">
-                <h2>Bytt plan</h2>
-                <p>Trenger du mer eller mindre plass? Velg et annet nivå —
-                   det gamle avsluttes automatisk.</p>
-            </div>
-
-            <form th:each="n : ${niva}" th:action="@{/abonnement/checkout}" method="POST"
-                  class="niva-rad" th:classappend="${n == plan} ? 'anbefalt' : ''">
-                <input type="hidden" name="niva" th:value="${n.name()}">
-                <div class="niva-venstre">
-                    <strong th:text="${n.grenseTekst()}">30 oppskrifter</strong>
-                    <span th:if="${n == plan}" class="anbefalt-merke">Din plan</span>
-                </div>
-                <div class="niva-pris">
-                    <span class="belop" th:text="${n.prisKroner}">29</span> kr/mnd
-                </div>
-                <button type="submit" class="niva-btn"
-                        th:disabled="${n == plan or !tilgjengelig[n.name()]}"
-                        th:classappend="${n == plan or !tilgjengelig[n.name()]} ? 'utilgjengelig' : ''">
-                    <span th:if="${n == plan}">Aktiv</span>
-                    <span th:unless="${n == plan}"
-                          th:text="${tilgjengelig[n.name()]} ? 'Bytt' : 'Kommer'">Bytt</span>
-                </button>
-            </form>
-        </div>
     </div>
 
     <!-- NIVÅVELGER -->
-    <div class="niva-wrap" th:unless="${harAbonnement}">
+    <div class="niva-wrap">
 
         <div class="niva-intro">
-            <h2>Velg hvor stor kokebok du trenger</h2>
-            <p>Prisen følger antall oppskrifter. Alle planer gir de samme
-               MatMinne-funksjonene, og du kan bytte eller avslutte når som helst.</p>
+            <h2 th:if="${harAbonnement}">Bytt plan</h2>
+            <h2 th:unless="${harAbonnement}">Hvor mange oppskrifter trenger du?</h2>
+            <p th:if="${harAbonnement}">Dra for å velge et annet nivå.
+               Den gamle planen avsluttes automatisk.</p>
+            <p th:unless="${harAbonnement}">Dra for å velge størrelse. Alle planer gir
+               de samme MatMinne-funksjonene, og du kan bytte eller avslutte når som helst.</p>
             <div class="niva-status" th:if="${antallOppskrifter > 0}">
-                Du har <strong th:text="${antallOppskrifter}">0</strong> oppskrifter nå
-                — gratisplanen rommer <span th:text="${gratisGrense}">10</span>.
+                Du har <strong th:text="${antallOppskrifter}">0</strong> oppskrifter i dag
             </div>
         </div>
 
-        <!-- Gratis -->
-        <div class="niva-rad gratis">
-            <div class="niva-venstre">
-                <strong>Gratis</strong>
-                <span th:text="${gratisGrense} + ' oppskrifter'">10 oppskrifter</span>
-            </div>
-            <div class="niva-pris"><span class="belop">0</span> kr/mnd</div>
-            <a href="/kokebok" class="niva-btn sekundar">Fortsett gratis</a>
+        <!-- Nivådata for skyveknappen, lest av skriptet under -->
+        <div id="nivaData" hidden>
+            <span class="niva-punkt" th:each="n : ${niva}"
+                  th:attr="data-navn=${n.name()},
+                           data-tekst=${n.grenseTekst()},
+                           data-grense=${n.oppskriftGrense},
+                           data-pris=${n.prisKroner},
+                           data-ledig=${tilgjengelig[n.name()]},
+                           data-min=${n == plan},
+                           data-anbefalt=${n == anbefalt}"></span>
         </div>
 
-        <!-- Betalte nivåer -->
-        <form th:each="n : ${niva}" th:action="@{/abonnement/checkout}" method="POST"
-              class="niva-rad"
-              th:classappend="${n == anbefalt} ? 'anbefalt' : ''">
-            <input type="hidden" name="niva" th:value="${n.name()}">
+        <form th:action="@{/abonnement/checkout}" method="POST" class="velger-kort">
+            <!-- Faller tilbake til anbefalt nivå hvis skriptet ikke kjører -->
+            <input type="hidden" name="niva" id="valgtNiva"
+                   th:value="${anbefalt != null ? anbefalt.name() : 'NIVA_30'}">
 
-            <div class="niva-venstre">
-                <strong th:text="${n.grenseTekst()}">30 oppskrifter</strong>
-                <span th:if="${n == anbefalt}" class="anbefalt-merke">Passer deg</span>
-                <span th:unless="${n == anbefalt}"
-                      th:text="${n.erUbegrenset()} ? 'Ingen grense' : 'Opptil ' + ${n.oppskriftGrense} + ' lagret'">
-                </span>
+            <!-- Stor visning av valget -->
+            <div class="velger-topp">
+                <div class="velger-antall">
+                    <span id="visGrense" th:text="${anbefalt != null ? anbefalt.grenseTekst() : '30 oppskrifter'}">
+                        30 oppskrifter</span>
+                    <small id="visMerke" class="velger-merke" hidden></small>
+                </div>
+                <div class="velger-pris">
+                    <span class="belop" id="visPris"
+                          th:text="${anbefalt != null ? anbefalt.prisKroner : 29}">29</span>
+                    <span class="per">kr/mnd</span>
+                </div>
             </div>
 
-            <div class="niva-pris">
-                <span class="belop" th:text="${n.prisKroner}">29</span> kr/mnd
+            <!-- Skyveknappen -->
+            <div class="skyve-felt">
+                <label for="nivaSkyve" class="visually-hidden">Antall oppskrifter</label>
+                <input type="range" id="nivaSkyve" class="skyve"
+                       min="0" step="1"
+                       th:attr="max=${#lists.size(niva) - 1}"
+                       value="0" aria-describedby="visGrense">
+                <div class="skyve-merker" id="skyveMerker">
+                    <span th:each="n : ${niva}"
+                          th:text="${n.erUbegrenset()} ? '∞' : ${n.oppskriftGrense}">30</span>
+                </div>
             </div>
 
-            <button type="submit" class="niva-btn"
-                    th:disabled="${!tilgjengelig[n.name()]}"
-                    th:classappend="${!tilgjengelig[n.name()]} ? 'utilgjengelig' : ''">
-                <span th:if="${tilgjengelig[n.name()]}">Velg</span>
-                <span th:unless="${tilgjengelig[n.name()]}">Kommer</span>
+            <button type="submit" class="velger-btn" id="velgBtn">
+                <i class="fas fa-bolt"></i>
+                <span id="velgBtnTekst" th:text="${harAbonnement} ? 'Bytt til denne planen' : 'Velg denne planen'">
+                    Velg denne planen</span>
             </button>
+
+            <p class="velger-info" id="velgInfo" hidden></p>
         </form>
+
+        <!-- Gratisplanen, for de som ikke betaler ennå -->
+        <div class="niva-rad gratis" th:unless="${harAbonnement}">
+            <div class="niva-venstre">
+                <strong>Fortsett gratis</strong>
+                <span th:text="${gratisGrense} + ' oppskrifter, ingen betaling'">10 oppskrifter</span>
+            </div>
+            <a href="/kokebok" class="niva-btn sekundar">Behold gratis</a>
+        </div>
 
         <p class="niva-fot">
             Sikker betaling via Stripe · Avslutt når som helst ·
@@ -537,6 +658,80 @@
 
     <script>
         function toggleFaq(el) { el.classList.toggle('open'); }
+
+        /* ══ SKYVEVELGER FOR ABONNEMENT ═══════════════════════════════
+           Nivåene er trinn, ikke et jevnt tall: skyveknappen går fra 0 til
+           antall nivåer − 1, og hvert steg er ett prisnivå. */
+        (function () {
+            const skyve = document.getElementById('nivaSkyve');
+            const data  = document.getElementById('nivaData');
+            if (!skyve || !data) return;
+
+            const niva = Array.from(data.querySelectorAll('.niva-punkt')).map(el => ({
+                navn:     el.dataset.navn,
+                tekst:    el.dataset.tekst,
+                pris:     el.dataset.pris,
+                ledig:    el.dataset.ledig === 'true',
+                minPlan:  el.dataset.min === 'true',
+                anbefalt: el.dataset.anbefalt === 'true',
+            }));
+            if (!niva.length) return;
+
+            const visGrense = document.getElementById('visGrense');
+            const visPris   = document.getElementById('visPris');
+            const visMerke  = document.getElementById('visMerke');
+            const valgtFelt = document.getElementById('valgtNiva');
+            const btn       = document.getElementById('velgBtn');
+            const btnTekst  = document.getElementById('velgBtnTekst');
+            const info      = document.getElementById('velgInfo');
+            const merker    = document.querySelectorAll('#skyveMerker span');
+            const byttModus = btnTekst.textContent.indexOf('Bytt') !== -1;
+
+            function tegn() {
+                const i = Number(skyve.value);
+                const n = niva[i];
+                if (!n) return;
+
+                visGrense.textContent = n.tekst;
+                visPris.textContent   = n.pris;
+                valgtFelt.value       = n.navn;
+
+                // Fyller sporet til venstre for håndtaket (WebKit trenger dette)
+                const andel = niva.length > 1 ? (i / (niva.length - 1)) * 100 : 100;
+                skyve.style.setProperty('--fyll', andel + '%');
+
+                merker.forEach((m, j) => m.classList.toggle('aktiv', j === i));
+
+                // Merkelapp: din plan, eller den som passer antallet du har
+                if (n.minPlan)       { visMerke.textContent = 'Din plan nå'; visMerke.hidden = false; }
+                else if (n.anbefalt) { visMerke.textContent = 'Passer deg';  visMerke.hidden = false; }
+                else                 { visMerke.hidden = true; }
+
+                // Knappen: kan dette nivået faktisk velges?
+                if (!n.ledig) {
+                    btn.disabled = true;
+                    btnTekst.textContent = 'Ikke tilgjengelig ennå';
+                    info.textContent = 'Dette nivået er ikke satt opp for betaling ennå. Velg et annet.';
+                    info.hidden = false;
+                } else if (n.minPlan) {
+                    btn.disabled = true;
+                    btnTekst.textContent = 'Dette er planen din';
+                    info.hidden = true;
+                } else {
+                    btn.disabled = false;
+                    btnTekst.textContent = byttModus ? 'Bytt til denne planen' : 'Velg denne planen';
+                    info.hidden = true;
+                }
+            }
+
+            // Start på brukerens egen plan, ellers den anbefalte
+            let start = niva.findIndex(n => n.minPlan);
+            if (start < 0) start = niva.findIndex(n => n.anbefalt);
+            skyve.value = start < 0 ? 0 : start;
+
+            skyve.addEventListener('input', tegn);
+            tegn();
+        })();
     </script>
 </body>
 </html>

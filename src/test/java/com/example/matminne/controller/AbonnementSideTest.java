@@ -117,7 +117,9 @@ class AbonnementSideTest {
                         org.hamcrest.Matchers.hasEntry("NIVA_30", true)))
                 .andExpect(model().attribute("tilgjengelig",
                         org.hamcrest.Matchers.hasEntry("NIVA_80", false)))
-                .andExpect(content().string(containsString("Kommer")));
+                // Skyveknappen leser tilgjengelighet fra data-ledig
+                .andExpect(content().string(containsString("data-ledig=\"false\"")))
+                .andExpect(content().string(containsString("data-ledig=\"true\"")));
     }
 
     @Test
@@ -141,6 +143,33 @@ class AbonnementSideTest {
                 .andExpect(model().attribute("plan", Abonnement.NIVA_150))
                 .andExpect(content().string(containsString("150 oppskrifter")))
                 .andExpect(content().string(containsString("Bytt plan")));
+    }
+
+    @Test
+    void skyveknappen_harEttTrinnPerNiva() throws Exception {
+        bruker(Abonnement.GRATIS, false);
+        when(oppskriftRepository.countByBrukerId(BRUKER_ID)).thenReturn(0L);
+
+        mockMvc.perform(get("/abonnement").with(somMeg()))
+                .andExpect(status().isOk())
+                // Sju nivåer gir max=6, siden skyveknappen er nullindeksert
+                .andExpect(content().string(containsString("max=\"6\"")))
+                .andExpect(content().string(containsString("id=\"nivaSkyve\"")))
+                // Hvert nivå må ha navnet sitt, ellers kan ikke skjemaet sendes
+                .andExpect(content().string(containsString("data-navn=\"NIVA_30\"")))
+                .andExpect(content().string(containsString("data-navn=\"UBEGRENSET\"")));
+    }
+
+    @Test
+    void utenJs_faltTilbakePaAnbefaltNiva() throws Exception {
+        bruker(Abonnement.GRATIS, false);
+        when(oppskriftRepository.countByBrukerId(BRUKER_ID)).thenReturn(60L);
+
+        // Det skjulte feltet er forhåndsutfylt, så skjemaet virker uten skript
+        mockMvc.perform(get("/abonnement").with(somMeg()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("name=\"niva\" id=\"valgtNiva\"")))
+                .andExpect(content().string(containsString("value=\"NIVA_80\"")));
     }
 
     // ── CHECKOUT ──────────────────────────────────────────────────
